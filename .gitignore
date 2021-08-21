@@ -4,3 +4,43 @@
 
 /projects/Project1/.vs/Project1/v16/.suo
 /projects/Project1/.vs/Project1/v16
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+*.ilk
+*.pdb
+*.res
+*.idb
+*.log
+*.tlog
+*.ipch
+*.sdf
+*.suo
+*.v12.suo
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+#*.lib
+*.tlh
+*.tli
+
+# Executables
+*.exp
+*.out
+*.app

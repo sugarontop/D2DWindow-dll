@@ -1,2 +1,23 @@
-﻿  D2D1UI_1.cpp
+﻿  pch.cpp
+  D2DButon.cpp
+  D2DDropdownListbox.cpp
+  D2DSimpleListbox.cpp
+  D2DTextbox.cpp
+  D2DTextboxScrollbar.cpp
+  D2DTreeList.cpp
+  D2DWhiteControl.cpp
+  D2DWindow.cpp
+  TextMemory.cpp
+  D2DCharRect.cpp
+  DisplayAttribute.cpp
+  TextContainer.cpp
+  TextEditor.cpp
+  TextLayout.cpp
+  TextStoreACP.cpp
+  undo.cpp
+  D2D1UI_1.cpp
+  dllmain.cpp
+  コードを生成中...
+  LINK : 前回のインクリメンタル リンクで E:\work\github\D2DWindow-dll\projects\Project1\Debug\D2DUI_1.dll が見つからなかったか、ビルドされませんでした。フル リンクを行います。
+     ライブラリ E:\work\github\D2DWindow-dll\projects\Project1\Debug\D2DUI_1.lib とオブジェクト E:\work\github\D2DWindow-dll\projects\Project1\Debug\D2DUI_1.exp を作成中
   D2DUI_1.vcxproj -> E:\work\github\D2DWindow-dll\projects\Project1\Debug\D2DUI_1.dll
