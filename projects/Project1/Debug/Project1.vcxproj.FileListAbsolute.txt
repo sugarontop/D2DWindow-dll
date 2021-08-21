@@ -1,4 +1,0 @@
-E:\work\vc\Direct2dt\direct2d\Project1\Debug\Project1.exe
-E:\work\vc\Direct2dt\direct2d\Project2\Debug\Project1.exe
-E:\work\vc\Direct2dt\direct2d\Project3\Debug\Project1.exe
-E:\work\github\D2DWindow-dll\projects\Project1\Debug\Project1.exe

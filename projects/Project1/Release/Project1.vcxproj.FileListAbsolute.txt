@@ -1,2 +1,0 @@
-E:\work\vc\Direct2dt\direct2d\Project3\Release\Project1.exe
-E:\work\github\D2DWindow-dll\projects\Project1\Release\Project1.exe
