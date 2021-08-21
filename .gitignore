@@ -39,6 +39,7 @@
 #*.lib
 *.tlh
 *.tli
+*.tlog
 
 # Executables
 *.exp
