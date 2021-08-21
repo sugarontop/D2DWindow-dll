@@ -9,7 +9,7 @@
 *.slo
 *.lo
 *.o
-#*.obj
+*.obj
 
 # Precompiled Headers
 *.gch
@@ -39,6 +39,7 @@
 #*.lib
 *.tlh
 *.tli
+*.tlog
 
 # Executables
 *.exp

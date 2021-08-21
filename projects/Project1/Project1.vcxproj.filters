@@ -28,7 +28,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="readme.txt">
+    <Text Include="readme.md">
       <Filter>ソース ファイル</Filter>
     </Text>
   </ItemGroup>
