@@ -10,10 +10,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 ## make UI Control  
 void CreateControl(HWND hWnd);  
-
+- textbox
+- tabcontrol
+    - page1: (empty)
+    - page2: textbox
 ## Clipboard,text copy or paste
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste );  
 
-## tab window button
+## tab control button
 void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, int activeidx );  
 
