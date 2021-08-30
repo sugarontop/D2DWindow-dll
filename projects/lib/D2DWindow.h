@@ -37,6 +37,7 @@ class D2DWindow
 		void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
 		int MessageBox(LPCWSTR text);
+		HWND GetHwnd() const { return hWnd_; }
 
 		V6::D2DContextEx cxt;
 		TSFIsland tsf;

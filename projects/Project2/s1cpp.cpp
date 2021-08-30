@@ -17,8 +17,8 @@ void CreateControl2test(UIHandleWin hwin, UIHandle hcs )
 {
     struct WhiteBoard
     {
-        DelegateDrawFunc f1;
-        DelegateProcFunc f2;
+        DelegateDrawFunc drawFunc;
+        DelegateProcFunc procFunc;
         int typ;
         D2DMat mat;
     };
@@ -36,7 +36,7 @@ void CreateControl2test(UIHandleWin hwin, UIHandle hcs )
     obj.active_idx = 0;
     obj.wboard.typ = 0;
     
-    obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt) {
+    obj.wboard.drawFunc = [](LPVOID captureobj, D2DContext& cxt) {
 
         CaptureObj1* obj = (CaptureObj1*)captureobj;
         WhiteBoard& wb = obj->wboard;
@@ -49,21 +49,68 @@ void CreateControl2test(UIHandleWin hwin, UIHandle hcs )
         wb.mat = mat.Offset(rc);
         obj->mat = wb.mat;
         {
-            cxt.DDrawRect(rc.ZeroRect(), D2RGB(170, 255, 255), D2RGB(170, 255, 255));
+            auto time = ::GetTickCount64() / 250;
 
+
+            if ( time % 4 == 0 )
+                cxt.DDrawRect(rc.ZeroRect(), D2RGB(170, 255, 255), D2RGB(170, 255, 255));
+            else if ( time % 4 == 1 )
+                cxt.DDrawRect(rc.ZeroRect(), D2RGB(170, 255, 170), D2RGB(170, 255, 170));
+            else if ( time % 4 == 2 )
+                cxt.DDrawRect(rc.ZeroRect(), D2RGB(255, 255, 170), D2RGB(255, 255, 170));
+            else if ( time % 4 == 3 )
+                cxt.DDrawRect(rc.ZeroRect(), D2RGB(255, 170, 170), D2RGB(255, 170, 170));
+
+            cxt.bRedraw_ = true;
         }
         mat.PopTransform();
     };
-    obj.wboard.f2 = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+    obj.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
 
         CaptureObj1* obj = (CaptureObj1*)captureobj;
         HRESULT r = 0;
         switch (message)
         {
-        case WM_LBUTTONDOWN:
-        break;
-        }
+            case WM_D2D_CREATE:
+            {
+				UIHandleWin&win = *(UIHandleWin*)wParam;
+				UIHandle& ctrl = *(UIHandle*)lParam;
+				
+				FRectF rc(10, 300, FSizeF(200,30));
+				D2DCreateButton(win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b1", 211);
 
+				rc.Offset(0,35);
+				D2DCreateButton(win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b2", 212);
+
+				rc.Offset(0,35);
+				auto b3 = D2DCreateButton(win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b3", 213);
+
+				D2DSetText( b3, L"this is button three");
+
+
+				return 0;
+			}
+            break;
+        
+            case WM_LBUTTONDOWN:
+			{
+
+			}
+            break;
+			case WM_NOTIFY:
+			{
+				if ( wParam == 213 )
+				{
+					int a = 0;
+				}
+			
+
+
+
+			}
+			break;
+		}
+    
         return r;
     };
     
@@ -71,7 +118,7 @@ void CreateControl2test(UIHandleWin hwin, UIHandle hcs )
     FRectF rc(0, 50, FSizeF(200, 200));
 
     obj.rc = rc;
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21", 210);
+    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.drawFunc, obj.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21", 210);
 
 
 

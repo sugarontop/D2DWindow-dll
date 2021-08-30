@@ -15,10 +15,14 @@ void D2DButton::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const F
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
 	rc_ = rc;
+	text_ = L"button";
 
 
 }
-
+void D2DButton::SetText(LPCWSTR str)
+{
+	text_ = str;
+}
 // D2DCaptureObject interface
 HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -99,7 +103,7 @@ void  D2DButton::Draw(D2DContext& cxt)
 		(*cxt)->DrawRectangle(rc, cxt.black_);
 		(*cxt)->FillRectangle(rc, cxt.white_);
 
-		(*cxt)->DrawText(L"Button", 6, cxt.textformat_, rc, cxt.black_ );
+		(*cxt)->DrawText(text_.c_str(), text_.length(), cxt.textformat_, rc, cxt.black_ );
 
 		mat.PopTransform();
 

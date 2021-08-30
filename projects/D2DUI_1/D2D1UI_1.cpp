@@ -121,10 +121,18 @@ DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc fu
 	cs1->CreateControl(win, ctrls, rc, stat, name, id);
 	ctrls->Add(std::shared_ptr<D2DWhiteControl>(cs1));
 
+	AppBase ab = {};
+	ab.hWnd = win->GetHwnd();
+	
+	
+
 
 	UIHandle r;
 	r.p = cs1;
 	r.typ = TYP_CONTROLS;
+
+	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
+
 	return r;
 }
 
@@ -147,6 +155,11 @@ DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
 	{
 		auto tx =  (D2DTextbox*)h.p;
 		tx->SetText(str, wcslen(str) );
+	}
+	else if ( h.typ == TYP_BUTTON )
+	{
+		auto btn = (D2DButton*)h.p;
+		btn->SetText(str);
 	}
 }
 

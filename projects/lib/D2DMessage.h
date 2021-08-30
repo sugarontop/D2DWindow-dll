@@ -42,3 +42,4 @@ struct D2DNMHDR
 
 #define WM_D2D_CB_INSERTSTRING			(WM_APP+1)
 #define WM_D2D_RESOURCES_UPDATE	(WM_APP+2)
+#define WM_D2D_CREATE							(WM_APP+3)

@@ -11,6 +11,7 @@ namespace V6
 			D2DButton();
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 
+			void SetText(LPCWSTR str);
 		public:
 			// D2DCaptureObject interface
 			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
@@ -24,6 +25,7 @@ namespace V6
 		protected :
 			FRectF rc_;
 			int part_stat_;
+			std::wstring text_;
 		
 
 	};
