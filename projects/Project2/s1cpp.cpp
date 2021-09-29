@@ -9,11 +9,11 @@
 
 using namespace V6;
 
-void CreateControl2(UIHandleWin hwin, UIHandle hcs)
+void CreateControl2test(UIHandleWin hwin, UIHandle hcs)
 {
 
 }
-void CreateControl2test(UIHandleWin hwin, UIHandle hcs )
+void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 {
     struct WhiteBoard
     {
