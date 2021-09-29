@@ -27,7 +27,7 @@ HRESULT D2DWhiteControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 	
 	if (stat_ & STAT_ENABLE)
 	{
-		if (ProcFunc_)
+		if (ProcFunc_ != nullptr)
 		{
 			auto old = b.card;
 			r = ProcFunc_(captureobj_, b, message, wParam, lParam);

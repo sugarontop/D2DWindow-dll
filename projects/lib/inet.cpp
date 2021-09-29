@@ -41,23 +41,22 @@ DWORD WINAPI InetAsync( LPVOID p )
 	InternetInfo* cn = (InternetInfo*)p;
 	_ASSERT(cn);
 
-	auto hr = CoInitialize(0);
-	if ( hr!=S_OK )
-	{
-		cn->errormsg = ::SysAllocString(L"CoInitialize fail");
-		throw (long)1;
-	}
-
 	cn->throwerror = 0;
 	cn->result = -1;
 	cn->content_len = 0;
 	cn->pstream = nullptr;
 
-
 	CLSID clsid;
 	IServerXMLHTTPRequest* req = nullptr;
 
-	try {
+	try 
+	{
+		auto hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		if ( hr!=S_OK )
+		{
+			cn->errormsg = ::SysAllocString(L"CoInitialize fail");
+			throw (long)1;
+		}
 		hr = CLSIDFromProgID( L"Msxml2.ServerXMLHTTP.6.0", &clsid );
 		if ( hr!=S_OK )
 		{
@@ -159,3 +158,37 @@ DWORD WINAPI InetAsync( LPVOID p )
 	return 0;
 }
 
+InternetInfo* CreateInternetInfo( )
+{
+	InternetInfo* p = new InternetInfo();
+
+	p->bGet = true;
+	p->url = nullptr;
+	p->errormsg= nullptr;
+	p->throwerror = 0;
+	p->postdata= nullptr;
+	p->result = 0;
+	p->content_type= nullptr;
+	p->content_len = 0;
+	p->pstream = nullptr;
+
+	return p;
+}
+void DeleteInternetInfo(InternetInfo* p)
+{
+	if ( p )
+	{
+		::SysFreeString(p->url);
+		::SysFreeString(	p->errormsg);
+		p->throwerror = 0;
+		::SysFreeString(p->postdata);
+		p->result = 0;
+		::SysFreeString(p->content_type);
+		p->content_len = 0;
+
+		if ( p->pstream )
+			p->pstream->Release();
+
+		delete p;
+	}
+}

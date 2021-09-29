@@ -30,11 +30,13 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
         int active_idx;
         D2DMat mat;
         WhiteBoard wboard;
+		UIHandleWin hwin;
     };
 
     static CaptureObj1 obj;
     obj.active_idx = 0;
     obj.wboard.typ = 0;
+	obj.hwin = hwin;
     
     obj.wboard.drawFunc = [](LPVOID captureobj, D2DContext& cxt) {
 
@@ -103,7 +105,34 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 				{
 					int a = 0;
 				}
-			
+				if ( wParam == 211 )
+				{
+					void work(IStream** ppJpg);
+
+					ComPTR<IStream> p;
+					work(&p);
+
+					if ( p )
+					{
+						//UIHandleWin&win = *(UIHandleWin*)wParam;
+
+
+
+
+						void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
+
+						ComPTR<ID2D1Bitmap> bmp;
+
+						auto cxt = D2DGetDeviceContext(obj->hwin);
+
+						Stream2Bitmap( p, cxt, &bmp);
+
+
+
+					}
+
+
+				}
 
 
 
