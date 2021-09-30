@@ -31,12 +31,14 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
         D2DMat mat;
         WhiteBoard wboard;
 		UIHandleWin hwin;
+		ID2D1Bitmap* bmp1;
     };
 
     static CaptureObj1 obj;
     obj.active_idx = 0;
     obj.wboard.typ = 0;
 	obj.hwin = hwin;
+	obj.bmp1 = nullptr;
     
     obj.wboard.drawFunc = [](LPVOID captureobj, D2DContext& cxt) {
 
@@ -65,6 +67,14 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 
             cxt.bRedraw_ = true;
         }
+
+
+		if ( obj->bmp1)
+		{
+			FRectF rcbmp(200,0,FSizeF(20,14));
+			(*cxt)->DrawBitmap(obj->bmp1, rcbmp );
+		}
+
         mat.PopTransform();
     };
     obj.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
@@ -114,20 +124,13 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 
 					if ( p )
 					{
-						//UIHandleWin&win = *(UIHandleWin*)wParam;
-
-
-
-
 						void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
-						ComPTR<ID2D1Bitmap> bmp;
+						
 
 						auto cxt = D2DGetDeviceContext(obj->hwin);
 
-						Stream2Bitmap( p, cxt, &bmp);
-
-
+						Stream2Bitmap( p, cxt, &obj->bmp1);
 
 					}
 

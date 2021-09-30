@@ -48,10 +48,11 @@ DWORD WINAPI InetAsync( LPVOID p )
 
 	CLSID clsid;
 	IServerXMLHTTPRequest* req = nullptr;
+	HRESULT hr;
 
 	try 
 	{
-		auto hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 		if ( hr!=S_OK )
 		{
 			cn->errormsg = ::SysAllocString(L"CoInitialize fail");
@@ -130,11 +131,12 @@ DWORD WINAPI InetAsync( LPVOID p )
 	if ( cn->throwerror == 0 && cn->result == 200 )
 	{
 		CBstr clen;
-		auto hr = req->getResponseHeader(CBstr(L"Content-Length"), &clen);		
+		hr = req->getResponseHeader(CBstr(L"Content-Length"), &clen);		
 		if ( hr == S_OK )
 			cn->content_len = (int)clen;
-
+		_ASSERT(hr == S_OK);
 		hr = req->getResponseHeader(CBstr(L"Content-Type"), &cn->content_type);
+		_ASSERT(hr == S_OK);
 
 		VARIANT vsm;
 		::VariantInit(&vsm);
@@ -142,11 +144,35 @@ DWORD WINAPI InetAsync( LPVOID p )
 
 		if ( S_OK == req->get_responseStream( &vsm ))
 		{						
-			hr = V_UNKNOWN(&vsm)->QueryInterface( IID_IStream, (void**)&cn->pstream );
+			IStream* sm1 = nullptr;
+
+			_ASSERT(vsm.vt == VT_UNKNOWN);	
+			hr = vsm.punkVal->QueryInterface( IID_IStream, (void**)&sm1 );
+
+			_ASSERT(hr == S_OK);	
+
 			if ( hr == S_OK )
 				cn->throwerror = 0;
+			
+			// copy sm to cn->pstream;
+			_ASSERT(cn->pstream == nullptr);
+			if ( S_OK == CreateStreamOnHGlobal(NULL,TRUE,&cn->pstream ))
+			{
+				LARGE_INTEGER x={0};
+				ULARGE_INTEGER xx;
+				sm1->Seek(x,0,&xx);
+			
+				ULARGE_INTEGER x1,x2, len;
+				len.HighPart=0;
+				len.LowPart = cn->content_len;
+				hr = sm1->CopyTo(cn->pstream,len, &x1, &x2 );
+				_ASSERT(hr == S_OK);	
 
-			::VariantClear(&vsm);
+				hr = cn->pstream->Seek(x,0,&xx);
+				_ASSERT(hr == S_OK);	
+			}
+			
+			sm1->Release();			
 		}
 	}
 
