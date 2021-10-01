@@ -11,7 +11,7 @@ CTextContainer::CTextContainer()
 	nSelStart_ = nSelEnd_ = 0;
 	bSelTrail_ = false;
 	bSingleLine_ = false;
-	LimitCharCnt_ = 65500;	
+	
 	nStartCharPos_ = 0;
 	psz_ = 0;
 	nTextSize_ = 0;

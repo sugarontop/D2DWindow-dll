@@ -363,10 +363,11 @@ void D2DTextbox::SetText(LPCWSTR str, int str_len, int insert_pos)
 	for(int i = 0; i < str_len; i++ )
 	{
 		auto ch = str[i];
-		if ( ch != L'\r'  )
+		if ( ch == 0x0A )
+			sm << ch;
+		else if ( ch != 0x0D )
 			sm << ch;
 	}
-
 	auto s = sm.str();
 
 	insert_pos = max(0, insert_pos);

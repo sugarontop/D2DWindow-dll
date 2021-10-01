@@ -37,11 +37,12 @@ public :
 	V6::FRectF rc_;
 	SIZE view_size_;
 	bool bSingleLine_;
-	UINT LimitCharCnt_;
+	
 	V6::FPointF offpt_; // Textbox2“à‚Ì•¶š‚ÌˆÚ“®ASingleline‚Åd—v
 	int nStartCharPos_;
 private:
 	BOOL EnsureBuffer(UINT nNewTextSize);
+	const UINT LimitCharCnt_ = 65000;
 
 	WCHAR* psz_;
 

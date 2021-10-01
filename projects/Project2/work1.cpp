@@ -16,11 +16,15 @@ void work(IStream** ppJpg)
 
 	::WaitForSingleObject(h, INFINITE);
 
+
+	
 	if ( info->result == 200 )
 	{		
 		*ppJpg = info->pstream;
 
-		(*ppJpg)->AddRef();
+		long rc = (*ppJpg)->AddRef();
+
+		_ASSERT(rc==2);
 
 	}
 

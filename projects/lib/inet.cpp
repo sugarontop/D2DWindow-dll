@@ -36,6 +36,25 @@ class CBstr
 		BSTR bs;
 };
 
+static bool cnv_GlobalStream(IStream* src, IStream** out)
+{
+	IStream* sm = nullptr;
+	if ( S_OK == CreateStreamOnHGlobal(NULL,TRUE,&sm))
+	{
+		LARGE_INTEGER x={0};
+		ULARGE_INTEGER x1,x2, len;
+
+		if ( S_OK==src->Seek(x, STREAM_SEEK_END, &len))
+			if ( S_OK == src->Seek(x,STREAM_SEEK_SET,&x1))			
+				if ( S_OK==src->CopyTo(sm,len, &x1, &x2 ))
+				{
+					*out = sm;
+					return true;
+				}
+	}
+	return false;
+}
+
 DWORD WINAPI InetAsync( LPVOID p )
 {
 	InternetInfo* cn = (InternetInfo*)p;
@@ -88,7 +107,8 @@ DWORD WINAPI InetAsync( LPVOID p )
 
 		// through  all server cert error 
 
-		VARIANT kv; 	::VariantInit(&kv);
+		VARIANT kv; 	
+		::VariantInit(&kv);
 		kv.vt=VT_I4;
 		kv.intVal=SXH_SERVER_CERT_IGNORE_ALL_SERVER_ERRORS ;
 		req->setOption(SERVERXMLHTTP_OPTION::SXH_OPTION_IGNORE_SERVER_SSL_CERT_ERROR_FLAGS, kv);
@@ -155,23 +175,16 @@ DWORD WINAPI InetAsync( LPVOID p )
 				cn->throwerror = 0;
 			
 			// copy sm to cn->pstream;
-			_ASSERT(cn->pstream == nullptr);
-			if ( S_OK == CreateStreamOnHGlobal(NULL,TRUE,&cn->pstream ))
-			{
-				LARGE_INTEGER x={0};
-				ULARGE_INTEGER xx;
-				sm1->Seek(x,0,&xx);
-			
-				ULARGE_INTEGER x1,x2, len;
-				len.HighPart=0;
-				len.LowPart = cn->content_len;
-				hr = sm1->CopyTo(cn->pstream,len, &x1, &x2 );
-				_ASSERT(hr == S_OK);	
 
-				hr = cn->pstream->Seek(x,0,&xx);
-				_ASSERT(hr == S_OK);	
-			}
-			
+			_ASSERT(cn->pstream == nullptr);
+			bool bl = cnv_GlobalStream(sm1, &cn->pstream);
+
+			LARGE_INTEGER x={0};
+			ULARGE_INTEGER xx;
+
+			hr = cn->pstream->Seek(x,0,&xx);
+			_ASSERT(hr == S_OK);	
+
 			sm1->Release();			
 		}
 	}

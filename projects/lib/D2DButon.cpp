@@ -15,7 +15,7 @@ void D2DButton::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const F
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
 	rc_ = rc;
-	text_ = L"button";
+	text_ =name;
 
 
 }

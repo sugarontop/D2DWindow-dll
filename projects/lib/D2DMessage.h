@@ -31,11 +31,13 @@ struct D2DNMHDR
 };
 
 
-#define TYP_MAIN_WINDOW 5
+#define TYP_NULL 0
 #define TYP_TEXTBOX 1
 #define TYP_BUTTON 2
 #define TYP_CONTROLS 3
 #define TYP_DROPDOWNLISTBOX 4
+#define TYP_MAIN_WINDOW 5
+
 
 
 #define EVENT_PUSH 1

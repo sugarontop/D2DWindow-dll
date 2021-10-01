@@ -175,6 +175,9 @@ void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, 
 
 #define COMBOBOX_ID_1 10
 void CreateControl2(UIHandleWin hwin, UIHandle hcs);
+bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
+bool SaveTextFile( LPCWSTR fnm, LPCWSTR str );
+UIHandle gx2;
 
 void CreateControl(HWND hWnd)
 {
@@ -185,7 +188,6 @@ void CreateControl(HWND hWnd)
     FRectF rctextbox(10, 40, FSizeF(400, 700));
     UIHandle htextbox = D2DCreateTextbox(hwin, root, rctextbox, true, STAT_VISIBLE | STAT_ENABLE, L"textbox1");
     D2DSetText(htextbox, L"Hello world");
-
 
 //    FRectF rccmb(500, 800, FSizeF(100, 26));
 //    UIHandle cb1 = D2DCreateDropdownListbox(hwin, root, rccmb,  STAT_VISIBLE | STAT_ENABLE, L"comb1", COMBOBOX_ID_1);
@@ -277,6 +279,36 @@ void CreateControl(HWND hWnd)
                 }
             }
             break;
+			case WM_NOTIFY:
+			{
+				if ( wParam == 400 )
+				{
+					// load
+					std::wstring str;
+					if ( LoadTextFile( L"script.txt" , &str ) )
+					{						
+						//auto h = obj->page[1];
+
+						//auto h = gx2;
+						auto h2 = D2DGetControlFromName(hwin, L"textbox200");
+
+						D2DSetText(h2, str.c_str());
+					}
+					r = 1;
+				}
+				else if ( wParam == 401 )
+				{
+					// save
+					auto h2 = D2DGetControlFromName(hwin, L"textbox200");
+
+					BSTR bs = D2DGetText(h2, true);
+
+					SaveTextFile(L"script.txt", bs );
+
+
+				}
+			}
+			break;
         }        
         return r;
     };
@@ -292,8 +324,17 @@ void CreateControl(HWND hWnd)
     obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"cs2", 113);
 
     FRectF rc2(10, 40, FSizeF(400, 600));
-    UIHandle x2 = D2DCreateTextbox(hwin, obj.page[1], rc2, true, STAT_VISIBLE | STAT_ENABLE, L"textbox2");
-    D2DSetText(x2, L"Hello world");
+    UIHandle x2 = D2DCreateTextbox(hwin, obj.page[1], rc2, true, STAT_VISIBLE | STAT_ENABLE, L"textbox200");
+
+	gx2 = x2;
+    D2DSetText(gx2, L"Hello\nworld");
+
+	FRectF rc1( rc2.left, rc2.bottom+5, FSizeF(100,26));
+	auto btn1 = D2DCreateButton(hwin,obj.page[1], rc1, STAT_VISIBLE | STAT_ENABLE, L"Load", 400);
+	rc1.Offset(200, 0);
+	auto btn2 = D2DCreateButton(hwin,obj.page[1], rc1, STAT_VISIBLE | STAT_ENABLE, L"Save", 401);
+
+
 
 
     CreateControl2( hwin, obj.page[2]);
@@ -304,6 +345,7 @@ void CreateControl(HWND hWnd)
 
 static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
+
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -430,7 +472,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 }
 
-
          }
          break;
 
@@ -478,4 +519,40 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
         }
         ::CloseClipboard();
     }
+}
+#include <fstream>
+bool LoadTextFile( LPCWSTR fnm, std::wstring* str )
+{
+	std::wifstream fs;
+	std::wstring& s = *str;
+	fs.open(fnm, std::ios::in);
+	int i = 0;
+	if ( fs ) 
+	{
+		while( !fs.eof())
+		{
+			std::wstring xx;
+			std::getline( fs, xx );	
+
+			if ( i++ != 0)
+				s += '\n';
+			s += xx;
+			
+		}
+		return true;
+	}
+	return false;
+}
+bool SaveTextFile( LPCWSTR fnm, LPCWSTR str )
+{
+	std::wofstream fs;
+	fs.open( fnm, std::ios::trunc);
+
+	if ( fs )
+	{
+		fs.write(str, wcslen(str));
+		fs.close();
+		return true;
+	}
+	return false;
 }

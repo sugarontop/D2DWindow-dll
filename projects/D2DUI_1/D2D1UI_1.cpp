@@ -154,6 +154,7 @@ DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
 	if ( h.typ == TYP_TEXTBOX )
 	{
 		auto tx =  (D2DTextbox*)h.p;
+		tx->Clear();
 		tx->SetText(str, wcslen(str) );
 	}
 	else if ( h.typ == TYP_BUTTON )
@@ -217,6 +218,38 @@ DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd )
 	return r;
 }
 
+UIHandle Renewal_UIHandle(  UIHandle h )
+{
+	UIHandle r = h;
+	D2DControl* p = (D2DControl*)h.p;
+
+	if ( dynamic_cast<D2DTextbox*>(p) )
+	{
+		r.p = dynamic_cast<D2DTextbox*>(p);
+		r.typ = TYP_TEXTBOX;
+	}
+	else if ( dynamic_cast<D2DButton*>(p) )
+	{
+		r.p = dynamic_cast<D2DButton*>(p);
+		r.typ = TYP_BUTTON;
+	}
+	else if ( dynamic_cast<D2DDropdownListbox*>(p) )
+	{
+		r.p = dynamic_cast<D2DDropdownListbox*>(p);
+		r.typ = TYP_DROPDOWNLISTBOX;
+	}
+	/*else if ( dynamic_cast<D2DWindow*>(p) )
+	{
+		r.p = dynamic_cast<D2DWindow*>(p);
+		r.typ = TYP_MAIN_WINDOW;
+	}*/
+	else if ( p == nullptr )
+		r.typ = TYP_NULL;
+
+	return r;
+}
+
+
 DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 {
 	UIHandle r;
@@ -225,17 +258,18 @@ DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 	r.p =  x->GetControlFromID(id);
 	r.typ = TYP_CONTROLS;
 
-	return r;
+	return Renewal_UIHandle(r);
 }
 DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm)
 {
 	UIHandle r;
 	D2DControls* x = ((D2DWindow*)hMainWnd.p)->top_control_.get();
 
-	r.p = x->GetControl( nm );
-	r.typ = TYP_CONTROLS;
+	auto ctrl = x->GetControl( nm );
+	r.p = ctrl;
+	r.typ = TYP_NULL;
 
-	return r;
+	return Renewal_UIHandle(r);
 
 }
 
