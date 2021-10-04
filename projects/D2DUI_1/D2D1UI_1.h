@@ -61,5 +61,5 @@ DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPA
 DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r);
 
 
-DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F&  rcStarg, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style=0);
+DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style=0);
 };

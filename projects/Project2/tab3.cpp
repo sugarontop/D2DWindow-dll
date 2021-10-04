@@ -72,7 +72,31 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 		if ( obj->bmp1)
 		{
 			FRectF rcbmp(200,0,FSizeF(20,14));
-			(*cxt)->DrawBitmap(obj->bmp1, rcbmp );
+			FRectF rcS(1000,1000,FSizeF(20,14));
+
+			static int gk = 0;
+			static FRectF* gp = nullptr;
+			if ( gk == 0 && gp == nullptr )
+			{
+				 gp = new FRectF[100];
+				RectAnimation(rcS, rcbmp, gp, 100, 0);
+				gk++;
+			}
+
+			if ( gk == 100)
+			{
+				(*cxt)->DrawBitmap(obj->bmp1, rcbmp );
+				delete [] gp;
+				gp = nullptr;
+			}
+			else if ( gp )
+			{
+				(*cxt)->DrawBitmap(obj->bmp1, gp[gk-1] );
+				gk++;
+
+				cxt.Redraw();
+			}
+
 		}
 
         mat.PopTransform();
