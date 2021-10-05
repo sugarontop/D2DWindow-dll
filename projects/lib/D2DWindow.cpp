@@ -123,7 +123,11 @@ HRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		hr = top_control_->WndProc(b, message, wParam, lParam);
 
 	if ( message == WM_MOUSEMOVE )
+	{
 		mp.ptprv = mp.pt;
+
+		
+	}
 
 
 	return hr;

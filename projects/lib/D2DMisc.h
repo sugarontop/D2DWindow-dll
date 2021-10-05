@@ -908,6 +908,7 @@ class FRectU : public D2D1_RECT_U
 		INT32 zDelta;
 
 		D2D1_MATRIX_3X2_F mat;
+		
 	};
 
 

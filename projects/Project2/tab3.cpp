@@ -252,6 +252,7 @@ void Initialwbbox( WhiteBoard& wb )
 					auto ptprv = obj->mat.DPtoLP(mp->ptprv);
 
 					rcbox.Offset( pt.x - ptprv.x, pt.y - ptprv.y );
+					b.bRedraw = true;
 					r = 1;
 				}
 
