@@ -37,6 +37,7 @@ struct D2DNMHDR
 #define TYP_CONTROLS 3
 #define TYP_DROPDOWNLISTBOX 4
 #define TYP_MAIN_WINDOW 5
+#define TYP_WHITE_CONTROL 6
 
 
 

@@ -207,6 +207,12 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 					ret = 1;
 					bl = true;
 				}
+				else if (APP.IsCapture(this) )
+				{
+					APP.ReleaseCapture();
+					ret = 1;
+					bl = true;
+				}
 				
 			}
 			break;

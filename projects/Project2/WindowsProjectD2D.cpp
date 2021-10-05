@@ -432,9 +432,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
         }
         break;
-        case WM_KEYUP:
+        
         case WM_LBUTTONDOWN:
+			r = D2DDefWndProc(hwin, app, message, wParam,lParam);
+		break;
         case WM_LBUTTONUP:
+			r = D2DDefWndProc(hwin, app, message, wParam,lParam);
+		break;
+		case WM_KEYUP:
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_MOUSEWHEEL:

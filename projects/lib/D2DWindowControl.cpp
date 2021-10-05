@@ -101,14 +101,14 @@ void D2DControls::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	auto capture = APP.GetCapture();
-
+	HRESULT hr = 0;
 	if ( nullptr == capture )
 	{
 		for(auto& it : controls_ )
 		{
 			if ( it->GetStat() & STAT_ENABLE )
 			{
-				auto hr = it->WndProc(b,message,wParam,lParam);
+				hr = it->WndProc(b,message,wParam,lParam);
 				if ( hr != 0 )
 				{
 					/*if ( message == WM_LBUTTONDOWN )
@@ -128,9 +128,22 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	}
 	else if ( capture != this )
 	{
-		return capture->WndProc(b, message, wParam, lParam);
+		hr = capture->WndProc(b, message, wParam, lParam);
+
+		if ( message == WM_LBUTTONDOWN )
+		{
+			auto capture2 = APP.GetCapture();
+
+			if ( capture2 == nullptr )
+			{
+				// captureの切り替え、次のオブジェクトへメッセージをまわす
+
+				hr = DefWndProc(b,message,wParam,lParam);
+
+			}
+		}
 	}
-	return 0;
+	return hr;
 }
 void D2DControls::Add(std::shared_ptr<D2DControl> p)
 {

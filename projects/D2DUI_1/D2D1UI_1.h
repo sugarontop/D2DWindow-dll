@@ -42,7 +42,9 @@ DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm);
 
 DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  );
 
+DLLEXPORT void D2DSetCapture(UIHandle h);
 DLLEXPORT UIHandle D2DGetCapture();
+DLLEXPORT void D2DReleaseCapture();
 
 DLLEXPORT void D2DSwapChain(UIHandleWin main, HWND hWnd  );
 DLLEXPORT void D2DDraw(UIHandleWin main, void* option  );

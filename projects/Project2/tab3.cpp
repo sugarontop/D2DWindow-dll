@@ -9,30 +9,38 @@
 
 using namespace V6;
 
+
+
+struct WhiteBoard
+{
+	DelegateDrawFunc drawFunc;
+	DelegateProcFunc procFunc;
+	int typ;
+	D2DMat mat;
+};
+struct CaptureObj1
+{
+	FRectF rc;
+	UIHandle page[3];
+	int active_idx;
+	D2DMat mat;
+	WhiteBoard wboard;
+	UIHandleWin hwin;
+	ID2D1Bitmap* bmp1;
+
+	WhiteBoard wbbox;
+	FRectF rcwbbox;
+	UIHandle wbboxhandle;
+};
 void CreateControl2test(UIHandleWin hwin, UIHandle hcs)
 {
 
 }
+
+void Initialwbbox( WhiteBoard& wb );
 void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 {
-    struct WhiteBoard
-    {
-        DelegateDrawFunc drawFunc;
-        DelegateProcFunc procFunc;
-        int typ;
-        D2DMat mat;
-    };
-        
-    struct CaptureObj1
-    {
-        FRectF rc;
-        UIHandle page[3];
-        int active_idx;
-        D2DMat mat;
-        WhiteBoard wboard;
-		UIHandleWin hwin;
-		ID2D1Bitmap* bmp1;
-    };
+
 
     static CaptureObj1 obj;
     obj.active_idx = 0;
@@ -124,6 +132,11 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 				D2DSetText( b3, L"this is button three");
 
 
+
+				obj->wbboxhandle = D2DCreateWhiteControls(obj, obj->wbbox.drawFunc, obj->wbbox.procFunc, win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"xbox", 215);
+
+
+
 				return 0;
 			}
             break;
@@ -170,14 +183,98 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
         return r;
     };
     
+
+	Initialwbbox( obj.wbbox );
+
     
     FRectF rc(0, 50, FSizeF(200, 200));
 
     obj.rc = rc;
     auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.drawFunc, obj.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21", 210);
+}
+
+void Initialwbbox( WhiteBoard& wb )
+{
+	
+	wb.drawFunc = [](LPVOID captureobj, D2DContext& cxt) {
+		
+		CaptureObj1* obj = (CaptureObj1*)captureobj;
+
+		cxt.DDrawRect(obj->rcwbbox, D2RGB(255,0,0),D2RGB(255,0,0) );
+
+		std::wstring s = L"movable rect by mouse";
+		FRectF rc1 = obj->rcwbbox;
+
+		(*cxt)->DrawText( s.c_str(), s.length(), cxt.textformat_, rc1, cxt.white_ );
+			
+	};
+
+
+	wb.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+
+		CaptureObj1* obj = (CaptureObj1*)captureobj;
+		HRESULT r = 0;
+		FRectF& rcbox = obj->rcwbbox;
+
+		switch( message )
+		{
+			case WM_D2D_CREATE:
+			{
+				rcbox.SetRect(200,200, FSizeF(100,100));
+
+			}
+			break;
+			case WM_LBUTTONDOWN:
+			{
+				MouseParam* mp = (MouseParam*)lParam;
+				auto pt = obj->mat.DPtoLP(mp->pt);
+
+				if ( rcbox.PtInRect(pt))
+				{
+					auto h = obj->wbboxhandle;
+
+					D2DSetCapture(h);
+					int a = 0;
+					
+
+					r = 1;
+				}
+			}
+			break;
+			case WM_MOUSEMOVE:
+			{
+				auto h1 = D2DGetCapture();
+
+				if (h1.p == obj->wbboxhandle.p )
+				{
+					MouseParam* mp = (MouseParam*)lParam;
+					auto pt = obj->mat.DPtoLP(mp->pt);
+					auto ptprv = obj->mat.DPtoLP(mp->ptprv);
+
+					rcbox.Offset( pt.x - ptprv.x, pt.y - ptprv.y );
+					r = 1;
+				}
+
+			}
+			break;
+			case WM_LBUTTONUP:
+			{
+				auto h1 = D2DGetCapture();
+
+				if (h1.p == obj->wbboxhandle.p )
+				{
+					D2DReleaseCapture();
+					r = 1;
+				}
+
+			}
+			break;
 
 
 
+		}
 
+		return r;
+	};
 
 }

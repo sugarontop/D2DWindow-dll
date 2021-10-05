@@ -7,6 +7,7 @@
 #include "D2DWhiteControl.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
+UIHandle Renewal_UIHandle(  UIHandle h );
 
 DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight )
 {
@@ -136,17 +137,43 @@ DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc fu
 	return r;
 }
 
+DLLEXPORT void D2DSetCapture(UIHandle h)
+{
+	D2DControl* p = (D2DControl*)h.p;
+	
+	_ASSERT(p);
+	APP.SetCapture(p);
+
+}
+DLLEXPORT void D2DReleaseCapture()
+{
+	APP.ReleaseCapture();
+}
 DLLEXPORT UIHandle D2DGetCapture()
 {
 	UIHandle r = {0};
 	auto p = APP.GetCapture();
-	auto tx = dynamic_cast<D2DTextbox*>(p);
 
-	if (tx)
+	if ( dynamic_cast<D2DTextbox*>(p))
 	{
+		auto tx = dynamic_cast<D2DTextbox*>(p);
 		r.p = tx;
 		r.typ = TYP_TEXTBOX;
 	}
+	else if  (dynamic_cast<D2DWhiteControl*>(p))
+	{
+		auto tx = dynamic_cast<D2DWhiteControl*>(p);
+		r.p = tx;
+		r.typ = TYP_WHITE_CONTROL;
+
+	}
+	else if ( p != nullptr )
+	{
+		_ASSERT( 1==0); // –¢‘Î‰ž
+	}
+
+
+
 	return r;
 }
 DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
