@@ -174,10 +174,11 @@ void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, 
 }
 
 #define COMBOBOX_ID_1 10
+void CreateControl0(UIHandleWin hwin, UIHandle hcs);
+void CreateControl1(UIHandleWin hwin, UIHandle hcs);
 void CreateControl2(UIHandleWin hwin, UIHandle hcs);
 bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
 bool SaveTextFile( LPCWSTR fnm, LPCWSTR str );
-UIHandle gx2;
 
 void CreateControl(HWND hWnd)
 {
@@ -319,23 +320,13 @@ void CreateControl(HWND hWnd)
     
     obj.rc = rc;
 
-    obj.page[0] =  D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"cs1", 112);
-    obj.page[1] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"cs2", 113);
-    obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"cs2", 113);
+    obj.page[0] =  D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
+    obj.page[1] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"tab2", 113);
+    obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"tab3", 113);
 
-    FRectF rc2(10, 40, FSizeF(400, 600));
-    UIHandle x2 = D2DCreateTextbox(hwin, obj.page[1], rc2, true, STAT_VISIBLE | STAT_ENABLE, L"textbox200");
+	CreateControl0( hwin, obj.page[0]);
 
-	gx2 = x2;
-    D2DSetText(gx2, L"Hello\nworld");
-
-	FRectF rc1( rc2.left, rc2.bottom+5, FSizeF(100,26));
-	auto btn1 = D2DCreateButton(hwin,obj.page[1], rc1, STAT_VISIBLE | STAT_ENABLE, L"Load", 400);
-	rc1.Offset(200, 0);
-	auto btn2 = D2DCreateButton(hwin,obj.page[1], rc1, STAT_VISIBLE | STAT_ENABLE, L"Save", 401);
-
-
-
+	CreateControl1( hwin, obj.page[1]);
 
     CreateControl2( hwin, obj.page[2]);
 
