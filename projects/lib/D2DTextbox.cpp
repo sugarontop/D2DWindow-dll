@@ -9,11 +9,16 @@ using namespace V6;
 #define LEFT_MARGIN 3.0f
 
 
+D2DTextbox::D2DTextbox():back_(D2RGB(255,255,255)),fore_(D2RGB(0,0,0)),border_(D2RGB(0,0,0))
+{
 
+}
 void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP typ, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	
+
+
 	rctext_ =  rc;
 	typ_ = typ;
 	tm_ = { 0 };
@@ -37,10 +42,23 @@ TSF::CTextEditorCtrl* D2DTextbox::ctrl() const
 
 void D2DTextbox::Draw(D2DContext& cxt)
 { 
+	ComPTR<ID2D1SolidColorBrush> back;
+	ComPTR<ID2D1SolidColorBrush> fore;
+	ComPTR<ID2D1SolidColorBrush> border;
+
+	(*cxt)->CreateSolidColorBrush(back_, &back);
+	(*cxt)->CreateSolidColorBrush(fore_, &fore);
+	(*cxt)->CreateSolidColorBrush(border_, &border);
+
+
 	if ( stat_&STAT_VISIBLE )
 	{
 		D2DMatrix mat(*cxt);
 		mat_ = mat.PushTransform();
+
+		(*cxt)->DrawRectangle(rctext_, border);
+		(*cxt)->FillRectangle(rctext_, back);
+
 
 		auto rc = rctext_;
 		rc.InflateRect(1,1);
@@ -52,7 +70,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 			ComPTR<ID2D1SolidColorBrush> br;
 			(*cxt)->CreateSolidColorBrush(D2RGB(50,50,50), &br);
 			(*cxt)->DrawRectangle(rctext_, br);
-			(*cxt)->FillRectangle(rctext_, cxt.white_);
+			(*cxt)->FillRectangle(rctext_, back);
 			
 			mat.Offset(rctext_);
 			mat.Offset(-ct_.offpt_.x, -vscrollbar_.Scroll());
@@ -89,13 +107,13 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		}
 		else if ( text_layout_ )
 		{			
-			(*cxt)->FillRectangle(rctext_, cxt.white_);
+			
 			
 			mat.Offset(rctext_);
 			mat.Offset(0, -vscrollbar_.Scroll());
 			mat_sc_ = mat.Copy();
 
-			(*cxt)->DrawTextLayout(FPointF(), text_layout_, cxt.black_ );			
+			(*cxt)->DrawTextLayout(FPointF(), text_layout_, fore );			
 		}
 
 		mat.PopTransform();
@@ -265,6 +283,14 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 						b.bRedraw = true;
 					}
 					
+					if ( msg == WM_KEYDOWN )
+					{
+						// capture‚µ‚Ä‚¢‚é‚Ì‚ÅA‘S‘Ì‚É‚Í”ò‚Î‚¹‚È‚¢‚Ì‚ÅAparent‚É‚¾‚¯”ò‚Î‚·
+						parent_control_->WndProc(b, WM_D2D_TEXTBOX_KEYDOWN, wp, lp );						
+						ret = 1;
+					}
+
+
 				}
 			}
 			break;

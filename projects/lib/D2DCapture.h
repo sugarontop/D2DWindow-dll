@@ -28,6 +28,7 @@ namespace V6
 		virtual bool IsDialog() const { return BITFLG(STAT_MODAL); }
 		
 		virtual void DestroyEx(){Destroy(); }
+		virtual int GetTypeid() const { return TYP_NULL; }
 		 
 
 		DWORD GetStat() const { return stat_; }

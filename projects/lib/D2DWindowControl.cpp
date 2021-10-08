@@ -154,7 +154,7 @@ void D2DControls::Add(std::shared_ptr<D2DControl> p)
 }
 D2DControl* D2DControls::GetControl( std::wstring name )
 {
-	return control_map_[name];
+	return dynamic_cast<D2DControl*>( control_map_[name]);
 }
 D2DControl* D2DControls::GetControlFromID( int id ) const
 {

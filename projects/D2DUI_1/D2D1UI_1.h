@@ -27,6 +27,7 @@ DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc fu
 
 DLLEXPORT void D2DSetText(UIHandle h, LPCWSTR str);
 DLLEXPORT int D2DSetStat(UIHandle h, int stat);
+DLLEXPORT void D2DSetColor(UIHandle h, ColorF back, ColorF front, ColorF border );
 
 DLLEXPORT int D2DAddItem(UIHandle, int idx, LPCWSTR str);
 
@@ -57,6 +58,8 @@ DLLEXPORT HRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WP
 DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPARAM wParam, LPARAM lParam);
 
 
+DLLEXPORT D2D1_RECT_F D2DGetRect(UIHandle h );
+DLLEXPORT void D2DSetRect( UIHandle h, D2D1_RECT_F rc );
 
 ////////
 //DLLEXPORT UIHandle D2DCreateDropdownListbox(D2DWindow* win, D2DControls* ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);

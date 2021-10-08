@@ -15,7 +15,7 @@ namespace V6
 		public:
 			// D2DCaptureObject interface
 			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
-	
+			virtual int GetTypeid() const override{ return TYP_BUTTON; }
 		public:
 			// D2DControl
 			virtual const FRectF& GetRect() const override { return rc_; }

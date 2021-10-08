@@ -68,8 +68,47 @@ DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRe
 	UIHandle r;
 	r.p = pgtx;
 	r.typ = TYP_TEXTBOX;
+
+
+	//auto tx1 = dynamic_cast<D2DTextbox*>(pgtx);
+
+
+	//D2DControl* p =static_cast<D2DControl*>(r.p);
+	//auto tx11 = dynamic_cast<D2DTextbox*>( p);
+	//auto tx12 = dynamic_cast<D2DTextbox*>(pgtx);
+
+
 	return r;
 }
+
+D2DControl* D2DCastControl(UIHandle h )
+{
+	UIHandle r = h;
+	D2DControl* p2 = (D2DControl*)h.p;
+	if ( h.typ == TYP_TEXTBOX )
+	{
+		D2DTextbox* p = (D2DTextbox*)h.p;
+		p2 = dynamic_cast<D2DControl*>(p);	// ‘½dŒp³‚ß‚ñ‚Ç‚¤
+		_ASSERT( h.typ == p2->GetTypeid());
+
+		auto p3 = dynamic_cast<D2DTextbox*>(p2);	
+
+		_ASSERT( h.typ == p3->GetTypeid());
+
+		int a = 0;
+	}
+	else if ( h.typ == TYP_BUTTON )
+	{
+		p2 = static_cast<D2DControl*>(p2);		
+	}
+	else if ( h.typ == TYP_DROPDOWNLISTBOX)
+	{
+		p2 = static_cast<D2DControl*>(p2);		
+	}
+
+	return p2;
+}
+
 DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin hwin, UIHandle hctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto pgtx = new D2DDropdownListbox();
@@ -180,7 +219,8 @@ DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
-		auto tx =  (D2DTextbox*)h.p;
+		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
+		//auto tx =  (D2DTextbox*)h.p;
 		tx->Clear();
 		tx->SetText(str, wcslen(str) );
 	}
@@ -245,36 +285,6 @@ DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd )
 	return r;
 }
 
-UIHandle Renewal_UIHandle(  UIHandle h )
-{
-	UIHandle r = h;
-	D2DControl* p = (D2DControl*)h.p;
-
-	if ( dynamic_cast<D2DTextbox*>(p) )
-	{
-		r.p = dynamic_cast<D2DTextbox*>(p);
-		r.typ = TYP_TEXTBOX;
-	}
-	else if ( dynamic_cast<D2DButton*>(p) )
-	{
-		r.p = dynamic_cast<D2DButton*>(p);
-		r.typ = TYP_BUTTON;
-	}
-	else if ( dynamic_cast<D2DDropdownListbox*>(p) )
-	{
-		r.p = dynamic_cast<D2DDropdownListbox*>(p);
-		r.typ = TYP_DROPDOWNLISTBOX;
-	}
-	/*else if ( dynamic_cast<D2DWindow*>(p) )
-	{
-		r.p = dynamic_cast<D2DWindow*>(p);
-		r.typ = TYP_MAIN_WINDOW;
-	}*/
-	else if ( p == nullptr )
-		r.typ = TYP_NULL;
-
-	return r;
-}
 
 
 DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
@@ -282,10 +292,18 @@ DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 	UIHandle r;
 	D2DControls* x = ((D2DWindow*)hMainWnd.p)->top_control_.get();
 
-	r.p =  x->GetControlFromID(id);
-	r.typ = TYP_CONTROLS;
+	auto ctrl =  x->GetControlFromID(id);
+	r.p = ctrl;
+	r.typ = x->GetTypeid();
 
-	return Renewal_UIHandle(r);
+	if ( r.typ == TYP_TEXTBOX )
+	{
+		r.p = dynamic_cast<D2DTextbox*>(ctrl);
+
+	}
+
+
+	return r;
 }
 DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm)
 {
@@ -294,9 +312,15 @@ DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm)
 
 	auto ctrl = x->GetControl( nm );
 	r.p = ctrl;
-	r.typ = TYP_NULL;
+	r.typ = ctrl->GetTypeid();
 
-	return Renewal_UIHandle(r);
+	if ( r.typ == TYP_TEXTBOX )
+	{
+		r.p = dynamic_cast<D2DTextbox*>(ctrl);
+
+	}
+
+	return r;
 
 }
 
@@ -360,8 +384,35 @@ DLLEXPORT void D2DDraw(UIHandleWin main, void* hWnd  )
 
 	if ( cxt.bRedraw_ )
 		cxt.DoRedraw((HWND)hWnd);
-
 }
+
+DLLEXPORT void D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF border )
+{
+	if ( h.typ == TYP_TEXTBOX )
+	{
+		auto tx = static_cast<D2DTextbox*>(h.p);
+
+		tx->SetBackColor(back);
+		tx->SetForeColor(fore);
+		tx->SetBorderColor(border);
+
+	}
+}
+
+
+
+DLLEXPORT D2D1_RECT_F D2DGetRect(UIHandle h )
+{
+	D2DControl* p2 = D2DCastControl(h);
+	return p2->GetRect();
+}
+DLLEXPORT void D2DSetRect( UIHandle h, D2D1_RECT_F rc )
+{
+	D2DControl* p2 = D2DCastControl(h);
+	p2->SetRect(rc);
+	
+}
+
 DLLEXPORT HRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );

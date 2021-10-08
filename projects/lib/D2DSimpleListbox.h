@@ -45,6 +45,7 @@ namespace V6
 			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
 			int GetSelectedIdx() const { return selected_idx_; }
+			virtual int GetTypeid() const override{ return TYP_SIMPLE_LISTBOX; }
 	
 	protected:
 

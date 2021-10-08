@@ -57,6 +57,7 @@ namespace V6
 		public D2DControl
 	{
 	public :
+		D2DTextbox();
 		virtual ~D2DTextbox();
 
 		
@@ -69,6 +70,10 @@ namespace V6
 		bool IsMultiline() const;
 		int CurrentPos() const;
 
+		void SetBackColor(ColorF clr){ back_=clr; }
+		void SetForeColor(ColorF clr){ fore_=clr; }
+		void SetBorderColor(ColorF clr){ border_=clr; }
+		virtual int GetTypeid() const override { return TYP_TEXTBOX; }
 	public :
 		void CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP typ, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 		virtual void Draw(D2DContext& cxt) override;
@@ -112,6 +117,9 @@ namespace V6
 		D2DMat mat_, mat_sc_;
 		Scrollbar vscrollbar_;
 		DWRITE_TEXT_METRICS tm_;
+		ColorF back_;
+		ColorF fore_;
+		ColorF border_;
 
 	};
 };

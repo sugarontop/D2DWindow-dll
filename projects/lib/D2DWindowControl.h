@@ -25,6 +25,7 @@ public:
 	virtual void Draw(D2DContext& cxt) = 0;
 
 
+
 	//virtual void UpdateScrollbar(D2DScrollbar* bar) {};
 	//bool IsThroughMessage(UINT message);
 
@@ -78,7 +79,7 @@ public:
 	virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual void Draw(D2DContext& cxt) override;
 	void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
-
+	virtual int GetTypeid() const override{ return TYP_CONTROLS; }
 
 	void Add(std::shared_ptr<D2DControl> p);
 	D2DControl* GetControl( std::wstring name );
