@@ -188,6 +188,13 @@ DLLEXPORT void D2DReleaseCapture()
 {
 	APP.ReleaseCapture();
 }
+DLLEXPORT bool D2DIsCapture(UIHandle h)
+{
+	auto p = APP.GetCapture();
+
+	return ( p == dynamic_cast<D2DCaptureObject*>( (D2DControl*)h.p));
+
+}
 DLLEXPORT UIHandle D2DGetCapture()
 {
 	UIHandle r = {0};

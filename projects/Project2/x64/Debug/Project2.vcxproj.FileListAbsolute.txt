@@ -1,3 +1,0 @@
-E:\work\github\D2DWindow-dll\projects\Project2\x64\Debug\Project2.vcxproj.MdMergeInputs.cache
-E:\work\github\D2DWindow-dll\projects\Project2\x64\Debug\Project2.vcxproj.cppwinrt_plat.cache
-E:\work\github\D2DWindow-dll\projects\Project2\x64\Debug\Project2.vcxproj.cppwinrt_comp.cache

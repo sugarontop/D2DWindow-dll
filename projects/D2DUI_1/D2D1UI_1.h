@@ -45,6 +45,7 @@ DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  );
 
 DLLEXPORT void D2DSetCapture(UIHandle h);
 DLLEXPORT UIHandle D2DGetCapture();
+DLLEXPORT bool D2DIsCapture(UIHandle h);
 DLLEXPORT void D2DReleaseCapture();
 
 DLLEXPORT void D2DSwapChain(UIHandleWin main, HWND hWnd  );
