@@ -309,7 +309,7 @@ void CreateControl(HWND hWnd)
         return r;
     };
 
-    FRectF rc(10, 10, FSizeF(800, 700));
+    FRectF rc(10, 10, FSizeF(900, 1000));
     auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
     
     obj.rc = rc;

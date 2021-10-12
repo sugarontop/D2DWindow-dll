@@ -148,7 +148,7 @@ void CreateTest(UIHandleWin hwin, UIHandle hcs)
 
 	};
 
-	FRectF rc(50, 110, FSizeF(700, 600));
+	FRectF rc(50, 110, FSizeF(900, 1000));
 	D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"tab1_whb1", 1000);
 
 }
@@ -373,8 +373,9 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 	FRectF rc(10, 50, FSizeF(700, 150));
 	auto hcs1 = D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"scroll_control_bar", 2000);
 
+	CreateEmptyControl(hwin, hcs1);
 
-	//CreateControl2(hwin, hcs1 );
+
 }
 // ////////////////////////////////////////////////////////////////////////////////////////
 void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
@@ -385,12 +386,29 @@ void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 		WhiteBoard wboard;
 		UIHandleWin hwin;
 		UIHandle hcs;
+		FRectF rc;
 	};
 
 	static CapureObjTab1_2 c;
 
 	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
 		HRESULT hr = 0;
+		CapureObjTab1_2& c = *(CapureObjTab1_2*) captureobj;
+
+		switch( message )
+		{
+			case WM_D2D_CREATE:
+				auto h = *(UIHandle*)lParam;
+				c.rc = D2DGetRect(h);
+
+
+				hr = 1;
+			break;
+
+
+		}
+
+
 
 		return hr;
 	};
@@ -398,6 +416,23 @@ void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 
 	c.wboard.drawFunc =[](LPVOID captureobj, D2DContext& cxt) {
 
+		CapureObjTab1_2& c = *(CapureObjTab1_2*) captureobj;
+		D2DMatrix mat(*cxt);
+		(*cxt)->PushAxisAlignedClip( c.rc, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );		
+		mat.PushTransform();
+		c.mat = mat.Offset(c.rc);
+
+
+		cxt.DDrawRect(c.rc.ZeroRect(), D2RGB(155,155,155),D2RGB(255,255,255));
+
+		(*cxt)->PopAxisAlignedClip();
+		mat.PopTransform();
+
 	};
 
+	FRectF rc(10, 300, FSizeF(700, 300));
+	auto hcs1 = D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"empty", 2001);
+
+
+	CreateControl2(hwin, hcs1 );
 }
