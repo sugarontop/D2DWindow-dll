@@ -47,6 +47,7 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
     obj.wboard.typ = 0;
 	obj.hwin = hwin;
 	obj.bmp1 = nullptr;
+	
     
     obj.wboard.drawFunc = [](LPVOID captureobj, D2DContext& cxt) {
 
