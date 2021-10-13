@@ -5,6 +5,7 @@
 #include "D2DContext.h"
 #include "D2DDropdownListbox.h"
 #include "D2DWhiteControl.h"
+#include "D2DClientControl.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 UIHandle Renewal_UIHandle(  UIHandle h );
@@ -166,6 +167,25 @@ DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc fu
 	
 	
 
+
+	UIHandle r;
+	r.p = cs1;
+	r.typ = TYP_CONTROLS;
+
+	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
+
+	return r;
+}
+DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+{
+	auto cs1 = new D2DClientControls(captureobj, func1, func2);
+	auto win = (D2DWindow*)hwin.p;
+	auto ctrls = (D2DControls*)hctrls.p;
+	cs1->CreateControl(win, ctrls, rc, stat, name, id);
+	ctrls->Add(std::shared_ptr<D2DClientControls>(cs1));
+
+	AppBase ab = {};
+	ab.hWnd = win->GetHwnd();
 
 	UIHandle r;
 	r.p = cs1;

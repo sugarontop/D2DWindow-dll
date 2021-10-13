@@ -415,23 +415,13 @@ void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 
 
 	c.wboard.drawFunc =[](LPVOID captureobj, D2DContext& cxt) {
-
-		CapureObjTab1_2& c = *(CapureObjTab1_2*) captureobj;
-		D2DMatrix mat(*cxt);
-		(*cxt)->PushAxisAlignedClip( c.rc, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );		
-		mat.PushTransform();
-		c.mat = mat.Offset(c.rc);
-
-
-		cxt.DDrawRect(c.rc.ZeroRect(), D2RGB(155,155,155),D2RGB(255,255,255));
-
-		(*cxt)->PopAxisAlignedClip();
-		mat.PopTransform();
+		
+		// empty
 
 	};
 
-	FRectF rc(10, 300, FSizeF(700, 300));
-	auto hcs1 = D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"empty", 2001);
+	FRectF rc(10, 300, FSizeF(700, 600));
+	auto hcs1 = D2DCreateClientControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"empty", 2001);
 
 
 	CreateControl2(hwin, hcs1 );
