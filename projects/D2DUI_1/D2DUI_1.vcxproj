@@ -192,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\D2DButon.cpp" />
+    <ClCompile Include="..\lib\D2DClientControl.cpp" />
     <ClCompile Include="..\lib\D2DDropdownListbox.cpp" />
     <ClCompile Include="..\lib\D2DSimpleListbox.cpp" />
     <ClCompile Include="..\lib\D2DTextbox.cpp" />

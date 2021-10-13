@@ -129,7 +129,7 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 				rc.Offset(0,35);
 				auto b3 = D2DCreateButton(win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b3", 213);
 
-				D2DSetText( b3, L"this is button three");
+				D2DSetText( b3, L"Šg’£‹@”\");
 
 
 
@@ -152,7 +152,7 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 				{
 					int a = 0;
 				}
-				if ( wParam == 211 )
+				else if ( wParam == 211 )
 				{
 					void work(IStream** ppJpg);
 

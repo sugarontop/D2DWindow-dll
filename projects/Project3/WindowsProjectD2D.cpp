@@ -305,11 +305,23 @@ void CreateControl(HWND hWnd)
 				}
 			}
 			break;
+			case WM_SIZE :
+			{
+				// 画面内最大化
+				UINT width = LOWORD(lParam);
+				UINT height = HIWORD(lParam);
+
+				obj->rc.left = obj->rc.top = 0;
+				obj->rc.right = width;
+				obj->rc.bottom = height;
+				b.bRedraw = true;
+			}
+			break;
         }        
         return r;
     };
 
-    FRectF rc(10, 10, FSizeF(900, 1000));
+    FRectF rc(0, 0, FSizeF(900, 1000));
     auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
     
     obj.rc = rc;
@@ -428,6 +440,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_MOUSEWHEEL:
+		case WM_LBUTTONDBLCLK:
         {
             r = D2DDefWndProc(hwin, app, message, wParam,lParam);
         }
