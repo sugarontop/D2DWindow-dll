@@ -39,7 +39,10 @@ TSF::CTextEditorCtrl* D2DTextbox::ctrl() const
 {
 	return (TSF::CTextEditorCtrl*)parent_window_->tsf.ctrl;
 }
-
+void D2DTextbox::SetReadonly(bool bReadOnly)
+{
+	stat_ = (bReadOnly ? (stat_ &~ STAT_ENABLE) : (stat_ | STAT_ENABLE));
+}
 void D2DTextbox::Draw(D2DContext& cxt)
 { 
 	ComPTR<ID2D1SolidColorBrush> back;

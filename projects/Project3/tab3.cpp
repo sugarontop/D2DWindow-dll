@@ -9,6 +9,7 @@
 
 using namespace V6;
 
+#include "CToolboxControls.h"
 
 
 struct WhiteBoard
@@ -31,6 +32,7 @@ struct CaptureObj1
 	WhiteBoard wbbox;
 	FRectF rcwbbox;
 	UIHandle wbboxhandle;
+	CToolboxControls* toolbox;
 };
 void CreateControl2test(UIHandleWin hwin, UIHandle hcs)
 {
@@ -150,7 +152,8 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 			{
 				if ( wParam == 213 )
 				{
-					int a = 0;
+					obj->toolbox->SwShow();
+
 				}
 				else if ( wParam == 211 )
 				{
@@ -190,7 +193,18 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
     FRectF rc(0, 50, FSizeF(200, 200));
 
     obj.rc = rc;
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.drawFunc, obj.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21", 210);
+    auto hcs2 = D2DCreateWhiteControls(&obj, obj.wboard.drawFunc, obj.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21", 210);
+
+
+	static CToolboxControls toolbox;
+	toolbox.CreateControl(hwin, hcs, CToolboxControls::TYP::RIGHT_SIDE, L"test");
+	obj.toolbox = &toolbox;
+
+
+	rc.SetRect(10,10,FSizeF(150,25));
+	auto hc3 = toolbox.GetUIHandle();
+	D2DCreateButton(hwin, hc3, rc, STAT_VISIBLE | STAT_ENABLE, L"test-btn", 2130);
+
 }
 
 void Initialwbbox( WhiteBoard& wb )

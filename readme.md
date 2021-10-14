@@ -4,7 +4,7 @@ UI controlとはbutton,listbox,textbox
 コードが煩雑にならないようにDLL化する  
 
 ## build condition
-VisualStudio 2019, C++, (not xaml, not c++/winrt)
+VisualStudio 2019, C++, (not xaml, not c++/cx)
 
 ## D2DUI_1
 dll project
@@ -16,4 +16,6 @@ main, window project
 lib source code
 
 ## Project2
+???
+## Project3
 ???

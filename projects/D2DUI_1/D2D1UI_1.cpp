@@ -8,7 +8,8 @@
 #include "D2DClientControl.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
-UIHandle Renewal_UIHandle(  UIHandle h );
+//UIHandle Renewal_UIHandle(  UIHandle h );
+UIHandle ConvertUIHandle(D2DControl* p);
 
 DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight )
 {
@@ -139,6 +140,12 @@ DLLEXPORT int D2DAddItem(UIHandle h, int idx, LPCWSTR str)
 	return 0;
 }
 
+DLLEXPORT UIHandle D2DGetParent(UIHandle h)
+{
+	D2DControl* pc = (D2DControl*)h.p;
+	return ConvertUIHandle(pc->GetParentControls());
+}
+
 DLLEXPORT UIHandle D2DCreateControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DControls();
@@ -262,7 +269,7 @@ DLLEXPORT void D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos)
 {
 	if (h.typ == TYP_TEXTBOX)
 	{
-		auto tx = (D2DTextbox*)h.p;
+		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
 
 		if (start_pos < 0)
 			start_pos = tx->CurrentPos();
@@ -275,7 +282,7 @@ DLLEXPORT BSTR D2DGetText(UIHandle h, bool bAll)
 	if (h.typ == TYP_TEXTBOX)
 	{
 		std::wstringstream sm;
-		auto tx = (D2DTextbox*)h.p;
+		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
 
 		if ( bAll )
 			tx->GetText( &sm, false );
@@ -304,11 +311,44 @@ DLLEXPORT int D2DSetStat(UIHandle h, int stat)
 	}
 	return old;
 }
+
+DLLEXPORT void D2DReadOnly(UIHandle h, bool readonly)
+{
+	if (h.typ == TYP_TEXTBOX)
+	{
+		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
+
+		if ( tx )		
+			tx->SetReadonly(readonly);
+	}
+}
+
+
+
+
 DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd )
 {
 	UIHandle r;
 	r.p = ((D2DWindow*)hMainWnd.p)->top_control_.get();
 	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+
+UIHandle ConvertUIHandle(D2DControl* p)
+{
+	UIHandle r;
+	auto ctrl =  p;
+	r.p = ctrl;
+	r.typ = p->GetTypeid();
+
+	if ( r.typ == TYP_TEXTBOX )
+	{
+		r.p = dynamic_cast<D2DTextbox*>(ctrl);
+
+	}
+
+
 	return r;
 }
 
@@ -459,8 +499,10 @@ DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPA
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
 {
 	_ASSERT( 0 < p_size && p );
-	float xstep = (rcEnd.left - rcStart.left) / p_size;
-	float ystep = (rcEnd.top - rcStart.top) / p_size;
+	float xstep_left = (rcEnd.left - rcStart.left) / p_size;
+	float ystep_top = (rcEnd.top - rcStart.top) / p_size;
+	float xstep_right = (rcEnd.right - rcStart.right) / p_size;
+	float ystep_bottom = (rcEnd.bottom - rcStart.bottom) / p_size;
 
 	p[0] = rcStart;
 
@@ -470,14 +512,15 @@ DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT
 		{
 			FRectF rc(rcStart);
 
-			rc.left = xstep * i + rc.left;
-			rc.right = xstep * i + rc.right;
-			rc.top = ystep * i + rc.top;
-			rc.bottom = ystep * i + rc.bottom;
+			rc.left = xstep_left * i + rc.left;
+			rc.right = xstep_right * i + rc.right;
+			rc.top = ystep_top * i + rc.top;
+			rc.bottom = ystep_bottom * i + rc.bottom;
 
 			p[i] = rc;
 		}
 	}
+
 
 	p[p_size-1] = rcEnd;
 	return p;

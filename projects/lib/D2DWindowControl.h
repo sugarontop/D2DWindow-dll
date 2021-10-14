@@ -50,6 +50,7 @@ public:
 	void SetName(LPCWSTR nm) { name_ = nm; }
 
 	D2DWindow* GetParent() const { return parent_window_; }
+	D2DControls* GetParentControls() const { return parent_control_; }
 
 	
 protected:

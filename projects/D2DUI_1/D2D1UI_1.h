@@ -29,6 +29,7 @@ DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc f
 DLLEXPORT void D2DSetText(UIHandle h, LPCWSTR str);
 DLLEXPORT int D2DSetStat(UIHandle h, int stat);
 DLLEXPORT void D2DSetColor(UIHandle h, ColorF back, ColorF front, ColorF border );
+DLLEXPORT void D2DReadOnly(UIHandle h, bool readonly);
 
 DLLEXPORT int D2DAddItem(UIHandle, int idx, LPCWSTR str);
 
@@ -41,6 +42,7 @@ DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd );
 DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id);
 DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm);
 
+DLLEXPORT UIHandle D2DGetParent(UIHandle h);
 
 DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  );
 

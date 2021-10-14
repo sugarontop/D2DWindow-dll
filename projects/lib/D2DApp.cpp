@@ -25,36 +25,13 @@ void D2DApp::SetCapture( V6::D2DCaptureObject* new_target)
         auto capobj = static_cast<D2DCaptureObject*>(new_target);
         while(capobj)
         {
-    //        if ( dynamic_cast<Card*>( capobj ) && card_target == nullptr)
-    //        {
-    //            card_target = dynamic_cast<Card*>( capobj );                
-    //        }
-
             capture_.push_back(capobj);            
-            capobj = static_cast<D2DCaptureObject*>(capobj->GetParent());
+            //capobj = static_cast<D2DCaptureObject*>(capobj->GetParent());
+			break;
         }
     //}
 
-    //// move target to top position
-    //auto itx=cards_.begin();
-    //for(auto it=cards_.begin(); it < cards_.end(); it++ )
-    //{
-    //    if ( (*it).get() == card_target )
-    //    {
-    //        itx = it;
-    //        card_target = nullptr;
-    //        break;
-    //    }
-    //}
-
     _ASSERT(card_target == nullptr);
-
-    // 表示の順序をトップに変える
-    //std::shared_ptr<Card> x = (*itx);
-    //auto x1 = x->GetIdx();
-
-//    cards_.erase(itx);
-//    cards_.insert(cards_.begin(),  (*itx));
 
 
     {

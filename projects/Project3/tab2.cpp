@@ -26,5 +26,13 @@ void CreateControl1(UIHandleWin hwin, UIHandle hcs )
 	rc1.Offset(200, 0);
 	auto btn2 = D2DCreateButton(hwin,hcs, rc1, STAT_VISIBLE | STAT_ENABLE, L"Save", 401);
 
+	FRectF rc3(rc1);
+	rc3.Offset( -200, 50 );
+	rc3.SetSize(600,26);
+	auto tx_fnm = D2DCreateTextbox(hwin,hcs,rc3,false, STAT_VISIBLE | STAT_ENABLE, L"textbox_fnm");
+
+	D2DSetText(tx_fnm, L"script.txt");
+
+	D2DReadOnly(tx_fnm, true);
 
 }

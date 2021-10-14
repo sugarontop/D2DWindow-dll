@@ -44,6 +44,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
 	auto thid = ::GetCurrentThreadId();
+
+	_tsetlocale(LC_ALL, L"Japanese_Japan.932");
+	 
    
 
     // グローバル文字列を初期化する3
@@ -207,6 +210,7 @@ void CreateControl(HWND hWnd)
         int active_idx;
         D2DMat mat;
         WhiteBoard wboard;
+		UIHandle me;
     };
 
     static CaptureObj1 obj;
@@ -242,7 +246,14 @@ void CreateControl(HWND hWnd)
         HRESULT r = 0;
         switch( message )
         {
-            case WM_LBUTTONDOWN:
+			case WM_D2D_CREATE:
+			{
+				obj->me = *(UIHandle*)lParam;
+
+				r = 1;
+			}
+			break;
+			case WM_LBUTTONDOWN:
             {
                 MouseParam* mp = (MouseParam*)lParam;
                 auto pt = obj->mat.DPtoLP(mp->pt);
@@ -279,18 +290,22 @@ void CreateControl(HWND hWnd)
 			{
 				if ( wParam == 400 )
 				{
+					
+					auto htx = D2DGetControlFromName(hwin, L"textbox_fnm");
+					BSTR fnm = D2DGetText(htx,true);
+					
 					// load
 					std::wstring str;
-					if ( LoadTextFile( L"script.txt" , &str ) )
+					if ( LoadTextFile( fnm , &str ) )
 					{						
-						//auto h = obj->page[1];
-
-						//auto h = gx2;
+						
 						auto h2 = D2DGetControlFromName(hwin, L"textbox200");
 
 						D2DSetText(h2, str.c_str());
 					}
 					r = 1;
+
+					::SysFreeString(fnm);
 				}
 				else if ( wParam == 401 )
 				{
@@ -301,7 +316,8 @@ void CreateControl(HWND hWnd)
 
 					SaveTextFile(L"script.txt", bs );
 
-
+					::SysFreeString(bs);
+					r = 1;
 				}
 			}
 			break;
@@ -312,9 +328,18 @@ void CreateControl(HWND hWnd)
 				UINT height = HIWORD(lParam);
 
 				obj->rc.left = obj->rc.top = 0;
-				obj->rc.right = width;
-				obj->rc.bottom = height;
+				obj->rc.right = (float)width;
+				obj->rc.bottom = (float)height;
 				b.bRedraw = true;
+
+				D2DSetRect(obj->me, obj->rc);
+
+
+				D2DSetRect( obj->page[0], obj->rc );
+				D2DSetRect( obj->page[1], obj->rc );
+				D2DSetRect( obj->page[2], obj->rc );
+
+
 			}
 			break;
         }        
@@ -322,7 +347,7 @@ void CreateControl(HWND hWnd)
     };
 
     FRectF rc(0, 0, FSizeF(900, 1000));
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
+    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2000", 110);
     
     obj.rc = rc;
 

@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\inet.cpp" />
+    <ClCompile Include="CToolboxControls.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -179,6 +180,7 @@
     <Text Include="script.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CToolboxControls.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TRCell.h" />
   </ItemGroup>
