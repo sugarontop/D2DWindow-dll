@@ -27,6 +27,12 @@ HRESULT D2DWhiteControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 	
 	if (stat_ & STAT_ENABLE)
 	{
+
+		if ( message == WM_SIZE)
+		{
+			int a = 0;
+		}
+
 		if (ProcFunc_ != nullptr)
 		{
 			auto old = b.card;

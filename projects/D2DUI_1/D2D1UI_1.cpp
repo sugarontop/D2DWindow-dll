@@ -8,7 +8,8 @@
 #include "D2DClientControl.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
-UIHandle Renewal_UIHandle(  UIHandle h );
+//UIHandle Renewal_UIHandle(  UIHandle h );
+UIHandle ConvertUIHandle(D2DControl* p);
 
 DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight )
 {
@@ -137,6 +138,12 @@ DLLEXPORT int D2DAddItem(UIHandle h, int idx, LPCWSTR str)
 	}
 
 	return 0;
+}
+
+DLLEXPORT UIHandle D2DGetParent(UIHandle h)
+{
+	D2DControl* pc = (D2DControl*)h.p;
+	return ConvertUIHandle(pc->GetParentControls());
 }
 
 DLLEXPORT UIHandle D2DCreateControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
@@ -313,6 +320,24 @@ DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd )
 }
 
 
+UIHandle ConvertUIHandle(D2DControl* p)
+{
+	UIHandle r;
+	auto ctrl =  p;
+	r.p = ctrl;
+	r.typ = p->GetTypeid();
+
+	if ( r.typ == TYP_TEXTBOX )
+	{
+		r.p = dynamic_cast<D2DTextbox*>(ctrl);
+
+	}
+
+
+	return r;
+}
+
+
 
 DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 {
@@ -459,8 +484,10 @@ DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPA
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
 {
 	_ASSERT( 0 < p_size && p );
-	float xstep = (rcEnd.left - rcStart.left) / p_size;
-	float ystep = (rcEnd.top - rcStart.top) / p_size;
+	float xstep_left = (rcEnd.left - rcStart.left) / p_size;
+	float ystep_top = (rcEnd.top - rcStart.top) / p_size;
+	float xstep_right = (rcEnd.right - rcStart.right) / p_size;
+	float ystep_bottom = (rcEnd.bottom - rcStart.bottom) / p_size;
 
 	p[0] = rcStart;
 
@@ -470,14 +497,15 @@ DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT
 		{
 			FRectF rc(rcStart);
 
-			rc.left = xstep * i + rc.left;
-			rc.right = xstep * i + rc.right;
-			rc.top = ystep * i + rc.top;
-			rc.bottom = ystep * i + rc.bottom;
+			rc.left = xstep_left * i + rc.left;
+			rc.right = xstep_right * i + rc.right;
+			rc.top = ystep_top * i + rc.top;
+			rc.bottom = ystep_bottom * i + rc.bottom;
 
 			p[i] = rc;
 		}
 	}
+
 
 	p[p_size-1] = rcEnd;
 	return p;

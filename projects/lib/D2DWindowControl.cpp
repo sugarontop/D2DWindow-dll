@@ -90,7 +90,7 @@ void D2DControls::CreateControl(D2DWindow* win, D2DControls* parent, const FRect
 	
 }
 HRESULT D2DControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
-{
+{	
 	return DefWndProc(b,message,wParam,lParam);
 }
 void D2DControls::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)

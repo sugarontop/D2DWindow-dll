@@ -41,6 +41,7 @@ DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd );
 DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id);
 DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm);
 
+DLLEXPORT UIHandle D2DGetParent(UIHandle h);
 
 DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  );
 

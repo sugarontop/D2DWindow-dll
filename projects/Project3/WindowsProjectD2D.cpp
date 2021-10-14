@@ -207,6 +207,7 @@ void CreateControl(HWND hWnd)
         int active_idx;
         D2DMat mat;
         WhiteBoard wboard;
+		UIHandle me;
     };
 
     static CaptureObj1 obj;
@@ -242,7 +243,14 @@ void CreateControl(HWND hWnd)
         HRESULT r = 0;
         switch( message )
         {
-            case WM_LBUTTONDOWN:
+			case WM_D2D_CREATE:
+			{
+				obj->me = *(UIHandle*)lParam;
+
+				r = 1;
+			}
+			break;
+			case WM_LBUTTONDOWN:
             {
                 MouseParam* mp = (MouseParam*)lParam;
                 auto pt = obj->mat.DPtoLP(mp->pt);
@@ -315,6 +323,15 @@ void CreateControl(HWND hWnd)
 				obj->rc.right = width;
 				obj->rc.bottom = height;
 				b.bRedraw = true;
+
+				D2DSetRect(obj->me, obj->rc);
+
+
+				D2DSetRect( obj->page[0], obj->rc );
+				D2DSetRect( obj->page[1], obj->rc );
+				D2DSetRect( obj->page[2], obj->rc );
+
+
 			}
 			break;
         }        
@@ -322,7 +339,7 @@ void CreateControl(HWND hWnd)
     };
 
     FRectF rc(0, 0, FSizeF(900, 1000));
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
+    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2000", 110);
     
     obj.rc = rc;
 

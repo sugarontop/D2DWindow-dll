@@ -424,5 +424,5 @@ void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 	auto hcs1 = D2DCreateClientControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"empty", 2001);
 
 
-	CreateControl2(hwin, hcs1 );
+	//CreateControl2(hwin, hcs1 );
 }

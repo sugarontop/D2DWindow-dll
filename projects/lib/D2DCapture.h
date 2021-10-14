@@ -13,14 +13,16 @@ namespace V6
 	class D2DContext;
 	class D2DCaptureObject
 	{
+	private :
+		D2DCaptureObject* parent1_; // <-- Žg—p‚µ‚Ä‚È‚¢
 	protected :
 		DWORD stat_;
-		D2DCaptureObject* parent_;
+		
 	public :
-		D2DCaptureObject():stat_(STAT_VISIBLE), parent_(0){}
+		D2DCaptureObject():stat_(STAT_VISIBLE), parent1_(0){}
 
 		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) = 0;
-		virtual D2DCaptureObject* GetParent(){ return parent_; }
+		virtual D2DCaptureObject* GetParent(){ return parent1_; }
 		virtual bool OnChangeFocus(bool bActive, D2DCaptureObject* pnew) { return false; }
 
 
