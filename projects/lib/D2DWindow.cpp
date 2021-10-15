@@ -103,6 +103,13 @@ HRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			lParam = (LPARAM)&mp;
 		}
 		break;
+		case WM_LBUTTONDBLCLK:
+			mp.pt = FPointF(lParam);
+			mp.ptprv = mp.pt;
+			b.bRedraw = true;
+			lParam = (LPARAM)&mp;
+		break;
+
 		case WM_KEYDOWN:
 		case WM_KEYUP:
 		case WM_CHAR:
