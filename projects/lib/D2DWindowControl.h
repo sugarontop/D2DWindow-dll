@@ -43,6 +43,7 @@ public:
 	
 	virtual void OnHostage(D2DControls* p, bool block) {}
 	virtual void DestroyControl();
+	
 
 	D2DMat Matrix() const { return mat_; }
 	wstring GetName() const { return name_; }
@@ -51,7 +52,7 @@ public:
 
 	D2DWindow* GetParent() const { return parent_window_; }
 	D2DControls* GetParentControls() const { return parent_control_; }
-
+	//virtual HRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	
 protected:
 	D2DWindow* parent_window_;

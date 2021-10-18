@@ -58,15 +58,7 @@ void FillFRectF( D2DContext& cxt, FRectF& rc, ColorF clr)
 
 void CreateControl0(UIHandleWin hwin, UIHandle hcs)
 {
-	   /* FRectF rccmb(50, 100, FSizeF(120, 26));
-	    UIHandle cb1 = D2DCreateDropdownListbox(hwin, hcs, rccmb,  STAT_VISIBLE | STAT_ENABLE, L"comb1", 0);
-	    D2DAddItem(cb1, 0, L"scale1.0");
-	    D2DAddItem(cb1, 1, L"scale1.2");
-	    D2DAddItem(cb1, 2,L"scale0.8");*/
-
-
-		//CreateTest(hwin,hcs);
-		CreateScrollControlBar(hwin, hcs);
+	CreateScrollControlBar(hwin, hcs);
 
 }
 
@@ -179,6 +171,24 @@ struct SimpleBoxEx : public SimpleBox
 };
 
 
+struct XResize
+{
+	XResize(){}
+
+	void StartStep(WORD cnt1,FRectF rc1, FRectF rc2 )
+	{
+		rc = std::shared_ptr<FRectF[]>(new FRectF[cnt1]);
+		no = 0;
+		cnt = cnt1;
+
+		RectAnimation(rc1,rc2, &rc[0], cnt);
+	}
+
+	std::shared_ptr<FRectF[]> rc;
+	WORD no, cnt;
+};
+
+
 struct CapureObjTab1_1
 {
 	D2DMat mat;
@@ -195,7 +205,13 @@ struct CapureObjTab1_1
 
 	std::shared_ptr<SimpleBoxEx> target;
 
+	
+
 };
+
+XResize xresize;
+
+
 #define CLIENT_BOX_W 100
 void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 {
@@ -301,12 +317,16 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 			break;
 			case WM_LBUTTONUP:
 			{				
-				FRectF rc(0,0, c.rc.Size());
-				rc.top = rc.bottom - 12;
-
 				if ( D2DIsCapture(c.hwhite) )
 				{
 					D2DReleaseCapture();
+
+					auto rc1 = c.target->rc;
+					FRectF rc2(rc1.left,rc1.top, FSizeF(rc1.Size().width*8, rc1.Size().height*4));
+
+					xresize.StartStep(30,rc1,rc2);
+					
+					c.target->rc = rc2;
 					c.mouse_mode = 0;
 					r = 1;
 				}
@@ -363,7 +383,13 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 		(*cxt)->PopAxisAlignedClip();
 		
 
-		if ( c.target )
+		if ( xresize.rc && xresize.no < xresize.cnt )
+		{
+			auto& rc4 = xresize.rc[xresize.no++];
+			FillFRectF(cxt, rc4, c.target->clr);
+			cxt.Redraw();
+		}
+		else if ( c.target )
 			FillFRectF(cxt, c.target->rc, c.target->clr); // D2RGB(100,50,80));
 
 		mat.PopTransform();
@@ -373,7 +399,7 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 	FRectF rc(10, 50, FSizeF(700, 150));
 	auto hcs1 = D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"scroll_control_bar", 2000);
 
-	CreateEmptyControl(hwin, hcs1);
+	//CreateEmptyControl(hwin, hcs1);
 
 
 }

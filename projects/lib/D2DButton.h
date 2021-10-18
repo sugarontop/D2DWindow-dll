@@ -26,6 +26,9 @@ namespace V6
 			FRectF rc_;
 			int part_stat_;
 			std::wstring text_;
+
+			ComPTR<IDWriteTextLayout> textlayout_;
+			FPointF ptText_;
 		
 
 	};
