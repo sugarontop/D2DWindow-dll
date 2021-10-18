@@ -22,8 +22,9 @@ void D2DButton::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const F
 void D2DButton::SetText(LPCWSTR str)
 {
 	text_ = str;
+	textlayout_ = nullptr;
 }
-// D2DCaptureObject interface
+
 HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if ( (stat_&STAT_ENABLE) == 0 )
@@ -86,6 +87,19 @@ HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 	return ret;
 }
 
+
+FPointF CreateCenterTextLayout(D2DContext& cxt, const std::wstring& str, const FRectF& rc, IDWriteTextLayout** ppout )
+{
+	if ( S_OK == cxt.wfactory_->CreateTextLayout(str.c_str(), str.length(), cxt.textformat_, rc.Width(), rc.Height(), ppout ))
+	{
+		DWRITE_TEXT_METRICS t;
+		(*ppout)->GetMetrics(&t);
+		return FPointF( (rc.Width()-t.width)/2.0f, (rc.Height()-t.height)/2.0f );
+	}
+	return FPointF();
+}
+
+
 void  D2DButton::Draw(D2DContext& cxt) 
 {
 	if ( stat_&STAT_VISIBLE )
@@ -103,7 +117,13 @@ void  D2DButton::Draw(D2DContext& cxt)
 		(*cxt)->DrawRectangle(rc, cxt.black_);
 		(*cxt)->FillRectangle(rc, cxt.white_);
 
-		(*cxt)->DrawText(text_.c_str(), text_.length(), cxt.textformat_, rc, cxt.black_ );
+		//(*cxt)->DrawText(text_.c_str(), text_.length(), cxt.textformat_, rc, cxt.black_ );
+
+		if ( textlayout_ == nullptr )
+			ptText_ = CreateCenterTextLayout(cxt, text_, rc, &textlayout_ );
+
+		(*cxt)->DrawTextLayout(ptText_, textlayout_, cxt.black_ );
+
 
 		mat.PopTransform();
 
