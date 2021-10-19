@@ -33,7 +33,8 @@ struct CapureObjTab1
 void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs);
 void CreateTest(UIHandleWin hwin, UIHandle hcs);
 
-void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs);
+
+UIHandle CreateEmptyControl(UIHandleWin hwin, UIHandle hcs);
 
 void CreateControl2(UIHandleWin hwin, UIHandle hcs ); // tab3.cpp
 
@@ -167,7 +168,7 @@ struct SimpleBoxEx : public SimpleBox
 
 	FRectF rc;
 
-
+	UIHandle client;
 };
 
 
@@ -284,6 +285,7 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 							
 
 							c.target = std::make_shared<SimpleBoxEx>(*it, rc1);
+							c.target->client = CreateEmptyControl(c.hwin, c.hwhite);
 
 						}
 
@@ -321,12 +323,14 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 				{
 					D2DReleaseCapture();
 
-					auto rc1 = c.target->rc;
-					FRectF rc2(rc1.left,rc1.top, FSizeF(rc1.Size().width*8, rc1.Size().height*4));
+					if ( c.mouse_mode == 2 ) {
+						FRectF rc1 = c.target->rc;
+						FRectF rc2(rc1.left,rc1.top, FSizeF(rc1.Size().width*8, rc1.Size().height*4));
 
-					xresize.StartStep(30,rc1,rc2);
+						xresize.StartStep(25,rc1,rc2);
 					
-					c.target->rc = rc2;
+						c.target->rc = rc2;
+					}
 					c.mouse_mode = 0;
 					r = 1;
 				}
@@ -389,8 +393,18 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 			FillFRectF(cxt, rc4, c.target->clr);
 			cxt.Redraw();
 		}
-		else if ( c.target )
-			FillFRectF(cxt, c.target->rc, c.target->clr); // D2RGB(100,50,80));
+		else if ( c.target && (c.mouse_mode == 0 || c.mouse_mode == 1) )
+		{
+			D2DSetRect( c.target->client,c.target->rc);
+			
+			cxt.DDrawRect(c.target->rc, c.target->clr, D2RGB(255,255,255));
+			
+		}
+		else if ( c.target)
+		{
+			cxt.DDrawRect(c.target->rc, c.target->clr, c.target->clr);
+
+		}
 
 		mat.PopTransform();
 	};
@@ -404,7 +418,7 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 
 }
 // ////////////////////////////////////////////////////////////////////////////////////////
-void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
+UIHandle CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 {
 	struct CapureObjTab1_2
 	{
@@ -415,9 +429,10 @@ void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 		FRectF rc;
 	};
 
-	static CapureObjTab1_2 c;
+	CapureObjTab1_2* c = new CapureObjTab1_2();
+	c->hwin = hwin;
 
-	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+	c->wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
 		HRESULT hr = 0;
 		CapureObjTab1_2& c = *(CapureObjTab1_2*) captureobj;
 
@@ -428,9 +443,21 @@ void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 				c.rc = D2DGetRect(h);
 
 
+				D2DCreateTextbox(c.hwin, h, FRectF(10,30,FSizeF(200,26)), false, STAT_VISIBLE | STAT_ENABLE,L"XXXXX");
+				D2DCreateButton(c.hwin, h, FRectF(10,80,FSizeF(220,26)), STAT_VISIBLE | STAT_ENABLE,L"test button", 2002);
+
+
 				hr = 1;
 			break;
+			case WM_D2D_DESTROY:
+			{
 
+				CapureObjTab1_2* pc = (CapureObjTab1_2*) captureobj;
+				delete pc;
+
+			}
+
+			break;
 
 		}
 
@@ -440,15 +467,18 @@ void CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 	};
 
 
-	c.wboard.drawFunc =[](LPVOID captureobj, D2DContext& cxt) {
+	c->wboard.drawFunc =[](LPVOID captureobj, D2DContext& cxt) {
 		
-		// empty
+		CapureObjTab1_2& c1 = *(CapureObjTab1_2*) captureobj;
+		//(*cxt)->FillRectangle(c1.rc.ZeroRect(), cxt.black_);
 
 	};
 
-	FRectF rc(10, 300, FSizeF(700, 600));
-	auto hcs1 = D2DCreateClientControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"empty", 2001);
+	FRectF rc(0, 0, FSizeF(50, 50));
+	auto hcs1 = D2DCreateClientControls(c, c->wboard.drawFunc, c->wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"empty", 2001);
 
+	
 
-	//CreateControl2(hwin, hcs1 );
+	
+	return hcs1;
 }

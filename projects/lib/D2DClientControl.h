@@ -12,6 +12,7 @@ public:
 	typedef std::function<HRESULT(LPVOID,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)> ProcFunc;
 
 	D2DClientControls(LPVOID captureobj,  DelegateDrawFunc func1, DelegateProcFunc func2);
+	virtual ~D2DClientControls();
 
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 	virtual const FRectF& GetRect() const	 override { return rc_; }

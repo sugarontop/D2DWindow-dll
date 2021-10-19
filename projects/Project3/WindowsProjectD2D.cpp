@@ -95,7 +95,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEXW wcex;
+    WNDCLASSEXW wcex={};
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -224,7 +224,7 @@ void CreateControl(HWND hWnd)
             D2DMatrix mat(*cxt);
             mat.PushTransform();
 
-            auto rc = obj->rc;
+			FRectF rc = obj->rc;
             wb.mat = mat.Offset(rc);
             obj->mat = wb.mat;
             {
@@ -317,6 +317,12 @@ void CreateControl(HWND hWnd)
 					SaveTextFile(L"script.txt", bs );
 
 					::SysFreeString(bs);
+					r = 1;
+				}
+				else if ( wParam == 2002 )
+				{
+					D2DMessageBox(hwin, L"this is test", L"test");
+					
 					r = 1;
 				}
 			}
@@ -523,7 +529,8 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
             HANDLE h = GetClipboardData(CF_UNICODETEXT);
             LPCWSTR s1a = (LPCWSTR)GlobalLock(h);
 
-            D2DInsertText(uh, s1a, (UINT)wcslen(s1a), -1);
+			if ( s1a )
+				D2DInsertText(uh, s1a, (UINT)wcslen(s1a), -1);
            
             GlobalUnlock(h);
         }

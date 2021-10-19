@@ -55,15 +55,18 @@ DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  )
 	return nullptr;
 }
 
-DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name )
+DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id )
 {
+	_ASSERT(hwin.p);
+	_ASSERT(hctrls.p);
+	
 	auto pgtx = new D2DTextbox(); 
 	auto typ = ( multiline ?  IBridgeTSFInterface::MULTILINE :  IBridgeTSFInterface::SINGLELINE );
 
 	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
 
-	pgtx->CreateControl(win,ctrls, typ, rc, stat, name );
+	pgtx->CreateControl(win,ctrls, typ, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DTextbox>(pgtx));	
 
 
@@ -146,6 +149,18 @@ DLLEXPORT UIHandle D2DGetParent(UIHandle h)
 	return ConvertUIHandle(pc->GetParentControls());
 }
 
+DLLEXPORT UIHandle D2DMessageBox(UIHandleWin hwin, LPCWSTR title, LPCWSTR message)
+{
+	
+	
+	auto win = (D2DWindow*)hwin.p;
+	win->MessageBox(message,title);
+
+	UIHandle r;
+	r.p = 0;
+	r.typ = TYP_NULL;
+	return r;
+}
 DLLEXPORT UIHandle D2DCreateControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DControls();
@@ -240,6 +255,15 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_WHITE_CONTROL;
 
 	}
+	else if  (dynamic_cast<InnerMessageBox*>(p))
+	{
+		auto tx = dynamic_cast<InnerMessageBox*>(p);
+		r.p = tx;
+		r.typ = TYP_MESSAGEBOX;
+
+	}
+
+
 	else if ( p != nullptr )
 	{
 		_ASSERT( 1==0); // –¢‘Î‰ž

@@ -33,4 +33,26 @@ namespace V6
 
 	};
 
+
+
+
+	class InnerMessageBox : public D2DControl
+	{
+	public :
+		InnerMessageBox(){}
+
+		virtual const FRectF& GetRect() const { return rc_; }
+		virtual void SetRect(const FRectF& rc) {rc_ = rc; }
+
+		void ModalShow(LPCWSTR text, LPCWSTR title);
+
+		virtual void Draw(D2DContext& cxt) override;		
+
+		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+
+
+		FRectF rc_;
+		wstring msg_,title_;
+
+	};
 };

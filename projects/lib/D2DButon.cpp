@@ -129,3 +129,73 @@ void  D2DButton::Draw(D2DContext& cxt)
 
 	}
 }
+
+
+// ///////////////////////////////////////////////////////////////////////////////////
+
+void InnerMessageBox::ModalShow(LPCWSTR text,LPCWSTR title )
+{
+	APP.SetCapture(this);
+
+	msg_ = text;
+	title_ = title;
+}
+void InnerMessageBox::Draw(D2DContext& cxt)
+{
+	if ( IsVisible())
+	{
+		(*cxt)->FillRectangle( rc_, cxt.black_ );
+
+		D2DMatrix mat(*cxt);
+
+		mat.PushTransform();
+		mat.Offset( rc_ );
+
+		FRectF rc = rc_.ZeroRect();
+		
+		rc.Offset(20,20);
+		(*cxt)->DrawText(title_.c_str(), title_.length(), cxt.textformat_, rc, cxt.white_ );
+
+		rc.Offset(0,30);
+		(*cxt)->DrawText(msg_.c_str(), msg_.length(), cxt.textformat_, rc, cxt.white_ );
+
+		mat.PopTransform();
+	}
+
+}
+HRESULT InnerMessageBox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
+{
+	switch( message )
+	{
+	case WM_KEYDOWN:
+	{
+		auto key = 0xff & wParam;
+
+		if ( key == VK_ESCAPE && APP.IsCapture(this) )
+		{
+			APP.ReleaseCapture();
+
+			DestroyControl();
+			return 1;
+		}
+	}
+	break;
+	}
+	return ( APP.IsCapture(this) ? 1 : 0 );
+}
+
+int D2DWindow::MessageBox(LPCWSTR text, LPCWSTR title)
+{
+	auto msgbox = std::shared_ptr<InnerMessageBox>(new InnerMessageBox());
+
+	FRectF rc(0,0,300,100);
+	msgbox->CreateControl(this, top_control_.get(), rc, STAT_VISIBLE, L"msgbox" );
+
+	top_control_->Add( msgbox );
+
+	msgbox->ModalShow(text,title);
+
+
+
+	return 0;
+}

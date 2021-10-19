@@ -21,6 +21,16 @@ void D2DClientControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol,
 
 	rc_ = rc;
 }
+D2DClientControls::~D2DClientControls()
+{
+	if (ProcFunc_ != nullptr)
+	{
+		AppBase b;
+		b.hWnd=0;
+		ProcFunc_(captureobj_, b, WM_D2D_DESTROY, 0, 0 );
+	}
+
+}
 HRESULT D2DClientControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HRESULT r = 0;
