@@ -15,6 +15,17 @@ D2DWhiteControl::D2DWhiteControl(LPVOID captureobj, DelegateDrawFunc func1, Dele
 	rc_ = FRectF(0,0,0,0);
 	captureobj_ = captureobj;
 }
+
+D2DWhiteControl::~D2DWhiteControl()
+{
+	if (ProcFunc_ != nullptr)
+	{
+		AppBase b;
+		b.hWnd=0;
+		ProcFunc_(captureobj_, b, WM_D2D_DESTROY, 0, 0 );
+	}
+}
+
 void D2DWhiteControl::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	D2DControl::CreateControl(parent, pacontrol, rc, stat, name, local_id);

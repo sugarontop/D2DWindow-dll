@@ -149,12 +149,10 @@ DLLEXPORT UIHandle D2DGetParent(UIHandle h)
 	return ConvertUIHandle(pc->GetParentControls());
 }
 
-DLLEXPORT UIHandle D2DMessageBox(UIHandleWin hwin, LPCWSTR title, LPCWSTR message)
-{
-	
-	
+DLLEXPORT UIHandle D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)
+{	
 	auto win = (D2DWindow*)hwin.p;
-	win->MessageBox(message,title);
+	win->MessageBox(FRectF(rc), message,title);
 
 	UIHandle r;
 	r.p = 0;
@@ -518,7 +516,14 @@ DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPA
 	auto win = (D2DWindow*)main.p;
 	win->ForceWndProc(app, message, wParam, lParam); // STAT_ENABLE‚Í–³Ž‹‚·‚é
 }
+DLLEXPORT  void D2DDestroyControl(UIHandle hcs)
+{
+	D2DControl* h2 = D2DCastControl(hcs);
 
+
+	h2->DestroyControl();
+
+}
 
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
 {

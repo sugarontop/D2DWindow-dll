@@ -18,43 +18,23 @@ struct WhiteBoard
 	int typ;
 	D2DMat mat;
 };
-struct CapureObjTab1
-{
-	D2DMat mat;
-	WhiteBoard wboard;
-	std::shared_ptr<TRCellRow> row;
-	std::shared_ptr<TRCellRow> row2;
-	UIHandleWin hwin;
-	UIHandle hcs;
-	UIHandle tx;
-
-};
+//struct CapureObjTab1
+//{
+//	D2DMat mat;
+//	WhiteBoard wboard;
+//	std::shared_ptr<TRCellRow> row;
+//	std::shared_ptr<TRCellRow> row2;
+//	UIHandleWin hwin;
+//	UIHandle hcs;
+//	UIHandle tx;
+//
+//};
 
 void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs);
 void CreateTest(UIHandleWin hwin, UIHandle hcs);
 
 
 UIHandle CreateEmptyControl(UIHandleWin hwin, UIHandle hcs);
-
-void CreateControl2(UIHandleWin hwin, UIHandle hcs ); // tab3.cpp
-
-ComPTR<ID2D1SolidColorBrush> MkBrush( D2DContext& cxt, ColorF clr)
-{
-	ComPTR<ID2D1SolidColorBrush> br1;
-	(*cxt)->CreateSolidColorBrush( clr, &br1);
-	return br1;
-}
-ComPTR<ID2D1SolidColorBrush> MkBrush( D2DContext& cxt, int r, int g, int b, int a)
-{
-	return MkBrush(cxt,  D2RGBA(r,g,b,a));
-}
-
-void FillFRectF( D2DContext& cxt, FRectF& rc, ColorF clr)
-{
-	ComPTR<ID2D1SolidColorBrush> br1;
-	(*cxt)->CreateSolidColorBrush( clr, &br1);
-	(*cxt)->FillRectangle(rc, br1 );
-}
 
 
 void CreateControl0(UIHandleWin hwin, UIHandle hcs)
@@ -169,6 +149,12 @@ struct SimpleBoxEx : public SimpleBox
 	{
 		idx = parent.idx;
 		clr = parent.clr;
+	}
+
+	~SimpleBoxEx()
+	{
+		D2DDestroyControl(client);
+
 	}
 
 	FRectF rc;
@@ -287,7 +273,7 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 					c.mouse_mode = 2;
 					
 
-					int idx = (pt.x+c.offset_x ) / CLIENT_BOX_W;
+					int idx = (int) ((pt.x+c.offset_x ) / CLIENT_BOX_W);
 
 					for(auto& it : c.childs_ )
 					{
@@ -406,9 +392,9 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 		{			
 			rc.SetSize(it->sz );
 			if (it->select )
-				FillFRectF(cxt, rc, D2RGB(190,190,190));
+				cxt.DFillRect(rc, D2RGB(190,190,190));
 			else
-				FillFRectF(cxt, rc, it->clr);
+				cxt.DFillRect(rc, it->clr);
 			rc.Offset(rc.Size().width, 0); 
 			
 		}
@@ -420,7 +406,7 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 			// draw scroll bar 
 			rc.SetRect(0,0, c.rc.Size());
 			rc.top = rc.bottom - 12;
-			FillFRectF(cxt, rc, D2RGB(170,170,170));
+			cxt.DFillRect(rc, D2RGB(170,170,170));
 
 			rc.left = c.offset_x;
 			rc.right = rc.left + 5;
@@ -432,7 +418,7 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 		if ( xresize.rc && xresize.no < xresize.cnt )
 		{
 			auto& rc4 = xresize.rc[xresize.no++];
-			FillFRectF(cxt, rc4, c.target->clr);
+			cxt.DFillRect(rc4, c.target->clr);
 			cxt.Redraw();
 		}
 		else if ( c.target && (c.mouse_mode == 0 || c.mouse_mode == 1) )
@@ -451,8 +437,9 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 		mat.PopTransform();
 	};
 
+	FRectF rc1 = D2DGetRect(hcs);
 
-	FRectF rc(10, 50, FSizeF(700, 150));
+	FRectF rc(10, 50, rc1.right, 150);
 	auto hcs1 = D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"scroll_control_bar", 2000);
 
 	//CreateEmptyControl(hwin, hcs1);

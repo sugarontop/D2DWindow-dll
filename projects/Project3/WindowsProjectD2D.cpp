@@ -250,6 +250,9 @@ void CreateControl(HWND hWnd)
 			{
 				obj->me = *(UIHandle*)lParam;
 
+
+				
+
 				r = 1;
 			}
 			break;
@@ -321,7 +324,14 @@ void CreateControl(HWND hWnd)
 				}
 				else if ( wParam == 2002 )
 				{
-					D2DMessageBox(hwin, L"this is test", L"test");
+					int cx,cy;					
+					b.GetClientRect(&cx,&cy);
+					FRectF rc(0,0,FSizeF(450,200));
+					FPointF pt = rc.CenterPt();
+					rc.Offset( -pt.x+cx/2, -pt.y+cy/2 );
+
+
+					D2DMessageBox(hwin, rc, L"sample", L"This is a message box. push Escape key.");
 					
 					r = 1;
 				}
@@ -352,14 +362,17 @@ void CreateControl(HWND hWnd)
         return r;
     };
 
-    FRectF rc(0, 0, FSizeF(900, 1000));
+	RECT rcclient;
+	::GetClientRect(hWnd,&rcclient);
+
+    FRectF rc(0, 0, FSizeF( (float)rcclient.right, (float)rcclient.bottom));
     auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2000", 110);
     
     obj.rc = rc;
 
-    obj.page[0] =  D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
-    obj.page[1] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"tab2", 113);
-    obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"tab3", 113);
+    obj.page[0] =  D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
+    obj.page[1] = D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), 0, L"tab2", 113);
+    obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), 0, L"tab3", 113);
 
 	CreateControl0( hwin, obj.page[0]);
 

@@ -315,11 +315,11 @@ void CreateControl(HWND hWnd)
 					scale = 1.0f;
 
 					if ( d.prm1 == 0 )
-						scale = 1;
+						scale = 1.0f;
 					else if ( d.prm1 == 1 )
-						scale = 1.2;
+						scale = 1.2f;
 					else if ( d.prm1 == 2 )
-						scale = 0.8;
+						scale = 0.8f;
 
 					r = 1;
 				}

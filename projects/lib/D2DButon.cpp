@@ -167,35 +167,41 @@ HRESULT InnerMessageBox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 {
 	switch( message )
 	{
-	case WM_KEYDOWN:
-	{
-		auto key = 0xff & wParam;
-
-		if ( key == VK_ESCAPE && APP.IsCapture(this) )
+		case WM_D2D_CREATE :
 		{
-			APP.ReleaseCapture();
-
-			DestroyControl();
 			return 1;
 		}
-	}
-	break;
+		break;
+		case WM_KEYDOWN:
+		{
+			auto key = 0xff & wParam;
+
+			if ( key == VK_ESCAPE && APP.IsCapture(this) )
+			{
+				APP.ReleaseCapture();
+
+				DestroyControl();
+				return 1;
+			}
+		}
+		break;
 	}
 	return ( APP.IsCapture(this) ? 1 : 0 );
 }
 
-int D2DWindow::MessageBox(LPCWSTR text, LPCWSTR title)
+int D2DWindow::MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title)
 {
 	auto msgbox = std::shared_ptr<InnerMessageBox>(new InnerMessageBox());
 
-	FRectF rc(0,0,300,100);
+	//FRectF rc(0,0,300,100);
 	msgbox->CreateControl(this, top_control_.get(), rc, STAT_VISIBLE, L"msgbox" );
 
 	top_control_->Add( msgbox );
 
 	msgbox->ModalShow(text,title);
 
-
-
+	
 	return 0;
 }
+
+

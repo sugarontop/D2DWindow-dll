@@ -184,29 +184,29 @@ void D2DContext::DrawBlackLine(D2D1_RECT_F& rc)
 	target_->DrawRectangle(rc, br);
 }
 
-void D2DContext::DDrawRect(const FRectF& rc, ColorF lineclr, ColorF fillclr)
+void D2DContext::DDrawRect(const D2D1_RECT_F& rc, ColorF lineclr, ColorF fillclr)
 {
 	ComPTR<ID2D1SolidColorBrush> br1,br2;
-	target_->CreateSolidColorBrush(lineclr, &br1);
-	target_->CreateSolidColorBrush(fillclr, &br2);
-	target_->DrawRectangle(rc, br1); 
-	target_->FillRectangle(rc, br2);	
+	if ( S_OK == target_->CreateSolidColorBrush(lineclr, &br1))
+		target_->DrawRectangle(rc, br1); 	
+	if ( S_OK == target_->CreateSolidColorBrush(fillclr, &br2))	
+		target_->FillRectangle(rc, br2);	
 }
-void D2DContext::DFillRect(const FRectF& rc, ColorF clr)
+void D2DContext::DFillRect(const D2D1_RECT_F& rc, ColorF clr)
 {
 	ComPTR<ID2D1SolidColorBrush> br;
-	target_->CreateSolidColorBrush( clr, &br);
-	target_->FillRectangle(rc, br);
+	if ( S_OK == target_->CreateSolidColorBrush( clr, &br))
+		target_->FillRectangle(rc, br);
 }
-void D2DContext::DCircle(const FRectF& rc, ColorF clr)
+void D2DContext::DCircle(const D2D1_RECT_F& rc, ColorF clr)
 {
 	ComPTR<ID2D1SolidColorBrush> br;
 	D2D1_ELLIPSE crc; 
-	crc.point = rc.CenterPt();
+	crc.point = FPointF((rc.left+rc.right)/2.0f, (rc.top+rc.bottom)/2.0f );
 	crc.radiusX = (rc.right-rc.left)/2.0f;
 	crc.radiusY = (rc.bottom-rc.top)/2.0f;
-	target_->CreateSolidColorBrush(clr, &br);
-	target_->FillEllipse(crc, br);
+	if ( S_OK == target_->CreateSolidColorBrush(clr, &br))
+		target_->FillEllipse(crc, br);
 }
 
 void D2DContextEx::DoRedraw(HWND hwnd)
