@@ -7,4 +7,15 @@ struct AppBase
 	HWND hWnd;
 	bool bRedraw;
 	void* card;
+
+	void GetClientRect( int* cx, int* cy )
+	{
+		RECT rc;
+		::GetClientRect(hWnd,&rc);
+
+		*cx = rc.right - rc.left;
+		*cy = rc.bottom - rc.top;
+
+	}
+
 };

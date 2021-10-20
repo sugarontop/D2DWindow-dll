@@ -16,7 +16,7 @@ void CreateControl0(UIHandleWin hwin, UIHandle hcs)
 {
 
 	    FRectF rccmb(50, 100, FSizeF(120, 26));
-	    UIHandle cb1 = D2DCreateDropdownListbox(hwin, hcs, rccmb,  STAT_VISIBLE | STAT_ENABLE, L"comb1", 0);
+	    UIHandle cb1 = D2DCreateDropdownListbox(hwin, hcs, rccmb,  STAT_VISIBLE | STAT_ENABLE, L"comb1", 1100);
 	    D2DAddItem(cb1, 0, L"scale1.0");
 	    D2DAddItem(cb1, 1, L"scale1.2");
 	    D2DAddItem(cb1, 2,L"scale0.8");

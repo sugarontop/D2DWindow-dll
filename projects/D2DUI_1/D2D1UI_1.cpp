@@ -55,15 +55,18 @@ DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  )
 	return nullptr;
 }
 
-DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name )
+DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id )
 {
+	_ASSERT(hwin.p);
+	_ASSERT(hctrls.p);
+	
 	auto pgtx = new D2DTextbox(); 
 	auto typ = ( multiline ?  IBridgeTSFInterface::MULTILINE :  IBridgeTSFInterface::SINGLELINE );
 
 	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
 
-	pgtx->CreateControl(win,ctrls, typ, rc, stat, name );
+	pgtx->CreateControl(win,ctrls, typ, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DTextbox>(pgtx));	
 
 
@@ -146,6 +149,16 @@ DLLEXPORT UIHandle D2DGetParent(UIHandle h)
 	return ConvertUIHandle(pc->GetParentControls());
 }
 
+DLLEXPORT UIHandle D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)
+{	
+	auto win = (D2DWindow*)hwin.p;
+	win->MessageBox(FRectF(rc), message,title);
+
+	UIHandle r;
+	r.p = 0;
+	r.typ = TYP_NULL;
+	return r;
+}
 DLLEXPORT UIHandle D2DCreateControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DControls();
@@ -240,6 +253,15 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_WHITE_CONTROL;
 
 	}
+	else if  (dynamic_cast<InnerMessageBox*>(p))
+	{
+		auto tx = dynamic_cast<InnerMessageBox*>(p);
+		r.p = tx;
+		r.typ = TYP_MESSAGEBOX;
+
+	}
+
+
 	else if ( p != nullptr )
 	{
 		_ASSERT( 1==0); // –¢‘Î‰ž
@@ -494,7 +516,14 @@ DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPA
 	auto win = (D2DWindow*)main.p;
 	win->ForceWndProc(app, message, wParam, lParam); // STAT_ENABLE‚Í–³Ž‹‚·‚é
 }
+DLLEXPORT  void D2DDestroyControl(UIHandle hcs)
+{
+	D2DControl* h2 = D2DCastControl(hcs);
 
+
+	h2->DestroyControl();
+
+}
 
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
 {

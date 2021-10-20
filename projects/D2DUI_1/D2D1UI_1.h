@@ -18,10 +18,12 @@ class FRectF;
 DLLEXPORT bool D2DResource(D2DWindow* win,  FRectF& rc );
 
 
-DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin win, UIHandle ctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name );
+DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin win, UIHandle ctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateButton(UIHandleWin win, UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin win, UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle D2DCreateControls(UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
+DLLEXPORT UIHandle D2DMessageBox(UIHandleWin win,  const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message);
+
 
 DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
@@ -55,6 +57,7 @@ DLLEXPORT void D2DSwapChain(UIHandleWin main, HWND hWnd  );
 DLLEXPORT void D2DDraw(UIHandleWin main, void* option  );
 
 
+DLLEXPORT  void D2DDestroyControl(UIHandle hcs  );
 DLLEXPORT  void D2DDestroyWindow(UIHandleWin main  );
 
 

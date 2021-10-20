@@ -32,9 +32,9 @@ class D2DContext
 
 		void DrawBlack(float x, float y, float w, float h);
 		void DrawBlackLine(D2D1_RECT_F& rc);
-		void DFillRect(const FRectF& rc, ColorF clr);
-		void DDrawRect(const FRectF& rc, ColorF lineclr, ColorF fillclr);
-		void DCircle(const FRectF& rc, ColorF clr);
+		void DFillRect(const D2D1_RECT_F& rc, ColorF clr);
+		void DDrawRect(const D2D1_RECT_F& rc, ColorF lineclr, ColorF fillclr);
+		void DCircle(const D2D1_RECT_F& rc, ColorF clr);
 
 		ComPTR<ID2D1SolidColorBrush> black_;
 		ComPTR<ID2D1SolidColorBrush> white_;

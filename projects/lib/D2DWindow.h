@@ -36,7 +36,7 @@ class D2DWindow
 		HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 		void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
-		int MessageBox(LPCWSTR text);
+		int MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title);
 		HWND GetHwnd() const { return hWnd_; }
 
 		V6::D2DContextEx cxt;
@@ -64,9 +64,6 @@ class D2DWindow
 		std::vector<MSG> post_message_queue_;
 		CRITICAL_SECTION message_lock_;
 };
-
-
-
 
 
 

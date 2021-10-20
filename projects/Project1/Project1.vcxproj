@@ -168,9 +168,6 @@
     <ResourceCompile Include="WindowsProjectD2D.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="readme.md" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

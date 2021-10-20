@@ -87,7 +87,7 @@ void D2DControls::CreateControl(D2DWindow* win, D2DControls* parent, const FRect
 {
 	InnerCreateWindow(win, parent, stat, name, local_id);
 
-	
+	rc_ = rc;
 }
 HRESULT D2DControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {	

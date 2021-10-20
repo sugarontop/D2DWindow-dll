@@ -30,6 +30,8 @@ struct D2DNMHDR
 	LPCWSTR prm2;
 };
 
+#define NONAME		(L"__NONAME")
+
 
 #define TYP_NULL 0
 #define TYP_TEXTBOX 1
@@ -39,6 +41,7 @@ struct D2DNMHDR
 #define TYP_MAIN_WINDOW 5
 #define TYP_WHITE_CONTROL 6
 #define TYP_SIMPLE_LISTBOX 7
+#define TYP_MESSAGEBOX 8
 
 
 
@@ -47,5 +50,6 @@ struct D2DNMHDR
 #define WM_D2D_CB_INSERTSTRING			(WM_APP+1)
 #define WM_D2D_RESOURCES_UPDATE	(WM_APP+2)
 #define WM_D2D_CREATE							(WM_APP+3)
+#define WM_D2D_DESTROY							(WM_APP+4)
 
-#define WM_D2D_TEXTBOX_KEYDOWN 	(WM_APP+4)
+#define WM_D2D_TEXTBOX_KEYDOWN 	(WM_APP+5)
