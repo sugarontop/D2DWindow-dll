@@ -35,4 +35,7 @@ void CreateControl1(UIHandleWin hwin, UIHandle hcs )
 
 	D2DReadOnly(tx_fnm, true);
 
+
+	
+
 }

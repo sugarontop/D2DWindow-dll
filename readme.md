@@ -1,7 +1,8 @@
 ## D2DWindow-dll
 UI controlをDirect2Dで作る  
 UI controlとはbutton,listbox,textbox  
-コードが煩雑にならないようにDLL化する  
+コードが煩雑にならないようにDLL化する
+すべての辻褄が合致して動作するかを確認する
 
 ## build condition
 VisualStudio 2019, C++, (not xaml, not c++/cx)
@@ -12,10 +13,8 @@ dll project
 lib project
 ## Project1
 main, window project
-## lib
-lib source code
-
 ## Project2
-???
+Project1にプラスアルファ
 ## Project3
-???
+さらにプラスアルファ
+

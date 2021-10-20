@@ -63,88 +63,93 @@ void CreateControl0(UIHandleWin hwin, UIHandle hcs)
 
 }
 
-void CreateTest(UIHandleWin hwin, UIHandle hcs)
-{
-	static CapureObjTab1 c;
-
-	c.hwin = hwin;
-	c.hcs = hcs;		
-
-	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
-
-		switch(message )
-		{
-		case WM_D2D_CREATE:
-		{
-			FRectF rc[7];
-			FRectF rck(10,200,110,226);
-			for(int i =0; i < 7; i++ )
-			{
-				rc[i] = rck;
-				rck.Offset(100,0);
-			}
-
-			c.row = std::make_shared<TRCellRow>( rc, 7 );
-			c.row2 = std::make_shared<TRCellRow>( rc, 7, 0 );
-
-			UIHandle hcs = *(UIHandle*)lParam;
-
-			FRectF rc2(10, 226, FSizeF(100, 26));
-			c.tx = D2DCreateTextbox(c.hwin, hcs, rc2, false, STAT_VISIBLE | STAT_ENABLE, L"input_editor");
-			D2DSetColor( c.tx, D2RGB(2,232,60), D2RGB(0,0,0),D2RGB(0,0,0));
-			//D2DSetText(c.tx, L"test");
-
-
-			return 1;
-		}
-		break;
-		case WM_D2D_TEXTBOX_KEYDOWN:
-		{
-			if ( wParam == VK_RETURN )
-			{
-
-				FRectF rc  = D2DGetRect( c.tx );
-
-				rc.Offset(rc.Size().width,0);
-
-				D2DSetRect( c.tx, rc );
-
-				return 1;
-
-			}
-		}
-		break;
-		};
-
-
-
-
-		return 0;
-	};
-
-	c.wboard.drawFunc =[](LPVOID captureobj, D2DContext& cxt) {
-
-
-		D2DMatrix mat(*cxt);
-
-		mat.PushTransform();
-
-		mat.Offset(50,110);
-
-		c.row->Draw(cxt);
-
-		mat.Offset(0,26);
-		c.row2->Draw(cxt);
-
-
-		mat.PopTransform();
-
-	};
-
-	FRectF rc(50, 110, FSizeF(900, 1000));
-	D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"tab1_whb1", 1000);
-
-}
+//void CreateTest(UIHandleWin hwin, UIHandle hcs)
+//{
+//	static CapureObjTab1 c;
+//
+//	c.hwin = hwin;
+//	c.hcs = hcs;		
+//
+//	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+//
+//		switch(message )
+//		{
+//		case WM_D2D_CREATE:
+//		{
+//			FRectF rc[7];
+//			FRectF rck(10,200,110,226);
+//			for(int i =0; i < 7; i++ )
+//			{
+//				rc[i] = rck;
+//				rck.Offset(100,0);
+//			}
+//
+//			c.row = std::make_shared<TRCellRow>( rc, 7 );
+//			c.row2 = std::make_shared<TRCellRow>( rc, 7, 0 );
+//
+//			UIHandle hcs = *(UIHandle*)lParam;
+//
+//			FRectF rc2(10, 226, FSizeF(100, 26));
+//			c.tx = D2DCreateTextbox(c.hwin, hcs, rc2, false, STAT_VISIBLE | STAT_ENABLE, L"input_editor");
+//			D2DSetColor( c.tx, D2RGB(2,232,60), D2RGB(0,0,0),D2RGB(0,0,0));
+//			//D2DSetText(c.tx, L"test");
+//
+//			
+//
+//
+//			return 1;
+//		}
+//		break;
+//		case WM_D2D_TEXTBOX_KEYDOWN:
+//		{
+//			if ( wParam == VK_RETURN )
+//			{
+//
+//				FRectF rc  = D2DGetRect( c.tx );
+//
+//				rc.Offset(rc.Size().width,0);
+//
+//				D2DSetRect( c.tx, rc );
+//
+//				return 1;
+//
+//			}
+//		}
+//		break;
+//		};
+//
+//
+//
+//
+//		return 0;
+//	};
+//
+//	c.wboard.drawFunc =[](LPVOID captureobj, D2DContext& cxt) {
+//
+//
+//		D2DMatrix mat(*cxt);
+//
+//		mat.PushTransform();
+//
+//		mat.Offset(50,110);
+//
+//		c.row->Draw(cxt);
+//
+//		mat.Offset(0,26);
+//		c.row2->Draw(cxt);
+//
+//
+//		mat.PopTransform();
+//
+//	};
+//
+//	FRectF rc(50, 110, FSizeF(900, 1000));
+//	D2DCreateWhiteControls(&c, c.wboard.drawFunc, c.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"tab1_whb1", 1000);
+//
+//
+//
+//
+//}
 
 // ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -205,7 +210,7 @@ struct CapureObjTab1_1
 	int mouse_mode;
 
 	std::shared_ptr<SimpleBoxEx> target;
-
+	float scale;
 	
 
 };
@@ -221,6 +226,7 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 	c.hwin = hwin;
 	c.hcs = hcs;		
 	c.offset_x = 50;
+	c.scale = 1.0f;
 
 	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
 
@@ -250,6 +256,14 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 
 					c.childs_.push_back(box);
 				}
+
+
+				FRectF rccmb(10, 200, FSizeF(120, 26));
+				UIHandle cb1 = D2DCreateDropdownListbox(c.hwin, c.hwhite, rccmb,  STAT_VISIBLE | STAT_ENABLE, L"comb1", 1100);
+				D2DAddItem(cb1, 0, L"scale1.0");
+				D2DAddItem(cb1, 1, L"scale1.2");
+				D2DAddItem(cb1, 2, L"scale0.8");
+
 			}
 			return 1;
 
@@ -336,6 +350,31 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 				}
 			}
 			break;
+			case WM_NOTIFY:
+			{
+				switch( wParam )
+				{
+					case 1100:
+					{
+						D2DNMHDR d = *(D2DNMHDR*)lParam;
+
+						c.scale = 1.0f;
+
+						if ( d.prm1 == 0 )
+							c.scale = 1.0f;
+						else if ( d.prm1 == 1 )
+							c.scale = 1.2f;
+						else if ( d.prm1 == 2 )
+							c.scale = 0.8f;
+
+						r = 1;
+					}
+					break;
+				}
+
+
+			}
+			break;
 
 		}
 		return r;
@@ -345,6 +384,9 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 
 		CapureObjTab1_1& c = *(CapureObjTab1_1*) captureobj;
 		D2DMatrix mat(*cxt);
+
+		mat.Scale(c.scale,c.scale);
+
 		(*cxt)->PushAxisAlignedClip( c.rc, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE );		
 
 		mat.PushTransform();

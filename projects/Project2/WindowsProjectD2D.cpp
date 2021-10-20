@@ -15,7 +15,7 @@ using namespace V6;
 #pragma comment(lib,"D2DUI_1.lib") // $(OutDir)
 
 UIHandleWin hwin;
-
+static float scale = 1.0f;
 //////////////////////////////////////
 
 #define MAX_LOADSTRING 100
@@ -308,6 +308,21 @@ void CreateControl(HWND hWnd)
 
 
 				}
+				else if ( wParam == 1100 )
+				{
+					D2DNMHDR d = *(D2DNMHDR*)lParam;
+					
+					scale = 1.0f;
+
+					if ( d.prm1 == 0 )
+						scale = 1;
+					else if ( d.prm1 == 1 )
+						scale = 1.2;
+					else if ( d.prm1 == 2 )
+						scale = 0.8;
+
+					r = 1;
+				}
 			}
 			break;
         }        
@@ -334,7 +349,7 @@ void CreateControl(HWND hWnd)
 }
 
 
-static float scale = 1.0f;
+
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 
 

@@ -139,7 +139,9 @@ HRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM 
 
 void D2DDropdownListbox::OnClick()
 {
-    FRectF rc(0, 0,rc_.Width(), rc_.Height()+50);
+    // 右隅のボタンをクリック、itemをリスト分作成する
+	
+	FRectF rc(0, 0,rc_.Width(), rc_.Height()+50);
     ls_ = std::shared_ptr<D2DSimpleListbox>( new D2DSimpleListbox());
     ls_->CreateControl( parent_window_, this, rc, STAT_VISIBLE|STAT_ENABLE, L"NONAME" );
     Add(ls_);
@@ -151,7 +153,9 @@ void D2DDropdownListbox::OnClick()
 
 void D2DDropdownListbox::OnCloseListbox(int selected_idx)
 {
-    _ASSERT( ls_ );
+	// リストの中から選択されて上部に表示
+	
+	_ASSERT( ls_ );	
 
     int old_item = selected_idx_;
 
