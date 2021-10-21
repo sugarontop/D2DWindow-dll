@@ -253,6 +253,13 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_WHITE_CONTROL;
 
 	}
+	else if  (dynamic_cast<D2DClientControls*>(p))
+	{
+		auto tx = dynamic_cast<D2DClientControls*>(p);
+		r.p = tx;
+		r.typ = TYP_CLIENT_CONTROL;
+
+	}
 	else if  (dynamic_cast<InnerMessageBox*>(p))
 	{
 		auto tx = dynamic_cast<InnerMessageBox*>(p);
