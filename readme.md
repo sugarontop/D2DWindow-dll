@@ -9,13 +9,15 @@ UI controlとはbutton,listbox,textbox
 VisualStudio 2019, C++, (not xaml, not c++/cx)
 
 ## D2DUI_1
-dll project
+DLL project
 ## D2DUI_lib
 lib project
 ## Project1
-main, window project
+easy sample project
 ## Project2
 Project1にプラスアルファ
 ## Project3
 さらにプラスアルファ
+## Project4
+MDIフレーム
 
