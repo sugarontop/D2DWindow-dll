@@ -103,7 +103,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINDOWSPROJECTD2D));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.hbrBackground  = NULL;
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINDOWSPROJECTD2D);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -181,12 +181,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
         case WM_PAINT:
         {
-                auto cxt = D2DGetDeviceContext(hwin);
 
                 PAINTSTRUCT ps;
                 HDC hdc = BeginPaint(hWnd, &ps);
                 {
-                   cxt->BeginDraw();
+					auto cxt = D2DGetDeviceContext(hwin);
+					cxt->BeginDraw();
                     D2D1_MATRIX_3X2_F mat = {0};
 
                     mat._11 = scale;

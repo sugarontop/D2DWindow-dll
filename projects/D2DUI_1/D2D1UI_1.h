@@ -67,6 +67,7 @@ DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPA
 
 DLLEXPORT D2D1_RECT_F D2DGetRect(UIHandle h );
 DLLEXPORT void D2DSetRect( UIHandle h, D2D1_RECT_F rc );
+DLLEXPORT void D2DMDISetTopControl(UIHandle h);
 
 ////////
 //DLLEXPORT UIHandle D2DCreateDropdownListbox(D2DWindow* win, D2DControls* ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);

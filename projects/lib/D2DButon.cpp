@@ -31,7 +31,6 @@ HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 		return 0;
 
 	HRESULT ret = 0;
-	bool bl = false;
 	static int mouse_mode = 0;
 
 	switch( message )
