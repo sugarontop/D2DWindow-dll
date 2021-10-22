@@ -523,12 +523,23 @@ DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPA
 	auto win = (D2DWindow*)main.p;
 	win->ForceWndProc(app, message, wParam, lParam); // STAT_ENABLE‚Í–³Ž‹‚·‚é
 }
-DLLEXPORT  void D2DDestroyControl(UIHandle hcs)
+DLLEXPORT  void D2DDestroyControl(UIHandle h)
 {
-	D2DControl* h2 = D2DCastControl(hcs);
+	D2DControl* h2 = D2DCastControl(h);
 
 
 	h2->DestroyControl();
+
+}
+
+
+DLLEXPORT void D2DMDISetTopControl(UIHandle h)
+{
+	D2DControl* h2 = D2DCastControl(h);
+
+	D2DControls* x = h2->GetParentControls();
+
+	x->SetFirstControl(h2);
 
 }
 

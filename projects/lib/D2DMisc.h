@@ -276,6 +276,12 @@ class FRectF : public D2D1_RECT_F
 			left -= cx; top -= cy;
 			right += cx; bottom += cy;
 		}
+		FRectF& Inflate( float cx, float cy )
+		{
+			left -= cx; top -= cy;
+			right += cx; bottom += cy;
+			return *this;
+		}
 		void SetEmpty()
 		{
 			left = right = top = bottom = 0;		

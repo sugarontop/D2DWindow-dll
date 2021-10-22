@@ -152,6 +152,33 @@ void D2DControls::Add(std::shared_ptr<D2DControl> p)
 	control_map_[p->GetName()] = p.get();
 
 }
+
+void D2DControls::SetFirstControl(D2DControl* p)
+{
+	auto target = controls_.end();
+
+	for(auto it = controls_.begin(); it != controls_.end(); it++ )
+	{
+		if ( (*it).get() == p )
+		{
+			target = it;
+			break;
+		}
+	}
+
+	if ( target != controls_.end() )
+	{
+		std::shared_ptr<D2DControl> copy_target = *target;
+		
+		controls_.erase(target);
+
+		controls_.insert(controls_.begin(), copy_target);
+	}
+
+
+}
+
+
 D2DControl* D2DControls::GetControl( std::wstring name )
 {
 	return dynamic_cast<D2DControl*>( control_map_[name]);
