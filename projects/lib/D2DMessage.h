@@ -48,9 +48,14 @@ struct D2DNMHDR
 
 #define EVENT_PUSH 1
 
-#define WM_D2D_CB_INSERTSTRING			(WM_APP+1)
-#define WM_D2D_RESOURCES_UPDATE	(WM_APP+2)
+#define WM_D2D_CB_INSERTSTRING					(WM_APP+1)
+#define WM_D2D_RESOURCES_UPDATE					(WM_APP+2)
 #define WM_D2D_CREATE							(WM_APP+3)
 #define WM_D2D_DESTROY							(WM_APP+4)
 
-#define WM_D2D_TEXTBOX_KEYDOWN 	(WM_APP+5)
+#define WM_D2D_TEXTBOX_KEYDOWN 					(WM_APP+5)
+
+
+#define WM_D2D_MDI_TOPCHANGE 					(WM_APP+6)
+#define WM_D2D_MDI_SIZE_LARGEST					(WM_APP+7)
+#define WM_D2D_MDI_SIZE_PRV						(WM_APP+8)

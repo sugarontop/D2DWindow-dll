@@ -159,8 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MDIChild.cpp" />
-    <ClCompile Include="MDIFrame.cpp" />
+    <ClCompile Include="MDIFrameControl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>

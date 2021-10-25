@@ -87,6 +87,9 @@ public:
 	void Add(std::shared_ptr<D2DControl> p);
 	D2DControl* GetControl( std::wstring name );
 	D2DControl* GetControlFromID( int id ) const;
+	virtual const FRectF& GetRect() const override { return rc_; }
+	virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
+
 protected :
 	virtual HRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	
@@ -95,8 +98,6 @@ protected :
 	
 	std::shared_ptr<D2DControl> Detach(D2DControl* target);
 
-	virtual const FRectF& GetRect() const override { return rc_; }
-	virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 
 	
 

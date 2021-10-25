@@ -91,10 +91,7 @@ void CreateControl(HWND hWnd)
 
 
 	auto hmdichild = CreateMDIChild(hwin, hmdi);
-
 	CreateControl2(hwin, hmdichild );
-	
-	
 	CreateMDIChild(hwin, hmdi);
 
 }

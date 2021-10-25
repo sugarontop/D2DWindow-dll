@@ -154,6 +154,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 #define COMBOBOX_ID_1 10
 
 void CreateControl(HWND hWnd);
+void CreateMDIControl(HWND hWnd);
 
 static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
@@ -168,7 +169,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {    
         case WM_CREATE:
         {
-            CreateControl(hWnd);
+            //CreateControl(hWnd);
+			CreateMDIControl(hWnd);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;

@@ -29,7 +29,17 @@ class D2DWindow
 		~D2DWindow();
 
 		LRESULT SendMessage(UINT msg, WPARAM wp, LPARAM lp );
-		LRESULT PostMessage(UINT msg, WPARAM wp, LPARAM lp);
+		LRESULT PostMessage(UINT msg, WPARAM wp, LPARAM lp)
+		{
+			EnterCriticalSection( &message_lock_ );
+			{
+				MSG m(msg,wp,lp);
+				post_message_queue_.push_back( m );
+			}
+			LeaveCriticalSection(&message_lock_);
+
+			return 0;
+		}
 
 		bool CreateResource( FSizeF* size );
 

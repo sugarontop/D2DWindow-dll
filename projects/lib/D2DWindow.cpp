@@ -208,16 +208,16 @@ LRESULT D2DWindow::SendMessage(UINT msg, WPARAM wp, LPARAM lp)
 	AppBase b(hWnd_, nullptr);
 	return WndProc(b, msg, wp, lp);
 }
-LRESULT D2DWindow::PostMessage(UINT msg, WPARAM wp, LPARAM lp)
-{
-	EnterCriticalSection( &message_lock_ );
-	{
-		MSG m(msg,wp,lp);
-		post_message_queue_.push_back( m );
-	}
-	LeaveCriticalSection(&message_lock_);
-
-	return 0;
-}
+//LRESULT D2DWindow::PostMessage(UINT msg, WPARAM wp, LPARAM lp)
+//{
+//	EnterCriticalSection( &message_lock_ );
+//	{
+//		MSG m(msg,wp,lp);
+//		post_message_queue_.push_back( m );
+//	}
+//	LeaveCriticalSection(&message_lock_);
+//
+//	return 0;
+//}
 
 

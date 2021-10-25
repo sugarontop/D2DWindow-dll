@@ -149,7 +149,10 @@ void D2DControls::Add(std::shared_ptr<D2DControl> p)
 {
 	controls_.push_back( p);
 
-	control_map_[p->GetName()] = p.get();
+	auto nm = p->GetName();
+
+	if ( nm != NONAME )
+		control_map_[nm] = p.get();
 
 }
 

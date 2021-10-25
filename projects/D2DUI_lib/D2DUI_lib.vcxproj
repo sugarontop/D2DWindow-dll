@@ -155,17 +155,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="D2DMDIControls.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\D2DApp.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
+    <ClCompile Include="..\lib\D2DMDIControls.cpp" />
     <ClCompile Include="..\lib\D2DWhiteControl.cpp" />
     <ClCompile Include="..\lib\D2DWhiteWindowControl.cpp" />
     <ClCompile Include="..\lib\D2DWindowControl.cpp" />
-    <ClCompile Include="D2DMDIControls.cpp" />
     <ClCompile Include="D2DUI_lib.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
