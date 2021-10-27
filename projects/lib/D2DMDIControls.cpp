@@ -8,7 +8,7 @@ using namespace V6;
 
 
 
-D2DMDIFrame::D2DMDIFrame():largest_idx_(-1),top_(0)
+D2DMDIFrame::D2DMDIFrame():largest_idx_(-1),top_(0),active_idx_(-1)
 {
 
 }
@@ -30,7 +30,10 @@ void D2DMDIFrame::Draw(D2DContext& cxt)
 		rc.Inflate(-2, -2);
 		mat.Offset(rc);
 
+		
 		top_ = (UINT_PTR)controls_.begin()->get();
+
+		
 
 		for (auto it = controls_.rbegin(); it != controls_.rend(); it++ )
 		{
@@ -61,16 +64,6 @@ std::shared_ptr<D2DMDIChild> D2DMDIFrame::Add(const FRectF& rc, DWORD stat, LPCW
 void D2DMDIFrame::SetTopMDIChild(short idx)
 {
 	int i = 0;
-	prvRect_.clear();
-
-	for(auto it=controls_.begin(); it < controls_.end(); it++ )
-	{
-		auto k = dynamic_cast<D2DMDIChild*>(it->get());
-
-		if ( k )
-			prvRect_[k->idx_]=(*it)->GetRect();
-	}
-
 
 	auto kkk = APP.GetCapture();
 
@@ -97,8 +90,9 @@ void D2DMDIFrame::SetTopMDIChild(short idx)
 	{
 		controls_.insert(controls_.begin(), temp);
 
-		FRectF rc(0,0,rc_.Size());		
-		//temp->SetRect(rc);
+		auto k = dynamic_cast<D2DMDIChild*>( temp.get());
+		active_idx_ = k->idx_;
+		
 
 
 	}
@@ -131,42 +125,67 @@ HRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				short idx = (short)lParam;
 				SetTopMDIChild( idx );
+				b.bRedraw = true;
 				hr = 1;
 			}
 		break;
 		case WM_D2D_MDI_SIZE_LARGEST:
 		{
-			short idx = (short)lParam;
-
-			auto k = GetChild(idx);
-				
+			prvRect_.clear();
+			for(auto& it : controls_)
 			{
-				FRectF rc(rc_);
+				auto k = dynamic_cast<D2DMDIChild*>(it.get());
+				prvRect_[k->idx_] = it->GetRect();				
+			}
+						
+			
+			if ( active_idx_ > -1 )
+			{
+				short idx = active_idx_;
 
-				rc.Inflate(-2,-2);
 
-				k->SetRect(rc);
+				auto k = GetChild(idx);
+				
+				{
+					FRectF rc(rc_);
 
-				k->SetMTYP(D2DMDIChild::MDI_FULLSIZE);
+					rc.Inflate(-2,-2);
 
-				largest_idx_ = idx;
+					k->SetRect(rc);
+
+					k->SetMTYP(D2DMDIChild::MDI_FULLSIZE);
+
+					largest_idx_ = idx;
+					b.bRedraw = true;
+				}
 			}
 			hr = 1;
-
 		}
 		break;
 		case WM_D2D_MDI_SIZE_PRV:
 		{
-			largest_idx_ = -1;
+			auto k = GetChild(largest_idx_);			
+			if ( k )
+			{			
+				largest_idx_ = -1;
 
-			for(auto& it : controls_)
-			{
-				auto k = dynamic_cast<D2DMDIChild*>(it.get());
+				for(auto& it : controls_)
+				{
+					auto k = dynamic_cast<D2DMDIChild*>(it.get());
+					it->SetRect(prvRect_[k->idx_]);				
+				}
 
-				it->SetRect(prvRect_[k->idx_]);
+				k->SetMTYP(D2DMDIChild::MDI_MOVABLE);
+
+				b.bRedraw = true;
 			}
-
 			hr = 1;
+		}
+		break;
+		case WM_D2D_MDI_TILE_HORZ:
+		{
+
+
 		}
 		break;
 
@@ -217,7 +236,7 @@ HRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 }
 
 // /////////////////////////////////////////////////////////////////
-static void DrawTitlebar(D2DContext& cxt, const FRectF& rc, D2DMDIChild::TitleMouse tmd);
+static void DrawTitlebar(D2DContext& cxt, const FRectF& rc, D2DMDIChild::TitleMouse tmd, LPCWSTR title);
 HRESULT TitleBarMoouseProc(D2DControls* ctrl,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 #define bar_h 30.0f
 
@@ -264,7 +283,7 @@ void D2DMDIChild::Draw(D2DContext& cxt)
 			cxt.DFillRect(rc2.Inflate(-2,-2), D2RGB(230,230,230));
 
 
-			DrawTitlebar(cxt, rc, tmd_);
+			DrawTitlebar(cxt, rc, tmd_, this->name_.c_str());
 		}
 		else if ( mtyp_ == MTYP::MDI_FULLSIZE )
 		{			
@@ -330,7 +349,7 @@ HRESULT D2DMDIChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 
 
 
-static void DrawTitlebar(D2DContext& cxt, const FRectF& rc, D2DMDIChild::TitleMouse tmd)
+static void DrawTitlebar(D2DContext& cxt, const FRectF& rc, D2DMDIChild::TitleMouse tmd, LPCWSTR title)
 {
 	FRectF rcbar(0,0,rc.Size().width, bar_h);
 	cxt.DFillRect(rcbar, D2RGB(255,255,255));
@@ -368,6 +387,10 @@ static void DrawTitlebar(D2DContext& cxt, const FRectF& rc, D2DMDIChild::TitleMo
 	mat.PopTransform();
 
 	(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+
+
+	(*cxt)->DrawText(title, wcslen(title), cxt.textformat_, rcbar, cxt.black_);
+
 }
 HRESULT TitleBarMoouseProc(D2DControls* ctrls,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {

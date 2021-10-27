@@ -289,6 +289,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
          }
          break;
+		 case WM_COMMAND:
+		 {
+			 int wmId = LOWORD(wParam);
+			 // 選択されたメニューの解析:
+			 switch (wmId)
+			 {
+				 case IDM_WINDOW_LARGE:
+					D2DDefWndProc(hwin ,app, WM_D2D_MDI_SIZE_LARGEST, 0, 0);
+				 break;
+				 case IDM_WINDOW_SMALL:
+					D2DDefWndProc(hwin ,app, WM_D2D_MDI_SIZE_PRV, 0, 0);
+				 break;
+				 case IDM_WINDOW_ARRENGE:
+					 D2DDefWndProc(hwin ,app, WM_D2D_MDI_TILE_HORZ, 0, 0);
+				 break;
+				 case IDM_EXIT:
+					DestroyWindow(hWnd);
+				 break;
+				 default:
+				 return DefWindowProc(hWnd, message, wParam, lParam);
+			 }
+		 }
+		 break;
 
         default:
        

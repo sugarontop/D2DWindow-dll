@@ -34,9 +34,9 @@ void CreateMDIControl(HWND hWnd)
 	root_controls->Add(frame);
 
 
-	auto c1 = frame->Add(FRectF(0,0,800,300), STAT_VISIBLE | STAT_ENABLE, NONAME, 111  );
+	auto c1 = frame->Add(FRectF(0,0,800,300), STAT_VISIBLE | STAT_ENABLE, L"view1", 111  );
 
-	auto c2 = frame->Add(FRectF(50,550,850,850), STAT_VISIBLE | STAT_ENABLE, NONAME, 112  );
+	auto c2 = frame->Add(FRectF(50,550,850,850), STAT_VISIBLE | STAT_ENABLE, L"view2", 112  );
 
 
 

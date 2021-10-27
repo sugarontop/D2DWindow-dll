@@ -26,7 +26,7 @@ namespace V6 {
 		
 		protected:
 			std::map<short, FRectF> prvRect_;
-			short largest_idx_;
+			short largest_idx_, active_idx_;
 			UINT_PTR top_;
 	};
 

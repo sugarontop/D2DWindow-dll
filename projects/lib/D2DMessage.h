@@ -59,3 +59,4 @@ struct D2DNMHDR
 #define WM_D2D_MDI_TOPCHANGE 					(WM_APP+6)
 #define WM_D2D_MDI_SIZE_LARGEST					(WM_APP+7)
 #define WM_D2D_MDI_SIZE_PRV						(WM_APP+8)
+#define WM_D2D_MDI_TILE_HORZ					(WM_APP+9) //•À‚×‚Ä•\Ž¦
