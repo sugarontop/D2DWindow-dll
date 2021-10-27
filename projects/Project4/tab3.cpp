@@ -9,8 +9,6 @@
 
 using namespace V6;
 
-//#include "CToolboxControls.h"
-
 
 struct WhiteBoard
 {
@@ -34,17 +32,15 @@ struct CaptureObj1
 	UIHandle wbboxhandle;
 	//CToolboxControls* toolbox;
 };
-void CreateControl2test(UIHandleWin hwin, UIHandle hcs)
-{
-
-}
 
 void Initialwbbox( WhiteBoard& wb );
+
 void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 {
+    CaptureObj1* pobj= new CaptureObj1();
 
+	CaptureObj1& obj = *pobj;
 
-    static CaptureObj1 obj;
     obj.active_idx = 0;
     obj.wboard.typ = 0;
 	obj.hwin = hwin;
@@ -142,6 +138,12 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 				return 1;
 			}
             break;
+			case WM_D2D_DESTROY:
+			{
+				delete obj;
+
+			}
+			break;
         
             case WM_LBUTTONDOWN:
 			{

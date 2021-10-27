@@ -48,8 +48,8 @@ void D2DControl::DestroyControl()
 	if ((stat_ & STAT_DEAD) == 0)
 	{
 		//TRACE( L"me=%x parent=%x HWND=%x %d\n", this, parent_, parent_->hWnd_, (IsWindow(parent_->hWnd_)?1:0) );
-		//SendMessage(WM_D2D_DESTROY_CONTROL, 0, (LPARAM)this);
-
+		
+		parent_control_->SendMesage(WM_D2D_ONCLOSE, 0, (LPARAM)this);
 
 		stat_ = STAT_DEAD;
 
@@ -59,18 +59,7 @@ void D2DControl::DestroyControl()
 			parent_window_->death_objects_.push_back(p);
 		}
 
-		//if (parent_->GetCapture() == this)
-		//	parent_->ReleaseCapture(); // 1ŠK‘w–Ú‚¾‚¯‚Ícheck
 
-
-		//if (parent_control_)
-		//{
-		//	auto p = parent_control_->Detach(this);
-
-		//	
-		//}
-
-		//parent_->chandle_.DeleteControlHandle(chdl_);
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,6 +78,15 @@ void D2DControls::CreateControl(D2DWindow* win, D2DControls* parent, const FRect
 
 	rc_ = rc;
 }
+
+HRESULT D2DControls::SendMesage(UINT message, WPARAM wParam, LPARAM lParam)
+{	
+	AppBase a={};
+	a.hWnd = GetParent()->GetHwnd();
+	return WndProc(a,message,wParam,lParam);
+}
+
+
 HRESULT D2DControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {	
 	return DefWndProc(b,message,wParam,lParam);
@@ -102,6 +100,12 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 {
 	auto capture = APP.GetCapture();
 	HRESULT hr = 0;
+
+	if ( message == WM_D2D_ONCLOSE )
+	{
+		hr = 0;
+	}
+
 	if ( nullptr == capture )
 	{
 		for(auto& it : controls_ )

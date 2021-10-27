@@ -29,6 +29,7 @@ class D2DWindow
 		~D2DWindow();
 
 		LRESULT SendMessage(UINT msg, WPARAM wp, LPARAM lp );
+		
 		LRESULT PostMessage(UINT msg, WPARAM wp, LPARAM lp)
 		{
 			EnterCriticalSection( &message_lock_ );

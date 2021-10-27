@@ -8,7 +8,7 @@ using namespace V6;
 
 
 
-D2DMDIFrame::D2DMDIFrame():largest_idx_(-1),top_(0),active_idx_(-1)
+D2DMDIFrame::D2DMDIFrame():largest_idx_(-1),top_(0),active_idx_(0)
 {
 
 }
@@ -189,6 +189,30 @@ HRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 		}
 		break;
 
+		case WM_D2D_ONCLOSE:
+		{			
+			// update acive_idx_;
+
+			short prv_idx = active_idx_;			
+			for(auto& it : controls_)
+			{
+				if ( it.get() == (D2DControl*)lParam)
+				{
+					auto k = dynamic_cast<D2DMDIChild*>(it.get());
+					if ( k )
+					{
+						if ( k->idx_ == active_idx_ )
+						{
+							active_idx_ = prv_idx;
+							break;
+						}
+						prv_idx = k->idx_;
+					}
+				}
+			}	
+		}
+		break;
+
 
 
 		case WM_SIZE:
@@ -226,10 +250,19 @@ HRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 	}
 
+	if ( active_idx_ > -1 )
+	{
+		auto k = GetChild(active_idx_);		
+
+		if ( k )
+			hr = k->WndProc(b, message, wParam, lParam);
+	}
+
+	if ( hr == 0 && (message == WM_LBUTTONDOWN || message == WM_D2D_ONCLOSE) )
+		hr = D2DControls::WndProc(b,message,wParam,lParam);
 
 
-
-	if ( hr == 0 )
+	if ( WM_SIZE == message )
 		hr = D2DControls::WndProc(b,message,wParam,lParam);
 
 	return hr;	
@@ -309,8 +342,16 @@ HRESULT D2DMDIChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 		case WM_D2D_CREATE :
 			r = 1;
 		break;
+		case WM_D2D_ONCLOSE:
+		{
+			if ( (D2DControl*)lParam == this )
+			{
+				int a = 0;
 
-
+				r = 1;
+			}
+		}
+		break;
 		//case WM_LBUTTONDOWN:
 		case WM_MOUSEMOVE:
 		case WM_LBUTTONUP:
@@ -420,9 +461,7 @@ HRESULT TitleBarMoouseProc(D2DControls* ctrls,AppBase& b, UINT message, WPARAM w
 				}
 				else if ( tmd == D2DMDIChild::TitleMouse::DESTROY )
 				{
-					//D2DDestroyControl(obj->me);
 					obj->DestroyControl();
-
 				}
 				else if ( tmd == D2DMDIChild::TitleMouse::LARGE )
 				{					

@@ -79,6 +79,7 @@ public:
 	virtual ~D2DControls();
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 	virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+	virtual HRESULT SendMesage(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual void Draw(D2DContext& cxt) override;
 	void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	virtual int GetTypeid() const override{ return TYP_CONTROLS; }
