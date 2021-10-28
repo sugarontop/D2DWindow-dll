@@ -270,7 +270,7 @@ std::shared_ptr<D2DControl> D2DControls::Detach(D2DControl* target)
 		}
 	}
 
-	_ASSERT(false);
+	_ASSERT(false); // parent_control‚ÉAdd‚³‚ê‚Ä‚È‚¢
 
 	return NULL;
 }

@@ -113,5 +113,8 @@
     <ClCompile Include="..\lib\D2DClientControl.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\D2DStatic.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

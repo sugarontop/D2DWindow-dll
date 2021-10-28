@@ -16,6 +16,7 @@ using namespace V6;
 
 extern UIHandleWin hwin;
 void CreateControl2(UIHandleWin hwin, UIHandle hcs ); // tab3.cpp
+void CreateControlTest(UIHandleWin hwin, UIHandle hcs );
 
 void CreateMDIControl(HWND hWnd)
 {
@@ -39,7 +40,7 @@ void CreateMDIControl(HWND hWnd)
 
 	auto c2 = frame->Add(FRectF(400,0,FSizeF(400,800)), STAT_VISIBLE | STAT_ENABLE, L"view2", 112  );
 
-	auto c3 = frame->Add(FRectF(200,400,FSizeF(400,800)), STAT_VISIBLE | STAT_ENABLE, L"view3", 113  );
+	auto c3 = frame->Add(FRectF(200,400,FSizeF(700,800)), STAT_VISIBLE | STAT_ENABLE, L"view3", 113  );
 
 
 
@@ -59,6 +60,6 @@ void CreateMDIControl(HWND hWnd)
 	UIHandle hcs3;
 	hcs3.p = c3.get();
 	hcs3.typ = 0;
-	CreateControl2(hwin, hcs3);
+	CreateControlTest(hwin, hcs3);
 
 }

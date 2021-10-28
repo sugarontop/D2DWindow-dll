@@ -3,11 +3,12 @@
 #include "AppBase.h"
 
 #define STAT_VISIBLE			0x1
-#define STAT_MODAL			0x2
-#define STAT_CAPTURED	0x4
+#define STAT_MODAL				0x2
+#define STAT_CAPTURED			0x4
 #define STAT_DEAD				0x8
-#define STAT_ENABLE			0x16
+#define STAT_ENABLE				0x16
 
+#define STAT_DEFAULT		(STAT_VISIBLE|STAT_ENABLE)
 
 struct UIHandle
 {
@@ -43,6 +44,7 @@ struct D2DNMHDR
 #define TYP_SIMPLE_LISTBOX 7
 #define TYP_MESSAGEBOX 8
 #define TYP_CLIENT_CONTROL 9
+#define TYP_STATIC 10
 
 
 

@@ -632,7 +632,10 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
 
 STDAPI CTextStore::GetScreenExt(TsViewCookie vcView, RECT *prc)
 {
-    FRectF rc(0,0,0,0); // = _pEditor->bri_->GetClientRect();
+    
+	if ( _pEditor->ct_ ) {
+	
+	FRectF rc(0,0,0,0); // = _pEditor->bri_->GetClientRect();
     int pos = _pEditor->GetSelectionStart();
 
     _pEditor->GetLayout()->RectFromCharPos(pos, &rc);
@@ -642,6 +645,7 @@ STDAPI CTextStore::GetScreenExt(TsViewCookie vcView, RECT *prc)
 
     //TRACE( L"candidate2  %d %d\n" ,prc->left, prc->top);
 
+	}
 
     return S_OK;
 }

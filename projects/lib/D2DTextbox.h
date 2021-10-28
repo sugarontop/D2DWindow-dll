@@ -83,7 +83,7 @@ namespace V6
 	public :
 		static void* CreateInputControl(D2DWindow* parent);
 		static void DestroyInputControl();
-
+		void StatActive(bool bActive);
 
 
 		static std::wstring Ascii2W( LPCSTR s );
@@ -91,7 +91,7 @@ namespace V6
 
 	protected :
 		void ActiveSw();
-		void StatActive(bool bActive);
+		
 		void AutoScroll();
 		FRectF GetVsrollbarRect() const;
 		TSF::CTextEditorCtrl* ctrl() const;

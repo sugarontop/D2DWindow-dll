@@ -70,10 +70,9 @@ void D2DTextbox::Draw(D2DContext& cxt)
 
 		if (APP.IsCapture(this))
 		{
-			ComPTR<ID2D1SolidColorBrush> br;
-			(*cxt)->CreateSolidColorBrush(D2RGB(50,50,50), &br);
-			(*cxt)->DrawRectangle(rctext_, br);
-			(*cxt)->FillRectangle(rctext_, back);
+			ComPTR<ID2D1SolidColorBrush> active_back;
+			(*cxt)->CreateSolidColorBrush(D2RGB(220,220,220), &active_back);
+			(*cxt)->FillRectangle(rctext_, active_back);
 			
 			mat.Offset(rctext_);
 			mat.Offset(-ct_.offpt_.x, -vscrollbar_.Scroll());

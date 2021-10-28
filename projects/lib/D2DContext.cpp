@@ -263,3 +263,7 @@ void D2DContextEx::OnRestructGraphicsResources()
 }
 
 
+bool D2DContext::CreateTextLayout(LPCWSTR str, D2D1_SIZE_F sz, IDWriteTextLayout** ret )
+{
+	return (0== tsf_wfactory_->CreateTextLayout(str, wcslen(str), this->textformat_, sz.width, sz.height, ret ));
+}

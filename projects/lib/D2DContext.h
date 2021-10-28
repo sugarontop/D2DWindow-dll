@@ -36,6 +36,9 @@ class D2DContext
 		void DDrawRect(const D2D1_RECT_F& rc, ColorF lineclr, ColorF fillclr);
 		void DCircle(const D2D1_RECT_F& rc, ColorF clr);
 
+		bool CreateTextLayout(LPCWSTR str, D2D1_SIZE_F sz, IDWriteTextLayout** ret );
+
+
 		ComPTR<ID2D1SolidColorBrush> black_;
 		ComPTR<ID2D1SolidColorBrush> white_;
 		ComPTR<IDXGISwapChain1> dxgiSwapChain_;

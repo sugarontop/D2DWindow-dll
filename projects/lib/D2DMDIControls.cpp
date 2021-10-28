@@ -31,16 +31,20 @@ void D2DMDIFrame::Draw(D2DContext& cxt)
 		mat.Offset(rc);
 
 		
-		top_ = (UINT_PTR)controls_.begin()->get();
-
-		
-
-		for (auto it = controls_.rbegin(); it != controls_.rend(); it++ )
+		if ( !controls_.empty())
 		{
-			(*it)->Draw(cxt);
-			
-		}
+			top_ = (UINT_PTR)controls_.begin()->get();
 
+			for (auto it = controls_.rbegin(); it != controls_.rend(); it++ )
+			{
+				(*it)->Draw(cxt);
+			
+			}
+		}
+		else
+		{
+			top_ = 0;
+		}
 		
 
 		mat.PopTransform();
@@ -324,7 +328,8 @@ void D2DMDIChild::Draw(D2DContext& cxt)
 			cxt.DFillRect(rc.ZeroRect(), D2RGB(220,220,220));
 
 		}
-				
+		
+		mat.Offset(0,bar_h);
 		
 		for (auto it = controls_.rbegin(); it != controls_.rend(); it++ )
 			(*it)->Draw(cxt);

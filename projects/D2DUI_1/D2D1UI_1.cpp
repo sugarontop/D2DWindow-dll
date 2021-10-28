@@ -6,6 +6,7 @@
 #include "D2DDropdownListbox.h"
 #include "D2DWhiteControl.h"
 #include "D2DClientControl.h"
+#include "D2DStatic.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 //UIHandle Renewal_UIHandle(  UIHandle h );
@@ -55,7 +56,27 @@ DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  )
 	return nullptr;
 }
 
-DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id )
+{
+	_ASSERT(hwin.p);
+	_ASSERT(hctrls.p);
+
+	auto pgtx = new D2DStatic(); 
+
+	auto win = (D2DWindow*)hwin.p;
+	auto ctrls = (D2DControls*)hctrls.p;
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( std::shared_ptr<D2DStatic>(pgtx));	
+	pgtx->SetText(text);
+
+	UIHandle r;
+	r.p = pgtx;
+	r.typ = TYP_STATIC;
+	return r;
+}
+
+DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id, int ext )
 {
 	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
@@ -70,19 +91,18 @@ DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRe
 	ctrls->Add( std::shared_ptr<D2DTextbox>(pgtx));	
 
 
+	if ( ext == 1 )
+	{
+		pgtx->SetBackColor(D2RGBA(0,0,0,0));
+		pgtx->SetBorderColor(D2RGBA(0,0,0,0));
+
+
+	}
+
+
 	UIHandle r;
 	r.p = pgtx;
 	r.typ = TYP_TEXTBOX;
-
-
-	//auto tx1 = dynamic_cast<D2DTextbox*>(pgtx);
-
-
-	//D2DControl* p =static_cast<D2DControl*>(r.p);
-	//auto tx11 = dynamic_cast<D2DTextbox*>( p);
-	//auto tx12 = dynamic_cast<D2DTextbox*>(pgtx);
-
-
 	return r;
 }
 
