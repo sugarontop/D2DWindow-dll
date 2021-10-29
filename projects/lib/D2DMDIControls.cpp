@@ -298,7 +298,7 @@ void D2DMDIChild::Draw(D2DContext& cxt)
 	if (stat_ & STAT_VISIBLE)
 	{
 		D2DMatrix mat(*cxt);
-		mat.PushTransform();
+		mat_ = mat.PushTransform();
 		mat.Offset(rc_);
 		auto rc = rc_.ZeroRect();
 		
@@ -378,17 +378,24 @@ HRESULT D2DMDIChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 					parent_window_->PostMessage(WM_D2D_MDI_TOPCHANGE, (WPARAM)frame, idx_);
 				}
 			}
-
 		}
 		break;
 		
 	}
 
-
-
-
 	if ( r == 0 )
 		r = D2DControls::WndProc(b,message,wParam,lParam);
+
+
+	// å„ÇÎÇÃD2DMDIChildÇ…ìßÇØÇ»Ç¢ÇΩÇﬂÇÃèàóù
+	if ( r == 0 && message == WM_LBUTTONDOWN )
+	{
+		MouseParam& mp = *(MouseParam*)lParam;
+		FPointF pt = mat_.DPtoLP(mp.pt);
+
+		if ( rc_.PtInRect( pt ))
+			r = 1;
+	}
 
 	return r;	
 }

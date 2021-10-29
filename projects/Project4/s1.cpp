@@ -100,18 +100,25 @@ void CreateControlTest(UIHandleWin hwin, UIHandle hcs )
 		switch (message)
 		{
 			case WM_D2D_CREATE:
+			{
 				r = 1;
 
 				auto& hcs = *(UIHandle*)lParam;
 
 
-				auto tx = D2DCreateTextbox(obj.hwin, hcs, FRectF(51,200+26*2-1, FSizeF(200,26)), FALSE, STAT_DEFAULT, L"tx3",-1,1 );
-				auto tx1 = D2DCreateTextbox(obj.hwin, hcs, FRectF(51,200+26*2-1+27, FSizeF(200,26)), FALSE, STAT_DEFAULT, L"tx4",-1,1 );
+				//auto tx = D2DCreateTextbox(obj.hwin, hcs, FRectF(51,200+26*2-1, FSizeF(200,26)), FALSE, STAT_DEFAULT, L"tx3",-1,1 );
+				//auto tx1 = D2DCreateTextbox(obj.hwin, hcs, FRectF(51,200+26*2-1+27, FSizeF(200,26)), FALSE, STAT_DEFAULT, L"tx4",-1,1 );
 
 
 				FRectF rc(51,200,FSizeF(200,30));
 
 				D2DCreateStatic(obj.hwin, hcs, rc, STAT_DEFAULT, L"‚±‚ê‚ÍƒeƒXƒg", NONAME );
+			}
+			break;
+			case WM_D2D_DESTROY:
+
+				delete (CaptureObj1*)captureobj;
+
 			break;
 		}
 

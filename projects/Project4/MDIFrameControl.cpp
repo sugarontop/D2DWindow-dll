@@ -37,29 +37,30 @@ void CreateMDIControl(HWND hWnd)
 
 
 	auto c1 = frame->Add(FRectF(0,0,FSizeF(400,800)), STAT_VISIBLE | STAT_ENABLE, L"view1", 111  );
-
-	auto c2 = frame->Add(FRectF(400,0,FSizeF(400,800)), STAT_VISIBLE | STAT_ENABLE, L"view2", 112  );
-
-	auto c3 = frame->Add(FRectF(200,400,FSizeF(700,800)), STAT_VISIBLE | STAT_ENABLE, L"view3", 113  );
-
-
-
 	UIHandle hcs;
-	hcs.p = c2.get();
+	hcs.p = c1.get();
 	hcs.typ = 0;
 
 	CreateControl2(hwin, hcs);
 
 
+	auto c2 = frame->Add(FRectF(450,0,FSizeF(400,800)), STAT_VISIBLE | STAT_ENABLE, L"view2", 112  );
 	UIHandle hcs2;
-	hcs2.p = c1.get();
+	hcs2.p = c2.get();
 	hcs2.typ = 0;
 	CreateControl2(hwin, hcs2);
 
+	auto c3 = frame->Add(FRectF(200,400,FSizeF(700,800)), STAT_VISIBLE | STAT_ENABLE, L"view3", 113  );
 
 	UIHandle hcs3;
 	hcs3.p = c3.get();
 	hcs3.typ = 0;
 	CreateControlTest(hwin, hcs3);
 
+
+
+
+
+
+	
 }
