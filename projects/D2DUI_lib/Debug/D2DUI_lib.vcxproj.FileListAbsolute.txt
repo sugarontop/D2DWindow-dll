@@ -1,0 +1,3 @@
+E:\work\github\sugarontop\D2DWindow-dll\projects\D2DUI_lib\Debug\D2DUI_lib.vcxproj.MdMergeInputs.cache
+E:\work\github\sugarontop\D2DWindow-dll\projects\D2DUI_lib\Debug\D2DUI_lib.vcxproj.cppwinrt_plat.cache
+E:\work\github\sugarontop\D2DWindow-dll\projects\D2DUI_lib\Debug\D2DUI_lib.vcxproj.cppwinrt_comp.cache

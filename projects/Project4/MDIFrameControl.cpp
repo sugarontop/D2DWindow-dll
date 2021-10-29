@@ -64,3 +64,26 @@ void CreateMDIControl(HWND hWnd)
 
 	
 }
+
+#include "D2DMDISplitControls.h"
+
+void CreateMDISplitControl(HWND hWnd)
+{
+	hwin = D2DCreateMainHWnd(hWnd, 14);
+
+	auto root = D2DGetRootControls(hwin);
+
+	auto frame = std::make_shared<D2DMDISplitFrame>();
+
+	D2DControls* root_controls = (D2DControls*)root.p;
+
+	RECT rc1;
+	GetClientRect(hWnd, &rc1);
+
+	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0,0,rc1.right,rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
+	root_controls->Add(frame);
+
+	auto c3 = frame->Add(0, STAT_DEFAULT, L"view3", 113  );
+
+
+}

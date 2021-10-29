@@ -208,6 +208,14 @@ void D2DContext::DCircle(const D2D1_RECT_F& rc, ColorF clr)
 	if ( S_OK == target_->CreateSolidColorBrush(clr, &br))
 		target_->FillEllipse(crc, br);
 }
+void D2DContext::DText(const D2D_POINT_2F& pt, LPCWSTR str, ColorF clr)
+{
+	FRectF rc( pt, FSizeF(1000,1000));
+	ComPTR<ID2D1SolidColorBrush> br;
+	if ( S_OK == target_->CreateSolidColorBrush( clr, &br))	
+		target_->DrawText(str,wcslen(str),this->textformat_, rc, br );
+
+}
 
 void D2DContextEx::DoRedraw(HWND hwnd)
 {

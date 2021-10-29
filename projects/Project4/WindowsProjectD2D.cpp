@@ -158,6 +158,7 @@ void CreateMDIControl(HWND hWnd);
 
 static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
+void CreateMDISplitControl(HWND hWnd);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -170,7 +171,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
         {
             //CreateControl(hWnd);
-			CreateMDIControl(hWnd);
+			//CreateMDIControl(hWnd);
+			CreateMDISplitControl(hWnd);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;

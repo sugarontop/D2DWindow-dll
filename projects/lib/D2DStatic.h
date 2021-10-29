@@ -24,7 +24,7 @@ class D2DStatic : public D2DControl
 		ComPTR<IDWriteTextLayout> text_;		
 		std::wstring str_;
 		FRectF rc_;
-		bool edit_able_;
+		bool editable_;
 		D2DTextbox* editor_;
 
 };

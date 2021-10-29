@@ -5,13 +5,8 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
-#define TAB_WIDTH_4CHAR 4
-#define LEFT_MARGIN 3.0f
 
-
-
-
-D2DStatic::D2DStatic()
+D2DStatic::D2DStatic():editor_(nullptr),editable_(false)
 {
 
 }
@@ -21,7 +16,8 @@ void D2DStatic::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const F
 
 	rc_ = rc;
 	editor_ = nullptr;
-	edit_able_  = true;
+
+	editable_  = true; // test
 }
 
 void D2DStatic::Draw(D2DContext& cxt)
@@ -37,7 +33,7 @@ HRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 {
 	HRESULT r = 0;
 	
-	if ( edit_able_ )
+	if ( editable_ )
 	{
 		bool bl = false;
 		if ( message == WM_LBUTTONDOWN && editor_ == nullptr )
@@ -65,7 +61,6 @@ HRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 			
 			if ( editor_ != APP.GetCapture() )
 			{
-				editor_->StatActive(false);
 				editor_->DestroyControl();
 
 				editor_ = nullptr;

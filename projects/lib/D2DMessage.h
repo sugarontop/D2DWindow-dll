@@ -45,7 +45,16 @@ struct D2DNMHDR
 #define TYP_MESSAGEBOX 8
 #define TYP_CLIENT_CONTROL 9
 #define TYP_STATIC 10
+#define TYP_MDI_CONTROLS 11
+#define TYP_MDISPLIT_CONTROLS  12
 
+#define theWhite D2RGB(255,255,255)
+#define theBlack D2RGB(0,0,0)
+#define theClear D2RGBA(255,255,255,0)
+
+#define theGray1 D2RGB(150,150,150)
+#define theGray2 D2RGB(170,170,170)
+#define theGray3 D2RGB(220,220,220)
 
 
 #define EVENT_PUSH 1

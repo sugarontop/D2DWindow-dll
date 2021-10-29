@@ -35,6 +35,7 @@ class D2DContext
 		void DFillRect(const D2D1_RECT_F& rc, ColorF clr);
 		void DDrawRect(const D2D1_RECT_F& rc, ColorF lineclr, ColorF fillclr);
 		void DCircle(const D2D1_RECT_F& rc, ColorF clr);
+		void DText(const D2D_POINT_2F& pt, LPCWSTR str, ColorF clr);
 
 		bool CreateTextLayout(LPCWSTR str, D2D1_SIZE_F sz, IDWriteTextLayout** ret );
 

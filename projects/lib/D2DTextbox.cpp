@@ -160,6 +160,7 @@ void D2DTextbox::StatActive(bool bActive)
 	}
 	else
 	{
+		// from OnChangeFocus
 		if ( ctrl()->GetContainer() == &ct_ )
 		{						
 			text_layout_.Release();
@@ -178,12 +179,11 @@ void D2DTextbox::StatActive(bool bActive)
 
 bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject* pnew)
 {
-	auto me = static_cast<D2DCaptureObject*>(this);
-
-	if (bActive)
-		TRACE(L"OnChangeFocus true   active=%x %x\n", me, pnew);
-	else
-		TRACE(L"OnChangeFocus false  lost=%x  %x\n", me, pnew);
+	//auto me = static_cast<D2DCaptureObject*>(this);
+	//if (bActive)
+	//	TRACE(L"OnChangeFocus true   active=%x %x\n", me, pnew);
+	//else
+	//	TRACE(L"OnChangeFocus false  lost=%x  %x\n", me, pnew);
 
 
 	StatActive(bActive);
