@@ -201,13 +201,35 @@ void D2DMDISplitChild::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
 // ///////////////////////////////////////////////////////////////////
 D2DScrollbar::D2DScrollbar()
 {
-
+	thumb_size_ = 0;
 
 }
-float D2DScrollbar::LogicalOffset() const
+float D2DScrollbar::Thumheight() const
 {
-	
-	return offset_ * 1.0f;
+
+	return thumb_size_;
+
+}
+float D2DScrollbar::LogicalOffset() 
+{
+	if (max_size_ <= view_size_ )
+	{
+		thumb_size_ = view_size_;
+		return offset_ * 1.0f;
+	}
+	else if (max_size_ < view_size_ * 2 )
+	{
+		thumb_size_ = (max_size_-view_size_);
+		return offset_ * 1.0f;
+	}
+	else
+	{
+		thumb_size_ = 10; //(max_size_ - view_size_);
+		return offset_ * (max_size_ - view_size_)/ view_size_;
+	}
+
+
+
 }
 
 void D2DScrollbar::Draw(D2DContext& cxt)
@@ -222,7 +244,7 @@ void D2DScrollbar::Draw(D2DContext& cxt)
 	{
 		cxt.DFillRect(rc, theBlack );
 
-		FRectF thum(0,offset_,Thumheight(),offset_+20);
+		FRectF thum(0,offset_,20, offset_+Thumheight());
 
 		cxt.DFillRect(thum, theGray3 );
 	}
@@ -281,17 +303,19 @@ HRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 
 	return 0;
 }
-float D2DScrollbar::Thumheight() const
-{
 
-	return 20.0f;
-
-}
 void D2DScrollbar::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	sz_ = rc.Size();
 
+	
+
 	bVertical_ = (sz_.height > sz_.width );
+
+	view_size_ = (bVertical_ ? sz_.height : sz_.width);
+	max_size_ = view_size_ * 1.5;
+	thumb_size_ = 0;
+
 	offset_ = 0;
 }

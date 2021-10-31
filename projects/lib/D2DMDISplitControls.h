@@ -48,13 +48,15 @@ namespace V6 {
 			virtual void SetRect(const FRectF& rc)  override { sz_ = rc.Size(); }
 
 			float Thumheight() const;
-			float LogicalOffset() const;
+			float LogicalOffset() ;
 
 			bool bVertical_;
 			FSizeF sz_;
 
-			float offset_;
-
+			float offset_; // device
+			float max_size_;// device
+			float view_size_;// device
+			float thumb_size_;
 
 	};
 
