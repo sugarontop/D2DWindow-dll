@@ -66,6 +66,10 @@ void CreateMDIControl(HWND hWnd)
 }
 
 #include "D2DMDISplitControls.h"
+//#include "D2DSquarePaper.h"
+
+
+
 
 void CreateMDISplitControl(HWND hWnd)
 {
@@ -83,7 +87,18 @@ void CreateMDISplitControl(HWND hWnd)
 	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0,0,rc1.right,rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
 	root_controls->Add(frame);
 
-	auto c3 = frame->Add(0, STAT_DEFAULT, L"view3", 113  );
+	auto left_side_controls = frame->Add(0, STAT_DEFAULT, L"view3", 113  );
 
+
+	// debug
+	//auto paper = std::make_shared<D2DSquarePaper>();	
+	//paper->CreateControl((D2DWindow*)hwin.p, left_side_controls.get(), FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG", 190);
+	//left_side_controls->Add( paper );
+	
+
+	UIHandle hcs3;
+	hcs3.p = left_side_controls.get();
+	hcs3.typ = 0;
+	D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG", 190);
 
 }

@@ -49,6 +49,8 @@ namespace V6 {
 
 			float Thumheight() const;
 			float LogicalOffset() ;
+			void SetMaxSize(float h){ max_size_=h; }
+			void Draw2(D2DContext& cxt);
 
 			bool bVertical_;
 			FSizeF sz_;
@@ -57,6 +59,7 @@ namespace V6 {
 			float max_size_;// device
 			float view_size_;// device
 			float thumb_size_;
+			float other_scrollbar_size_; // 
 
 	};
 
@@ -84,7 +87,7 @@ namespace V6 {
 			short idx_;
 			FSizeF sz_;
 
-			std::shared_ptr<D2DScrollbar> scv_;
+			std::shared_ptr<D2DScrollbar> scv_, sch_;
 
 	};
 

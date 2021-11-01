@@ -7,10 +7,7 @@ using namespace V6;
 
 #define BUTTON_WIDTH 13.0f
 
-D2DDropdownListbox::D2DDropdownListbox()
-{
-    
-}
+
 void D2DDropdownListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
     D2DControl::CreateControl(parent, pacontrol, rc, stat, name, local_id);

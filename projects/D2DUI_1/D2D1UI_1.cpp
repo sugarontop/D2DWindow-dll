@@ -7,6 +7,7 @@
 #include "D2DWhiteControl.h"
 #include "D2DClientControl.h"
 #include "D2DStatic.h"
+#include "D2DSquarePaper.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 //UIHandle Renewal_UIHandle(  UIHandle h );
@@ -55,7 +56,28 @@ DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  )
 	}
 	return nullptr;
 }
+DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hwin.p);
+	_ASSERT(hctrls.p);
 
+	auto pgtx = new D2DSquarePaper(); 
+
+	auto win = (D2DWindow*)hwin.p;
+	auto ctrls = (D2DControls*)hctrls.p;
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( std::shared_ptr<D2DSquarePaper>(pgtx));	
+	//pgtx->SetText(text);
+
+	UIHandle r;
+	r.p = pgtx;
+	r.typ = TYP_CONTROLS;
+	return r;
+
+
+
+}
 DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id )
 {
 	_ASSERT(hwin.p);
