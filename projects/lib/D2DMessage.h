@@ -27,6 +27,8 @@ struct D2DNMHDR
 	UIHandle sender;
 	UINT code;
 
+	LPVOID sender_parent;
+
 	int prm1;
 	LPCWSTR prm2;
 };

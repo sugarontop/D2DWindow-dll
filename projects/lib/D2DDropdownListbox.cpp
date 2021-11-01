@@ -5,12 +5,9 @@
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
-#define BUTTON_WIDTH 13.0f
+#define BUTTON_WIDTH BARW
 
-D2DDropdownListbox::D2DDropdownListbox()
-{
-    
-}
+
 void D2DDropdownListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
     D2DControl::CreateControl(parent, pacontrol, rc, stat, name, local_id);
@@ -177,6 +174,8 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
         UIHandle u;
         u.p = this;
         u.typ = TYP_DROPDOWNLISTBOX;
+
+		nmh.sender_parent = parent_control_;
         nmh.sender = u;
         nmh.code = 1001; // onchanged
         nmh.prm1 = selected_idx_;

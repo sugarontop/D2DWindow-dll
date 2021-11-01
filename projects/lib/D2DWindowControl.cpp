@@ -246,12 +246,14 @@ void D2DControls::Draw(D2DContext& cxt)
 	if (stat_ & STAT_VISIBLE)
 	{
 		D2DMatrix mat(*cxt);
-		mat.Offset( this->rc_ );
+		mat.Offset( rc_ );
 		mat.PushTransform();
 
 		InnerDraw(cxt);
 
 		mat.PopTransform();
+
+		
 	}
 }
 std::shared_ptr<D2DControl> D2DControls::Detach(D2DControl* target)

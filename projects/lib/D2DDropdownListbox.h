@@ -11,7 +11,7 @@ namespace V6
 	{
 	friend class D2DSimpleListbox;
 	public:
-		D2DDropdownListbox();
+		D2DDropdownListbox(){};
 		
 		virtual const FRectF& GetRect() const { return rc_; }
 		virtual void SetRect(const FRectF& rc) { rc_ = rc; }

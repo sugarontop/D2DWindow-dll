@@ -5,8 +5,8 @@
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
-#define BUTTON_WIDTH 13.0f
-#define ROW_HEIGHT 26.0f
+#define BUTTON_WIDTH BARW
+#define ROW_HEIGHT 22.0f
 
 D2DSimpleListbox::D2DSimpleListbox()
 {
@@ -73,7 +73,7 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
                 scbai_ = (sc_dataHeight() - sc_barTotalHeight()) / (sc_barTotalHeight() - scbarThumbHeight_); //());			
             }
 
-            FRectF scbar(rc_.Size().width - 20, 0, rc_.Size().width, scbarThumbHeight_);
+            FRectF scbar(rc_.Size().width - BARW, 0, rc_.Size().width, scbarThumbHeight_);
             cxt.DFillRect(scbar, D2GRAY);
         mat.PopTransform();
 

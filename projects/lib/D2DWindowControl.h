@@ -5,6 +5,8 @@
 #include "D2DWindow.h"
 namespace V6 {
 
+#define BARW 10.0f
+
 
 class D2DControls;
 

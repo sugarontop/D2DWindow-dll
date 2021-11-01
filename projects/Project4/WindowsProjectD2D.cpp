@@ -126,7 +126,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // グローバル変数にインスタンス ハンドルを格納する
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      300, 50, 1100, 1400, nullptr, nullptr, hInstance, nullptr);
+      300, 50, 1100, 900, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -179,7 +179,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     
         case WM_SIZE:
         {
-            D2DForceWndProc(hwin, app, message, wParam,lParam);
+			FSizeF sz((float)LOWORD(lParam), (float)HIWORD(lParam));			
+            D2DForceWndProc(hwin, app, message, 0, (LPARAM)&sz);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
@@ -249,7 +250,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
         case WM_KEYUP:
         case WM_LBUTTONDOWN:
-        case WM_LBUTTONUP:
+		case WM_LBUTTONUP:
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_MOUSEWHEEL:
@@ -258,7 +259,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             r = D2DDefWndProc(hwin, app, message, wParam,lParam);
         }
         break;
-
         case WM_MOUSEMOVE:
         {
             r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
