@@ -165,7 +165,7 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
     ls_->DestroyControl();
     ls_ = nullptr;
 
-    if ( selected_idx_ != old_item )
+    if ( selected_idx_ != old_item ) 
     {
         //this->parent_window_->SendMessage( WM_NOTIFY, (WPARAM)GetID(), (LPARAM)L"ONCHANGED" );
 

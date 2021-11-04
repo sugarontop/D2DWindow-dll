@@ -66,7 +66,7 @@ void CreateMDIControl(HWND hWnd)
 }
 
 #include "D2DMDISplitControls.h"
-//#include "D2DSquarePaper.h"
+//#include "D2DSquarePaper.h" 
 
 
 

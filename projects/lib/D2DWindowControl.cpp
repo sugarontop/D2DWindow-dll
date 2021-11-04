@@ -220,7 +220,7 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 			(*it)->Draw(cxt);
 	}
 	else
-	{
+	{ 
 		bool bl = false;
 
 		for (auto it = controls_.rbegin(); it != controls_.rend(); it++)
