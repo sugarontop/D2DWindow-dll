@@ -86,23 +86,25 @@ void CreateMDISplitControl(HWND hWnd)
 
 	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0,0,rc1.right,rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
 	root_controls->Add(frame);
+	
+	frame->CreateChildView(0);
 
-	auto left_side_controls = frame->Add(0, 300, STAT_DEFAULT, L"view3", 113  );
+	auto left_side_controls = frame->GetControl(L"LEFT");
 
-	auto right_side_controls = frame->Add(0,1000, STAT_DEFAULT, L"view4", 114  );
+	auto right_side_controls = frame->GetControl(L"RIGHT");
 
 
 	
 
 	UIHandle hcs3;
-	hcs3.p = left_side_controls.get();
+	hcs3.p = left_side_controls;
 	hcs3.typ = 0;
 	D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG", 190);
 
 
 
 	UIHandle hcs4;
-	hcs4.p = right_side_controls.get();
+	hcs4.p = right_side_controls;
 	hcs4.typ = 0;
 	D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,5000,2000),  STAT_DEFAULT, L"DEBUG1", 191);
 

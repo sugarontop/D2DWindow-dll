@@ -76,3 +76,4 @@ struct D2DNMHDR
 
 
 #define WM_D2D_ONCLOSE							(WM_APP+10)
+#define WM_D2D_SET_SIZE							(WM_APP+11)

@@ -11,14 +11,15 @@ namespace V6 {
 		friend class D2DMDISplitChild;
 		public:
 			D2DMDISplitFrame();
-			virtual ~D2DMDISplitFrame();
-
 			
 			virtual void Draw(D2DContext& cxt) override;
 			virtual int GetTypeid() const override { return TYP_MDISPLIT_CONTROLS; }
 			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
-			std::shared_ptr<D2DControls> Add(int typ, float width, DWORD stat, LPCWSTR name, int id);
+			//std::shared_ptr<D2DControls> Add(int typ, float width, DWORD stat, LPCWSTR name, int id);
+
+			void CreateChildView(int typ);
+
 
 			void SetTopMDIChild(short idx);
 
@@ -28,6 +29,7 @@ namespace V6 {
 			std::map<short, FRectF> prvRect_;
 			short largest_idx_, active_idx_;
 			UINT_PTR top_;
+			int child_typ_;
 
 			float split_line_x_;
 	};
@@ -46,7 +48,7 @@ namespace V6 {
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 			virtual const FRectF& GetRect() const override { return FRectF(0,0,sz_); }
 			virtual void SetRect(const FRectF& rc)  override { sz_ = rc.Size(); }
-			
+			void SetSize(const FSizeF& sz){ sz_ = sz; }
 
 			float Thumheight() const;
 			float LogicalOffset() ;
@@ -88,6 +90,7 @@ namespace V6 {
 		protected :
 			short idx_;
 			FSizeF sz_;
+			float vscroll_x_,hscroll_x_;
 
 			std::shared_ptr<D2DScrollbar> scv_, sch_;
 
