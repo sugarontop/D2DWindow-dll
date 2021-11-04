@@ -39,18 +39,14 @@ void D2DMDISplitFrame::Draw(D2DContext& cxt)
 	cxt.DFillRect(rc, D2RGBA(0,122,204,255));
 
 
-	if ( !controls_.empty())
+	for(auto it=controls_.begin(); it != controls_.end(); it++ )
 	{
-		for(auto it=controls_.begin(); it != controls_.end(); it++ )
-		{
-			auto rc1 = (*it)->GetRect();			
-			D2DRectFilter f(cxt, rc1);
+		auto rc1 = (*it)->GetRect();			
+		D2DRectFilter f(cxt, rc1);
 
-			mat.PushTransform();
-			(*it)->Draw(cxt);
-
-			mat.PopTransform();
-		}
+		mat.PushTransform();
+		(*it)->Draw(cxt);
+		mat.PopTransform();
 	}
 
 	mat.PopTransform();
@@ -75,7 +71,6 @@ HRESULT D2DMDISplitFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
 
 			auto right = controls_[0]->GetRect().right;
-
 
 			rc.left = right;
 			rc.right = sz.width;
@@ -186,21 +181,24 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
 				rc_.SetHeight( rc.Height() );
 
+				//rc_ = rc;
+
 				FRectF xrc(0,0,BARW,rc_.Height());
 				scv_->SetRect(xrc);
 
-				scv_->view_size_ = xrc.Height();
 				
-				xrc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
-				scv_->SetMaxSize( xrc.Height());
+				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
+				
 
 				vscroll_x_ = rc_.Width()-BARW;
 				hscroll_x_ = 0;
 
+				scv_->SetMaxSize( crc.Height());
+				sch_->SetMaxSize(crc.Width());				
 				sch_->SetSize(rc_.Size());
+				sch_->view_size_ = rc_.Width();
+				scv_->view_size_ = xrc.Height();
 
-				sch_->SetMaxSize(600);
-				sch_->view_size_ = 300;
 			}
 			else if ( wParam == 1 )
 			{
@@ -213,20 +211,23 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				FRectF xrc(0,0,BARW,rc_.Height());
 				scv_->SetRect(xrc);
 
-				scv_->view_size_ = xrc.Height();
 
-				xrc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
-				scv_->SetMaxSize( xrc.Height());
-				sch_->SetMaxSize( xrc.Width());
+				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
 
 
 				vscroll_x_ = rc_.right-BARW;
 				hscroll_x_ = rc_.left;
 
+				scv_->SetMaxSize( crc.Height());
+				sch_->SetMaxSize( crc.Width());
 				sch_->SetSize(rc_.Size());
 				sch_->view_size_ = rc.Width();
+				scv_->view_size_ = xrc.Height();
 				
 			}
+			auto sz = rc_.Size();
+			this->controls_[2]->WndProc(b,WM_SIZE,0,(LPARAM)&sz);
+
 			return 0;
 		}
 		break;

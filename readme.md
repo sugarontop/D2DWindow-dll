@@ -7,6 +7,7 @@ UI controlとはbutton,listbox,textbox
 
 ## build condition
 VisualStudio 2019, C++, (not xaml, not c++/cx)
+use Project1/Project1.sln.
 
 ## D2DUI_1
 DLL project
