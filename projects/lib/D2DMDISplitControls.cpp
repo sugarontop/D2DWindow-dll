@@ -183,8 +183,8 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
 				//rc_ = rc;
 
-				FRectF xrc(0,0,BARW,rc_.Height());
-				scv_->SetRect(xrc);
+				//FRectF xrc(0,0,BARW,rc_.Height());
+				//scv_->SetRect(xrc);
 
 				
 				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
@@ -196,8 +196,7 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				scv_->SetMaxSize( crc.Height());
 				sch_->SetMaxSize(crc.Width());				
 				sch_->SetSize(rc_.Size());
-				sch_->view_size_ = rc_.Width();
-				scv_->view_size_ = xrc.Height();
+				scv_->SetSize(rc_.Size());
 
 			}
 			else if ( wParam == 1 )
@@ -208,8 +207,8 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				rc_ = rc;
 
 				
-				FRectF xrc(0,0,BARW,rc_.Height());
-				scv_->SetRect(xrc);
+				//FRectF xrc(0,0,BARW,rc_.Height());
+				//scv_->SetRect(xrc);
 
 
 				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
@@ -221,8 +220,7 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				scv_->SetMaxSize( crc.Height());
 				sch_->SetMaxSize( crc.Width());
 				sch_->SetSize(rc_.Size());
-				sch_->view_size_ = rc.Width();
-				scv_->view_size_ = xrc.Height();
+				scv_->SetSize(rc_.Size());
 				
 			}
 			auto sz = rc_.Size();
@@ -286,6 +284,13 @@ float D2DScrollbar::Thumheight() const
 	return thumb_size_;
 
 }
+void D2DScrollbar::SetSize(const FSizeF& sz)
+{ 
+	sz_ = sz; 
+
+	view_size_ = (bVertical_ ? sz_.height : sz_.width );
+		
+}
 float D2DScrollbar::LogicalOffset() 
 {
 	if (max_size_ <= VIEW_SIZE )
@@ -307,13 +312,24 @@ float D2DScrollbar::LogicalOffset()
 
 
 }
+FSizeF D2DScrollbar::GetSize() const
+{
+	FSizeF sz(sz_);
+	if ( bVertical_ )
+		sz.width=BARW;
+	else
+		sz.height = BARW;
+
+	return sz;
+
+}
 void D2DScrollbar::Draw(D2DContext& cxt)
 {
 	// throgh
 }
 void D2DScrollbar::Draw2(D2DContext& cxt)
 {
-	FRectF rc(0,0,sz_);
+	FRectF rc(0,0,GetSize());
 	
 	D2DMatrix mat(*cxt);
 
@@ -321,7 +337,7 @@ void D2DScrollbar::Draw2(D2DContext& cxt)
 	
 	if (bVertical_)
 	{
-		cxt.DFillRect(rc, theBlack );
+		cxt.DFillRect(rc, D2RGB(50,50,50) );
 
 		FRectF thum(0,offset_, BARW, offset_+Thumheight());
 
@@ -330,7 +346,7 @@ void D2DScrollbar::Draw2(D2DContext& cxt)
 	else
 	{
 
-		cxt.DFillRect(rc, theBlack );
+		cxt.DFillRect(rc, D2RGB(50,50,50) );
 
 		FRectF thum(offset_,0, offset_+Thumheight(), BARW);
 
@@ -350,7 +366,7 @@ HRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 		{
 			MouseParam& pm = *(MouseParam*)lParam;
 			auto pt = mat_.DPtoLP(pm.pt);
-			FRectF rc(0,0,sz_);
+			FRectF rc(0,0,GetSize());
 
 			if (rc.PtInRect(pt))
 			{

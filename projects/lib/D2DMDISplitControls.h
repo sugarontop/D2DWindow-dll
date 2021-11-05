@@ -48,7 +48,8 @@ namespace V6 {
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 			virtual const FRectF& GetRect() const override { return FRectF(0,0,sz_); }
 			virtual void SetRect(const FRectF& rc)  override { sz_ = rc.Size(); }
-			void SetSize(const FSizeF& sz){ sz_ = sz; }
+			void SetSize(const FSizeF& sz);
+			FSizeF GetSize() const;
 
 			float Thumheight() const;
 			float LogicalOffset() ;
