@@ -170,7 +170,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {    
         case WM_CREATE:
         {
-            //CreateControl(hWnd);
+            
 			//CreateMDIControl(hWnd);
 			CreateMDISplitControl(hWnd);
             return ::DefWindowProc(hWnd, message, wParam, lParam);

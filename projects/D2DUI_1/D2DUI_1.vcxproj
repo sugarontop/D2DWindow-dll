@@ -185,6 +185,7 @@
     <ClInclude Include="..\lib\D2DMessage.h" />
     <ClInclude Include="..\lib\D2DSimpleListbox.h" />
     <ClInclude Include="..\lib\D2DWhiteControl.h" />
+    <ClInclude Include="..\lib\D2DWhiteWindow.h" />
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="D2D1UI_1.h" />
     <ClInclude Include="framework.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="..\lib\D2DTextboxScrollbar.cpp" />
     <ClCompile Include="..\lib\D2DTreeList.cpp" />
     <ClCompile Include="..\lib\D2DWhiteControl.cpp" />
+    <ClCompile Include="..\lib\D2DWhiteWindow.cpp" />
     <ClCompile Include="..\lib\D2DWindow.cpp" />
     <ClCompile Include="..\lib\TextMemory.cpp" />
     <ClCompile Include="..\lib\tsf\D2DCharRect.cpp" />

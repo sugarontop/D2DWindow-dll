@@ -24,17 +24,11 @@
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\lib\D2DSquarePaper.h">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClInclude>
     <ClInclude Include="..\lib\D2DScrollbar.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="D2DUI_lib.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>

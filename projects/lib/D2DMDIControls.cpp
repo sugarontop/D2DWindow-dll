@@ -221,11 +221,9 @@ HRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 
 		case WM_SIZE:
 		{
-			
-			auto cx = (float)LOWORD(lParam);
-			auto cy = (float)HIWORD(lParam);
+			FSizeF sz = *(FSizeF*)lParam;
 
-			rc_.SetSize(FSizeF(cx,cy));
+			rc_.SetSize(sz);
 
 			if ( largest_idx_ != -1 )
 			{

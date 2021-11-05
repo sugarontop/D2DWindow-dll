@@ -17,6 +17,7 @@ class FRectF;
 
 DLLEXPORT bool D2DResource(D2DWindow* win,  FRectF& rc );
 
+DLLEXPORT UIHandle D2DCreateWhiteWindow(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id );
 DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id );
 DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin win, UIHandle ctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id=-1, int ext=-1 );
 DLLEXPORT UIHandle D2DCreateButton(UIHandleWin win, UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id);
