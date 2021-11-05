@@ -16,6 +16,8 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 
 	mat_ = mat.PushTransform();
 
+	mat.Scale(scale_,scale_);
+
 
 	cxt.DFillRect(rc_, D2RGB(105,200,100)); 
 
@@ -83,6 +85,25 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				r = 1;
 			}
 
+			if ( 2 == wParam && p->sender_parent == this )
+			{
+				auto id = p->prm1;
+
+				D2DDropdownListbox* p1 = (D2DDropdownListbox*)p->sender.p;
+
+				int x = p1->xGetSelect();
+
+				if ( x == 0 )
+					scale_ = 1.0f;
+				if ( x == 1 )
+					scale_ = 0.8f;
+				if ( x == 2 )
+					scale_ = 1.2f;
+				
+
+				r = 1;
+			}
+
 
 
 		}
@@ -101,29 +122,60 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 	return r;
 }
+#include "D2DStatic.h"
 void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	rc_ = rc;
+	scale_ = 1.0f;
+
+	{
+		FRectF rc0(70,30,FSizeF(200,20));
+		auto t1 = std::make_shared<D2DStatic>(); 
+		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,NONAME);
+		t1->SetText(L"–Ú·‚è");
+		this->Add( t1);
+
+		FRectF rc1(70,50,FSizeF(80,20));
+		auto ls = std::make_shared<D2DDropdownListbox>();
+		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,NONAME,1);
+
+		ls->AddItem(0,L"50");
+		ls->AddItem(1,L"100");
+		ls->AddItem(2,L"150");
+		ls->AddItem(3,L"200");
+
+		ls->xSetSelect(0);
+		pitch_ = 50.0f;
+
+		this->Add(ls);
+	}
+	///////////////////////////////////////////////////////////
 
 
-	FRectF rc1(70,50,FSizeF(80,20));
-	auto ls = std::make_shared<D2DDropdownListbox>();
-	ls->CreateControl(parent,this,rc1,STAT_DEFAULT,NONAME,1);
+	{
+		FRectF rc0(170,30,FSizeF(200,20));
+		auto t1 = std::make_shared<D2DStatic>(); 
+		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,NONAME);
+		t1->SetText(L"SCALE");
+		this->Add( t1);
+
+		FRectF rc1(170,50,FSizeF(80,20));
+		auto ls = std::make_shared<D2DDropdownListbox>();
+		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,NONAME,2);
+
+		ls->AddItem(0,L"100");
+		ls->AddItem(1,L"80");
+		ls->AddItem(2,L"120");
+
+		ls->xSetSelect(0);
+		
+
+		this->Add(ls);
+	}
 
 
 
-
-
-	ls->AddItem(0,L"50");
-	ls->AddItem(1,L"100");
-	ls->AddItem(2,L"150");
-	ls->AddItem(3,L"200");
-
-	ls->xSetSelect(0);
-	pitch_ = 50.0f;
-
-	this->Add(ls);
 }
 
 

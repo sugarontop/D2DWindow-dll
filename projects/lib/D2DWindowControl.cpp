@@ -108,8 +108,10 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 	if ( nullptr == capture )
 	{
+		int i = 0;
 		for(auto& it : controls_ )
 		{
+			auto kkkk = it.get();
 			if ( it->GetStat() & STAT_ENABLE )
 			{
 				hr = it->WndProc(b,message,wParam,lParam);
@@ -128,6 +130,7 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 					return hr;
 				}
 			}
+			i++;
 		}
 	}
 	else if ( capture != this )
@@ -243,11 +246,32 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 
 void D2DControls::Draw(D2DContext& cxt)
 {
+
+#ifdef _DEBUG
+	if ( stat_ & STAT_DEBUG )
+	{
+		D2DMatrix mat(*cxt);
+		mat.PushTransform();
+		mat.Offset( rc_ );
+		
+
+		cxt.DFillRect(rc_.ZeroRect(), D2RGB(5,5,250));
+
+		InnerDraw(cxt);
+
+		mat.PopTransform();
+	}
+#endif
+
+
 	if (stat_ & STAT_VISIBLE)
 	{
 		D2DMatrix mat(*cxt);
-		mat.Offset( rc_ );
 		mat.PushTransform();
+		mat.Offset( rc_ );
+		
+
+		
 
 		InnerDraw(cxt);
 

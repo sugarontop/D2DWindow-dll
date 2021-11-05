@@ -21,6 +21,7 @@ class D2DSquarePaper : public D2DControls
 		virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 	private :
 		float pitch_;
+		float scale_;
 
 };
 

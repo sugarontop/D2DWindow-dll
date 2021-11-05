@@ -27,6 +27,9 @@
     <ClInclude Include="..\lib\D2DSquarePaper.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\D2DScrollbar.h">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2DUI_lib.cpp">
@@ -54,6 +57,9 @@
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\D2DMDISplitControls.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DScrollbar.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
   </ItemGroup>

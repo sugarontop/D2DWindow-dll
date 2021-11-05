@@ -6,7 +6,9 @@
 #define STAT_MODAL				0x2
 #define STAT_CAPTURED			0x4
 #define STAT_DEAD				0x8
-#define STAT_ENABLE				0x16
+#define STAT_ENABLE				0x10
+
+#define STAT_DEBUG				0x20
 
 #define STAT_DEFAULT		(STAT_VISIBLE|STAT_ENABLE)
 

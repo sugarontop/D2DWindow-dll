@@ -17,7 +17,7 @@ void D2DStatic::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const F
 	rc_ = rc;
 	editor_ = nullptr;
 
-	editable_  = true; // test
+	editable_  = false;
 }
 
 void D2DStatic::Draw(D2DContext& cxt)
@@ -70,8 +70,6 @@ HRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 
 		}
 	}
-
-
 
 	return r;
 }

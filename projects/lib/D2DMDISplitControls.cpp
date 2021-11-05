@@ -109,7 +109,7 @@ void D2DMDISplitFrame::CreateChildView(int typ)
 		float ww[2] = { split_line_x_, 1};
 		for(int idx=0; idx < 2; idx++ )
 		{	
-			auto r = std::make_shared<D2DMDISplitChild>(idx);
+			auto r = std::make_shared<D2DMDISplitChild>();
 
 			FRectF rc(0,0,ww[idx],1000); 
 
@@ -130,7 +130,7 @@ void D2DMDISplitFrame::CreateChildView(int typ)
 // /////////////////////////////////////////////////////////////////////////////////////
 
 
-D2DMDISplitChild::D2DMDISplitChild(short idx)
+D2DMDISplitChild::D2DMDISplitChild()
 {
 	vscroll_x_ = 0;
 	hscroll_x_ = 0;
@@ -183,8 +183,8 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
 				//rc_ = rc;
 
-				FRectF xrc(0,0,BARW,rc_.Height());
-				scv_->SetRect(xrc);
+				//FRectF xrc(0,0,BARW,rc_.Height());
+				//scv_->SetRect(xrc);
 
 				
 				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
@@ -196,8 +196,7 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				scv_->SetMaxSize( crc.Height());
 				sch_->SetMaxSize(crc.Width());				
 				sch_->SetSize(rc_.Size());
-				sch_->view_size_ = rc_.Width();
-				scv_->view_size_ = xrc.Height();
+				scv_->SetSize(rc_.Size());
 
 			}
 			else if ( wParam == 1 )
@@ -208,8 +207,8 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				rc_ = rc;
 
 				
-				FRectF xrc(0,0,BARW,rc_.Height());
-				scv_->SetRect(xrc);
+				//FRectF xrc(0,0,BARW,rc_.Height());
+				//scv_->SetRect(xrc);
 
 
 				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
@@ -221,8 +220,7 @@ HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				scv_->SetMaxSize( crc.Height());
 				sch_->SetMaxSize( crc.Width());
 				sch_->SetSize(rc_.Size());
-				sch_->view_size_ = rc.Width();
-				scv_->view_size_ = xrc.Height();
+				scv_->SetSize(rc_.Size());
 				
 			}
 			auto sz = rc_.Size();
@@ -249,7 +247,6 @@ void D2DMDISplitChild::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	rc_ = rc;
 
-	sz_ = rc_.Size();
 
 	FRectF rc1(0,0,BARW,100); //rc_.Height());
 	auto scV = std::make_shared<D2DScrollbar>();
@@ -266,173 +263,8 @@ void D2DMDISplitChild::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
 
 
 
-	scV->SetMaxSize(sz_.height);
-	scH->SetMaxSize(sz_.width);
+	scV->SetMaxSize(rc_.Height());
+	scH->SetMaxSize(rc_.Width());
 }
 
 // ///////////////////////////////////////////////////////////////////
-
-
-#define VIEW_SIZE (view_size_-other_scrollbar_size_)
-
-D2DScrollbar::D2DScrollbar()
-{
-	thumb_size_ = 0;
-
-}
-float D2DScrollbar::Thumheight() const
-{
-
-	return thumb_size_;
-
-}
-float D2DScrollbar::LogicalOffset() 
-{
-	if (max_size_ <= VIEW_SIZE )
-	{
-		thumb_size_ = VIEW_SIZE;
-		return offset_ * 1.0f;
-	}
-	else if (max_size_ < VIEW_SIZE * 2 )
-	{
-		thumb_size_ = (max_size_-VIEW_SIZE);
-		return offset_ * 1.0f;
-	}
-	else
-	{
-		thumb_size_ = 10;
-		return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
-	}
-
-
-
-}
-void D2DScrollbar::Draw(D2DContext& cxt)
-{
-	// throgh
-}
-void D2DScrollbar::Draw2(D2DContext& cxt)
-{
-	FRectF rc(0,0,sz_);
-	
-	D2DMatrix mat(*cxt);
-
-	mat_ = mat.PushTransform();
-	
-	if (bVertical_)
-	{
-		cxt.DFillRect(rc, theBlack );
-
-		FRectF thum(0,offset_, BARW, offset_+Thumheight());
-
-		cxt.DFillRect(thum, theGray3 );
-	}
-	else
-	{
-
-		cxt.DFillRect(rc, theBlack );
-
-		FRectF thum(offset_,0, offset_+Thumheight(), BARW);
-
-		cxt.DFillRect(thum, theGray3 );
-
-
-	}
-	mat.PopTransform();
-}
-HRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	HRESULT r = 0;
-
-	switch( message )
-	{
-		case WM_LBUTTONDOWN:
-		{
-			MouseParam& pm = *(MouseParam*)lParam;
-			auto pt = mat_.DPtoLP(pm.pt);
-			FRectF rc(0,0,sz_);
-
-			if (rc.PtInRect(pt))
-			{
-				APP.SetCapture(this);
-				r = 1;
-
-			}
-		}
-		break;
-		case WM_MOUSEMOVE:
-		{
-			if ( APP.GetCapture() == this )
-			{
-				if ( 0 == GetAsyncKeyState(VK_LBUTTON))
-				{
-					APP.ReleaseCapture();
-				}
-				else
-				{
-					MouseParam& pm = *(MouseParam*)lParam;
-					auto pt1 = mat_.DPtoLP(pm.pt);
-					auto pt2 = mat_.DPtoLP(pm.ptprv);
-	
-					offset_ = max(0.0f, (offset_ + (bVertical_ ? pt1.y-pt2.y : pt1.x-pt2.x )));
-
-					offset_ = min(VIEW_SIZE-thumb_size_, offset_);
-				}
-
-				b.bRedraw = true;
-				r = 1;
-			}
-		}
-		break;
-		case WM_LBUTTONUP:
-		{
-			if ( APP.GetCapture() == this )
-			{
-				APP.ReleaseCapture();
-
-
-				r = 1;
-			}
-		}
-		break;
-		/*case WM_SIZE :
-		{
-			FSizeF sz = *(FSizeF*)(lParam);
-
-			if ( this->bVertical_ )
-			{
-				view_size_ = sz.height;
-				sz_.height = sz.height;
-			}
-			else
-			{
-				auto f = sz.width;
-				view_size_ = sz.width;
-				sz_.width = sz.width;
-			}
-
-
-		}
-		break;*/
-
-
-	}
-
-	return 0;
-}
-
-void D2DScrollbar::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
-{
-	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
-	sz_ = rc.Size();
-
-	
-
-	bVertical_ = ( sz_.height > sz_.width );
-
-	view_size_ = (bVertical_ ? sz_.height : sz_.width );
-	max_size_ = view_size_ ;
-	thumb_size_ = 0;
-	other_scrollbar_size_ = BARW;
-	offset_ = 0;
-}

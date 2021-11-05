@@ -106,6 +106,14 @@ void CreateMDISplitControl(HWND hWnd)
 	UIHandle hcs4;
 	hcs4.p = right_side_controls;
 	hcs4.typ = 0;
-	D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,5000,2000),  STAT_DEFAULT, L"DEBUG1", 191);
+	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,5000,2000),  STAT_DEFAULT, L"DEBUG1", 191);
+
+
+
+	/*D2DControls* dc = (D2DControls*)dynamic_cast<D2DControls*>((D2DControls*)ha.p);
+	auto test = std::make_shared<D2DControls>();
+	test->CreateControl((D2DWindow*)hwin.p, dc, FRectF(315,115,FSizeF(600,600)),  STAT_DEBUG, L"DEBUG3", 192);
+	dc->Add(test);*/
+	
 
 }
