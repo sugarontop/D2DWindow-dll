@@ -3,7 +3,7 @@
 #include "D2DWindow.h" 
 #include "D2DSquarePaper.h"
 #include "D2DDropdownListbox.h"
-
+#include "D2DStatic.h"
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
@@ -21,30 +21,36 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 
 	cxt.DFillRect(rc_, D2RGB(105,200,100)); 
 
-	cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
+	mat.PushTransform();
 
-	float y = pitch_;
-	while( y < rc_.Size().height )
-	{
+		mat.Offset(rc_);
 
-		WCHAR cb[256];
-		wsprintf(cb,L"-->%d", (int)y);
+		cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
 
-		cxt.DText(FPointF(0,y), cb, theWhite);
-		cxt.DFillRect(FRectF(0,y,rc_.Size().width,y+1), theWhite);
+		float y = pitch_;
+		while( y < rc_.Size().height )
+		{
+
+			WCHAR cb[256];
+			wsprintf(cb,L"-->%d", (int)y);
+
+			cxt.DText(FPointF(0,y), cb, theWhite);
+			cxt.DFillRect(FRectF(0,y,rc_.Size().width,y+1), theWhite);
 
 
-		y+=pitch_;
-	}
+			y+=pitch_;
+		}
 
-	float x = pitch_;
-	while( x < rc_.Size().width )
-	{
+		float x = pitch_;
+		while( x < rc_.Size().width )
+		{
 
-		cxt.DFillRect(FRectF(x,0,x+1, rc_.Size().height), theWhite);
-		x += pitch_;
-	}
+			cxt.DFillRect(FRectF(x,0,x+1, rc_.Size().height), theWhite);
+			x += pitch_;
+		}
 
+
+	mat.PopTransform();
 
 	D2DControls::Draw(cxt);
 
@@ -122,7 +128,7 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 	return r;
 }
-#include "D2DStatic.h"
+
 void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);

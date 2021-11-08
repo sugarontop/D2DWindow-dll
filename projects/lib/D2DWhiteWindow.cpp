@@ -18,30 +18,37 @@ void D2DWhiteWindow::Draw(D2DContext& cxt)
 	D2DMatrix mat(*cxt);
 
 	mat_ = mat.PushTransform();
+	{
+		mat.Offset(rc_);
 
-	mat.Offset(rc_);
-
-	cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
-
-
-	mat.PushTransform();
-	mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
-
-	D2DControls::Draw(cxt);
-
-	mat.PopTransform();
-
-	mat.PushTransform();
-	mat.Offset(vscroll_x_, 0 );
-	scv_->Draw2(cxt);
-	mat.PopTransform();
-
-	mat.PushTransform();
-	mat.Offset(hscroll_x_, rc_.Height()-BARW );
-	sch_->Draw2(cxt);
-	mat.PopTransform();
+		cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
 
 
+		mat.PushTransform();
+		{
+			mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
+	
+			cxt.DFillRect(rc_.ZeroRect(), D2RGB(255,0,0) );
+	
+			D2DControls::Draw(cxt);
+		}
+		mat.PopTransform();
+
+		mat.PushTransform();
+		{
+			mat.Offset(vscroll_x_, 0 );
+			scv_->Draw2(cxt);
+		}
+		mat.PopTransform();
+
+		mat.PushTransform();
+		{
+			mat.Offset(hscroll_x_, rc_.Height()-BARW );
+			sch_->Draw2(cxt);
+		}
+		mat.PopTransform();
+
+	}
 	mat.PopTransform();
 }
 
@@ -57,22 +64,27 @@ HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 			//rc_.SetSize(sz);
 
-			if ( controls_.size() == 3 )
+			if ( controls_.size() >= 2 )
 			{
-
-				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
-
-
 				vscroll_x_ = rc_.right-BARW;
 				hscroll_x_ = rc_.left;
 
-				scv_->SetMaxSize( crc.Height());
-				sch_->SetMaxSize( crc.Width());
+				scv_->SetMaxSize( rc_.Size().height);
+				sch_->SetMaxSize( rc_.Size().width);
 				sch_->SetSize(rc_.Size());
 				scv_->SetSize(rc_.Size());
 
-				auto sz = rc_.Size();
-				this->controls_[2]->WndProc(b,WM_SIZE,0,(LPARAM)&sz);
+				if ( controls_.size() == 3 )
+				{
+					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
+					scv_->SetMaxSize( crc.Height());
+					sch_->SetMaxSize( crc.Width());
+
+
+
+					auto sz = rc_.Size();
+					this->controls_[2]->WndProc(b,WM_SIZE,0,(LPARAM)&sz);
+				}
 			}
 
 			return 0;
