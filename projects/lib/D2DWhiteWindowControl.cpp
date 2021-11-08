@@ -54,24 +54,31 @@ HRESULT D2DWhiteWindowControls::WndProc(AppBase& b, UINT message, WPARAM wParam,
 	return r;
 }
 
+
+
 void D2DWhiteWindowControls::Draw(D2DContext& cxt)
 { 	
 	D2DMatrix mat(*cxt);
 	mat.PushTransform();
+
+	D2DRectFilter f(cxt, rc_);
+
 	mat_ = mat.Offset(rc_);
 
-
 	FRectF rc = rc_.ZeroRect();
-
-	ComPTR<ID2D1SolidColorBrush> br,btTitle;
-	(*cxt)->CreateSolidColorBrush( D2RGB(230,239,245), &br );
+	
+	auto br = Brush(230,239,245);		
 	(*cxt)->DrawRectangle(rc, cxt.black_);
-	(*cxt)->FillRectangle(rc, br);
-
+	(*cxt)->FillRectangle(rc, br);	
+	
 	rc.SetHeight(MovableWithMouse::TitleBarHeight);
-	(*cxt)->CreateSolidColorBrush(D2RGBA(211, 239, 245, 255), &btTitle);
+	auto btTitle = Brush(21, 23, 204);		
 	(*cxt)->FillRectangle(rc, btTitle);
 
+	mat.Offset(0,rc.Height());
+
+
+	
 	InnerDraw(cxt);
 
 	mat.PopTransform();

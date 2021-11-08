@@ -38,7 +38,7 @@ class D2DContext
 		void DText(const D2D_POINT_2F& pt, LPCWSTR str, ColorF clr);
 
 		bool CreateTextLayout(LPCWSTR str, D2D1_SIZE_F sz, IDWriteTextLayout** ret );
-
+		bool CreateBrush(ColorF clr,  ID2D1SolidColorBrush** pbr);
 
 		ComPTR<ID2D1SolidColorBrush> black_;
 		ComPTR<ID2D1SolidColorBrush> white_;

@@ -326,7 +326,7 @@ class FRectF : public D2D1_RECT_F
 
 		FRectF ZeroRect() const
 		{
-			return FRectF( 0,0,right-left,bottom-top );
+			return FRectF( 0.0f,0.0f,right-left,bottom-top );
 		}
 		FPointF LeftTop() const
 		{

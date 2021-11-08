@@ -172,6 +172,12 @@ void D2DContext::SwapChain()
 	dxgiSwapChain_->Present(1, 0);
 }
 
+bool D2DContext::CreateBrush(ColorF clr, ID2D1SolidColorBrush** pbr)
+{	
+	return (S_OK == target_->CreateSolidColorBrush(clr, pbr));
+
+}
+
 void D2DContext::DrawBlack(float x, float y, float w, float h)
 {
 	D2D1_RECT_F rc={x,y,x+w,y+h};

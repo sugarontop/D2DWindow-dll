@@ -110,4 +110,11 @@ protected :
 	FRectF rc_;
 
 };
+
+
+ComPTR<ID2D1SolidColorBrush> CreateBrush1(D2DContext& cxt, byte r,byte g,byte b);
+
+#define Brush(r,g,b) CreateBrush1(cxt, r,g,b);
+
+
 };

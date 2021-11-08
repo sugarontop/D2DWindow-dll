@@ -104,6 +104,8 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				if ( x == 1 )
 					scale_ = 0.8f;
 				if ( x == 2 )
+					scale_ = 0.5f;
+				if ( x == 3 )
 					scale_ = 1.2f;
 				
 
@@ -172,7 +174,8 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 		ls->AddItem(0,L"100");
 		ls->AddItem(1,L"80");
-		ls->AddItem(2,L"120");
+		ls->AddItem(2,L"50");
+		ls->AddItem(3,L"120");
 
 		ls->xSetSelect(0);
 		

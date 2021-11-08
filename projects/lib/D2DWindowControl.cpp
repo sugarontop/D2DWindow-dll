@@ -300,3 +300,15 @@ std::shared_ptr<D2DControl> D2DControls::Detach(D2DControl* target)
 
 	return NULL;
 }
+
+
+// ////////////////////////////////////////////////
+
+ComPTR<ID2D1SolidColorBrush> V6::CreateBrush1(D2DContext& cxt, byte r,byte g,byte b)
+{
+	ComPTR<ID2D1SolidColorBrush> br;
+	cxt.CreateBrush(D2RGB(r,g,b), &br);	
+	return br;
+}
+
+

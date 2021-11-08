@@ -32,7 +32,7 @@ void CreateMDIControl(HWND hWnd)
 	RECT rc1;
 	GetClientRect(hWnd, &rc1);
 
-	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0,0,rc1.right,rc1.bottom),  STAT_VISIBLE | STAT_ENABLE, L"MDIFrame", 110);
+	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0.0f,0.0f,(float)rc1.right,(float)rc1.bottom),  STAT_VISIBLE | STAT_ENABLE, L"MDIFrame", 110);
 	root_controls->Add(frame);
 
 
@@ -69,7 +69,8 @@ void CreateMDIControl(HWND hWnd)
 //#include "D2DSquarePaper.h" 
 
 
-
+#include "D2DWhiteWindowControl.h"
+#include "D2DGrid.h"
 
 void CreateMDISplitControl(HWND hWnd)
 {
@@ -84,7 +85,7 @@ void CreateMDISplitControl(HWND hWnd)
 	RECT rc1;
 	GetClientRect(hWnd, &rc1);
 
-	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0,0,rc1.right,rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
+	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0.0f,0.0f,(float)rc1.right,(float)rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
 	root_controls->Add(frame);
 	
 	frame->CreateChildView(0);
@@ -106,20 +107,24 @@ void CreateMDISplitControl(HWND hWnd)
 	UIHandle hcs4;
 	hcs4.p = right_side_controls;
 	hcs4.typ = 0;
-	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,5000,2000),  STAT_DEFAULT, L"DEBUG1", 191);
+	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"DEBUG1", 191);
 
-
-
-	/*D2DControls* dc = (D2DControls*)dynamic_cast<D2DControls*>((D2DControls*)ha.p);
-	auto test = std::make_shared<D2DControls>();
-	test->CreateControl((D2DWindow*)hwin.p, dc, FRectF(315,115,FSizeF(600,600)),  STAT_DEBUG, L"DEBUG3", 192);
-	dc->Add(test);*/
 	
 	//auto ha2 = D2DCreateWhiteWindow(hwin,ha, FRectF(0,0, FSizeF(900,900)),  STAT_DEFAULT, L"AAAAA", 192);
 
-	auto ha1 = D2DCreateSquarePaper(hwin,ha, FRectF(140,140, FSizeF(300,300)),  STAT_DEFAULT, L"DEBUG10", 192);
+	//auto ha1 = D2DCreateSquarePaper(hwin,ha, FRectF(145,145, FSizeF(300,300)),  STAT_DEFAULT, L"DEBUG10", 192);
+
+	
+	auto win = std::make_shared<D2DWhiteWindowControls>();
+	D2DControls* ctrl = (D2DControls*)ha.p;
+	win->CreateControl((D2DWindow*)hwin.p, ctrl, FRectF(145,145, FSizeF(300,300)), STAT_DEFAULT, L"DEBUG10", 192);
+	ctrl->Add(win);
 
 	
 	
+	auto grid = std::make_shared<D2DGrid>();
+	grid->CreateControl((D2DWindow*)hwin.p, win.get(), FRectF(0,0, FSizeF(300,300)), STAT_DEFAULT, L"DEBUG10", 192);
+	win->Add(grid);
+
 
 }
