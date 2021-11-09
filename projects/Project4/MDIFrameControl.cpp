@@ -115,16 +115,20 @@ void CreateMDISplitControl(HWND hWnd)
 	//auto ha1 = D2DCreateSquarePaper(hwin,ha, FRectF(145,145, FSizeF(300,300)),  STAT_DEFAULT, L"DEBUG10", 192);
 
 	
-	auto win = std::make_shared<D2DWhiteWindowControls>();
-	D2DControls* ctrl = (D2DControls*)ha.p;
-	win->CreateControl((D2DWindow*)hwin.p, ctrl, FRectF(145,145, FSizeF(300,300)), STAT_DEFAULT, L"DEBUG10", 192);
-	ctrl->Add(win);
+
+	for(int i=0; i < 10; i++)
+	{
+
+		auto win = std::make_shared<D2DWhiteWindowControls>();
+		D2DControls* ctrl = (D2DControls*)ha.p;
+		win->CreateControl((D2DWindow*)hwin.p, ctrl, FRectF(150+i*10,150+i*10, FSizeF(600,300)), STAT_DEFAULT, L"DEBUG10", 192);
+		ctrl->Add(win);
 
 	
 	
-	auto grid = std::make_shared<D2DGrid>();
-	grid->CreateControl((D2DWindow*)hwin.p, win.get(), FRectF(0,0, FSizeF(300,300)), STAT_DEFAULT, L"DEBUG10", 192);
-	win->Add(grid);
+		auto grid = std::make_shared<D2DGrid>();
+		grid->CreateControl((D2DWindow*)hwin.p, win.get(), FRectF(0,0, FSizeF(600,300)), STAT_DEFAULT, L"DEBUG10", 192);
+		win->Add(grid);
 
-
+	}
 }

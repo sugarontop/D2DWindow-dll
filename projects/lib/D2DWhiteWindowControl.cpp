@@ -29,7 +29,10 @@ HRESULT D2DWhiteWindowControls::WndProc(AppBase& b, UINT message, WPARAM wParam,
 
 		auto pt = mat_.DPtoLP(mp->pt);
 		if ( IsMilitarybase(1, rc_.ZeroRect(), pt ))
+		{
 			mstat_ = STAT::MOVING;
+			this->parent_control_->SetFirstControl(this);
+		}
 	}
 
 
@@ -101,13 +104,13 @@ HRESULT MovableWithMouse::WndProc( AppBase& b, UINT message, WPARAM wParam, LPAR
 				APP.SetCapture(me);
 				r = 1;
 
-
+				
 			}
 			break;
 			case WM_MOUSEMOVE:
 			{
 				MouseParam* mp = (MouseParam*)lParam;
-				auto me = dynamic_cast<D2DControl*>(this);// ëΩèdåpè≥ÇµÇƒÇ¢ÇÈÇÕÇ∏
+				auto me = dynamic_cast<D2DControl*>(this);
 				_ASSERT(me);
 
 				if ( APP.GetCapture() == me )

@@ -101,36 +101,18 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	auto capture = APP.GetCapture();
 	HRESULT hr = 0;
 
-	if ( message == WM_D2D_ONCLOSE )
-	{
-		hr = 0;
-	}
-
 	if ( nullptr == capture )
 	{
-		int i = 0;
 		for(auto& it : controls_ )
 		{
-			auto kkkk = it.get();
 			if ( it->GetStat() & STAT_ENABLE )
 			{
 				hr = it->WndProc(b,message,wParam,lParam);
 				if ( hr != 0 )
 				{
-					/*if ( message == WM_LBUTTONDOWN )
-					{
-						auto x = (*it);
-
-						x->WndProc(b,message,wParam,lParam);
-
-						int a = 0;
-
-					}*/
-				
 					return hr;
 				}
 			}
-			i++;
 		}
 	}
 	else if ( capture != this )
