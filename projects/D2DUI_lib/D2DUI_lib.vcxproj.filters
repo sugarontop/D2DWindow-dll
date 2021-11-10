@@ -59,6 +59,9 @@
     <ClCompile Include="..\lib\D2DGrid.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\D2DTabControls.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -286,6 +286,10 @@ class FRectF : public D2D1_RECT_F
 		{
 			left = right = top = bottom = 0;		
 		}
+		bool Empty() const
+		{
+			return ( left==right && top == bottom );
+		}
 		FRectF& Offset( float cx, float cy )
 		{
 			left += cx;
@@ -813,7 +817,7 @@ class FRectU : public D2D1_RECT_U
 			D2DMatrix( const D2D1_MATRIX_3X2_F& m ):D2DMat(m),st_i_(0){}
 			//D2DMatrix( D2DContext* cxt ):g_(cxt->target_),st_i_(0){}
 			D2DMatrix( ID2D1RenderTarget* g ):g_(g),st_i_(0){ GetTransform(); }
-
+		protected :
 			void Push()
 			{
 				_ASSERT( st_i_ < 4 );
@@ -825,6 +829,7 @@ class FRectU : public D2D1_RECT_U
 				_ASSERT( st_i_ > 0 );
 				*this = stack_[--st_i_];
 			}
+		public :
 			D2DMatrix& operator = ( const D2D1_MATRIX_3X2_F& mat )
 			{
 				_11 = mat._11; _21 = mat._21;
@@ -833,11 +838,11 @@ class FRectU : public D2D1_RECT_U
 				return *this;
 			}
 
-			void PushTransformInCaputre(const D2DMat& mat )
+			/*void PushTransformInCaputre(const D2DMat& mat )
 			{				
 				g_->SetTransform( &mat );
 				PushTransform();				
-			}
+			}*/
 			D2DMatrix& GetTransform()
 			{			
 				g_->GetTransform( this );					

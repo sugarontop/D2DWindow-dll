@@ -184,6 +184,8 @@ void D2DGrid::Draw(D2DContext& cxt)
 	for(int ir = 0; ir < colr; ir++ )
 	{
 		mat.PushTransform();
+
+	
 		for(int ic = 0; ic < colc; ic++ )
 		{
 			FRectF rc(1,1,1+w,1+h);

@@ -71,6 +71,7 @@ void CreateMDIControl(HWND hWnd)
 
 #include "D2DWhiteWindowControl.h"
 #include "D2DGrid.h"
+#include "D2DTabControls.h"
 
 void CreateMDISplitControl(HWND hWnd)
 {
@@ -88,11 +89,11 @@ void CreateMDISplitControl(HWND hWnd)
 	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0.0f,0.0f,(float)rc1.right,(float)rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
 	root_controls->Add(frame);
 	
-	frame->CreateChildView(0);
+	frame->CreateChildView(1);
 
-	auto left_side_controls = frame->GetControl(L"LEFT");
+	auto left_side_controls =(D2DControls*) frame->GetControl(L"LEFT");
 
-	auto right_side_controls = frame->GetControl(L"RIGHT");
+	auto right_side_controls =(D2DControls*) frame->GetControl(L"RIGHT");
 
 
 	
@@ -104,18 +105,30 @@ void CreateMDISplitControl(HWND hWnd)
 
 
 
+
+
+
+#ifdef SAMPLE1
 	UIHandle hcs4;
 	hcs4.p = right_side_controls;
 	hcs4.typ = 0;
 	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"DEBUG1", 191);
+	auto ha2 = D2DCreateWhiteWindow(hwin,ha, FRectF(0,0, FSizeF(900,900)),  STAT_DEFAULT, L"AAAAA", 192);
+#endif
 
-	
-	//auto ha2 = D2DCreateWhiteWindow(hwin,ha, FRectF(0,0, FSizeF(900,900)),  STAT_DEFAULT, L"AAAAA", 192);
+#ifdef SAMPLE2
+		UIHandle hcs4;
+	hcs4.p = right_side_controls;
+	hcs4.typ = 0;
+	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"DEBUG1", 191);
+	auto ha1 = D2DCreateSquarePaper(hwin,ha, FRectF(145,145, FSizeF(300,300)),  STAT_DEFAULT, L"DEBUG10", 192);
+#endif
 
-	//auto ha1 = D2DCreateSquarePaper(hwin,ha, FRectF(145,145, FSizeF(300,300)),  STAT_DEFAULT, L"DEBUG10", 192);
-
-	
-
+#ifdef SAMPLE3
+	UIHandle hcs4;
+	hcs4.p = right_side_controls;
+	hcs4.typ = 0;
+	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"DEBUG1", 191);
 	for(int i=0; i < 10; i++)
 	{
 
@@ -131,4 +144,15 @@ void CreateMDISplitControl(HWND hWnd)
 		win->Add(grid);
 
 	}
+#endif
+	
+	auto tabs = std::make_shared<D2DTabControls>();
+	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"DEBUG1", 191);
+
+	right_side_controls->Add(tabs);
+
+
+
+
+
 }

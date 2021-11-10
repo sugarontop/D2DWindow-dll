@@ -92,6 +92,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>.\;..\lib;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -114,6 +115,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>.\;..\lib;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -171,6 +173,7 @@
     <ClCompile Include="..\lib\D2DMDIControls.cpp" />
     <ClCompile Include="..\lib\D2DMDISplitControls.cpp" />
     <ClCompile Include="..\lib\D2DScrollbar.cpp" />
+    <ClCompile Include="..\lib\D2DTabControls.cpp" />
     <ClCompile Include="..\lib\D2DWhiteControl.cpp" />
     <ClCompile Include="..\lib\D2DWhiteWindowControl.cpp" />
     <ClCompile Include="..\lib\D2DWindowControl.cpp" />

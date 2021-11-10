@@ -48,6 +48,13 @@ class D2DWindow
 		void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
 		int MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title);
+		FRectF GetClientRect() const
+		{
+			RECT rc;
+			::GetClientRect(hWnd_, &rc);
+			return FRectF( (float)rc.left, (float)rc.top, (float)rc.right, (float)rc.bottom );
+		}
+
 		HWND GetHwnd() const { return hWnd_; }
 
 		V6::D2DContextEx cxt;

@@ -140,14 +140,20 @@ HRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	return hr;
 }
 
+//FRectF D2DWindow::GetClientRect() const
+//{
+//	RECT rc;
+//	::GetClientRect(hWnd_, &rc);
+//	return FRectF( (float)rc.left, (float)rc.top, (float)rc.right, (float)rc.bottom );
+//}
+
 void D2DWindow::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch( message )
 	{
 		case WM_SIZE :
 		{
-			RECT rc;
-			::GetClientRect(b.hWnd, &rc);
+			auto rc = GetClientRect();
 
 			if (rc.left < rc.right && rc.top < rc.bottom)
 			{
