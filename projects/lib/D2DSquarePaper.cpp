@@ -21,14 +21,33 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 
 	cxt.DFillRect(rc_, D2RGB(105,200,100)); 
 
+
+	
+
+
+
 	mat.PushTransform();
 
 		mat.Offset(rc_);
 
+#ifdef _DEBUG
 		cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
+#endif
 
-		float y = pitch_;
-		while( y < rc_.Size().height )
+		FRectF rc(0,0,0,0);
+		rc = mat.LPtoDP(rc);
+
+		float y  = pitch_;
+
+		if ( rc.top < 0 )
+		{
+			while( y+pitch_ < -rc.top )
+				y += pitch_;
+		}
+
+		auto sz = rc_.Size();
+		
+		while( y < sz.height)
 		{
 
 			WCHAR cb[256];
@@ -42,7 +61,7 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 		}
 
 		float x = pitch_;
-		while( x < rc_.Size().width )
+		while( x < sz.width)
 		{
 
 			cxt.DFillRect(FRectF(x,0,x+1, rc_.Size().height), theWhite);

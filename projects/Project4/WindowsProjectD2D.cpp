@@ -179,8 +179,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     
         case WM_SIZE:
         {
-			FSizeF sz((float)LOWORD(lParam), (float)HIWORD(lParam));			
-            D2DForceWndProc(hwin, app, message, 0, (LPARAM)&sz);
+			FSizeF sz((float)LOWORD(lParam), (float)HIWORD(lParam));            
+			//D2DForceWndProc(hwin, app, message, 0, (LPARAM)&sz);
+
+			FRectF rc(0,0,sz);
+			D2DForceWndProc(hwin, app, message, 0, (LPARAM)&rc);
+
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;

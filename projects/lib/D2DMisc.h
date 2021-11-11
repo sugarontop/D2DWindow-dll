@@ -382,6 +382,11 @@ class FRectF : public D2D1_RECT_F
 		{
 			right = left + cx;
 		}
+		void SetWH( const FRectF& rc )
+		{
+			right = left + (rc.right-rc.left);
+			bottom = top + (rc.bottom-rc.top);
+		}
 		FSizeF GetSize() const
 		{
 			return FSizeF( right-left, bottom-top );

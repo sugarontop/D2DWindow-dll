@@ -96,11 +96,20 @@ void CreateMDISplitControl(HWND hWnd)
 	auto right_side_controls =(D2DControls*) frame->GetControl(L"RIGHT");
 
 
-	
+	UIHandle hcs4;
+	hcs4.p = left_side_controls;
+	hcs4.typ = 0;
 
-	UIHandle hcs3;
-	hcs3.p = left_side_controls;
-	hcs3.typ = 0;
+	//auto dws = std::make_shared<D2DControls_with_Scrollbar>();
+	//dws->CreateControl((D2DWindow*)hwin.p,left_side_controls, FRectF(0,0,300,1000),  STAT_DEFAULT, L"aaa", 180);
+	//left_side_controls->Add(dws);
+
+	auto hcs3 = D2DCreateEmptyControls(hwin,hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"aaa", 180);
+
+
+	//UIHandle hcs3;
+	//hcs3.p = dws.get();
+	//hcs3.typ = 0;
 	D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG", 190);
 
 

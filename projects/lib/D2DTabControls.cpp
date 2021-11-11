@@ -23,7 +23,6 @@ void D2DTabControls::Draw(D2DContext& cxt)
 
 	controls_[tab_idx_]->Draw(cxt);
 
-
 	mat.PopTransform();
 
 }
@@ -39,14 +38,19 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 	USHORT k = 0;
 	for(auto& it : tabrects_)
 	{
+		auto clr1 = D2RGB(220,220,220);
+		auto clr2 = D2RGB(0,0,0);
+
 		if ( k == tabidx )
-			cxt.DFillRect(it, D2RGB(220,220,220));
-		else
-			cxt.DFillRect(it, D2RGB(200,200,200));
+		{
+			clr1 = D2RGB(110,110,110);
+			clr2 = D2RGB(255,255,255);
 
+		}
 
+		cxt.DFillRect(it, clr1);
 		auto nm = this->controls_[k]->GetName();
-		cxt.DText(FPointF(it.left, it.top), nm.c_str(), D2RGB(0,0,0));
+		cxt.DText(FPointF(it.left+5, it.top), nm.c_str(), clr2);
 
 		k++;
 	}
@@ -103,6 +107,24 @@ HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			}
 		}
 		break;
+		case WM_D2D_SET_SIZE:
+		{
+			FRectF rc = *(FRectF*)lParam;
+			
+			rc_.SetWH(rc);
+			
+			rc.top += tabrects_[0].Height();
+			
+			rc = rc.ZeroRect();
+
+			
+			for(auto& it : controls_)
+				it->WndProc(b,WM_D2D_SET_SIZE,0,(LPARAM)&rc);
+
+			return 0;
+
+		}
+		break;
 
 	}
 
@@ -136,44 +158,36 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	tab_idx_ = 0;
 
 
+
+#ifdef _DEBUG
+
+
 	for(int i = 0; i < 3; i++ )
 	{
 		WCHAR nm[64];
-		wsprintf(nm,L"NAME=%d", i);
+		wsprintf(nm,L"NAME_%d", i);
 
-		if ( i != 1 )
-		{
-			auto page1 = std::make_shared<D2DControls>();
-			page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
-			Add(page1);
+		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
+		page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
+		Add(page1);
 
-		}
-		else 
-		{
-			auto page2 = std::make_shared<D2DControls_with_Scrollbar>();
-			page2->CreateControl(parent,this, FRectF(0,0,1000,1000), STAT_DEFAULT, nm );
-			Add(page2);
 
-			
+		if (i==1)
+		{			
 			UIHandleWin hwin={};
 
 			hwin.p=parent;
 
 			UIHandle hs={};
 
-			hs.p = page2.get();
+			hs.p = page1.get();
 
 			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
 		
-			
-			AppBase b;
-			page2->WndProc(b,WM_D2D_SET_SIZE,0,0);
 		}
 
 	}
 
-
-	
 
 
 	for(int i=0; i < 3; i++ )
@@ -183,6 +197,44 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		tabrects_.push_back(rc);
 
 	}
+#else
+	
+	for(int i = 0; i < 1; i++ )
+	{
+		WCHAR nm[64];
+		wsprintf(nm,L"NAME_%d", i);
+
+		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
+		page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
+		Add(page1);
+
+
+		if (i==1)
+		{			
+			UIHandleWin hwin={};
+
+			hwin.p=parent;
+
+			UIHandle hs={};
+
+			hs.p = page1.get();
+
+			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
+		
+		}
+
+	}
+	for(int i=0; i < 1; i++ )
+	{
+		FRectF rc(0,0,FSizeF(200,20));
+		rc.Offset(i*180,0);
+		tabrects_.push_back(rc);
+
+	}
+
+
+
+#endif
 
 }
 

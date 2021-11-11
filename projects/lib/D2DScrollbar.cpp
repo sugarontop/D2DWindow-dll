@@ -69,109 +69,96 @@ void D2DScrollbar::Draw(D2DContext& cxt)
 }
 void D2DScrollbar::Draw2(D2DContext& cxt)
 {
-	FRectF rc(0,0,GetSize());
-
-	D2DMatrix mat(*cxt);
-
-	mat_ = mat.PushTransform();
-
-	if (bVertical_)
+	if ( stat_ & STAT_VISIBLE )
 	{
-		cxt.DFillRect(rc, D2RGB(50,50,50) );
+	
+		FRectF rc(0,0,GetSize());
 
-		FRectF thum(0,offset_, BARW, offset_+Thumheight());
+		D2DMatrix mat(*cxt);
 
-		cxt.DFillRect(thum, theGray3 );
+		mat_ = mat.PushTransform();
+
+		if (bVertical_)
+		{
+			cxt.DFillRect(rc, D2RGB(50,50,50) );
+
+			FRectF thum(0,offset_, BARW, offset_+Thumheight());
+
+			cxt.DFillRect(thum, theGray3 );
+		}
+		else
+		{
+
+			cxt.DFillRect(rc, D2RGB(50,50,50) );
+
+			FRectF thum(offset_,0, offset_+Thumheight(), BARW);
+
+			cxt.DFillRect(thum, theGray3 );
+
+
+		}
+		mat.PopTransform();
 	}
-	else
-	{
-
-		cxt.DFillRect(rc, D2RGB(50,50,50) );
-
-		FRectF thum(offset_,0, offset_+Thumheight(), BARW);
-
-		cxt.DFillRect(thum, theGray3 );
-
-
-	}
-	mat.PopTransform();
 }
 HRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HRESULT r = 0;
 
-	switch( message )
+	if ( stat_ & STAT_ENABLE )
 	{
-	case WM_LBUTTONDOWN:
-	{
-		MouseParam& pm = *(MouseParam*)lParam;
-		auto pt = mat_.DPtoLP(pm.pt);
-		FRectF rc(0,0,GetSize());
-
-		if (rc.PtInRect(pt))
+		switch( message )
 		{
-			APP.SetCapture(this);
-			r = 1;
-
-		}
-	}
-	break;
-	case WM_MOUSEMOVE:
-	{
-		if ( APP.GetCapture() == this )
-		{
-			if ( 0 == GetAsyncKeyState(VK_LBUTTON))
-			{
-				APP.ReleaseCapture();
-			}
-			else
+			case WM_LBUTTONDOWN:
 			{
 				MouseParam& pm = *(MouseParam*)lParam;
-				auto pt1 = mat_.DPtoLP(pm.pt);
-				auto pt2 = mat_.DPtoLP(pm.ptprv);
+				auto pt = mat_.DPtoLP(pm.pt);
+				FRectF rc(0,0,GetSize());
 
-				offset_ = max(0.0f, (offset_ + (bVertical_ ? pt1.y-pt2.y : pt1.x-pt2.x )));
+				if (rc.PtInRect(pt))
+				{
+					APP.SetCapture(this);
+					r = 1;
 
-				offset_ = min(VIEW_SIZE-thumb_size_, offset_);
+				}
 			}
+			break;
+			case WM_MOUSEMOVE:
+			{
+				if ( APP.GetCapture() == this )
+				{
+					if ( 0 == GetAsyncKeyState(VK_LBUTTON))
+					{
+						APP.ReleaseCapture();
+					}
+					else
+					{
+						MouseParam& pm = *(MouseParam*)lParam;
+						auto pt1 = mat_.DPtoLP(pm.pt);
+						auto pt2 = mat_.DPtoLP(pm.ptprv);
 
-			b.bRedraw = true;
-			r = 1;
+						offset_ = max(0.0f, (offset_ + (bVertical_ ? pt1.y-pt2.y : pt1.x-pt2.x )));
+
+						offset_ = min(VIEW_SIZE-thumb_size_, offset_);
+					}
+
+					b.bRedraw = true;
+					r = 1;
+				}
+			}
+			break;
+			case WM_LBUTTONUP:
+			{
+				if ( APP.GetCapture() == this )
+				{
+					APP.ReleaseCapture();
+
+
+					r = 1;
+				}
+			}
+			break;
+
 		}
-	}
-	break;
-	case WM_LBUTTONUP:
-	{
-		if ( APP.GetCapture() == this )
-		{
-			APP.ReleaseCapture();
-
-
-			r = 1;
-		}
-	}
-	break;
-	/*case WM_SIZE :
-	{
-	FSizeF sz = *(FSizeF*)(lParam);
-
-	if ( this->bVertical_ )
-	{
-	view_size_ = sz.height;
-	sz_.height = sz.height;
-	}
-	else
-	{
-	auto f = sz.width;
-	view_size_ = sz.width;
-	sz_.width = sz.width;
-	}
-
-
-	}
-	break;*/
-
-
 	}
 
 	return 0;

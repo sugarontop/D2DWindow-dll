@@ -25,6 +25,7 @@ DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin win, UIHandle ctrls , co
 DLLEXPORT UIHandle D2DCreateControls(UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle D2DMessageBox(UIHandleWin win,  const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message);
 DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
 DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);

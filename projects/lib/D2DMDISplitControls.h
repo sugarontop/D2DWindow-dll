@@ -5,8 +5,6 @@
 #include "D2DScrollbar.h"
 namespace V6 {
 
-	class D2DMDIChild;
-
 	class D2DMDISplitFrame : public D2DControls
 	{
 		friend class D2DMDISplitChild;
@@ -17,15 +15,12 @@ namespace V6 {
 			virtual int GetTypeid() const override { return TYP_MDISPLIT_CONTROLS; }
 			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
-			//std::shared_ptr<D2DControls> Add(int typ, float width, DWORD stat, LPCWSTR name, int id);
-
-			void CreateChildView(int typ);
+			void CreateChildView(int typ, float left_width=300.0f);
 
 
 			void SetTopMDIChild(short idx);
 
-			D2DMDISplitChild* GetChild(short idx) const;
-		
+	
 		protected:
 			std::map<short, FRectF> prvRect_;
 			short largest_idx_, active_idx_;
@@ -35,30 +30,10 @@ namespace V6 {
 			float split_line_x_;
 	};
 
-
-
-
-
 	class D2DMDISplitChild : public D2DControls
 	{
-		public:
-			D2DMDISplitChild();
-			
-			virtual void Draw(D2DContext& cxt) override;
-			virtual int GetTypeid() const override { return TYP_MDISPLIT_CONTROLS; }
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
-			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
-		
-		protected :
-			float vscroll_x_,hscroll_x_;
-			std::shared_ptr<D2DScrollbar> scv_, sch_;
-
-	};
-
-	class D2DMDISplitChildEx : public D2DControls
-	{
 	public:
-			D2DMDISplitChildEx();
+			D2DMDISplitChild();
 			
 			virtual void Draw(D2DContext& cxt) override;
 			virtual int GetTypeid() const override { return TYP_MDISPLIT_CONTROLS; }
