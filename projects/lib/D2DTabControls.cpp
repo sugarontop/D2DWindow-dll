@@ -139,6 +139,7 @@ HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 #include "..\D2DUI_1\D2D1UI_1.h"
 #include "D2DMDISplitControls.h"
+#include "..\Project4\yahoo.h"
 
 void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
@@ -183,7 +184,13 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 			hs.p = page1.get();
 
 			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
-		
+
+
+
+
+			yahoo_finance* yf = new yahoo_finance();
+			yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(100,100,FSizeF(100,100)), STAT_DEFAULT, NONAME );
+			((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
 		}
 
 	}

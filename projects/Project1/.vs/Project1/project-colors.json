@@ -20,7 +20,12 @@
       "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
       "DisplayName": "その他のファイル",
       "ColorIndex": -1
+    },
+    "64823fb2-d654-40de-af4a-fd37d32c8f58": {
+      "ProjectGuid": "64823fb2-d654-40de-af4a-fd37d32c8f58",
+      "DisplayName": "Project2",
+      "ColorIndex": 3
     }
   },
-  "NextColorIndex": 3
+  "NextColorIndex": 4
 }

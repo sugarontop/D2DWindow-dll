@@ -19,4 +19,5 @@ struct InternetInfo
 InternetInfo* CreateInternetInfo( );
 void DeleteInternetInfo(InternetInfo* p);
 
+// ::CreateThread(0,0,InetAsync, info_, 0, &dw);
 DWORD WINAPI InetAsync( LPVOID pInternetInfo );

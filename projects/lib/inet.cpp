@@ -150,10 +150,10 @@ DWORD WINAPI InetAsync( LPVOID p )
 
 	if ( cn->throwerror == 0 && cn->result == 200 )
 	{
-		CBstr clen;
+		CBstr clen;		
 		hr = req->getResponseHeader(CBstr(L"Content-Length"), &clen);		
 		if ( hr == S_OK )
-			cn->content_len = (int)clen;
+			cn->content_len = ((BSTR)clen!=nullptr ? (int)_wtoi(clen) : 0);
 		_ASSERT(hr == S_OK);
 		hr = req->getResponseHeader(CBstr(L"Content-Type"), &cn->content_type);
 		_ASSERT(hr == S_OK);
