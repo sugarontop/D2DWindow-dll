@@ -189,6 +189,10 @@ DWORD WINAPI InetAsync( LPVOID p )
 		}
 	}
 
+
+	if (cn->complete)
+		cn->complete(cn);
+
 	if ( req )
 		req->Release();
 

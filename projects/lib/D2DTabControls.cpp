@@ -60,6 +60,14 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 	return tab_height;
 }
 
+D2DControl* D2DTabControls::GetControlFromIdx(USHORT idx)
+{
+	if ( idx < (USHORT)controls_.size())
+		return this->controls_[idx].get();
+
+	return nullptr;
+}
+
 HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HRESULT r = 0;
@@ -111,12 +119,19 @@ HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		{
 			FRectF rc = *(FRectF*)lParam;
 			
-			rc_.SetWH(rc);
+			if ( size_fix_ )
+			{
+				rc = rc_.ZeroRect();
+				rc.top += tabrects_[0].Height();
+			}
+			else
+			{
+				rc_.SetWH(rc);
 			
-			rc.top += tabrects_[0].Height();
+				rc.top += tabrects_[0].Height();
 			
-			rc = rc.ZeroRect();
-
+				rc = rc.ZeroRect();
+			}
 			
 			for(auto& it : controls_)
 				it->WndProc(b,WM_D2D_SET_SIZE,0,(LPARAM)&rc);
@@ -157,12 +172,11 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 
 	tab_idx_ = 0;
+	size_fix_ = false;
 
 
-
-#ifdef _DEBUG
-
-
+if (name == L"test" )
+{
 	for(int i = 0; i < 3; i++ )
 	{
 		WCHAR nm[64];
@@ -189,7 +203,7 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 
 			yahoo_finance* yf = new yahoo_finance();
-			yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(100,100,FSizeF(100,100)), STAT_DEFAULT, NONAME );
+			yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(100,100,FSizeF(800,500)), STAT_DEFAULT, NONAME );
 			((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
 		}
 
@@ -204,7 +218,9 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		tabrects_.push_back(rc);
 
 	}
-#else
+}
+else {
+
 	
 	for(int i = 0; i < 1; i++ )
 	{
@@ -212,11 +228,11 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		wsprintf(nm,L"NAME_%d", i);
 
 		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
-		page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
+		page1->CreateControl(parent,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, nm );
 		Add(page1);
 
 
-		if (i==1)
+		/*if (i==1)
 		{			
 			UIHandleWin hwin={};
 
@@ -228,7 +244,7 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
 		
-		}
+		}*/
 
 	}
 	for(int i=0; i < 1; i++ )
@@ -239,9 +255,9 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 	}
 
+}
 
 
-#endif
 
 }
 

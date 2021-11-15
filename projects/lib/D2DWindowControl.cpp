@@ -136,6 +136,9 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 }
 void D2DControls::Add(std::shared_ptr<D2DControl> p)
 {
+
+	_ASSERT(this== p->GetParentControls());
+
 	controls_.push_back( p);
 
 	auto nm = p->GetName();

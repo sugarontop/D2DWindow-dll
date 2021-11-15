@@ -12,6 +12,7 @@
 
 #define STAT_DEFAULT		(STAT_VISIBLE|STAT_ENABLE)
 
+
 struct UIHandle
 {
 	WORD typ;

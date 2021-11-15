@@ -6,6 +6,8 @@ struct InternetInfo
 	BSTR url;
 	BSTR postdata;
 
+	std::function<void(InternetInfo*)> complete;
+
 	// output
 	BSTR errormsg;
 	long throwerror;

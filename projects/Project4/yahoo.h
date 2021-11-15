@@ -31,9 +31,26 @@ namespace V6 {
 
 
 			bool ConvCsv(IStream* ism);
+			void StartDownload();
+			void InetComplete(InternetInfo* );
 	};
 
+	class yahoo_chart : public D2DControls
+	{
+		public :
+			yahoo_chart();
 
+			virtual void Draw(D2DContext& cxt) override;
+			virtual int GetTypeid() const override { return 0; }
+			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
+			virtual const FRectF& GetRect() const { return rc_; }
+			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
+
+			FRectF rc_;
+			yahoo_finance* finance_;
+
+	};
 
 
 };

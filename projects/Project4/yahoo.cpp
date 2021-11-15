@@ -6,9 +6,8 @@
 #include "AppBase.h"
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
-
-
 #include "yahoo.h"
+#include "D2DTabControls.h"
 
 using namespace V6;
 
@@ -22,11 +21,38 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
 	rc_ = rc;
+
+	/////////////////////////////////////////////////////////////////////////
+	auto tabs = std::make_shared<D2DTabControls>();
+	tabs->CreateControl(parent_window_, this, FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_tabcontrol", 191);
+
+	tabs->SizeFix();
+
+	this->Add(tabs);
+
+	auto tab1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
+
+	FSizeF sz = rc_.Size();
+
+	tab1->SetRect(FRectF(0,0,sz));
+
+	auto chart = std::make_shared<yahoo_chart>();
+	chart->CreateControl(parent_window_, tab1, FRectF(0,0,FSizeF(2222,1000)),  STAT_DEFAULT, L"yahoochart", 1910);
+	tab1->Add(chart);
+
+
+	//tab1->Add(xxxxx);
+
+	chart->finance_ = this;
+
+
+
 }
 	
 
 void yahoo_finance::Draw(D2DContext& cxt)
 {
+
 	D2DMatrix mat(*cxt);
 
 	mat_ = mat.PushTransform();
@@ -36,44 +62,65 @@ void yahoo_finance::Draw(D2DContext& cxt)
 
 	mat.Offset(rc_);
 
+	D2DControls::Draw(cxt);
 
-	if ( info_ )
-	{
-		WCHAR cb[64];
-		swprintf_s(cb, L"result=%d", info_->result);
-
-
-		if ( info_->result == 200 && y1_.empty() )
-		{
-			ConvCsv(info_->pstream);
-		}
-		if ( !y1_.empty())
-		{
-			for(auto y : y1_)
-			{
-				swprintf_s(cb,L"%f", y);
-
-				FRectF rc(0,0,200,20);
-				(*cxt)->DrawText(cb, wcslen(cb), cxt.tsf_text_format_, rc, cxt.black_);
-
-				mat.Offset(0,20.0f);
-
-			}
+	//if ( info_ )
+	//{
+	//	WCHAR cb[64];
+	//	swprintf_s(cb, L"result=%d", info_->result);
 
 
-		}
+	//	if ( info_->result == 200 && y1_.empty() )
+	//	{
+	//		ConvCsv(info_->pstream);
+	//	}
+	//	if ( !y1_.empty())
+	//	{
+	//		for(auto y : y1_)
+	//		{
+	//			swprintf_s(cb,L"%f", y);
+
+	//			FRectF rc(0,0,200,20);
+	//			(*cxt)->DrawText(cb, wcslen(cb), cxt.tsf_text_format_, rc, cxt.black_);
+
+	//			mat.Offset(0,20.0f);
+
+	//		}
 
 
-		//FRectF rc(10,10,200,200);
-		//(*cxt)->DrawText(cb, wcslen(cb), cxt.tsf_text_format_, rc, cxt.black_);
-
-
-	}
+	//	}
+	//}
 
 
 	mat.PopTransform();
 
 }
+
+void yahoo_finance::InetComplete(InternetInfo* )
+{
+	ConvCsv(info_->pstream);
+
+	this->parent_window_->cxt.Redraw();
+
+}
+void yahoo_finance::StartDownload()
+{
+	if ( info_ == nullptr )
+	{
+		info_ = CreateInternetInfo();
+
+		info_->bGet = true;
+		//info_->url = ::SysAllocString(L"https://query1.finance.yahoo.com/v7/finance/download/XLF?period1=1605085785&period2=1636621785&interval=1d&events=history&includeAdjustedClose=true");
+		info_->url = ::SysAllocString(L"https://192.168.10.65/zaimu/XLE.csv");
+					
+		info_->complete = std::bind(&yahoo_finance::InetComplete, this, _1);
+					
+		DWORD dw;
+		::CreateThread(0,0,InetAsync, info_, 0, &dw);
+	}					
+}
+
+
 HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	
@@ -83,38 +130,33 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 	{
 		case WM_LBUTTONDOWN:
 		{
-			//if ( info_ )
-			{
-				MouseParam pm = *(MouseParam*)lParam;
-
-				auto pt = mat_.DPtoLP(pm.pt);
-
-				if ( rc_.PtInRect(pt))
-				{
-					info_ = CreateInternetInfo();
-
-					info_->bGet = true;
-					//info_->url = ::SysAllocString(L"https://query1.finance.yahoo.com/v7/finance/download/XLF?period1=1605085785&period2=1636621785&interval=1d&events=history&includeAdjustedClose=true");
-					info_->url = ::SysAllocString(L"https://192.168.10.65/zaimu/XLE.csv");
-					
-					
-					DWORD dw;
-					::CreateThread(0,0,InetAsync, info_, 0, &dw);
-					
-					
-				}
-			}
 			
+		}
+		break;
+		case WM_D2D_SET_SIZE:
+		{
+			FRectF& rc = *(FRectF*)lParam;
+
+			
+			//rc_.SetSize(rc.Size());
+
+			int a = 0;
+
 		}
 		break;
 
 
 
 	}
+
+
+	if ( hr == 0 )
+		hr = D2DControls::WndProc(b,message,wParam,lParam);
+
 	return hr;
-
-
 }
+
+#pragma region SplitInet
 
 std::vector<std::string> Split( LPCSTR str, LPCSTR split )
 {
@@ -180,7 +222,7 @@ float myatof( LPCSTR str, poslen pos)
 
 	ss[pos.pos + pos.len]=0;
 
-	float a = atof(ss+pos.pos);
+	float a = (float)atof(ss+pos.pos);
 
 	ss[pos.pos + pos.len] = temp;
 	return a;
@@ -236,6 +278,104 @@ bool yahoo_finance::ConvCsv(IStream* ism)
 	y1_ = adj_values;
 
 	return true;
+
+
+}
+#pragma endregion
+/////////////////////////////////////////////////////////////////////////
+yahoo_chart::yahoo_chart()
+{
+
+}
+
+void yahoo_chart::Draw(D2DContext& cxt)
+{
+	D2DMatrix mat(*cxt);
+
+	mat_ = mat.PushTransform();
+
+	//cxt.DFillRect(rc_,theGray1);
+
+	mat.Offset(rc_);
+
+
+	WCHAR cb[256];
+	swprintf_s(cb,L" rc_ = (%f, %f, %f, %f)", rc_.left,rc_.top, rc_.right, rc_.bottom); 
+	cxt.DText(FPointF(0,50), cb, theBlack);
+
+
+
+
+	auto rc = parent_control_->GetRect();
+	swprintf_s(cb,L" rc = (%f, %f, %f, %f)", rc.left,rc.top, rc.right, rc.bottom); 
+	cxt.DText(FPointF(0,100), cb, theBlack);
+
+
+	auto info = finance_->info_;
+
+
+	if ( info )
+	{
+		if ( info->result == 200 )
+		{
+			auto ar = finance_->y1_;
+
+			FRectF rc;
+			float x = 0;
+			for(auto y : ar )
+			{
+				y = 500 - y*5;
+				rc = FRectF(x, y, x+3, y+3);
+				(*cxt)->FillRectangle(rc, cxt.black_);
+				x=rc.right;
+			}
+
+		}
+	}
+
+
+
+	mat.PopTransform();
+}
+HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	HRESULT hr = 0;
+
+	switch( message )
+	{
+		case WM_D2D_SET_SIZE:
+		{
+			FRectF& rc = *(FRectF*)lParam;
+		}
+		break;
+		case WM_LBUTTONDOWN :
+		{
+			MouseParam pm = *(MouseParam*)lParam;
+
+			FPointF pt = mat_.DPtoLP(pm.pt);
+
+			if ( rc_.PtInRect(pt))
+			{
+				finance_->StartDownload();
+
+
+				hr = 1;
+			}
+		}
+		break;
+
+
+	}
+
+	return hr;
+}
+void yahoo_chart::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
+{
+	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
+
+	rc_ = rc;
+
+
 
 
 }

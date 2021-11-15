@@ -156,7 +156,7 @@ void CreateMDISplitControl(HWND hWnd)
 #endif
 	
 	auto tabs = std::make_shared<D2DTabControls>();
-	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"DEBUG1", 191);
+	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"test", 191);
 
 	right_side_controls->Add(tabs);
 

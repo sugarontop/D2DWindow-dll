@@ -16,11 +16,13 @@ class D2DTabControls : public D2DControls
 		virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 
 		float DrawTab(D2DContext& cxt, USHORT tabidx);
+		D2DControl* GetControlFromIdx(USHORT idx);
+		void SizeFix(){ size_fix_ = true;};
 	protected :
 		
 		std::vector<FRectF> tabrects_;
 		USHORT tab_idx_;
-
+		bool size_fix_;
 		
 
 

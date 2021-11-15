@@ -197,6 +197,7 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 	cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
 #endif
 	
+	//_ASSERT(rc_.Width() != 0 && rc_.Height()!=0 );
 	D2DRectFilter f(cxt, rc_);
 
 	mat.PushTransform();
@@ -230,11 +231,13 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 		{
 			if (controls_.size() == 3)
 			{
-				if (wParam == 0)
+				if (wParam == 0 || wParam == 1)
 				{
 					FRectF& rc = *(FRectF*)(lParam);
 
-					rc_.SetWH(rc);
+					
+					if ( wParam == 0 )
+						rc_.SetWH(rc);
 				
 					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
 
@@ -248,7 +251,10 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 					sch_->SetMaxSize(crc.Width());				
 					sch_->SetSize(rc_.Size());
 					scv_->SetSize(rc_.Size());
-				}
+
+					crc = rc_.ZeroRect();
+					this->controls_[2]->WndProc(b,message,1,(LPARAM)&crc);
+				}				
 			}
 
 			return 0;
