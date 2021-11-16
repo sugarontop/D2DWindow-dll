@@ -8,6 +8,11 @@
 #include "inet.h"
 namespace V6 {
 
+	struct Rousoku
+	{
+		float ymax,ymin;
+		float ystart,yend;
+	};
 
 
 	class yahoo_finance : public D2DControls
@@ -26,7 +31,7 @@ namespace V6 {
 			InternetInfo* info_;
 			FRectF rc_;
 
-			std::vector<float> y1_;
+			std::vector<Rousoku> y1_;
 			std::vector<std::string> dates_;
 
 

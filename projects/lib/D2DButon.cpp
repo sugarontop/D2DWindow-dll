@@ -69,7 +69,11 @@ HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 						d.sender.p = this;
 						d.sender.typ = TYP_BUTTON;
 
-						parent_window_->SendMessage( WM_NOTIFY, id_, (LPARAM)&d );
+
+						ret = GetParentControls()->SendMesage(WM_NOTIFY, id_, (LPARAM)&d );
+
+						if ( ret == 0 )
+							parent_window_->SendMessage( WM_NOTIFY, id_, (LPARAM)&d );
 
 					}
 
@@ -190,10 +194,10 @@ HRESULT InnerMessageBox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 
 int D2DWindow::MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title)
 {
-	auto msgbox = std::shared_ptr<InnerMessageBox>(new InnerMessageBox());
+	auto msgbox = std::make_shared<InnerMessageBox>();
+	
+	msgbox->CreateControl(this, top_control_.get(), rc, STAT_DEFAULT, L"msgbox" );
 
-	//FRectF rc(0,0,300,100);
-	msgbox->CreateControl(this, top_control_.get(), rc, STAT_VISIBLE, L"msgbox" );
 
 	top_control_->Add( msgbox );
 
@@ -203,4 +207,179 @@ int D2DWindow::MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title)
 	return 0;
 }
 
+// ///////////////////////////////////////////////////////////////////////////////////
 
+void InnerFloatingMenu::ModalShow(LPVOID sender,std::vector<MenuItem>& ar )
+{
+	APP.SetCapture(this);
+
+	items_ = ar;
+	floating_idx_ = -1;
+	sender_ = sender;
+}
+void InnerFloatingMenu::Draw(D2DContext& cxt)
+{
+	if ( IsVisible())
+	{
+		float cy = 0;
+		for(auto& it : items_ )
+			cy += (it.typ == 0 ? 20 : 10);
+		
+		FRectF xrc(rc_);
+		xrc.bottom = xrc.top + cy;
+		
+		(*cxt)->DrawRectangle( xrc, cxt.black_ );
+		(*cxt)->FillRectangle( xrc, cxt.white_ );
+
+		D2DMatrix mat(*cxt);
+
+		mat.PushTransform();
+		mat_ = mat.Offset(rc_);
+
+		FRectF rc(0,0, rc_.Width(), 20); 
+
+		int idx = 0;
+		itemrc_.resize(items_.size());
+
+		for(auto& it : items_ )
+		{
+			if ( it.typ == 0 )
+			{
+				if ( idx == floating_idx_ )
+					cxt.DFillRect(rc, D2RGBA(0,200,0,100));
+
+
+				(*cxt)->DrawText(it.str, wcslen(it.str), cxt.textformat_, rc, cxt.black_ );
+				itemrc_[idx] = rc;
+
+				idx++;
+				rc.Offset(0,20);
+
+				
+			}
+			else if ( it.typ == 1 )
+			{
+				float yline = (rc.top+rc.bottom)/2;
+				FRectF rc1(rc.left,yline,rc.Width(),yline+1);
+				(*cxt)->FillRectangle(rc1, cxt.black_ );
+				rc.Offset(0,10);
+			}
+		}
+		mat.PopTransform();
+	}
+
+}
+HRESULT InnerFloatingMenu::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
+{
+	switch( message )
+	{
+		case WM_D2D_CREATE :
+		{
+			return 1;
+		}
+		break;
+		case WM_KEYDOWN:
+		{
+			auto key = 0xff & wParam;
+
+			if ( key == VK_ESCAPE && APP.IsCapture(this) )
+			{
+				APP.ReleaseCapture();
+
+				DestroyControl();
+				return 1;
+			}
+		}
+		break;
+		case WM_MOUSEMOVE:
+		{
+			if ( APP.IsCapture(this) )
+			{
+				MouseParam mp = *(MouseParam*)lParam;
+
+				auto pt = mat_.DPtoLP(mp.pt);
+				int idx = 0;
+				for(auto& rc1 : itemrc_ )
+				{
+					if (rc1.PtInRect(pt))
+					{
+						
+						floating_idx_ = idx;
+						
+						break;
+					}
+
+					idx++;
+				}
+
+				b.bRedraw = true;
+
+				return 1;
+			}
+
+		}
+		break;
+		case WM_LBUTTONDOWN:
+		{
+			if ( APP.IsCapture(this) )
+			{
+				
+				MouseParam mp = *(MouseParam*)lParam;
+
+				auto pt = mat_.DPtoLP(mp.pt);
+				int idx = 0, floating_idx = -1;
+				for(auto& rc1 : itemrc_ )
+				{
+					if (rc1.PtInRect(pt))
+					{						
+						floating_idx = idx;						
+						break;
+					}
+					idx++;
+				}
+				APP.ReleaseCapture();
+				DestroyControl();
+
+
+				if ( floating_idx == floating_idx_ && floating_idx > -1)
+				{
+					D2DNMHDR d;
+					d.code = EVENT_PUSH;
+					d.sender.p = this;
+					d.sender.typ = TYP_BUTTON;
+					d.prm1 = items_[floating_idx_].id;
+					d.sender_parent = sender_;
+
+
+					auto ret = GetParentControls()->SendMesage(WM_NOTIFY, id_, (LPARAM)&d );
+
+					if ( ret == 0 )
+						parent_window_->SendMessage( WM_NOTIFY, id_, (LPARAM)&d );
+
+				}
+
+
+				return 1;
+			}
+
+		}
+		break;
+
+
+
+	}
+	return ( APP.IsCapture(this) ? 1 : 0 );
+}
+
+int D2DWindow::FloatingMenu(LPVOID sender, const FRectF& rc, std::vector<MenuItem>& items)
+{
+	auto FloatingMenu = std::make_shared<InnerFloatingMenu>();
+	
+	FloatingMenu->CreateControl(this, top_control_.get(), rc, STAT_DEFAULT, L"floatingmenu", ID_FLOATING_MENU );
+
+	top_control_->Add( FloatingMenu );
+
+	FloatingMenu->ModalShow(sender,items);
+
+	return 0;
+}

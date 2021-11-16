@@ -38,6 +38,8 @@ struct D2DNMHDR
 
 #define NONAME		(L"__NONAME")
 
+#define ID_FLOATING_MENU	-10
+
 
 #define TYP_NULL 0
 #define TYP_TEXTBOX 1

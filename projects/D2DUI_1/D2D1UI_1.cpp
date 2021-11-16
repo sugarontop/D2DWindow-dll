@@ -245,6 +245,21 @@ DLLEXPORT UIHandle D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWST
 	r.typ = TYP_NULL;
 	return r;
 }
+DLLEXPORT UIHandle D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& rc, LPVOID sender, MenuItem* items, int items_cnt)
+{	
+	std::vector<MenuItem> ar;
+
+	for(int i = 0; i < items_cnt; i++ )
+		ar.push_back(items[i]);
+
+	auto win = (D2DWindow*)hwin.p;
+	win->FloatingMenu(sender, FRectF(rc), ar );
+
+	UIHandle r;
+	r.p = 0;
+	r.typ = TYP_NULL;
+	return r;
+}
 DLLEXPORT UIHandle D2DCreateControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DControls();
@@ -349,6 +364,13 @@ DLLEXPORT UIHandle D2DGetCapture()
 	else if  (dynamic_cast<InnerMessageBox*>(p))
 	{
 		auto tx = dynamic_cast<InnerMessageBox*>(p);
+		r.p = tx;
+		r.typ = TYP_MESSAGEBOX;
+
+	}
+	else if  (dynamic_cast<InnerFloatingMenu*>(p))
+	{
+		auto tx = dynamic_cast<InnerFloatingMenu*>(p);
 		r.p = tx;
 		r.typ = TYP_MESSAGEBOX;
 

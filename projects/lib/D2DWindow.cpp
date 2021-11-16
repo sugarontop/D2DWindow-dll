@@ -8,6 +8,7 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
+//int D2DWindow::MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title) <-- D2Dbutton.cpp
 
 D2DWindow::D2DWindow()
 {
@@ -79,12 +80,14 @@ HRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			lParam = (LPARAM)&mp;
 		break;
 		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
 			mp.pt = FPointF(lParam);
 			mp.ptprv = mp.pt;
 			b.bRedraw = true;
 			lParam = (LPARAM)&mp;
 		break;
 		case WM_LBUTTONUP:
+		case WM_RBUTTONUP:
 			mp.pt = FPointF(lParam);
 			mp.ptprv = mp.pt;
 			b.bRedraw = true;

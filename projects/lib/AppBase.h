@@ -19,3 +19,10 @@ struct AppBase
 	}
 
 };
+
+struct MenuItem
+{
+	int id;
+	int typ;
+	LPCWSTR str;
+};

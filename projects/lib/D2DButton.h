@@ -55,4 +55,29 @@ namespace V6
 		wstring msg_,title_;
 
 	};
+
+	class InnerFloatingMenu : public D2DControl
+	{
+	public :
+		InnerFloatingMenu(){}
+
+		virtual const FRectF& GetRect() const { return rc_; }
+		virtual void SetRect(const FRectF& rc) {rc_ = rc; }
+
+		void ModalShow(LPVOID sender, std::vector<MenuItem>& ar);
+
+		virtual void Draw(D2DContext& cxt) override;		
+
+		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+
+
+		std::vector<MenuItem> items_;
+
+	private:
+		FRectF rc_;
+		int floating_idx_;
+		std::vector<FRectF> itemrc_;
+		LPVOID sender_;
+
+	};
 };

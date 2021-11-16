@@ -15,10 +15,11 @@ struct TSFIsland
 	TfClientId TfClientId;
 	ComPTR<ITfThreadMgr2> pThreadMgr; 
 	ComPTR<ITfKeystrokeMgr> pKeystrokeMgr;
-	ComPTR<ITfDisplayAttributeMgr> DisplayAttributeMgr;
-	//TSF::CTextEditorCtrl* D2DTextbox::ctrl();
+	ComPTR<ITfDisplayAttributeMgr> DisplayAttributeMgr;	
 	void* ctrl;
 };
+
+
 
 class D2DWindow
 {
@@ -48,6 +49,9 @@ class D2DWindow
 		void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
 		int MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title);
+		int FloatingMenu(LPVOID sender,const FRectF& rc, std::vector<MenuItem>& items);
+
+
 		FRectF GetClientRect() const
 		{
 			RECT rc;
