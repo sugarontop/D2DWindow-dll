@@ -65,6 +65,9 @@
     <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\D2DWindow2.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

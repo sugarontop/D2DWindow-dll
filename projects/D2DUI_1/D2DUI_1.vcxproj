@@ -204,6 +204,7 @@
     <ClCompile Include="..\lib\D2DWhiteControl.cpp" />
     <ClCompile Include="..\lib\D2DWhiteWindow.cpp" />
     <ClCompile Include="..\lib\D2DWindow.cpp" />
+    <ClCompile Include="..\lib\D2DWindow2.cpp" />
     <ClCompile Include="..\lib\TextMemory.cpp" />
     <ClCompile Include="..\lib\tsf\D2DCharRect.cpp" />
     <ClCompile Include="..\lib\tsf\DisplayAttribute.cpp" />

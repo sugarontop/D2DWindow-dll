@@ -142,11 +142,19 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 					if ( idx == 2 )
 					{
+						std::map<std::wstring, D2DControl*> m;
 
 
+						parent_window_->SendMessage(WM_D2D_GET_CONTROL_NM,0,(LPARAM)&m);
+
+
+						auto aaa = m[L"aaa"];
+
+
+						hr = 1;
 					}
 
-					hr = 1;
+					
 				}
 			}
 

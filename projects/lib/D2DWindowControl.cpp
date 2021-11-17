@@ -6,16 +6,8 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
-std::map<std::wstring, D2DControl*> D2DControls::control_map_;
+//std::map<std::wstring, D2DControl*> D2DControls::control_map_;
 
-D2DControl::D2DControl()
-{
-
-}
-D2DControl::~D2DControl()
-{
-	
-}
 
 void D2DControl::CreateControl(D2DWindow* win, D2DControls* parent, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {

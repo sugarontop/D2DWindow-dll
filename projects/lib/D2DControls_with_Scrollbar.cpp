@@ -87,6 +87,15 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 			return 0;
 		}
 		break;
+		case WM_D2D_GET_CONTROL_NM:
+		{
+			
+			std::map<std::wstring, D2DControl*>& m = *(std::map<std::wstring, D2DControl*>*)lParam;
+
+			m[GetName()] = this;
+
+		}
+		break;
 
 	}
 
@@ -127,3 +136,9 @@ void D2DControls_with_Scrollbar::CreateControl(D2DWindow* parent, D2DControls* p
 	scH->SetMaxSize(rc_.Width());
 }
 
+std::shared_ptr<D2DControl> D2DControls_with_Scrollbar::GetMainControls()
+{
+	_ASSERT( controls_.size() == 3);
+
+	return controls_[2];
+}

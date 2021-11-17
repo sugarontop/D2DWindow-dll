@@ -177,6 +177,7 @@
     <ClCompile Include="..\lib\D2DTabControls.cpp" />
     <ClCompile Include="..\lib\D2DWhiteControl.cpp" />
     <ClCompile Include="..\lib\D2DWhiteWindowControl.cpp" />
+    <ClCompile Include="..\lib\D2DWindow2.cpp" />
     <ClCompile Include="..\lib\D2DWindowControl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

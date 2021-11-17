@@ -13,8 +13,8 @@ class D2DControls;
 class D2DControl : public D2DCaptureObject
 {
 public:
-	D2DControl();
-	virtual ~D2DControl();
+	D2DControl(){};
+	virtual ~D2DControl(){};
 
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 
@@ -105,7 +105,7 @@ protected :
 	
 
 protected :
-	static std::map<std::wstring, D2DControl*> control_map_;
+	std::map<std::wstring, D2DControl*> control_map_;
 	std::vector<std::shared_ptr<D2DControl>> controls_;
 	FRectF rc_;
 

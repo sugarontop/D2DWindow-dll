@@ -18,6 +18,7 @@ extern UIHandleWin hwin;
 void CreateControl2(UIHandleWin hwin, UIHandle hcs ); // tab3.cpp
 void CreateControlTest(UIHandleWin hwin, UIHandle hcs );
 
+
 void CreateMDIControl(HWND hWnd)
 {
 
