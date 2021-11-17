@@ -10,6 +10,7 @@
 #include "D2DSquarePaper.h"
 #include "D2DWhiteWindow.h"
 #include "D2DMDISplitControls.h"
+#include "D2DControls_with_Scrollbar.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 //UIHandle Renewal_UIHandle(  UIHandle h );

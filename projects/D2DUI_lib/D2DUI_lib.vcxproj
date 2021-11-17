@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClCompile Include="..\lib\D2DApp.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
+    <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp" />
     <ClCompile Include="..\lib\D2DGrid.cpp" />
     <ClCompile Include="..\lib\D2DMDIControls.cpp" />
     <ClCompile Include="..\lib\D2DMDISplitControls.cpp" />

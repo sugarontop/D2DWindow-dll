@@ -92,8 +92,8 @@ void yahoo_finance::StartDownload()
 		info_ = CreateInternetInfo();
 
 		info_->bGet = true;
-		info_->url = ::SysAllocString(L"https://query1.finance.yahoo.com/v7/finance/download/AAPL?period1=1605085785&period2=1636621785&interval=1d&events=history&includeAdjustedClose=true");
-		//info_->url = ::SysAllocString(L"https://192.168.10.65/zaimu/XLE.csv");
+		//info_->url = ::SysAllocString(L"https://query1.finance.yahoo.com/v7/finance/download/AAPL?period1=1605085785&period2=1636621785&interval=1d&events=history&includeAdjustedClose=true");
+		info_->url = ::SysAllocString(L"https://192.168.10.65/zaimu/XLE.csv");
 					
 		info_->complete = std::bind(&yahoo_finance::InetComplete, this, _1);
 					
@@ -126,7 +126,33 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 		}
 		break;
+		case WM_NOTIFY:
+		{
+			D2DNMHDR h;
+			if ( wParam == ID_FLOATING_MENU )
+			{
+				h = *(D2DNMHDR*)lParam;
 
+				auto k = (D2DControl*)h.sender_parent;
+
+				if ( k->GetID() == 1910 )
+				{
+				
+					int idx = h.prm1;
+
+					if ( idx == 2 )
+					{
+
+
+					}
+
+					hr = 1;
+				}
+			}
+
+
+		}
+		break;
 
 
 	}

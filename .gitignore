@@ -2,8 +2,8 @@
 # この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
 ################################################################################
 
-/projects/Project1/.vs/Project1/v16/.suo
-/projects/Project1/.vs/Project1/v16
+/projects/Project1/.vs/Project1/v17/.suo
+/projects/Project1/.vs/Project1/v17
 
 # Compiled Object files
 *.slo
@@ -45,6 +45,6 @@
 *.exp
 *.out
 *.app
-/.vs/d2dwindow-dll/v16/Browse.VC.db-shm
-/.vs/d2dwindow-dll/v16/Browse.VC.db-wal
-/.vs/d2dwindow-dll/v16/Browse.VC.opendb
+/.vs/d2dwindow-dll/v17/Browse.VC.db-shm
+/.vs/d2dwindow-dll/v17/Browse.VC.db-wal
+/.vs/d2dwindow-dll/v17/Browse.VC.opendb

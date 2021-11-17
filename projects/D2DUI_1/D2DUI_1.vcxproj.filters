@@ -33,9 +33,6 @@
     <ClInclude Include="..\lib\D2DMessage.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
-    <ClInclude Include="AppBase.h">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClInclude>
     <ClInclude Include="..\lib\D2DDropdownListbox.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
@@ -52,6 +49,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="..\lib\D2DWhiteWindow.h">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\AppBase.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
   </ItemGroup>

@@ -179,6 +179,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\AppBase.h" />
     <ClInclude Include="..\lib\D2DButton.h" />
     <ClInclude Include="..\lib\D2DDropdownListbox.h" />
     <ClInclude Include="..\lib\D2DInterface.h" />
@@ -186,7 +187,6 @@
     <ClInclude Include="..\lib\D2DSimpleListbox.h" />
     <ClInclude Include="..\lib\D2DWhiteControl.h" />
     <ClInclude Include="..\lib\D2DWhiteWindow.h" />
-    <ClInclude Include="AppBase.h" />
     <ClInclude Include="D2D1UI_1.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
