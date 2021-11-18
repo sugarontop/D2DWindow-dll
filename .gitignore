@@ -41,6 +41,9 @@
 *.tli
 *.tlog
 
+#folder
+Generated Files
+
 # Executables
 *.exp
 *.out
