@@ -119,7 +119,7 @@ void D2DMDISplitFrame::CreateChildView(int typ, float left_width)
 
 			r->CreateControl(GetParent(), this, rc, STAT_DEFAULT, nm[idx], idx);
 
-			this->control_map_[nm[idx]]= r.get();
+			parent_window_->name_map_[nm[idx]]= r.get();
 			controls_.push_back(r);
 	
 		}

@@ -55,7 +55,7 @@ public:
 	D2DWindow* GetParent() const { return parent_window_; }
 	D2DControls* GetParentControls() const { return parent_control_; }
 	//virtual HRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
-	
+	void SetNewParent(D2DControls* newparent);
 protected:
 	D2DWindow* parent_window_;
 	D2DControls* parent_control_;
@@ -105,7 +105,7 @@ protected :
 	
 
 protected :
-	std::map<std::wstring, D2DControl*> control_map_;
+	//std::map<std::wstring, D2DControl*> control_map_;
 	std::vector<std::shared_ptr<D2DControl>> controls_;
 	FRectF rc_;
 

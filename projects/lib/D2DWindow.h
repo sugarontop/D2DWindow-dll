@@ -65,6 +65,7 @@ class D2DWindow
 		TSFIsland tsf;
 		
 		std::shared_ptr<D2DControls> top_control_;
+		std::map<std::wstring, D2DControl*> name_map_;
 	protected :
 		HRESULT InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 		bool TSFInit(HWND hWnd);
@@ -75,6 +76,7 @@ class D2DWindow
 		
 		std::stack<D2DControl*> capture_obj_;
 		std::vector< std::shared_ptr<D2DControl>> death_objects_;
+		
 
 		struct MSG
 		{	

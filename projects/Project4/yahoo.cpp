@@ -8,6 +8,7 @@
 #include "D2DMessage.h"
 #include "yahoo.h"
 #include "D2DTabControls.h"
+#include "D2DControls_with_Scrollbar.h"
 
 using namespace V6;
 
@@ -142,13 +143,15 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 					if ( idx == 2 )
 					{
-						std::map<std::wstring, D2DControl*> m;
+						auto ptr = parent_window_->name_map_[L"aaa"];
+
+						auto ptr1 = dynamic_cast<D2DControls_with_Scrollbar*>(ptr);
+
+						auto ncontrols = ptr1->GetMainControls();
 
 
-						parent_window_->SendMessage(WM_D2D_GET_CONTROL_NM,0,(LPARAM)&m);
+						this->SetNewParent(ncontrols);
 
-
-						auto aaa = m[L"aaa"];
 
 
 						hr = 1;
@@ -361,7 +364,7 @@ void yahoo_chart::Draw(D2DContext& cxt)
 			GetMaxMin(ar,&fmax,&fmin);
 
 			float fd = fmax-fmin;
-			float step = 0.8*h / fd;
+			float step = 0.8f*h / fd;
 
 			FRectF rc;
 			float x = 0;

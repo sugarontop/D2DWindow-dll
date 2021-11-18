@@ -15,7 +15,7 @@ namespace V6 {
 			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 
-			std::shared_ptr<D2DControl> GetMainControls();
+			D2DControls* GetMainControls();
 
 		protected :
 			float vscroll_x_,hscroll_x_;

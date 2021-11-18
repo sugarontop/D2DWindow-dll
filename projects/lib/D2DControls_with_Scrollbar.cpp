@@ -136,9 +136,9 @@ void D2DControls_with_Scrollbar::CreateControl(D2DWindow* parent, D2DControls* p
 	scH->SetMaxSize(rc_.Width());
 }
 
-std::shared_ptr<D2DControl> D2DControls_with_Scrollbar::GetMainControls()
+D2DControls* D2DControls_with_Scrollbar::GetMainControls()
 {
 	_ASSERT( controls_.size() == 3);
 
-	return controls_[2];
+	return dynamic_cast<D2DControls*>(controls_[2].get());
 }
