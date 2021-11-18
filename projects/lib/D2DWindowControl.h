@@ -104,8 +104,7 @@ protected :
 
 	
 
-protected :
-	//std::map<std::wstring, D2DControl*> control_map_;
+protected :	
 	std::vector<std::shared_ptr<D2DControl>> controls_;
 	FRectF rc_;
 

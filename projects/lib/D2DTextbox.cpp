@@ -312,6 +312,20 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 				}
 			}
 			break;
+			case WM_D2D_SET_COLOR:
+			{
+				ColorF clr = *(ColorF*)lp;
+
+				if ( wp == 0 )
+					back_ = clr;
+				else if ( wp == 0 )
+					fore_ = clr;
+
+				bl = false;
+				ret = 1;
+
+			}
+			break;
 
 		}
 

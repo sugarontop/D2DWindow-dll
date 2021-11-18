@@ -69,7 +69,7 @@ void yahoo_finance::Draw(D2DContext& cxt)
 
 	cxt.DFillRect(rc_,theWhite);
 
-	mat.Offset(rc_);
+	//mat.Offset(rc_);
 
 	D2DControls::Draw(cxt);
 
@@ -153,6 +153,27 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 						this->SetNewParent(ncontrols);
 
 
+
+						hr = 1;
+					}
+					else if ( idx == 3 )
+					{
+						auto ptr = parent_window_->name_map_[L"MySquarePaper"];
+
+						auto ctrls = dynamic_cast<D2DControls*>(ptr);
+
+						auto moveobj = std::make_shared<D2DControls_with_Move>();
+												
+						moveobj->CreateControl(parent_window_, ctrls, rc_, STAT_DEFAULT, NONAME);
+
+						ctrls->Add(moveobj);
+
+						moveobj->prv_controls_ = this->GetParentControls();
+						moveobj->target_ = this;
+						
+						this->SetNewParent(moveobj.get());
+
+						
 
 						hr = 1;
 					}

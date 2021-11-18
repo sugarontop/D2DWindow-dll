@@ -29,7 +29,7 @@ namespace V6 {
 	
 
 			InternetInfo* info_;
-			FRectF rc_;
+			//FRectF rc_;
 
 			std::vector<Rousoku> y1_;
 			std::vector<std::string> dates_;

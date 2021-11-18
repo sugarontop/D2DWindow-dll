@@ -5,11 +5,6 @@
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
-#define BOTTOM_BAR		25.0f
-#define INIT_SPLIT_LINE 300.0f
-
-
-
 
 #define VIEW_SIZE (view_size_-other_scrollbar_size_)
 
@@ -43,6 +38,11 @@ float D2DScrollbar::LogicalOffset()
 		thumb_size_ = (max_size_-VIEW_SIZE);
 		return offset_ * 1.0f;
 	}
+	else if (max_size_ < VIEW_SIZE * 3 )
+	{
+		thumb_size_ = 100;
+		return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
+	}
 	else
 	{
 		thumb_size_ = 10;
@@ -65,7 +65,7 @@ FSizeF D2DScrollbar::GetSize() const
 }
 void D2DScrollbar::Draw(D2DContext& cxt)
 {
-	// throgh
+	// through
 }
 void D2DScrollbar::Draw2(D2DContext& cxt)
 {

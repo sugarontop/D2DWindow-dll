@@ -87,15 +87,7 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 			return 0;
 		}
 		break;
-		case WM_D2D_GET_CONTROL_NM:
-		{
-			
-			std::map<std::wstring, D2DControl*>& m = *(std::map<std::wstring, D2DControl*>*)lParam;
-
-			m[GetName()] = this;
-
-		}
-		break;
+		
 
 	}
 
@@ -141,4 +133,119 @@ D2DControls* D2DControls_with_Scrollbar::GetMainControls()
 	_ASSERT( controls_.size() == 3);
 
 	return dynamic_cast<D2DControls*>(controls_[2].get());
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////
+
+void D2DControls_with_Move::Draw(D2DContext& cxt)
+{
+	D2DMatrix mat(*cxt);
+
+	mat_ = mat.PushTransform();
+	
+	//D2DRectFilter f(cxt, rc_);
+
+	FRectF rc = controls_[0]->GetRect();
+	mat.Offset(rc_.left-rc.left, rc_.top-rc.top);
+	
+	controls_[0]->Draw(cxt);
+
+	mat.PopTransform();
+	
+	//D2DControls::Draw(cxt);
+
+	mat.PushTransform();
+	
+
+	mat.Offset(rc_);
+	auto sz = rc_.Size();
+	
+	rc.SetRect(0,0,10,10); cxt.DFillRect(rc, ColorF::Red);
+	rc.SetRect(sz.width-10,0,FSizeF(10,10)); cxt.DFillRect(rc, ColorF::Red);
+	rc.SetRect(0,sz.height-10,FSizeF(10,10)); cxt.DFillRect(rc, ColorF::Red);
+	rc.SetRect(sz.width-10,sz.height-10,FSizeF(10,10)); cxt.DFillRect(rc, ColorF::Red);
+	mat.PopTransform();
+
+	
+}
+void D2DControls_with_Move::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
+{
+	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
+	rc_ = rc;
+
+}
+HRESULT D2DControls_with_Move::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	HRESULT r = 0;
+
+	switch( message )
+	{
+		case WM_LBUTTONDOWN:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+			if ( rc_.PtInRect(pt))
+			{
+				APP.SetCapture(this);
+
+				r = 1;
+			}
+			else if ( target_ )
+			{
+				target_->SetNewParent(prv_controls_);
+
+				target_->SetRect(rc_);
+				
+				target_ = nullptr;
+				prv_controls_ = nullptr;
+
+				
+
+				r = 1;
+
+				this->DestroyControl();
+
+			}
+		}
+		break;
+		case WM_MOUSEMOVE:
+		{
+			if ( APP.GetCapture() == this )
+			{
+				MouseParam& pm = *(MouseParam*)lParam;
+
+				auto pt = mat_.DPtoLP(pm.pt);
+				auto pt1 = mat_.DPtoLP(pm.ptprv);
+
+				auto offx = pt.x-pt1.x;
+				auto offy = pt.y-pt1.y;
+				rc_.Offset(offx,offy);
+
+				b.bRedraw = true;
+				r = 1;
+
+			}
+
+		}
+		break;
+		case WM_LBUTTONUP:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			if ( APP.GetCapture() == this )
+			{
+				APP.ReleaseCapture();
+
+
+				r = 1;
+			}
+		}		
+		break;
+	}
+
+
+	if ( r == 0 )
+		r = D2DControls::WndProc(b,message,wParam,lParam);
+
+	return r;
+
 }

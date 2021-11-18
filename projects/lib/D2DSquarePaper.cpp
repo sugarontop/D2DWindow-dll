@@ -18,13 +18,7 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 
 	mat.Scale(scale_,scale_);
 
-
-	cxt.DFillRect(rc_, D2RGB(105,200,100)); 
-
-
-	
-
-
+	cxt.DFillRect(rc_, backcolor_); 
 
 	mat.PushTransform();
 
@@ -54,7 +48,7 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 			wsprintf(cb,L"-->%d", (int)y);
 
 			cxt.DText(FPointF(0,y), cb, theWhite);
-			cxt.DFillRect(FRectF(0,y,rc_.Size().width,y+1), theWhite);
+			cxt.DFillRect(FRectF(0,y,rc_.Size().width,y+1), forecolor_);
 
 
 			y+=pitch_;
@@ -64,7 +58,7 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 		while( x < sz.width)
 		{
 
-			cxt.DFillRect(FRectF(x,0,x+1, rc_.Size().height), theWhite);
+			cxt.DFillRect(FRectF(x,0,x+1, rc_.Size().height), forecolor_);
 			x += pitch_;
 		}
 
@@ -130,12 +124,20 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 				r = 1;
 			}
+		}
+		break;
+		case WM_D2D_SET_COLOR:
+		{
+			if ( wParam == 0 )
+				backcolor_ = *(ColorF*)lParam;
+			else if ( wParam == 1 )
+				forecolor_ = *(ColorF*)lParam;
 
-
+			r = 1;
+			
 
 		}
 		break;
-
 
 
 		default :

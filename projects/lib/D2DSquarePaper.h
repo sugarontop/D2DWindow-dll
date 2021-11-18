@@ -13,7 +13,7 @@ class D2DSquarePaper : public D2DControls
 {
 	public :
 		
-		D2DSquarePaper(){}
+		D2DSquarePaper():backcolor_(D2RGB(105,200,100)),forecolor_(D2RGB(255,255,255)){}
 
 		virtual void Draw(D2DContext& cxt) override;
 		virtual int GetTypeid() const override { return TYP_CONTROLS; }
@@ -22,6 +22,7 @@ class D2DSquarePaper : public D2DControls
 	private :
 		float pitch_;
 		float scale_;
+		ColorF backcolor_,forecolor_;
 
 };
 

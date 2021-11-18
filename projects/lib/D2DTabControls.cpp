@@ -107,6 +107,7 @@ HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 		}
 		break;
+		case WM_MOUSEMOVE:
 		case WM_LBUTTONUP:
 		{
 			if ( APP.IsCapture(this))
@@ -145,8 +146,10 @@ HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	}
 
 	if ( r == 0 )
-		r = D2DControls::DefWndProc(b,message,wParam,lParam);
-
+	{
+		r = controls_[tab_idx_]->WndProc(b,message,wParam,lParam);
+		//r = D2DControls::DefWndProc(b,message,wParam,lParam);
+	}
 
 
 	return r;
@@ -198,7 +201,7 @@ if (name == L"test" )
 
 			hs.p = page1.get();
 
-			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
+			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"MySquarePaper",-1);
 
 
 
@@ -258,8 +261,28 @@ else {
 
 }
 
+}
 
+D2DControls* D2DTabControls::AddNewTab(LPCWSTR tabnm)
+{
+	auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
+	page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, tabnm );
+	Add(page1);
+
+	auto i = tabrects_.size();
+	FRectF rc(0,0,FSizeF(200,20));
+	rc.Offset(i*180,0);
+	tabrects_.push_back(rc);
+
+	return page1.get();
+}
+void D2DTabControls::DelTab(USHORT idx)
+{
+	
+	
 
 }
+
+
 
 

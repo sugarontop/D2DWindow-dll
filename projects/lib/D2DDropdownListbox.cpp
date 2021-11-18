@@ -18,9 +18,7 @@ void D2DDropdownListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol
     button_rc_.left = button_rc_.right - BUTTON_WIDTH;
     selected_idx_ = -1;
     listbox_height_ = rc.Height()*3;
-
-    //gtree.Create(rc.ZeroRect());
-    //gtree.test();
+	mouse_mode_ = 0;
 }
 void D2DDropdownListbox::Draw(D2DContext& cxt)
 {
@@ -45,6 +43,7 @@ void D2DDropdownListbox::Draw(D2DContext& cxt)
 
             (*cxt)->DrawRectangle(button_rc_, br);
         }
+		
 
         D2DMatrix mat(*cxt);
         mat.PushTransform();

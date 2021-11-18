@@ -17,6 +17,10 @@ class D2DTabControls : public D2DControls
 
 		float DrawTab(D2DContext& cxt, USHORT tabidx);
 		D2DControl* GetControlFromIdx(USHORT idx);
+
+		D2DControls* AddNewTab(LPCWSTR tabnm);
+		void DelTab(USHORT idx);
+
 		void SizeFix(){ size_fix_ = true;};
 	protected :
 		

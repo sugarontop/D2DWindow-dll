@@ -651,6 +651,14 @@ DLLEXPORT void D2DMDISetTopControl(UIHandle h)
 	x->SetFirstControl(h2);
 
 }
+DLLEXPORT int D2DSendMessage(UIHandle h, UINT msg, WPARAM wp, LPARAM lp)
+{
+	auto ctrl = D2DCastControl(h);
+
+	AppBase b={};
+
+	return (int)ctrl->WndProc(b,msg,wp,lp);
+}
 
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
 {

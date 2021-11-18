@@ -111,9 +111,10 @@ void CreateMDISplitControl(HWND hWnd)
 	//UIHandle hcs3;
 	//hcs3.p = dws.get();
 	//hcs3.typ = 0;
-	D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG", 190);
+	hcs4 = D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG", 190);
 
-
+	ColorF clr(D2RGB(200,200,200));
+	D2DSendMessage(hcs4,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
 
 
 
@@ -158,11 +159,37 @@ void CreateMDISplitControl(HWND hWnd)
 	
 	auto tabs = std::make_shared<D2DTabControls>();
 	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"test", 191);
-
 	right_side_controls->Add(tabs);
 
+	auto p1 = tabs->GetControlFromIdx(0);
+
+	UIHandle hcs_right={};
+	hcs_right.p = p1;
+
+	D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,2000,3000),  STAT_DEFAULT, L"DEBUG", 190);
 
 
+	for(int k = 0; k < 3; k++)
+	{
+		p1 = tabs->AddNewTab(L"page1");
+		hcs_right.p = p1;
+		auto kr = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,2000,3000),  STAT_DEFAULT, L"DEBUG2", 191+k);
 
+
+		if (k ==1)
+		{
+			ColorF clr(ColorF::SteelBlue);
+			D2DSendMessage(kr,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+		}
+		if (k ==2)
+		{
+			ColorF clr(ColorF::MidnightBlue);
+			D2DSendMessage(kr,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+
+			ColorF clr2(ColorF::Red);
+			D2DSendMessage(kr,WM_D2D_SET_COLOR, 1, (LPARAM)&clr2);
+		}
+
+	}
 
 }
