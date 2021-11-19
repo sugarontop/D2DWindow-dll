@@ -30,18 +30,7 @@ class D2DWindow
 		~D2DWindow();
 
 		LRESULT SendMessage(UINT msg, WPARAM wp, LPARAM lp );
-		
-		LRESULT PostMessage(UINT msg, WPARAM wp, LPARAM lp)
-		{
-			EnterCriticalSection( &message_lock_ );
-			{
-				MSG m(msg,wp,lp);
-				post_message_queue_.push_back( m );
-			}
-			LeaveCriticalSection(&message_lock_);
-
-			return 0;
-		}
+		LRESULT PostMessage(UINT msg, WPARAM wp, LPARAM lp);
 
 		bool CreateResource( FSizeF* size );
 
@@ -52,12 +41,7 @@ class D2DWindow
 		int FloatingMenu(LPVOID sender,const FRectF& rc, std::vector<MenuItem>& items);
 
 
-		FRectF GetClientRect() const
-		{
-			RECT rc;
-			::GetClientRect(hWnd_, &rc);
-			return FRectF( (float)rc.left, (float)rc.top, (float)rc.right, (float)rc.bottom );
-		}
+		FRectF GetClientRect() const;
 
 		HWND GetHwnd() const { return hWnd_; }
 

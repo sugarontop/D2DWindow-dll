@@ -153,236 +153,261 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
-void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, int activeidx )
-{
-    FRectF rc(0,0,tabbtn);
+//void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, int activeidx )
+//{
+//    FRectF rc(0,0,tabbtn);
+//
+//    for(int i = 0; i < btncnt; i++ )
+//    {        
+//        LPCWSTR s = pps[i];
+//
+//        if ( i == activeidx )
+//        {
+//            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(50, 50, 255));                
+//            (*cxt)->DrawText(s, (UINT)wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.white_ );
+//        }
+//        else 
+//        {
+//            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(255, 255, 255));                
+//            (*cxt)->DrawText(s, (UINT)wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.black_ );
+//        }
+//
+//        rc.Offset(tabbtn.width, 0 );
+//    }
+//}
 
-    for(int i = 0; i < btncnt; i++ )
-    {        
-        LPCWSTR s = pps[i];
+//#define COMBOBOX_ID_1 10
+//void CreateControl0(UIHandleWin hwin, UIHandle hcs);
+//void CreateControl1(UIHandleWin hwin, UIHandle hcs);
+//void CreateControl2(UIHandleWin hwin, UIHandle hcs);
+//bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
+//bool SaveTextFile( LPCWSTR fnm, LPCWSTR str );
 
-        if ( i == activeidx )
-        {
-            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(50, 50, 255));                
-            (*cxt)->DrawText(s, (UINT)wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.white_ );
-        }
-        else 
-        {
-            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(255, 255, 255));                
-            (*cxt)->DrawText(s, (UINT)wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.black_ );
-        }
-
-        rc.Offset(tabbtn.width, 0 );
-    }
-}
-
-#define COMBOBOX_ID_1 10
-void CreateControl0(UIHandleWin hwin, UIHandle hcs);
-void CreateControl1(UIHandleWin hwin, UIHandle hcs);
-void CreateControl2(UIHandleWin hwin, UIHandle hcs);
-bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
-bool SaveTextFile( LPCWSTR fnm, LPCWSTR str );
-
-void CreateControl(HWND hWnd)
-{
-    hwin = D2DCreateMainHWnd(hWnd, 14);
-    
-    auto root = D2DGetRootControls(hwin);
-
-    //FRectF rctextbox(10, 40, FSizeF(400, 700));
-    //UIHandle htextbox = D2DCreateTextbox(hwin, root, rctextbox, true, STAT_VISIBLE | STAT_ENABLE, L"textbox1");
-    //D2DSetText(htextbox, L"Hello world");
-
-
-
-
-    struct WhiteBoard
-    {     
-        DelegateDrawFunc f1;
-        DelegateProcFunc f2;
-        int typ;
-        D2DMat mat;
-    };
-    struct CaptureObj1
-    {
-        FRectF rc;
-        UIHandle page[3];
-        int active_idx;
-        D2DMat mat;
-        WhiteBoard wboard;
-		UIHandle me;
-    };
-
-    static CaptureObj1 obj;
-    obj.active_idx = 0;
-    obj.wboard.typ = 0;
-    obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt) {
-     
-        CaptureObj1* obj = (CaptureObj1*)captureobj;
-        WhiteBoard& wb = obj->wboard;
-
-            D2DMatrix mat(*cxt);
-            mat.PushTransform();
-
-			FRectF rc = obj->rc;
-            wb.mat = mat.Offset(rc);
-            obj->mat = wb.mat;
-            {
-                cxt.DDrawRect(rc.ZeroRect(), D2RGB(0,0,0), D2RGB(255, 255, 255));
-
-                // draw top buttons
-
-                FSizeF tabbtn(100,26 );
-                LPCWSTR str[] = { L"tab1", L"tab2", L"tag3" };
-
-                DrawTabButton( cxt, tabbtn, str, 3, obj->active_idx );
-
-            }
-            mat.PopTransform();
-    };
-    obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
-
-        CaptureObj1* obj = (CaptureObj1*)captureobj;
-        HRESULT r = 0;
-        switch( message )
-        {
-			case WM_D2D_CREATE:
-			{
-				obj->me = *(UIHandle*)lParam;
-
-
-				
-
-				r = 1;
-			}
-			break;
-			case WM_LBUTTONDOWN:
-            {
-                MouseParam* mp = (MouseParam*)lParam;
-                auto pt = obj->mat.DPtoLP(mp->pt);
-
-                FRectF rcs[] = { FRectF(0,0,100,26), FRectF(100,0,200,26),FRectF(200,0,300,26) };
-                if ( rcs[0].PtInRect( pt ) )
-                {
-                    obj->active_idx = 0;                   
-                    D2DSetStat(obj->page[0], STAT_VISIBLE | STAT_ENABLE);
-                    D2DSetStat(obj->page[1], 0);
-                    D2DSetStat(obj->page[2], 0);
-
-                    r = 1;
-                }
-                else if ( rcs[1].PtInRect( pt ) )
-                {
-                    obj->active_idx = 1;
-                    D2DSetStat(obj->page[0], 0);
-                    D2DSetStat(obj->page[1], STAT_VISIBLE | STAT_ENABLE);
-                    D2DSetStat(obj->page[2], 0);
-                    r = 1;
-                }
-                else if (rcs[2].PtInRect(pt))
-                {
-                    obj->active_idx = 2;
-                    D2DSetStat(obj->page[0], 0);
-                    D2DSetStat(obj->page[1], 0);
-                    D2DSetStat(obj->page[2], STAT_VISIBLE | STAT_ENABLE);
-                    r = 1;
-                }
-            }
-            break;
-			case WM_NOTIFY:
-			{
-				if ( wParam == 400 )
-				{
-					
-					auto htx = D2DGetControlFromName(hwin, L"textbox_fnm");
-					BSTR fnm = D2DGetText(htx,true);
-					
-					// load
-					std::wstring str;
-					if ( LoadTextFile( fnm , &str ) )
-					{						
-						
-						auto h2 = D2DGetControlFromName(hwin, L"textbox200");
-
-						D2DSetText(h2, str.c_str());
-					}
-					r = 1;
-
-					::SysFreeString(fnm);
-				}
-				else if ( wParam == 401 )
-				{
-					// save
-					auto h2 = D2DGetControlFromName(hwin, L"textbox200");
-
-					BSTR bs = D2DGetText(h2, true);
-
-					SaveTextFile(L"script.txt", bs );
-
-					::SysFreeString(bs);
-					r = 1;
-				}
-				else if ( wParam == 2002 )
-				{
-					int cx,cy;					
-					b.GetClientRect(&cx,&cy);
-					FRectF rc(0,0,FSizeF(450,200));
-					FPointF pt = rc.CenterPt();
-					rc.Offset( -pt.x+cx/2, -pt.y+cy/2 );
-
-
-					D2DMessageBox(hwin, rc, L"sample", L"This is a message box. push Escape key.");
-					
-					r = 1;
-				}
-			}
-			break;
-			case WM_SIZE :
-			{
-				// 画面内最大化
-				UINT width = LOWORD(lParam);
-				UINT height = HIWORD(lParam);
-
-				obj->rc.left = obj->rc.top = 0;
-				obj->rc.right = (float)width;
-				obj->rc.bottom = (float)height;
-				b.bRedraw = true;
-
-				D2DSetRect(obj->me, obj->rc);
-
-
-				D2DSetRect( obj->page[0], obj->rc );
-				D2DSetRect( obj->page[1], obj->rc );
-				D2DSetRect( obj->page[2], obj->rc );
-
-
-			}
-			break;
-        }        
-        return r;
-    };
-
-	RECT rcclient;
-	::GetClientRect(hWnd,&rcclient);
-
-    FRectF rc(0, 0, FSizeF( (float)rcclient.right, (float)rcclient.bottom));
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2000", 110);
-    
-    obj.rc = rc;
-
-    obj.page[0] =  D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
-    obj.page[1] = D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), 0, L"tab2", 113);
-    obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), 0, L"tab3", 113);
-
-	CreateControl0( hwin, obj.page[0]);
-
-	CreateControl1( hwin, obj.page[1]);
-
-    CreateControl2( hwin, obj.page[2]);
+//void CreateControl(HWND hWnd)
+//{
+//    hwin = D2DCreateMainHWnd(hWnd, 14);
+//    
+//    auto root = D2DGetRootControls(hwin);
+//
+//    //FRectF rctextbox(10, 40, FSizeF(400, 700));
+//    //UIHandle htextbox = D2DCreateTextbox(hwin, root, rctextbox, true, STAT_VISIBLE | STAT_ENABLE, L"textbox1");
+//    //D2DSetText(htextbox, L"Hello world");
+//
+//
+//
+//
+//    struct WhiteBoard
+//    {     
+//        DelegateDrawFunc f1;
+//        DelegateProcFunc f2;
+//        int typ;
+//        D2DMat mat;
+//    };
+//    struct CaptureObj1
+//    {
+//        FRectF rc;
+//        UIHandle page[3];
+//        int active_idx;
+//        D2DMat mat;
+//        WhiteBoard wboard;
+//		UIHandle me;
+//    };
+//
+//    static CaptureObj1 obj;
+//    obj.active_idx = 0;
+//    obj.wboard.typ = 0;
+//    obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt) {
+//     
+//        CaptureObj1* obj = (CaptureObj1*)captureobj;
+//        WhiteBoard& wb = obj->wboard;
+//
+//            D2DMatrix mat(*cxt);
+//            mat.PushTransform();
+//
+//			FRectF rc = obj->rc;
+//            wb.mat = mat.Offset(rc);
+//            obj->mat = wb.mat;
+//            {
+//                cxt.DDrawRect(rc.ZeroRect(), D2RGB(0,0,0), D2RGB(255, 255, 255));
+//
+//                // draw top buttons
+//
+//                FSizeF tabbtn(100,26 );
+//                LPCWSTR str[] = { L"tab1", L"tab2", L"tag3" };
+//
+//                DrawTabButton( cxt, tabbtn, str, 3, obj->active_idx );
+//
+//            }
+//            mat.PopTransform();
+//    };
+//    obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+//
+//        CaptureObj1* obj = (CaptureObj1*)captureobj;
+//        HRESULT r = 0;
+//        switch( message )
+//        {
+//			case WM_D2D_CREATE:
+//			{
+//				obj->me = *(UIHandle*)lParam;
+//
+//
+//				
+//
+//				r = 1;
+//			}
+//			break;
+//			case WM_LBUTTONDOWN:
+//            {
+//                MouseParam* mp = (MouseParam*)lParam;
+//                auto pt = obj->mat.DPtoLP(mp->pt);
+//
+//                FRectF rcs[] = { FRectF(0,0,100,26), FRectF(100,0,200,26),FRectF(200,0,300,26) };
+//                if ( rcs[0].PtInRect( pt ) )
+//                {
+//                    obj->active_idx = 0;                   
+//                    D2DSetStat(obj->page[0], STAT_VISIBLE | STAT_ENABLE);
+//                    D2DSetStat(obj->page[1], 0);
+//                    D2DSetStat(obj->page[2], 0);
+//
+//                    r = 1;
+//                }
+//                else if ( rcs[1].PtInRect( pt ) )
+//                {
+//                    obj->active_idx = 1;
+//                    D2DSetStat(obj->page[0], 0);
+//                    D2DSetStat(obj->page[1], STAT_VISIBLE | STAT_ENABLE);
+//                    D2DSetStat(obj->page[2], 0);
+//                    r = 1;
+//                }
+//                else if (rcs[2].PtInRect(pt))
+//                {
+//                    obj->active_idx = 2;
+//                    D2DSetStat(obj->page[0], 0);
+//                    D2DSetStat(obj->page[1], 0);
+//                    D2DSetStat(obj->page[2], STAT_VISIBLE | STAT_ENABLE);
+//                    r = 1;
+//                }
+//            }
+//            break;
+//			case WM_NOTIFY:
+//			{
+//				if ( wParam == 400 )
+//				{
+//					
+//					auto htx = D2DGetControlFromName(hwin, L"textbox_fnm");
+//					BSTR fnm = D2DGetText(htx,true);
+//					
+//					// load
+//					std::wstring str;
+//					if ( LoadTextFile( fnm , &str ) )
+//					{						
+//						
+//						auto h2 = D2DGetControlFromName(hwin, L"textbox200");
+//
+//						D2DSetText(h2, str.c_str());
+//					}
+//					r = 1;
+//
+//					::SysFreeString(fnm);
+//				}
+//				else if ( wParam == 401 )
+//				{
+//					// save
+//					auto h2 = D2DGetControlFromName(hwin, L"textbox200");
+//
+//					BSTR bs = D2DGetText(h2, true);
+//
+//					SaveTextFile(L"script.txt", bs );
+//
+//					::SysFreeString(bs);
+//					r = 1;
+//				}
+//				else if ( wParam == 2002 )
+//				{
+//					int cx,cy;					
+//					b.GetClientRect(&cx,&cy);
+//					FRectF rc(0,0,FSizeF(450,200));
+//					FPointF pt = rc.CenterPt();
+//					rc.Offset( -pt.x+cx/2, -pt.y+cy/2 );
+//
+//
+//					D2DMessageBox(hwin, rc, L"sample", L"This is a message box. push Escape key.");
+//					
+//					r = 1;
+//				}
+//			}
+//			break;
+//			case WM_SIZE :
+//			{
+//				// 画面内最大化
+//				UINT width = LOWORD(lParam);
+//				UINT height = HIWORD(lParam);
+//
+//				obj->rc.left = obj->rc.top = 0;
+//				obj->rc.right = (float)width;
+//				obj->rc.bottom = (float)height;
+//				b.bRedraw = true;
+//
+//				D2DSetRect(obj->me, obj->rc);
+//
+//
+//				D2DSetRect( obj->page[0], obj->rc );
+//				D2DSetRect( obj->page[1], obj->rc );
+//				D2DSetRect( obj->page[2], obj->rc );
+//
+//
+//			}
+//			break;
+//        }        
+//        return r;
+//    };
+//
+//	RECT rcclient;
+//	::GetClientRect(hWnd,&rcclient);
+//
+//    FRectF rc(0, 0, FSizeF( (float)rcclient.right, (float)rcclient.bottom));
+//    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2000", 110);
+//    
+//    obj.rc = rc;
+//
+//    obj.page[0] =  D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
+//    obj.page[1] = D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), 0, L"tab2", 113);
+//    obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, rc.GetSize()), 0, L"tab3", 113);
+//
+//	CreateControl0( hwin, obj.page[0]);
+//
+//	CreateControl1( hwin, obj.page[1]);
+//
+//    CreateControl2( hwin, obj.page[2]);
+//
+//
+//}
 
 
-}
+#include "D2DControls_with_Scrollbar.h"
+#include "D2DSquarePaper.h"
 
+void CreateControl(HWND hWnd);
+//{
+//	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
+//    auto root = D2DGetRootControls(hwin);
+//
+//	auto center = std::make_shared<D2DControls_with_Scrollbar>();
+//	auto ctrl =  (D2DControls*)root.p;
+//	center->CreateControl((D2DWindow*)hwin.p, ctrl, FRectF(0,0,1000,1000), STAT_DEFAULT, NONAME);
+//	ctrl->Add(center);
+//	
+//	//auto center = dynamic_cast<D2DControls_with_Scrollbar*>(  (D2DControls*)root.p);
+//
+//	UIHandle hctrls;
+//	hctrls.p = center.get();
+//	auto hd = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_DEFAULT, NONAME,-1);
+//
+//
+//	auto p1 = center->GetMainControls();
+//
+//
+//}
 
 static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
@@ -405,7 +430,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     
         case WM_SIZE:
         {
-            D2DForceWndProc(hwin, app, message, wParam,lParam);
+			FRectF rc(0,0,(float)LOWORD(lParam), (float)HIWORD(lParam));          
+			D2DForceWndProc(hwin, app, message, 0, (LPARAM)&rc);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
@@ -507,17 +533,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
          {
                 // child control events         
 
-                if ( wParam == COMBOBOX_ID_1 )
-                {   
-                    D2DNMHDR& n = *(D2DNMHDR*)lParam;
-
-                    int idx = n.prm1;
-
-                    scale = 1.0f;
-                    if ( idx == 1 ) scale = 1.2f;
-                    else if ( idx == 2 ) scale = 0.8f;
-
-                }
+               
 
          }
          break;

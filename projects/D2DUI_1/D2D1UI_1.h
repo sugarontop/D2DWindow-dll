@@ -42,7 +42,7 @@ DLLEXPORT void D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos);
 DLLEXPORT BSTR D2DGetText(UIHandle h, bool bAll );
 DLLEXPORT int D2DSendMessage(UIHandle h, UINT msg, WPARAM, LPARAM);
 
-DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd, float font_height );
+DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd, float font_height, int typ=0 );
 DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd );
 DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id);
 DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm);

@@ -160,6 +160,13 @@ static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 void CreateMDISplitControl(HWND hWnd);
 
+void CreateControl(HWND hWnd)
+{
+	hwin = D2DCreateMainHWnd(hWnd, 14);
+    
+    auto root = D2DGetRootControls(hwin);
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     AppBase app;
@@ -178,11 +185,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     
         case WM_SIZE:
-        {
-			FSizeF sz((float)LOWORD(lParam), (float)HIWORD(lParam));            
-			//D2DForceWndProc(hwin, app, message, 0, (LPARAM)&sz);
-
-			FRectF rc(0,0,sz);
+        {			
+			FRectF rc(0,0,(float)LOWORD(lParam), (float)HIWORD(lParam));          
 			D2DForceWndProc(hwin, app, message, 0, (LPARAM)&rc);
 
             return ::DefWindowProc(hWnd, message, wParam, lParam);

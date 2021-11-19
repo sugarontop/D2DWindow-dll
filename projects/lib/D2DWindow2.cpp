@@ -4,6 +4,18 @@
 #include "D2DContext.h"
 
 using namespace V6;
+LRESULT D2DWindow::PostMessage(UINT msg, WPARAM wp, LPARAM lp)
+{
+	EnterCriticalSection( &message_lock_ );
+	{
+		MSG m(msg,wp,lp);
+		post_message_queue_.push_back( m );
+	}
+	LeaveCriticalSection(&message_lock_);
+
+	return 0;
+}
+
 LRESULT D2DWindow::SendMessage(UINT msg, WPARAM wp, LPARAM lp)
 {
 	AppBase b(hWnd_, nullptr);
@@ -102,4 +114,10 @@ HRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 
 	return hr;
+}
+FRectF D2DWindow::GetClientRect() const
+{
+	RECT rc;
+	::GetClientRect(hWnd_, &rc);
+	return FRectF( (float)rc.left, (float)rc.top, (float)rc.right, (float)rc.bottom );
 }

@@ -142,25 +142,38 @@ void InnerMessageBox::ModalShow(LPCWSTR text,LPCWSTR title )
 
 	msg_ = text;
 	title_ = title;
+	mode_ = 0;
 }
 void InnerMessageBox::Draw(D2DContext& cxt)
 {
 	if ( IsVisible())
 	{
-		(*cxt)->FillRectangle( rc_, cxt.black_ );
+		
+
+		cxt.DFillRect(rc_, ColorF::Orange);
 
 		D2DMatrix mat(*cxt);
 
-		mat.PushTransform();
+		mat_ = mat.PushTransform();
 		mat.Offset( rc_ );
 
 		FRectF rc = rc_.ZeroRect();
 		
-		rc.Offset(20,20);
+		rc.Offset(20,0);
 		(*cxt)->DrawText(title_.c_str(), title_.length(), cxt.textformat_, rc, cxt.white_ );
 
-		rc.Offset(0,30);
-		(*cxt)->DrawText(msg_.c_str(), msg_.length(), cxt.textformat_, rc, cxt.white_ );
+		rc.SetRect(rc_.ZeroRect());
+
+		rc.Offset(0,20);
+		rc.Inflate(-10,-10);
+		rc.bottom -= 20;
+
+		cxt.DFillRect(rc, ColorF::LightGray);
+
+		rc.Inflate(-5,-10);
+
+		//cxt.DFillRect(rc,ColorF::Black);
+		(*cxt)->DrawText(msg_.c_str(), msg_.length(), cxt.textformat_, rc, cxt.black_ );
 
 		mat.PopTransform();
 	}
@@ -188,6 +201,36 @@ HRESULT InnerMessageBox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 			}
 		}
 		break;
+		case WM_LBUTTONDOWN:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+			mode_ = 0;
+			if ( rc_.PtInRect(pt))
+			{
+				mode_ = 1;				
+			}
+		}
+		break;
+		case WM_MOUSEMOVE:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+			auto pt2 = mat_.DPtoLP(pm.ptprv);
+
+			if ( mode_ == 1 )
+			{
+				rc_.Offset(pt.x-pt2.x, pt.y-pt2.y);
+				b.bRedraw = true;
+			}
+		}
+		break;
+		case WM_LBUTTONUP:
+		{
+			mode_ = 0;
+
+		}
+		break;
 	}
 	return ( APP.IsCapture(this) ? 1 : 0 );
 }
@@ -198,11 +241,9 @@ int D2DWindow::MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title)
 	
 	msgbox->CreateControl(this, top_control_.get(), rc, STAT_DEFAULT, L"msgbox" );
 
-
 	top_control_->Add( msgbox );
 
 	msgbox->ModalShow(text,title);
-
 	
 	return 0;
 }

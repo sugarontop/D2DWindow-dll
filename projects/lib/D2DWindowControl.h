@@ -41,7 +41,7 @@ public:
 	void Enable(bool bEnable);
 	void Visible(bool bVisible);
 	bool IsEnable()  const { return ((stat_&STAT_ENABLE) > 0 ); }
-	bool IsVisible()  const { return ((stat_ & STAT_VISIBLE) > 0); }
+	bool IsVisible()  const { return ((stat_&STAT_VISIBLE) > 0); }
 	
 	virtual void OnHostage(D2DControls* p, bool block) {}
 	virtual void DestroyControl();

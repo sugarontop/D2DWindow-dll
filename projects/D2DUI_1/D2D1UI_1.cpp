@@ -16,7 +16,7 @@ using namespace V6;
 //UIHandle Renewal_UIHandle(  UIHandle h );
 UIHandle ConvertUIHandle(D2DControl* p);
 
-DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight )
+DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight, int typ )
 {
 	auto win = new D2DWindow(hWnd);
 
@@ -24,17 +24,21 @@ DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight )
 	FSizeF size;
 	win->CreateResource( &size );
 
-	//RECT rc;
-	//::GetClientRect(hWnd, &rc);
-	//cxt.CreateDeviceResources(hWnd, rc.right, rc.bottom);
 	cxt.CreateDeviceIndependentResources(fontheight);
 
+	_ASSERT( typ == 0 );
 
-	auto topcontrol = std::shared_ptr<D2DControls>( new D2DControls());
-	topcontrol->CreateControl( win, nullptr, FRectF(0.0f,0.0f, size), STAT_VISIBLE, L"_root" );
-
-	
-	win->top_control_ = topcontrol;
+	{
+		auto topcontrol = std::shared_ptr<D2DControls>( new D2DControls());
+		topcontrol->CreateControl( win, nullptr, FRectF(0.0f,0.0f, size), STAT_VISIBLE, L"_root" );	
+		win->top_control_ = topcontrol;
+	}
+	/*else if ( typ == 1 )
+	{
+		auto topcontrol = std::make_shared<D2DControls_with_Scrollbar>();
+		topcontrol->CreateControl( win, nullptr, FRectF(0.0f,0.0f, size), STAT_VISIBLE, L"_root" );	
+		win->top_control_ = topcontrol;
+	}*/
 
 
 

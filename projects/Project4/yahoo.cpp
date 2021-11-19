@@ -53,7 +53,7 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	UIHandle c={};
 	c.p = this;
 
-	D2DCreateButton(w,c , FRectF(500,0,FSizeF(150,20)), STAT_DEFAULT, NONAME, ID_BUTTON );
+	D2DCreateButton(w,c , FRectF(500,0,FSizeF(150,20)), STAT_DEFAULT, L"msgbox", ID_BUTTON );
 
 
 }
@@ -494,8 +494,19 @@ HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 
 			if ( wParam == ID_BUTTON )
 			{
+				
+				FRectF rc(100,100,FSizeF(400,150));
 
-				finance_->StartDownload();
+
+				UIHandleWin hwin={};
+				hwin.p = parent_window_;
+
+				//rc = mat_.LPtoDP(rc);
+
+
+				D2DMessageBox(hwin, rc, L"sample",  L"this is **** message **** ");
+
+
 
 				hr = 1;
 			}

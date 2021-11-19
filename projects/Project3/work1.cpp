@@ -56,3 +56,46 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 
 	_ASSERT(hr == S_OK);
 }
+
+
+#include "D2D1UI_1.h"
+#include "D2DControls_with_Scrollbar.h"
+#include "D2DSquarePaper.h"
+
+extern UIHandleWin hwin;
+
+void CreateControl(HWND hWnd)
+{
+	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
+    auto root = D2DGetRootControls(hwin);
+
+	auto hctrls = D2DCreateEmptyControls(hwin, root, FRectF(), STAT_DEFAULT, NONAME,-1);
+
+	auto hd = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_DEFAULT, NONAME,-1);
+
+	auto clr = D2RGBA(170,170,170,150);
+	D2DSendMessage(hd, WM_D2D_SET_COLOR,1,(LPARAM)&clr);
+
+	clr = D2RGBA(200,200,200,255);
+	D2DSendMessage(hd, WM_D2D_SET_COLOR,0,(LPARAM)&clr);
+	//auto p1 = center->GetMainControls();
+
+	FRectF rc(200,100,FSizeF(300,20));
+
+	for(int i=0; i < 10; i++ )
+	{
+		auto tx = D2DCreateTextbox(hwin, hd, rc, false, STAT_DEFAULT, NONAME );
+
+		auto clr = D2RGBA(255,0,0,255);
+		D2DSendMessage(tx, WM_D2D_SET_COLOR,0,(LPARAM)&clr); // back
+		clr = D2RGBA(255,255,255,255);
+		D2DSendMessage(tx, WM_D2D_SET_COLOR,1,(LPARAM)&clr); // fore
+		clr = D2RGB(100,100,100);
+		D2DSendMessage(tx, WM_D2D_SET_COLOR,2,(LPARAM)&clr); // border
+
+		rc.Offset(0, 30);
+	}
+
+
+
+}

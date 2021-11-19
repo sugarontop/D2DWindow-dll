@@ -54,6 +54,7 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
 	switch( message )
 	{
+		case WM_SIZE:
 		case WM_D2D_SET_SIZE:
 		{
 			if (controls_.size() == 3)

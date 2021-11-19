@@ -117,7 +117,7 @@ void D2DWindow::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 	}
 
-
+	
 	top_control_->ForceWndProc(b, message, wParam, lParam);
 }
 

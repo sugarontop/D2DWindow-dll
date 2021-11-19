@@ -318,8 +318,10 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 
 				if ( wp == 0 )
 					back_ = clr;
-				else if ( wp == 0 )
+				else if ( wp == 1 )
 					fore_ = clr;
+				else if ( wp == 2 )
+					border_ = clr;
 
 				bl = false;
 				ret = 1;
