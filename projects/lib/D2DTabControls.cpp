@@ -207,7 +207,7 @@ if (name == L"test" )
 
 
 			yahoo_finance* yf = new yahoo_finance();
-			yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(100,100,FSizeF(800,500)), STAT_DEFAULT, NONAME );
+			yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(100,750,FSizeF(800,500)), STAT_DEFAULT, NONAME );
 			((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
 		}
 

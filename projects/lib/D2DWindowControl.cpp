@@ -59,8 +59,6 @@ void D2DControl::SetNewParent(D2DControls* newparent)
 	parent_control_ = newparent;
 
 	newparent->Add( me );
-
-
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,7 +117,7 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	{
 		hr = capture->WndProc(b, message, wParam, lParam);
 
-		if ( message == WM_LBUTTONDOWN )
+		if ( hr==0 && message == WM_LBUTTONDOWN )
 		{
 			auto capture2 = APP.GetCapture();
 

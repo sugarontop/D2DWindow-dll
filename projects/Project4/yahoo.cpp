@@ -61,6 +61,8 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 
 void yahoo_finance::Draw(D2DContext& cxt)
 {
+TRACE( L"yf=%x name= %s\n", this, parent_control_->GetName().c_str());
+
 
 	D2DMatrix mat(*cxt);
 
@@ -143,14 +145,14 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 					if ( idx == 2 )
 					{
-						auto ptr = parent_window_->name_map_[L"aaa"];
+						/*auto ptr = parent_window_->name_map_[L"aaa"];
 
 						auto ptr1 = dynamic_cast<D2DControls_with_Scrollbar*>(ptr);
 
 						auto ncontrols = ptr1->GetMainControls();
 
 
-						this->SetNewParent(ncontrols);
+						this->SetNewParent(ncontrols);*/
 
 
 
@@ -158,9 +160,7 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					}
 					else if ( idx == 3 )
 					{
-						auto ptr = parent_window_->name_map_[L"MySquarePaper"];
-
-						auto ctrls = dynamic_cast<D2DControls*>(ptr);
+						auto ctrls = dynamic_cast<D2DControls*>(parent_window_->name_map_[L"MySquarePaper"]);
 
 						auto moveobj = std::make_shared<D2DControls_with_Move>();
 												
