@@ -61,6 +61,7 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 #include "D2D1UI_1.h"
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
+#include "D2DAccordionbar.h"
 
 extern UIHandleWin hwin;
 
@@ -86,7 +87,7 @@ void CreateControl(HWND hWnd)
 	{
 		auto tx = D2DCreateTextbox(hwin, hd, rc, false, STAT_DEFAULT, NONAME );
 
-		auto clr = D2RGBA(255,0,0,255);
+		auto clr = D2RGBA(255,0,0,0);
 		D2DSendMessage(tx, WM_D2D_SET_COLOR,0,(LPARAM)&clr); // back
 		clr = D2RGBA(255,255,255,255);
 		D2DSendMessage(tx, WM_D2D_SET_COLOR,1,(LPARAM)&clr); // fore
@@ -96,6 +97,13 @@ void CreateControl(HWND hWnd)
 		rc.Offset(0, 30);
 	}
 
+	
+	auto bar = std::make_shared<D2DAccordionbar>();
+	bar->CreateControl((D2DWindow*)hwin.p, (D2DControls*)hd.p, FRectF(550,100,FSizeF(20,100)), STAT_DEFAULT, NONAME);
+	((D2DControls*)hd.p)->Add(bar);
 
+	
+	hctrls.p = bar.get();
+	D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, NONAME, 0);
 
 }

@@ -91,7 +91,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.\;..\lib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\lib;..\D2DUI_1;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -114,7 +114,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.\;..\lib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\lib;..\D2DUI_1;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,11 +162,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\D2DAccordionbar.h" />
     <ClInclude Include="..\lib\D2DScrollbar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\D2DAccordionbar.cpp" />
     <ClCompile Include="..\lib\D2DApp.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
     <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp" />

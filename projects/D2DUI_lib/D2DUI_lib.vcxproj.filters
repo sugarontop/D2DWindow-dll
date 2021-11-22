@@ -27,6 +27,9 @@
     <ClInclude Include="..\lib\D2DScrollbar.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\D2DAccordionbar.h">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -66,6 +69,9 @@
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\D2DWindow2.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DAccordionbar.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
   </ItemGroup>

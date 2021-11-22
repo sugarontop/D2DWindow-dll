@@ -4,6 +4,8 @@
 #include "D2DSquarePaper.h"
 #include "D2DDropdownListbox.h"
 #include "D2DStatic.h"
+#include "D2DButton.h"
+#include "D2D1UI_1.h"
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
@@ -124,6 +126,19 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 				r = 1;
 			}
+			else if ( 3 == wParam )
+			{
+				int a = 0;
+
+				UIHandleWin hwin;
+				hwin.p = parent_window_;
+				FRectF rc(0,0,300,100);
+
+				D2DMessageBox(hwin, rc, L"no problem", L"this is sample text");
+
+
+				r = 1;
+			}
 		}
 		break;
 		case WM_D2D_SET_COLOR:
@@ -159,13 +174,13 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	scale_ = 1.0f;
 
 	{
-		FRectF rc0(70,30,FSizeF(200,20));
+		FRectF rc0(70,0,FSizeF(200,20));
 		auto t1 = std::make_shared<D2DStatic>(); 
 		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,NONAME);
 		t1->SetText(L"–Ú·‚è");
 		this->Add( t1);
 
-		FRectF rc1(70,50,FSizeF(80,20));
+		FRectF rc1(70,20,FSizeF(80,20));
 		auto ls = std::make_shared<D2DDropdownListbox>();
 		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,NONAME,1);
 
@@ -183,13 +198,13 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 
 	{
-		FRectF rc0(170,30,FSizeF(200,20));
+		FRectF rc0(170,0,FSizeF(200,20));
 		auto t1 = std::make_shared<D2DStatic>(); 
 		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,NONAME);
 		t1->SetText(L"SCALE");
 		this->Add( t1);
 
-		FRectF rc1(170,50,FSizeF(80,20));
+		FRectF rc1(170,20,FSizeF(80,20));
 		auto ls = std::make_shared<D2DDropdownListbox>();
 		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,NONAME,2);
 
@@ -204,6 +219,12 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		this->Add(ls);
 	}
 
+	{
+		auto btn = std::make_shared<D2DButton>();
+		btn->CreateControl(parent,this, FRectF(300,20,FSizeF(200,25)), STAT_DEFAULT,L"sample",3);
+		this->Add(btn);
+
+	}
 
 
 }
