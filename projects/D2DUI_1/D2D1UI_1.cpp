@@ -380,6 +380,13 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_MESSAGEBOX;
 
 	}
+	else if  (dynamic_cast<D2DDropdownListbox*>(p))
+	{
+		auto tx = dynamic_cast<D2DDropdownListbox*>(p);
+		r.p = tx;
+		r.typ = TYP_DROPDOWNLISTBOX;
+
+	}
 
 
 	else if ( p != nullptr )

@@ -104,6 +104,16 @@ void CreateControl(HWND hWnd)
 
 	
 	hctrls.p = bar.get();
-	D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, NONAME, 0);
+	auto sq = D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, NONAME, 0);
+
+	
+	// //////////////////////////////////////////////////
+	
+	bar = std::make_shared<D2DAccordionbar>();
+	bar->CreateControl((D2DWindow*)hwin.p, (D2DControls*)hd.p, FRectF(550,250,FSizeF(20,100)), STAT_DEFAULT, NONAME);
+	((D2DControls*)hd.p)->Add(bar);
+
+	hctrls.p = bar.get();
+	sq = D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, NONAME, 0);
 
 }

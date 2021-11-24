@@ -90,6 +90,7 @@ void D2DAccordionbar::Draw(D2DContext& cxt)
 
 	mat.PopTransform();
 }
+
 HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HRESULT hr = 0;

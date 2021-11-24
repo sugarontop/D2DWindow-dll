@@ -181,8 +181,11 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
 
         int a = GetID();
 
+		
+		auto hr = parent_control_->SendMesage(WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh);
 
-        parent_window_->SendMessage( WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh );
+		if ( hr == 0 )
+			parent_window_->SendMessage( WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh );
 
 
 

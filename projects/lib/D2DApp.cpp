@@ -4,6 +4,105 @@
 using namespace V6;
 
 
+
+#ifdef CAPTURE_TEST
+
+D2DApp::D2DApp()
+{
+
+}
+void D2DApp::SetCapture( V6::D2DCaptureObject* new_target)
+{	
+    _ASSERT(new_target);
+
+	if ( 0 == IsCaptureEx(new_target))
+	{
+		
+		std::stack<D2DCaptureObject*> prv = capture_;
+		
+		capture_.push(new_target);   
+
+
+
+		 {
+			//@capture‚©‚ç‚Í‚¸‚ê‚½•ª‚Élostfocus
+			
+			while(!prv.empty())
+			{
+				prv.top()->OnChangeFocus(false, new_target);
+				break;
+			}
+			
+
+			//V‚½‚Écapture‚µ‚½•ª‚Ésetfocus
+			new_target->OnChangeFocus(true, new_target);			
+			
+		 }
+	}
+
+
+}
+void D2DApp::ReleaseCapture()
+{
+	if (!capture_.empty())
+	{
+		capture_.top()->OnChangeFocus(false, nullptr);	
+		capture_.pop();
+	}
+    
+}
+
+int D2DApp::IsCaptureEx(D2DCaptureObject* target)
+{
+	// 0:capture‚µ‚Ä‚È‚¢ 1:capture‚³‚ê‚Ä‚é 2..:secondˆÈ~‚Åcapture‚³‚ê‚Ä‚é
+    std::stack<D2DCaptureObject*> cap = capture_;
+	int i = 1;
+	
+	while( !cap.empty())
+	{
+		if ( cap.top() == target )
+			return i;
+		
+		cap.pop();
+		i++;
+	}
+	
+	return 0;
+}
+
+bool D2DApp::IsCapture(D2DCaptureObject* target)
+{
+	while( !capture_.empty())
+	{
+		if ( capture_.top() == target )
+			return true;
+		
+		break;
+	}
+	
+	return false;
+
+}
+D2DCaptureObject* D2DApp::GetCapture()
+{
+    if (capture_.empty())
+        return nullptr;
+
+    auto it = capture_.top();
+
+    return (it);
+}
+
+D2DApp& D2DApp::GetInstance()
+{
+	static D2DApp app;
+	return app;
+}
+
+
+#else
+
+
 D2DApp::D2DApp()
 {
 
@@ -86,6 +185,22 @@ bool D2DApp::IsCapture(D2DCaptureObject* target)
     return false;
 
 }
+int D2DApp::IsCaptureEx(D2DCaptureObject* target)
+{
+	// 0:capture‚µ‚Ä‚È‚¢ 1:capture‚³‚ê‚Ä‚é 2..:secondˆÈ~‚Åcapture‚³‚ê‚Ä‚é
+    std::vector<D2DCaptureObject*> cap = capture_;
+	int i = 1;
+	
+	for(auto& it : cap )
+	{
+		if ( it == target )
+			return i;
+				
+		i++;
+	}
+	
+	return 0;
+}
 D2DCaptureObject* D2DApp::GetCapture()
 {
     if (capture_.empty())
@@ -101,3 +216,5 @@ D2DApp& D2DApp::GetInstance()
 	static D2DApp app;
 	return app;
 }
+
+#endif

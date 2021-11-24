@@ -68,7 +68,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 
 		D2DRectFilter fil(cxt, rc, vscrollbar_.Width());
 
-		if (APP.IsCapture(this))
+		if (APP.IsCaptureEx(this)==1)
 		{
 			ComPTR<ID2D1SolidColorBrush> active_back;
 			(*cxt)->CreateSolidColorBrush(D2RGB(220,220,220), &active_back);

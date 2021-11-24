@@ -584,7 +584,7 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
    *prc={0};
 
 
-   //TRACE( L"candidate3  left=%f  top=%f, acp=%d  LOCK=%d %d\n", rcStart.left, rcStart.top,acpStart, m_dwLockType,  (int)*pfClipped  );
+   //TRACE( L"candidate3  left=%f  top=%f-%f, acp=%d  LOCK=%d %d\n", rcStart.left, rcStart.top, rcEnd.top, acpStart, m_dwLockType,  (int)*pfClipped  );
 
     if (b1 && b2 )
     {
@@ -608,6 +608,13 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
         }
     }
 
+	if ( prc->bottom == prc->top )
+	{
+		float height = _pEditor->GetLayout()->GetLineHeight();		
+		prc->bottom = prc->top+height;
+	}
+
+
     // 候補ダイアログボックスの位置	, candidate
     *prc = _pEditor->CandidateRect(*prc);
 
@@ -618,7 +625,8 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
     }
 
 
-    TRACE( L"candidate4  left=%d  top=%d   (%d,%d)\n", prc->left, prc->top, prc->right-prc->left, prc->bottom-prc->top );
+    TRACE( L"候補ダイアログボックス  left=%d top=%d,size=(%d,%d)\n", prc->left, prc->top, prc->right-prc->left, prc->bottom-prc->top );
+
 
     *pfClipped = FALSE;
     return S_OK;

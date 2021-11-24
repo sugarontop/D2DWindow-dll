@@ -221,7 +221,11 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 	{
 		auto btn = std::make_shared<D2DButton>();
-		btn->CreateControl(parent,this, FRectF(300,20,FSizeF(200,25)), STAT_DEFAULT,L"sample",3);
+		btn->CreateControl(parent,this, FRectF(300,20,FSizeF(100,25)), STAT_DEFAULT,L"DialogBox",3);
+		this->Add(btn);
+
+		btn = std::make_shared<D2DButton>();
+		btn->CreateControl(parent,this, FRectF(450,20,FSizeF(100,25)), STAT_DEFAULT,L"1000 button", 1000);
 		this->Add(btn);
 
 	}

@@ -128,17 +128,17 @@ BOOL CTextLayout::Layout(D2DContext& cxt, const WCHAR *psz, int nCnt,const SIZE&
 
 		StarCharPos_ = StarCharPos;
 			
-		cr.Set(DWTextLayout_, false);
+		char_rectf_.Set(DWTextLayout_, false);
 
 		int slen = nCnt;
-		int len;
+		int len=0;
 
 		//=============================================
 		// 文字文のRECT作成、取得
 		//
-		const FRectF* prcs = cr.Create( psz, sz, slen, &len );
+		const FRectF* prcs = char_rectf_.Create( psz, sz, slen, &len );
 
-		nLineHeight_ = cr.LineHeight();
+		nLineHeight_ = char_rectf_.LineHeight();
 
 		for( int rcidx = 0; rcidx < len ; rcidx++ )
 		{
@@ -154,13 +154,16 @@ BOOL CTextLayout::Layout(D2DContext& cxt, const WCHAR *psz, int nCnt,const SIZE&
 
     return FALSE;
 }
-
+float CTextLayout::GetLineHeight() const
+{
+	return nLineHeight_;
+}
 
 
 const FRectF* CTextLayout::GetCharRects2(int *len)
 {
 	*len = (int)CharPosMap_.size();	
-	return cr.GetTextRect();
+	return char_rectf_.GetTextRect();
 }
 
 BOOL CTextLayout::GetCharInfo( int pos, CHPOS* info )

@@ -491,7 +491,7 @@ void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm )
 
     if ( layout_.bRecalc_ )
 	{       
-         if (bri_->GetType() == IBridgeTSFInterface::PASSWORD)
+         if ( bri_ && bri_->GetType() == IBridgeTSFInterface::PASSWORD)
          {
              int len = min(50, ct_->GetTextLength());
              LPCWSTR s = L"**************************************************";
@@ -533,14 +533,16 @@ void CTextEditor::CalcRender(D2DContext& cxt )
 
 RECT CTextEditor::CandidateRect(RECT rclog) const
 {    
-     //FRectF xrc = mat_.LPtoDP( rclog );
+     if (pmat_) 
+	 {
+		FRectF xrc = pmat_->LPtoDP(rclog);
+		RECT ret = this->ClientToScreen( xrc.GetRECT());
 
-     if (pmat_) {
-     FRectF xrc = pmat_->LPtoDP(rclog);
-     RECT ret = this->ClientToScreen( xrc.GetRECT());
-
-     return ret;
+		//TRACE( L"CTextEditor::CandidateRec %f %f\n", xrc.top, xrc.bottom);
+		return ret;
      }
+
+	 //TRACE( L"???? CTextEditor::CandidateRec %d %d\n", rclog.top, rclog.bottom);
      return rclog;
 }
 
@@ -706,11 +708,18 @@ BOOL CTextEditor::AddCompositionRenderInfo(int nStart, int nEnd, TF_DISPLAYATTRI
 
 #ifdef _WINDOWS
 
-void CTextEditorCtrl::SetContainer( CTextContainer* ct, IBridgeTSFInterface* rect_size )
+void CTextEditorCtrl::SetContainer( CTextContainer* ct, IBridgeTSFInterface* brt )
 {
 	CTextEditor::SetContainer(ct);
 
-	Reset(rect_size);
+	if ( brt )
+	{
+		int a = 0;
+
+	}
+
+
+	Reset(brt);
 
     if ( ct )
     {

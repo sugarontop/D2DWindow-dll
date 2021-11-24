@@ -60,7 +60,7 @@ class CTextLayout
 
 		UINT FineFirstEndCharPosInLine(UINT uCurPos, BOOL bFirst);
 
-		float GetLineHeight() const {return nLineHeight_;}
+		float GetLineHeight() const;
 		float GetLineWidth() const { return row_width_; }
 
 		void Password( bool bl ){ bPassword_ = bl; }
@@ -88,7 +88,7 @@ class CTextLayout
 		IDWriteTextLayout* DWTextLayout_;
 
 		DWRITE_TEXT_METRICS tm_;	
-		CharsRectF cr;
+		CharsRectF char_rectf_; //cr;
 		
 };
 

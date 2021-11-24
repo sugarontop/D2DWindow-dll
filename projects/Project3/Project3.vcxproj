@@ -172,7 +172,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.md" />
-    <Text Include="script.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
