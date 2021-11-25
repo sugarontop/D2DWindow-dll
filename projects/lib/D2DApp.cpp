@@ -8,10 +8,11 @@ using namespace V6;
 #ifdef CAPTURE_TEST
 
 
+// DLLë§Ç∆Exeë§ÇÃ2éÌóﬁÇ†ÇÈÇ™ÅAã§í ÇÃílÇ…Ç∑ÇÈ
 D2DApp* D2DApp::globalapp_ = nullptr;
 
 
-D2DApp::D2DApp()
+D2DApp::D2DApp():unsee_(0)
 {
 	
 }
@@ -101,14 +102,24 @@ bool D2DApp::IsCapture(D2DCaptureObject* target)
 	return false;
 
 }
+
+void D2DApp::See(bool isSee, D2DCaptureObject* target)
+{
+	if ( !isSee )	
+		unsee_ = target;
+	else
+		unsee_ = nullptr;
+}
+
 D2DCaptureObject* D2DApp::GetCapture()
 {
     if (capture_.empty())
         return nullptr;
 
-    auto it = capture_.top();
+    auto target = capture_.top();
 
-    return (it);
+	return (unsee_ == target ? nullptr : target );
+  
 }
 
 D2DApp& D2DApp::GetInstance()

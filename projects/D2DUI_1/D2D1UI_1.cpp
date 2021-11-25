@@ -402,6 +402,20 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_ACCORDIONBAR;
 
 	}
+	else if  (dynamic_cast<D2DSimpleListbox*>(p))
+	{
+		auto tx = dynamic_cast<D2DSimpleListbox*>(p);
+		r.p = tx;
+		r.typ = TYP_SIMPLE_LISTBOX;
+
+	}
+	else if  (dynamic_cast<D2DWhiteWindow*>(p))
+	{
+		auto tx = dynamic_cast<D2DWhiteWindow*>(p);
+		r.p = tx;
+		r.typ = TYP_WHITE_WINDOW;
+
+	}
 
 
 	else if ( p != nullptr )

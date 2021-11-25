@@ -2,10 +2,11 @@
 #include "pch.h"
 #include "D2DWindow.h" 
 #include "D2DWhiteWindow.h"
+#include "D2DTextbox.h"
 
 using namespace V6;
 
-
+#define  APP (D2DApp::GetInstance())
 
 D2DWhiteWindow::D2DWhiteWindow()
 {
@@ -28,7 +29,7 @@ void D2DWhiteWindow::Draw(D2DContext& cxt)
 		{
 			mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
 	
-			cxt.DFillRect(rc_.ZeroRect(), D2RGB(255,0,0) );
+			cxt.DFillRect(rc_.ZeroRect(), theGray3 );
 	
 			D2DControls::Draw(cxt);
 		}
@@ -62,8 +63,6 @@ HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		{
 			FSizeF& sz = *(FSizeF*)(lParam);
 
-			//rc_.SetSize(sz);
-
 			if ( controls_.size() >= 2 )
 			{
 				vscroll_x_ = rc_.right-BARW;
@@ -90,14 +89,42 @@ HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			return 0;
 		}
 		break;
+		case WM_LBUTTONDOWN:
+		{
+			int a = 0;
+		}
+		break;
 
 	}
 
+APP.See(false,this);
 
 	if ( r == 0 )
 		r = D2DControls::WndProc(b,message,wParam,lParam);
+	
+APP.See(true,this);
 
+	if ( r == 0 )
+	{
+		switch( message )
+		{
+			case WM_KEYDOWN:
+			{
+				auto key = 0xff & wParam;
 
+				if ( key == VK_ESCAPE && APP.IsCapture(this) )
+				{
+						
+					APP.ReleaseCapture();
+
+					DestroyControl();
+					
+					r = 1;
+				}
+			}
+			break;
+		}
+	}
 
 
 	return r;
@@ -127,6 +154,19 @@ void D2DWhiteWindow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 	scV->SetMaxSize(rc_.Height());
 	scH->SetMaxSize(rc_.Width());
+
+
+
+	if ( (stat&STAT_DEBUG1) == STAT_DEBUG1)
+	{
+		auto tx = std::make_shared<D2DTextbox>();
+		tx->CreateControl(parent,this, IBridgeTSFInterface::TYP::SINGLELINE, FRectF(10,10,FSizeF(200,20)), STAT_DEFAULT, NONAME);
+		Add(tx);
+
+
+
+
+	}
 }
 
 // ///////////////////////////////////////////////////////////////////

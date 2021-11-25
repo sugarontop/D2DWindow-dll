@@ -6,6 +6,7 @@
 #include "D2DStatic.h"
 #include "D2DButton.h"
 #include "D2D1UI_1.h"
+#include "D2DWhiteWindow.h"
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
@@ -138,6 +139,20 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 
 				r = 1;
+			}
+			else if ( 1000 == wParam )
+			{
+				auto w = std::make_shared<D2DWhiteWindow>();
+
+				FRectF rc(50,50,FSizeF(300,400));
+
+				w->CreateControl(parent_window_,this, rc, STAT_DEFAULT|STAT_DEBUG1, NONAME );
+				Add(w);
+
+				APP.SetCapture(w.get());
+
+				r = 1;
+
 			}
 		}
 		break;

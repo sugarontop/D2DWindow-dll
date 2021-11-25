@@ -25,9 +25,12 @@ class D2DApp
 
 		static D2DApp& GetInstance();
 
+		void See(bool isSee, D2DCaptureObject* target);
+
 	protected :
 		std::stack<D2DCaptureObject*> capture_;
 		static D2DApp* globalapp_;
+		D2DCaptureObject* unsee_;
 		
 };
 

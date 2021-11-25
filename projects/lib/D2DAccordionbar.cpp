@@ -129,9 +129,6 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 	}
 	else if ( mode_ == 3 )
 	{
-		//hr = D2DControls::DefWndProc(b,message,wParam,lParam);
-
-
 		switch( message )
 		{
 			case WM_LBUTTONDOWN:
@@ -142,6 +139,13 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 				FPointF pt = mat_.DPtoLP(pm.pt);				
 				if (!rc_.PtInRect(pt) && APP.IsCapture(this))
 				{					
+					if (message == WM_LBUTTONDOWN)
+					{
+						OpenCloseBar(false);
+
+						APP.ReleaseCapture();
+					}
+					
 					hr = 1;
 					return hr;
 				}
@@ -149,15 +153,15 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 		}
 
 		{
-			// thisにcaptureの場合、stack overflowになるのではずす
-			auto r = APP.ReleaseCapture();
-
-			_ASSERT(r==this || r == nullptr);
+			/*
+			 thisにcaptureの場合、D2DControls::WndProc内でcaptureへメッセージが飛びstack overflow
+			 になるので、GetCapture()からthisをはずす。
+			*/
+			APP.See(false, this);
 
 			hr = D2DControls::WndProc(b,message,wParam,lParam);
-
-			if ( r == this )
-				APP.SetCapture(this);
+			
+			APP.See(true, this);
 		}
 
 		if ( hr == 0 )
