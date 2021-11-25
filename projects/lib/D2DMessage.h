@@ -54,6 +54,7 @@ struct D2DNMHDR
 #define TYP_STATIC 10
 #define TYP_MDI_CONTROLS 11
 #define TYP_MDISPLIT_CONTROLS  12
+#define TYP_ACCORDIONBAR  13
 
 #define theWhite D2RGB(255,255,255)
 #define theBlack D2RGB(0,0,0)

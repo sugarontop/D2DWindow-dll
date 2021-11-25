@@ -13,11 +13,12 @@ class D2DCaptureObject;
 
 class D2DApp
 {
-	protected :
-		D2DApp();
 	public :
-		virtual void SetCapture(D2DCaptureObject* target);
-		virtual void ReleaseCapture();
+		D2DApp();
+		static void SetD2DAppForDLL(D2DApp* p);
+	public :
+		void SetCapture(D2DCaptureObject* target);
+		D2DCaptureObject* ReleaseCapture();
 		bool IsCapture(D2DCaptureObject* target);
 		D2DCaptureObject* GetCapture();
 		int IsCaptureEx(D2DCaptureObject* target);
@@ -26,7 +27,7 @@ class D2DApp
 
 	protected :
 		std::stack<D2DCaptureObject*> capture_;
-
+		static D2DApp* globalapp_;
 		
 };
 

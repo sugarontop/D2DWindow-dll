@@ -64,11 +64,14 @@ void D2DAccordionbar::Draw(D2DContext& cxt)
 
 		rc.SetWidth(BTN_WIDTH);
 		cxt.DFillRect(rc, theGray2);
+
+		rc_.SetWidth(BAR_WIDTH);
 	}	
 	else if (mode_ == 0)
 	{
 		FRectF rc(rc_);
 		rc.SetWidth(BTN_WIDTH);
+		rc_.SetWidth(BTN_WIDTH);
 		cxt.DFillRect(rc, theGray2);
 
 		mat.PushTransform();
@@ -128,13 +131,34 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 	{
 		//hr = D2DControls::DefWndProc(b,message,wParam,lParam);
 
-		for(auto& it : controls_ )
+
+		switch( message )
 		{
-			hr = it->WndProc(b,message,wParam,lParam);
-			if ( hr )
-				break;
+			case WM_LBUTTONDOWN:
+			case WM_LBUTTONUP:
+			case WM_MOUSEMOVE:
+			{
+				MouseParam& pm = *(MouseParam*)lParam;
+				FPointF pt = mat_.DPtoLP(pm.pt);				
+				if (!rc_.PtInRect(pt) && APP.IsCapture(this))
+				{					
+					hr = 1;
+					return hr;
+				}
+			}
 		}
 
+		{
+			// thisÇ…captureÇÃèÍçáÅAstack overflowÇ…Ç»ÇÈÇÃÇ≈ÇÕÇ∏Ç∑
+			auto r = APP.ReleaseCapture();
+
+			_ASSERT(r==this || r == nullptr);
+
+			hr = D2DControls::WndProc(b,message,wParam,lParam);
+
+			if ( r == this )
+				APP.SetCapture(this);
+		}
 
 		if ( hr == 0 )
 		{

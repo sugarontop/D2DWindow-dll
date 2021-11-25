@@ -7,11 +7,21 @@ using namespace V6;
 
 #ifdef CAPTURE_TEST
 
+
+D2DApp* D2DApp::globalapp_ = nullptr;
+
+
 D2DApp::D2DApp()
 {
-
+	
 }
-void D2DApp::SetCapture( V6::D2DCaptureObject* new_target)
+void D2DApp::SetD2DAppForDLL(D2DApp* p)
+{
+	_ASSERT(globalapp_==nullptr);
+	_ASSERT(p);
+	globalapp_ = p;
+}
+void D2DApp::SetCapture(D2DCaptureObject* new_target)
 {	
     _ASSERT(new_target);
 
@@ -38,18 +48,26 @@ void D2DApp::SetCapture( V6::D2DCaptureObject* new_target)
 			new_target->OnChangeFocus(true, new_target);			
 			
 		 }
+
+
+		 TRACE( L"D2DApp::SetCapture() %x, cnt=%d\n", this, capture_.size());
 	}
 
 
 }
-void D2DApp::ReleaseCapture()
+D2DCaptureObject* D2DApp::ReleaseCapture()
 {
+	D2DCaptureObject* ret = nullptr;
 	if (!capture_.empty())
 	{
+		ret = capture_.top();
+		
 		capture_.top()->OnChangeFocus(false, nullptr);	
 		capture_.pop();
 	}
-    
+
+	TRACE( L"D2DApp::ReleaseCapture() %x, cnt=%d\n", this, capture_.size());
+    return ret;
 }
 
 int D2DApp::IsCaptureEx(D2DCaptureObject* target)
@@ -95,7 +113,9 @@ D2DCaptureObject* D2DApp::GetCapture()
 
 D2DApp& D2DApp::GetInstance()
 {
-	static D2DApp app;
+	_ASSERT(globalapp_);
+
+	D2DApp& app = *globalapp_;
 	return app;
 }
 

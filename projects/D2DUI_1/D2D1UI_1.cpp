@@ -11,10 +11,18 @@
 #include "D2DWhiteWindow.h"
 #include "D2DMDISplitControls.h"
 #include "D2DControls_with_Scrollbar.h"
+#include "D2DAccordionbar.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 //UIHandle Renewal_UIHandle(  UIHandle h );
 UIHandle ConvertUIHandle(D2DControl* p);
+
+DLLEXPORT void D2DInitail(INT_PTR p )
+{
+	D2DApp::SetD2DAppForDLL((D2DApp*)p);
+
+
+}
 
 DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight, int typ )
 {
@@ -385,6 +393,13 @@ DLLEXPORT UIHandle D2DGetCapture()
 		auto tx = dynamic_cast<D2DDropdownListbox*>(p);
 		r.p = tx;
 		r.typ = TYP_DROPDOWNLISTBOX;
+
+	}
+	else if  (dynamic_cast<D2DAccordionbar*>(p))
+	{
+		auto tx = dynamic_cast<D2DAccordionbar*>(p);
+		r.p = tx;
+		r.typ = TYP_ACCORDIONBAR;
 
 	}
 

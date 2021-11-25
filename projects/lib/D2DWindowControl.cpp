@@ -96,6 +96,12 @@ void D2DControls::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 }
 HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	if ( message == WM_LBUTTONDOWN)
+	{
+		int a = 0;
+	}
+	
+	
 	auto capture = APP.GetCapture();
 	HRESULT hr = 0;
 

@@ -16,6 +16,7 @@ class D2DControls;
 class FRectF;
 
 DLLEXPORT bool D2DResource(D2DWindow* win,  FRectF& rc );
+DLLEXPORT void D2DInitail(INT_PTR p );
 
 DLLEXPORT UIHandle D2DCreateWhiteWindow(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id );
 DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id );
