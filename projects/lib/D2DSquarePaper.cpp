@@ -146,7 +146,7 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 				FRectF rc(50,50,FSizeF(300,400));
 
-				w->CreateControl(parent_window_,this, rc, STAT_DEFAULT|STAT_DEBUG1, NONAME );
+				w->CreateControl(parent_window_,this, rc, STAT_DEFAULT|STAT_DEBUG1|STAT_MODAL, NONAME );
 				Add(w);
 
 				APP.SetCapture(w.get());

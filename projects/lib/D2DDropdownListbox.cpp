@@ -127,6 +127,18 @@ HRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM 
 
         }
         break;
+		case WM_KEYDOWN:
+		{
+			auto key = 0xff & wp;
+
+			if ( key == VK_ESCAPE && APP.IsCapture(this) )
+			{						
+				APP.ReleaseCapture();
+							
+				ret = 1;
+			}
+		}
+		break;
         
     }
 

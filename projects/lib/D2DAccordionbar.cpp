@@ -152,17 +152,9 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 			}
 		}
 
-		{
-			/*
-			 thisにcaptureの場合、D2DControls::WndProc内でcaptureへメッセージが飛びstack overflow
-			 になるので、GetCapture()からthisをはずす。
-			*/
-			APP.See(false, this);
-
-			hr = D2DControls::WndProc(b,message,wParam,lParam);
-			
-			APP.See(true, this);
-		}
+					
+		hr = D2DControls::WndProc(b,message,wParam,lParam);
+		
 
 		if ( hr == 0 )
 		{

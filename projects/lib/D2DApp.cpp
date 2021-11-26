@@ -12,7 +12,7 @@ using namespace V6;
 D2DApp* D2DApp::globalapp_ = nullptr;
 
 
-D2DApp::D2DApp():unsee_(0)
+D2DApp::D2DApp()
 {
 	
 }
@@ -103,13 +103,6 @@ bool D2DApp::IsCapture(D2DCaptureObject* target)
 
 }
 
-void D2DApp::See(bool isSee, D2DCaptureObject* target)
-{
-	if ( !isSee )	
-		unsee_ = target;
-	else
-		unsee_ = nullptr;
-}
 
 D2DCaptureObject* D2DApp::GetCapture()
 {
@@ -118,7 +111,7 @@ D2DCaptureObject* D2DApp::GetCapture()
 
     auto target = capture_.top();
 
-	return (unsee_ == target ? nullptr : target );
+	return target;
   
 }
 
@@ -130,6 +123,28 @@ D2DApp& D2DApp::GetInstance()
 	return app;
 }
 
+int D2DApp::Rank(D2DCaptureObject* target)
+{	
+	int c = capture_.size();
+	
+	if ( c > 1 )
+	{
+		auto cap = capture_;
+		int k = 0;
+
+		while( !cap.empty())
+		{
+			if ( cap.top() != target )
+				k++;
+			cap.pop();
+
+		}
+
+		c = c - k;
+	}
+	
+	return c;
+}
 
 #else
 

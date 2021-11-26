@@ -3,7 +3,7 @@
 #include "D2DWindow.h" 
 #include "D2DWhiteWindow.h"
 #include "D2DTextbox.h"
-
+#include "D2DButton.h"
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
@@ -94,15 +94,34 @@ HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			int a = 0;
 		}
 		break;
+		case WM_NOTIFY:
+		{
+			if ( wParam == 1001 && BITFLG(STAT_DEBUG1) )
+			{
+
+				auto w = std::make_shared<D2DWhiteWindow>();
+
+				FRectF rc(55,55,FSizeF(300,400));
+
+				w->CreateControl(parent_window_,this, rc, STAT_DEFAULT|STAT_DEBUG1|STAT_MODAL, NONAME );
+				Add(w);
+
+				APP.SetCapture(w.get());
+
+				r = 1;
+			}
+
+		}
+		break;
 
 	}
 
-APP.See(false,this);
+
 
 	if ( r == 0 )
 		r = D2DControls::WndProc(b,message,wParam,lParam);
 	
-APP.See(true,this);
+
 
 	if ( r == 0 )
 	{
@@ -117,7 +136,8 @@ APP.See(true,this);
 						
 					APP.ReleaseCapture();
 
-					DestroyControl();
+					if (BITFLG(STAT_MODAL))
+						DestroyControl();
 					
 					r = 1;
 				}
@@ -163,7 +183,9 @@ void D2DWhiteWindow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		tx->CreateControl(parent,this, IBridgeTSFInterface::TYP::SINGLELINE, FRectF(10,10,FSizeF(200,20)), STAT_DEFAULT, NONAME);
 		Add(tx);
 
-
+		auto bt = std::make_shared<D2DButton>();
+		bt->CreateControl(parent,this,FRectF(10,40,FSizeF(100,20)), STAT_DEFAULT,L"test",1001);
+		Add(bt);
 
 
 	}

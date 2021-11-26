@@ -16,21 +16,21 @@ class D2DApp
 	public :
 		D2DApp();
 		static void SetD2DAppForDLL(D2DApp* p);
+		static D2DApp& GetInstance();
 	public :
 		void SetCapture(D2DCaptureObject* target);
 		D2DCaptureObject* ReleaseCapture();
 		bool IsCapture(D2DCaptureObject* target);
 		D2DCaptureObject* GetCapture();
 		int IsCaptureEx(D2DCaptureObject* target);
+		int Count() { return (int)capture_.size(); }
 
-		static D2DApp& GetInstance();
-
-		void See(bool isSee, D2DCaptureObject* target);
-
+		int Rank(D2DCaptureObject* target);
+		
 	protected :
 		std::stack<D2DCaptureObject*> capture_;
 		static D2DApp* globalapp_;
-		D2DCaptureObject* unsee_;
+		
 		
 };
 

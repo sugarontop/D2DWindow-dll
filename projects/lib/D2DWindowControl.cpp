@@ -37,10 +37,6 @@ void D2DControl::DestroyControl()
 {
 	if ((stat_ & STAT_DEAD) == 0)
 	{
-		//TRACE( L"me=%x parent=%x HWND=%x %d\n", this, parent_, parent_->hWnd_, (IsWindow(parent_->hWnd_)?1:0) );
-		
-		parent_control_->SendMesage(WM_D2D_ONCLOSE, 0, (LPARAM)this);
-
 		stat_ = STAT_DEAD;
 
 		if (parent_control_)
@@ -49,6 +45,8 @@ void D2DControl::DestroyControl()
 			parent_window_->death_objects_.push_back(p);
 		}
 
+		parent_control_->SendMesage(WM_D2D_ONCLOSE, 0, (LPARAM)this);
+		parent_control_ = nullptr;
 
 	}
 }
@@ -105,7 +103,13 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	auto capture = APP.GetCapture();
 	HRESULT hr = 0;
 
-	if ( nullptr == capture )
+
+	if ( capture && GetParentControls() == capture )
+	{
+		capture = nullptr; // stop stackoverflow
+	}
+
+	if ( nullptr == capture || capture == this )
 	{
 		for(auto& it : controls_ )
 		{
@@ -136,6 +140,7 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			}
 		}
 	}
+
 	return hr;
 }
 void D2DControls::Add(std::shared_ptr<D2DControl> p)
@@ -202,10 +207,20 @@ D2DControl* D2DControls::GetControlFromID( int id ) const
 	}
 	return nullptr;
 }
-
 void D2DControls::InnerDraw(D2DContext& cxt)
 {
 	auto capture = APP.GetCapture();
+
+	auto vcapture = static_cast<D2DControl*>(capture);
+
+	int rank = APP.Rank(vcapture);
+
+	if (rank==2)
+	{
+		int a = 0;		
+
+	}
+
 	if (capture == nullptr || capture == this)
 	{
 		for (auto it = controls_.rbegin(); it != controls_.rend(); it++) 
@@ -227,11 +242,45 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 
 		if ( bl )
 		{
-			static_cast<D2DControl*>(capture)->Draw(cxt);
+			static_cast<D2DControl*>(vcapture)->Draw(cxt);
 		}
 	}
 
 }
+//void D2DControls::InnerDraw(D2DContext& cxt)
+//{
+//	auto capture = APP.GetCapture();
+//
+//	auto vcapture = capture;
+//	
+//
+//
+//	if (capture == nullptr || capture == this)
+//	{
+//		for (auto it = controls_.rbegin(); it != controls_.rend(); it++) 
+//			(*it)->Draw(cxt);
+//	}
+//	else
+//	{ 
+//		bool bl = false;
+//
+//		for (auto it = controls_.rbegin(); it != controls_.rend(); it++)
+//		{
+//			if (capture != it->get())
+//				(*it)->Draw(cxt);
+//			else
+//			{
+//				bl = true;
+//			}
+//		}
+//
+//		if ( bl )
+//		{
+//			static_cast<D2DControl*>(vcapture)->Draw(cxt);
+//		}
+//	}
+//
+//}
 
 void D2DControls::Draw(D2DContext& cxt)
 {

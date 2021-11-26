@@ -109,8 +109,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		}
 		else if ( text_layout_ )
 		{			
-			
-			
+
 			mat.Offset(rctext_);
 			mat.Offset(0, -vscrollbar_.Scroll());
 			mat_sc_ = mat.Copy();
