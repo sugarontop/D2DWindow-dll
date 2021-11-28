@@ -72,7 +72,7 @@ void CreateControl(HWND hWnd)
 
 	auto hctrls = D2DCreateEmptyControls(hwin, root, FRectF(), STAT_DEFAULT, NONAME,-1);
 
-	auto hd = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_DEFAULT, NONAME,-1);
+	auto hd = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_DEFAULT, L"sqare",-1);
 
 	auto clr = D2RGBA(170,170,170,150);
 	D2DSendMessage(hd, WM_D2D_SET_COLOR,1,(LPARAM)&clr);

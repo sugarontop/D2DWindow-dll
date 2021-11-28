@@ -31,7 +31,10 @@ class CTextEditor
 		CTextEditor();
 		virtual ~CTextEditor(); 
     
-		void SetContainer( CTextContainer* ct ){ ct_ = ct; }
+		void SetContainer( CTextContainer* ct )
+		{ 
+			ct_ = ct; 
+		}
 		CTextContainer* GetContainer(){ return ct_; }
     
 		void MoveSelection(int nSelStart, int nSelEnd, bool bTrail=true);

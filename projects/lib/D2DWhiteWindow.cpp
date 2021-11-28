@@ -101,10 +101,14 @@ HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 				auto w = std::make_shared<D2DWhiteWindow>();
 
+				
+
 				FRectF rc(55,55,FSizeF(300,400));
 
+				
+
 				w->CreateControl(parent_window_,this, rc, STAT_DEFAULT|STAT_DEBUG1|STAT_MODAL, NONAME );
-				Add(w);
+				this->Add(w);
 
 				APP.SetCapture(w.get());
 
@@ -113,21 +117,7 @@ HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 		}
 		break;
-
-	}
-
-
-
-	if ( r == 0 )
-		r = D2DControls::WndProc(b,message,wParam,lParam);
-	
-
-
-	if ( r == 0 )
-	{
-		switch( message )
-		{
-			case WM_KEYDOWN:
+		case WM_KEYDOWN:
 			{
 				auto key = 0xff & wParam;
 
@@ -143,10 +133,17 @@ HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				}
 			}
 			break;
-		}
+
 	}
 
 
+
+	if ( r == 0 )
+		r = D2DControls::WndProc(b,message,wParam,lParam);
+	
+
+
+	
 	return r;
 
 }

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "D2DApp.h"
 #include "D2DCapture.h"
+#include "D2DWindowControl.h"
 using namespace V6;
 
 
@@ -14,7 +15,7 @@ D2DApp* D2DApp::globalapp_ = nullptr;
 
 D2DApp::D2DApp()
 {
-	
+	modal_dialog_ = nullptr;
 }
 void D2DApp::SetD2DAppForDLL(D2DApp* p)
 {
@@ -33,7 +34,9 @@ void D2DApp::SetCapture(D2DCaptureObject* new_target)
 		
 		capture_.push(new_target);   
 
-
+		auto test = dynamic_cast<D2DControl*>(new_target);
+		if ( (test->GetStat()&STAT_MODAL) == STAT_MODAL && modal_dialog_ == nullptr)
+			modal_dialog_ = new_target;
 
 		 {
 			//@capture‚©‚ç‚Í‚¸‚ê‚½•ª‚Élostfocus
@@ -62,6 +65,10 @@ D2DCaptureObject* D2DApp::ReleaseCapture()
 	if (!capture_.empty())
 	{
 		ret = capture_.top();
+
+		if( ret == modal_dialog_)
+			modal_dialog_ = nullptr;
+
 		
 		capture_.top()->OnChangeFocus(false, nullptr);	
 		capture_.pop();
@@ -115,6 +122,15 @@ D2DCaptureObject* D2DApp::GetCapture()
   
 }
 
+
+D2DCaptureObject* D2DApp::GetCapture2()
+{
+
+
+	return modal_dialog_;
+  
+}
+
 D2DApp& D2DApp::GetInstance()
 {
 	_ASSERT(globalapp_);
@@ -123,28 +139,7 @@ D2DApp& D2DApp::GetInstance()
 	return app;
 }
 
-int D2DApp::Rank(D2DCaptureObject* target)
-{	
-	int c = capture_.size();
-	
-	if ( c > 1 )
-	{
-		auto cap = capture_;
-		int k = 0;
 
-		while( !cap.empty())
-		{
-			if ( cap.top() != target )
-				k++;
-			cap.pop();
-
-		}
-
-		c = c - k;
-	}
-	
-	return c;
-}
 
 #else
 

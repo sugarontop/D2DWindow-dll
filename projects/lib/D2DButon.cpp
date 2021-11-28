@@ -239,7 +239,7 @@ int D2DWindow::MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title)
 {
 	auto msgbox = std::make_shared<InnerMessageBox>();
 	
-	msgbox->CreateControl(this, top_control_.get(), rc, STAT_DEFAULT, L"msgbox" );
+	msgbox->CreateControl(this, top_control_.get(), rc, STAT_DEFAULT|STAT_MODAL, L"msgbox" );
 
 	top_control_->Add( msgbox );
 

@@ -207,21 +207,21 @@ D2DControl* D2DControls::GetControlFromID( int id ) const
 	}
 	return nullptr;
 }
+
+
 void D2DControls::InnerDraw(D2DContext& cxt)
 {
 	auto capture = APP.GetCapture();
+	int cn = APP.Count();
 
-	auto vcapture = static_cast<D2DControl*>(capture);
+	auto vcapture = capture;
 
-	int rank = APP.Rank(vcapture);
-
-	if (rank==2)
+	if (cn > 1)
 	{
-		int a = 0;		
-
+		vcapture = APP.GetCapture2();
 	}
 
-	if (capture == nullptr || capture == this)
+	if (capture == nullptr || vcapture == this)
 	{
 		for (auto it = controls_.rbegin(); it != controls_.rend(); it++) 
 			(*it)->Draw(cxt);
@@ -232,7 +232,7 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 
 		for (auto it = controls_.rbegin(); it != controls_.rend(); it++)
 		{
-			if (capture != it->get())
+			if (vcapture != it->get())
 				(*it)->Draw(cxt);
 			else
 			{
@@ -240,12 +240,11 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 			}
 		}
 
-		if ( bl )
+		if ( bl &&  vcapture )
 		{
 			static_cast<D2DControl*>(vcapture)->Draw(cxt);
 		}
 	}
-
 }
 //void D2DControls::InnerDraw(D2DContext& cxt)
 //{

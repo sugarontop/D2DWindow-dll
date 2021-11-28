@@ -352,7 +352,7 @@ void CreateControl(HWND hWnd)
 
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 
-
+#include "D2DSquarePaper.h"
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     AppBase app;
@@ -363,6 +363,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {    
         case WM_CREATE:
         {
+            static std::shared_ptr<D2DApp> _app;
+			_app = std::make_shared<D2DApp>(D2DApp());
+			auto k = _app.get();
+			D2DApp::SetD2DAppForDLL(k);
+			D2DInitail((INT_PTR)k );
+
             CreateControl(hWnd);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }

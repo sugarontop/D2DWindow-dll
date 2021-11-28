@@ -224,10 +224,10 @@ void CTextStore::_UnlockDocument()
 }
 BOOL CTextStore::_IsLocked(DWORD dwLockType) 
 { 
-   // if(m_dwInternalLockType)
-   // {
-   //     return TRUE;
-  //  }
+   /*if(m_dwInternalLockType)
+   {
+        return TRUE;
+   }*/
 
     return m_fLocked && (m_dwLockType & dwLockType); 
 }
@@ -281,11 +281,14 @@ STDAPI CTextStore::GetSelection(ULONG ulIndex, ULONG ulCount, TS_SELECTION_ACP *
     *pcFetched = 0;
     if ((ulCount > 0) && ((ulIndex == 0) || (ulIndex == TS_DEFAULT_SELECTION)))
     {
-        pSelection[0].acpStart = _pEditor->GetSelectionStart();
-        pSelection[0].acpEnd = _pEditor->GetSelectionEnd();
-        pSelection[0].style.ase = TS_AE_END;
-        pSelection[0].style.fInterimChar = FALSE;
-        *pcFetched = 1;
+        if (_pEditor->GetContainer())
+        {
+            pSelection[0].acpStart = _pEditor->GetSelectionStart();
+            pSelection[0].acpEnd = _pEditor->GetSelectionEnd();
+            pSelection[0].style.ase = TS_AE_END;
+            pSelection[0].style.fInterimChar = FALSE;
+            *pcFetched = 1;
+        }
     }
 
     return S_OK;
