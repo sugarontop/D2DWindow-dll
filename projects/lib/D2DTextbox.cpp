@@ -150,7 +150,7 @@ void D2DTextbox::StatActive(bool bActive)
 	{	
 		ActiveSw();
 		ctrl()->SetFocus(&mat_sc_);
-		stat_ |= STAT_CAPTURED;
+		//stat_ |= STAT_CAPTURED;
 
 		
 
@@ -171,20 +171,13 @@ void D2DTextbox::StatActive(bool bActive)
 		
 		_ASSERT(ctrl()->ct_==nullptr);
 		TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
-		stat_ &= ~STAT_CAPTURED;
+		//stat_ &= ~STAT_CAPTURED;
 		
 	}
 }
 
 bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject* pnew)
 {
-	//auto me = static_cast<D2DCaptureObject*>(this);
-	//if (bActive)
-	//	TRACE(L"OnChangeFocus true   active=%x %x\n", me, pnew);
-	//else
-	//	TRACE(L"OnChangeFocus false  lost=%x  %x\n", me, pnew);
-
-
 	StatActive(bActive);
 	return true;
 }
@@ -404,6 +397,14 @@ void D2DTextbox::AutoScroll()
 int D2DTextbox::CurrentPos() const
 {
 	return ct_.SelStart();
+}
+bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight)
+{
+	ComPTR<IDWriteTextFormat> textformat;
+	auto hr = parent_window_->cxt.tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,fontheight, L"ja-jp", & textformat);
+
+		 
+	 return (hr==0);
 }
 
 void D2DTextbox::SetText(LPCWSTR str, int str_len, int insert_pos)

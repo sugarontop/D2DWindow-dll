@@ -33,6 +33,7 @@ DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc fu
 DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 
 DLLEXPORT void D2DSetText(UIHandle h, LPCWSTR str);
+DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height);
 DLLEXPORT int D2DSetStat(UIHandle h, int stat);
 DLLEXPORT void D2DSetColor(UIHandle h, ColorF back, ColorF front, ColorF border );
 DLLEXPORT void D2DReadOnly(UIHandle h, bool readonly);

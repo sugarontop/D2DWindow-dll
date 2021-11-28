@@ -66,6 +66,7 @@ namespace V6
 		bool GetSelectText(std::wstringstream* out, bool crlf = true);
 		void Clear();
 		void SetReadonly(bool bReadonly);
+		bool SetFont(LPCWSTR fontnm, float height);
 
 		virtual bool OnChangeFocus(bool bActive, D2DCaptureObject* pnew) ;
 		bool IsMultiline() const;

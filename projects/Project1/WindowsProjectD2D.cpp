@@ -282,10 +282,10 @@ void CreateControl(HWND hWnd)
 
     FRectF rc2(10, 40, FSizeF(400, 600));
     UIHandle x2 = D2DCreateTextbox(hwin, obj.cc2, rc2, true, STAT_VISIBLE | STAT_ENABLE, L"textbox2");
-    D2DSetText(x2, L"Hello world");
+    D2DSetText(x2, L"Hello world1");
 
 
-    
+    D2DSetFont(x2, L"メイリオ", 10.0f);
 
 
 }

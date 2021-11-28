@@ -379,7 +379,7 @@ HRESULT InnerFloatingMenu::WndProc(AppBase& b, UINT message, WPARAM wParam, LPAR
 					idx++;
 				}
 				APP.ReleaseCapture();
-				DestroyControl();
+				
 
 
 				if ( floating_idx == floating_idx_ && floating_idx > -1)
@@ -391,14 +391,13 @@ HRESULT InnerFloatingMenu::WndProc(AppBase& b, UINT message, WPARAM wParam, LPAR
 					d.prm1 = items_[floating_idx_].id;
 					d.sender_parent = sender_;
 
-
 					auto ret = GetParentControls()->SendMesage(WM_NOTIFY, id_, (LPARAM)&d );
 
 					if ( ret == 0 )
 						parent_window_->SendMessage( WM_NOTIFY, id_, (LPARAM)&d );
 
 				}
-
+				DestroyControl();
 
 				return 1;
 			}

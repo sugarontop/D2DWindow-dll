@@ -442,6 +442,15 @@ DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
 		btn->SetText(str);
 	}
 }
+DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
+{
+	if ( h.typ == TYP_TEXTBOX )
+	{
+		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
+		tx->SetFont(fontnm, height );
+
+	}
+}
 
 DLLEXPORT void D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos)
 {
