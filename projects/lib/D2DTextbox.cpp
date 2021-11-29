@@ -8,6 +8,8 @@ using namespace V6;
 #define TAB_WIDTH_4CHAR 4
 #define LEFT_MARGIN 3.0f
 
+std::wstring MoneyString( const std::wstring& text );
+
 
 D2DTextbox::D2DTextbox():back_(D2RGB(255,255,255)),fore_(D2RGB(0,0,0)),border_(D2RGB(0,0,0))
 {
@@ -16,14 +18,16 @@ D2DTextbox::D2DTextbox():back_(D2RGB(255,255,255)),fore_(D2RGB(0,0,0)),border_(D
 void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP typ, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
-	
-
 
 	rctext_ =  rc;
 	typ_ = typ;
 	tm_ = { 0 };
+	ct_.bSingleLine_ = true;
 	if (IsMultiline())
+	{
 		vscrollbar_.Create(this, FRectF(rctext_.right, rctext_.top, rctext_.right + 20, rctext_.bottom));
+		ct_.bSingleLine_ = false;
+	}
 }
 D2DTextbox::~D2DTextbox()
 {
@@ -70,9 +74,8 @@ void D2DTextbox::Draw(D2DContext& cxt)
 
 		if (APP.IsCaptureEx(this)==1)
 		{
-			ComPTR<ID2D1SolidColorBrush> active_back;
-			(*cxt)->CreateSolidColorBrush(D2RGB(220,220,220), &active_back);
-			(*cxt)->FillRectangle(rctext_, active_back);
+			cxt.DFillRect(rctext_, ColorF::White);
+
 			
 			mat.Offset(rctext_);
 			mat.Offset(-ct_.offpt_.x, -vscrollbar_.Scroll());
@@ -81,7 +84,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		
 			if (ctrl()->ct_)
 			{
-				ctrl()->Render(cxt, &tm_); 
+				ctrl()->Render(cxt, &tm_, input_str_singleline_.c_str()); 
 			
 	#ifdef DRAW_CHAR_RECT
 				// char RECTの表示
@@ -128,9 +131,40 @@ void D2DTextbox::Draw(D2DContext& cxt)
 	}
 }
 
-void D2DTextbox::ActiveSw()
+
+std::wstring D2DTextbox::ConvertInputText(const std::wstring& text, int typ)
+{
+	if ( typ == 1 )		
+		return MoneyString(text); 
+
+
+	return text;
+}
+
+void D2DTextbox::ActiveSw(bool bActive)
 { 
-	D2DContext& cxt = this->parent_window_->cxt;
+
+	if ( !IsMultiline())
+	{
+		if (bActive == false)
+		{
+			// editを抜ける時, input_str_singleline_をconvert
+			auto s = ConvertInputText(input_str_singleline_, 0);
+
+			UINT cn;
+			ct_.Clear();
+			ct_.InsertText(0, s.c_str(), s.length(),cn);
+		}
+		else
+		{
+			UINT cn;
+			ct_.Clear();
+			ct_.InsertText(0, input_str_singleline_.c_str(),input_str_singleline_.length(),cn);
+		}
+	}
+
+
+	D2DContext& cxt = parent_window_->cxt;
 
 	_ASSERT(ctrl());
 
@@ -143,18 +177,14 @@ void D2DTextbox::ActiveSw()
 	ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
 }
 
-
 void D2DTextbox::StatActive(bool bActive)
 { 
+	ActiveSw(bActive);
+
 	if (bActive)
-	{	
-		ActiveSw();
+	{			
 		ctrl()->SetFocus(&mat_sc_);
-		//stat_ |= STAT_CAPTURED;
-
-		
-
-		TRACE( L"D2DTextbox::StatActive(TRUE)   %x\n", this );
+		//TRACE( L"D2DTextbox::StatActive(TRUE)   %x\n", this );
 
 	}
 	else
@@ -162,17 +192,11 @@ void D2DTextbox::StatActive(bool bActive)
 		// from OnChangeFocus
 		if ( ctrl()->GetContainer() == &ct_ )
 		{						
-			text_layout_.Release();
-			ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
-	
-
 			ctrl()->SetContainer( NULL, NULL );
 		}
 		
 		_ASSERT(ctrl()->ct_==nullptr);
-		TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
-		//stat_ &= ~STAT_CAPTURED;
-		
+		//TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
 	}
 }
 
@@ -279,8 +303,6 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 					
 					if ( msg == WM_KEYDOWN )
 					{
-						// captureしているので、全体には飛ばせないので、parentにだけ飛ばす
-						parent_control_->WndProc(b, WM_D2D_TEXTBOX_KEYDOWN, wp, lp );						
 						ret = 1;
 					}
 
@@ -326,6 +348,14 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 
 		if ( bl )
 			ret = ctrl()->WndProc( &app, msg, wp, lp ); // WM_CHAR,WM_KEYDOWNの処理など
+
+
+		if ( ret!=0 && (msg == WM_CHAR || msg == WM_KEYDOWN) && !IsMultiline())
+		{
+			WCHAR cb[256];			
+			auto len = ct_.GetText(0,cb, 256);
+			input_str_singleline_.assign(cb,len);
+		}
 		
 		if (mouse_mode == 1)
 		{			
@@ -403,12 +433,54 @@ bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight)
 	ComPTR<IDWriteTextFormat> textformat;
 	auto hr = parent_window_->cxt.tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,fontheight, L"ja-jp", & textformat);
 
-		 
-	 return (hr==0);
+	// NOT IMPLEMENT
+	
+	return (hr==0);
 }
 
 void D2DTextbox::SetText(LPCWSTR str, int str_len, int insert_pos)
 { 
+	if ( IsMultiline())
+		SetMultilineText(str,str_len,insert_pos );
+	else
+		SetSinglelineText(str,str_len,insert_pos );
+}
+
+void D2DTextbox::SetSinglelineText(LPCWSTR str, int str_len, int insert_pos )
+{
+	std::wstringstream sm;
+	for(int i = 0; i < str_len; i++ )
+	{
+		auto ch = str[i];
+		if ( ch == 0x0A || ch == 0x0D )
+		{
+			sm << '\0';
+			break;
+		}
+	}
+	auto s = sm.str();
+
+	insert_pos = max(0, insert_pos);
+
+	input_str_singleline_ = s;
+	
+	UINT n=0;
+	ct_.InsertText(insert_pos, s.c_str(), (UINT32)s.length(), n);
+
+	if ( this != APP.GetCapture() )
+		ActiveSw(false);
+	
+	int pos = CurrentPos() + (int)s.length();
+	if ( ctrl() )
+	{
+		ctrl()->MoveSelection( pos, pos, false );
+		ctrl()->GetLayout()->bRecalc_ = true;
+	}
+}
+
+void D2DTextbox::SetMultilineText(LPCWSTR str, int str_len, int insert_pos )
+{
+
 	std::wstringstream sm;
 	for(int i = 0; i < str_len; i++ )
 	{
@@ -426,7 +498,7 @@ void D2DTextbox::SetText(LPCWSTR str, int str_len, int insert_pos)
 	ct_.InsertText(insert_pos, s.c_str(), (UINT32)s.length(), n);
 
 	if ( this != APP.GetCapture() )
-		ActiveSw();
+		ActiveSw(false);
 	
 	int pos = CurrentPos() + (int)s.length();
 	if ( ctrl() )
@@ -434,8 +506,6 @@ void D2DTextbox::SetText(LPCWSTR str, int str_len, int insert_pos)
 		ctrl()->MoveSelection( pos, pos, false );
 		ctrl()->GetLayout()->bRecalc_ = true;
 	}
-
-
 }
 
 void D2DTextbox::GetText( std::wstringstream* out,  bool crlf )
@@ -520,13 +590,6 @@ void* D2DTextbox::CreateInputControl(D2DWindow* parent)
 	return parent->tsf.ctrl;
 }
 
-void D2DTextbox::DestroyInputControl()
-{ 			
-
-}
-
-
-
 // IBridgeTSFInterface
 FRectF D2DTextbox::GetClientRect() const
 { 
@@ -607,3 +670,125 @@ std::string D2DTextbox::W2Ascii( LPCWSTR s )
 }
 
 
+std::wstring MoneyString( const std::wstring& text )
+{
+	/*
+		入力例
+	auto s0 = MoneyString("");		_ASSERT( s0 == L"" );
+	auto s1 = MoneyString("1000");_ASSERT( s1 == L"1,000" );
+	auto s2 = MoneyString("-1000");_ASSERT( s2 == L"-1,000" );
+	auto s3 = MoneyString("-0001000");_ASSERT( s3 == L"-1,000" );
+
+	auto s4 = MoneyString("-0001000.001");_ASSERT( s4 == L"-1,000.001" );
+	auto s5 = MoneyString("+0001000.00100");_ASSERT( s5 == L"+1,000.00100" );
+	auto s6 = MoneyString("1,000.000");_ASSERT( s6 == L"1,000.000" );
+	auto s7 = MoneyString("1,00,000.000");_ASSERT( s7 == L"100,000.000" );
+
+	*/
+	_ASSERT( text.length() < 32 );
+
+	std::wstring ret;
+
+	WCHAR cba[32];
+	WCHAR* p = cba;
+
+	bool canma = false;
+	for( UINT i = 0; i < text.length(); i++ )
+	{
+		WCHAR ch = text[i];
+		if ( '0' <= ch && ch <= '9' )
+			*p++ = ch;
+		else if ( i == 0 && (ch == L'-' || ch =='+') )
+			*p++ = ch;	
+		else if ( ch == '.'  && canma == false)
+		{	
+			*p++ = ch;
+			canma = true;	
+		}
+	}
+	*p = 0;
+
+
+	p = cba;
+
+	WCHAR cbx[32];
+
+	enum TYP { NONE,PLUS,MINUS };
+
+	TYP ty = NONE;
+
+	int start = 0;
+
+	if ( *p == '-' )
+	{
+		ty = MINUS;
+		start++;
+	}
+	else if ( *p == '+' )
+	{
+		ty = PLUS;
+		start++;
+	}
+	else if ( *p == 0 )
+		return text;
+		
+	p += start;
+
+	while( *p && *p == '0' ) p++;
+
+
+	WCHAR* ps = p;
+	while( *p && *p != '.' ) p++;
+	
+	{
+		std::wstring s1( ps, p );
+
+		WCHAR* cb = cbx;
+
+		if ( ty == MINUS )
+		{
+			cbx[0] = '-';
+			cb = cbx+1;
+		}
+		else if ( ty == PLUS )
+		{
+			cbx[0] = '+';
+			cb = cbx+1;
+		}
+
+		//xassert( s.length() < 32 );
+	 
+		int j =0, k = 0, slen = s1.length();
+
+		for( int i = slen - 1; i >= 0; i-- ) 
+		{
+			if ( j && k % 3 == 0 )
+				cb[j++] = ',';
+
+			cb[j++] = s1[i];			
+			k++;
+		}
+		cb[j] = 0;
+		k = j-1;
+	
+		for( int i = 0; i < j; i++ )
+		{		
+			if ( i < k )
+				std::swap( cb[i], cb[k--] );
+			else
+				break;
+		}
+		
+		ret = cbx;
+
+		if ( p )
+		{
+			// 小数点以下を追加
+			ret += p;
+		}
+		
+	}
+	
+	return ret;
+
+}

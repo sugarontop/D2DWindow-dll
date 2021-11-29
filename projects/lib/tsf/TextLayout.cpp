@@ -24,7 +24,7 @@ CTextLayout::~CTextLayout()
 // Calc layout 行数の把握と文字単位にPOS,LEN,RECTを取得
 //----------------------------------------------------------------
 
-BOOL CTextLayout::Layout(D2DContext& cxt, const WCHAR *psz, int nCnt,const SIZE& sz, bool bSingleLine, int zCaret, int& StarCharPos,IDWriteTextFormat* fmt)
+BOOL CTextLayout::CreateLayout(D2DContext& cxt, const WCHAR *psz, int nCnt,const SIZE& sz, bool bSingleLine, int zCaret, int& StarCharPos,IDWriteTextFormat* fmt)
 {
 //TRACE( L"CTextLayout::Layout\n" );
 

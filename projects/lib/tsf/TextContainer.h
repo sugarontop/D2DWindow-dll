@@ -9,7 +9,7 @@ public:
 
 	BOOL InsertText(int nPos, const WCHAR *psz, UINT nCnt, UINT& nResultCnt);
 	BOOL RemoveText(int nPos, UINT nCnt);
-	BOOL GetText(int nPos, WCHAR *psz, UINT nBuffSize);
+	UINT GetText(int nPos, WCHAR *psz, UINT nBuffSize);
 	UINT GetTextLength() const {return nTextSize_;}
 	const WCHAR *GetTextBuffer() const {return psz_;}
 	void Clear();
@@ -18,16 +18,7 @@ public:
 	int SelStart() const { return nSelStart_; }
 	int SelEnd() const { return nSelEnd_; }
 
-	void SetSelStart(int a)
-	{ 
-		if ( a == 0 )
-		{
-			a = 0;
-		}
-		
-		
-		nSelStart_ = a; 
-	}
+	void SetSelStart(int a){ nSelStart_ = a; }
 	void SetSelEnd(int a){ nSelEnd_ = a; }
 
 private :

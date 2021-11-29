@@ -81,10 +81,10 @@ BOOL CTextContainer::RemoveText(int nPos, UINT nCnt)
 	return TRUE;
 }
 
-BOOL CTextContainer::GetText(int nPos, WCHAR *psz, UINT nCnt)
+UINT CTextContainer::GetText(int nPos, WCHAR *psz, UINT nCnt)
 { 
 	if (!nCnt)
-		return FALSE;
+		return 0;
 
 	auto start =  psz_ + nPos;
 
@@ -93,7 +93,7 @@ BOOL CTextContainer::GetText(int nPos, WCHAR *psz, UINT nCnt)
 
 	memcpy(psz, start, sizeof(WCHAR)*nCnt);
 
-	return TRUE;
+	return nCnt;
 }
 
 void CTextContainer::Clear()

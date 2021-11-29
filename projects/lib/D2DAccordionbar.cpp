@@ -109,6 +109,7 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 				if (rc_.PtInRect(pt))
 				{
 					APP.SetCapture(this);
+					OpenCloseBar(true);
 					hr = 1;
 				}
 			}
@@ -119,7 +120,7 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 				FPointF pt = mat_.DPtoLP(pm.pt);				
 				if (rc_.PtInRect(pt))
 				{
-					OpenCloseBar(true);
+					
 
 					hr = 1;
 				}

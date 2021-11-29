@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "inet.h"
 #include "D2DMisc.h"
+#include <fstream>
 
 using namespace V6;
 void work(IStream** ppJpg)
@@ -31,6 +32,39 @@ void work(IStream** ppJpg)
 
 	DeleteInternetInfo(info);
 }
+
+bool FileReadStream( LPCWSTR fnm, IStream** sm )
+{
+	HRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, sm);
+
+	std::fstream fs;
+	fs.open(fnm, std::fstream::in|std::fstream::binary);
+	if (hr == 0 && fs)
+	{
+		fs.seekg(0, std::ios_base::beg);
+		while(!fs.eof())
+		{
+			char cb[256];
+			fs.read(cb,256);
+			ULONG dlen;
+
+			auto len = fs.readsome(cb, 256);
+
+			if ( len > 0 )
+				(*sm)->Write(cb, (ULONG)len, &dlen);		
+		}
+		fs.close();
+
+		ULARGE_INTEGER ui;
+		LARGE_INTEGER uii={};
+		(*sm)->Seek(uii,STREAM_SEEK_SET,&ui);
+
+		return true;
+	}
+	return false;
+}
+
+
 
 void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 {
@@ -62,6 +96,24 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
 #include "D2DAccordionbar.h"
+static bool cnv_GlobalStream2(IStream* src, IStream** out)
+{
+	IStream* sm = nullptr;
+	if ( S_OK == CreateStreamOnHGlobal(NULL,TRUE,&sm))
+	{
+		LARGE_INTEGER x={0};
+		ULARGE_INTEGER x1,x2, len;
+
+		if ( S_OK==src->Seek(x, STREAM_SEEK_END, &len))
+			if ( S_OK == src->Seek(x,STREAM_SEEK_SET,&x1))			
+				if ( S_OK==src->CopyTo(sm,len, &x1, &x2 ))
+				{
+					*out = sm;
+					return true;
+				}
+	}
+	return false;
+}
 
 extern UIHandleWin hwin;
 
@@ -116,4 +168,23 @@ void CreateControl(HWND hWnd)
 	hctrls.p = bar.get();
 	sq = D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, L"square paper1", 0);
 
+
+
+/*
+
+	D2DWindow* pw = (D2DWindow*)hwin.p;
+	LPCWSTR fnm = L"E:\\work\\png files\\flags\\flag_argentina.png";
+	ComPTR<IStream> sm;
+
+	work(&sm);
+
+	ComPTR<ID2D1Bitmap> bmp;
+	//FileReadStream( fnm, &sm );
+
+	ComPTR<IStream> sm2;
+	if (cnv_GlobalStream2(sm,&sm2))
+		Stream2Bitmap( sm2, *(pw->cxt) , &bmp);
+
+
+*/
 }

@@ -83,7 +83,7 @@ namespace V6
 		virtual void SetRect(const FRectF& rc)  override { rctext_ = rc; }
 	public :
 		static void* CreateInputControl(D2DWindow* parent);
-		static void DestroyInputControl();
+		static void DestroyInputControl(){};
 		void StatActive(bool bActive);
 
 
@@ -91,11 +91,15 @@ namespace V6
 		static std::string W2Ascii( LPCWSTR s );
 
 	protected :
-		void ActiveSw();
+		void ActiveSw(bool bActive);
+		static std::wstring ConvertInputText(const std::wstring& text, int typ);
 		
 		void AutoScroll();
 		FRectF GetVsrollbarRect() const;
 		TSF::CTextEditorCtrl* ctrl() const;
+
+		void SetMultilineText(LPCWSTR str, int len, int insert_pos );
+		void SetSinglelineText(LPCWSTR str, int len, int insert_pos );
 
 	public:
 		// D2DCaptureObject interface
@@ -122,6 +126,7 @@ namespace V6
 		ColorF back_;
 		ColorF fore_;
 		ColorF border_;
+		std::wstring input_str_singleline_;
 
 	};
 };

@@ -483,7 +483,7 @@ int CTextEditor::CurrentCaretPos()
 //
 //
 //----------------------------------------------------------------
-void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm )
+void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, LPCWSTR editing_str )
 {	
 	int zCaretPos = CurrentCaretPos();
 
@@ -491,14 +491,24 @@ void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm )
 
     if ( layout_.bRecalc_ )
 	{       
-         if ( bri_ && bri_->GetType() == IBridgeTSFInterface::PASSWORD)
-         {
-             int len = min(50, ct_->GetTextLength());
-             LPCWSTR s = L"**************************************************";
-             layout_.Layout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
-         }
-         else
-	        layout_.Layout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
+		if ( bri_ && bri_->GetType() == IBridgeTSFInterface::PASSWORD)
+		{
+			int len = min(50, ct_->GetTextLength());
+			LPCWSTR s = L"**************************************************";
+			layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
+		}
+		else if ( ct_->bSingleLine_ )
+		{
+			LPCWSTR s = editing_str;
+			UINT len = wcslen(s);
+			
+			layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
+
+		}
+		else 
+			layout_.CreateLayout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
+
+
 		layout_.bRecalc_ = false;
 	}
 
@@ -522,10 +532,10 @@ void CTextEditor::CalcRender(D2DContext& cxt )
     {
         int len = min(50, ct_->GetTextLength());
         LPCWSTR s = L"**************************************************";
-        layout_.Layout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, 0, ct_->nStartCharPos_, cxt.tsf_text_format_);
+        layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, 0, ct_->nStartCharPos_, cxt.tsf_text_format_);
     }
     else
-	    layout_.Layout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_,0, x, cxt.tsf_text_format_);	
+	    layout_.CreateLayout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_,0, x, cxt.tsf_text_format_);	
 
 	layout_.bRecalc_ = false;
 }
@@ -711,13 +721,6 @@ BOOL CTextEditor::AddCompositionRenderInfo(int nStart, int nEnd, TF_DISPLAYATTRI
 void CTextEditorCtrl::SetContainer( CTextContainer* ct, IBridgeTSFInterface* brt )
 {
 	CTextEditor::SetContainer(ct);
-
-	if ( brt )
-	{
-		int a = 0;
-
-	}
-
 
 	Reset(brt);
 

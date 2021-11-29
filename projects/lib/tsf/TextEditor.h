@@ -49,7 +49,7 @@ class CTextEditor
 		BOOL MoveSelectionUpDown(BOOL bUp, bool bShiftKey);
 		BOOL MoveSelectionToLineFirstEnd(BOOL bFirst, bool bShiftKey);
 
-		void Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm );
+		void Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, LPCWSTR editing_str );
 		void CalcRender(D2DContext& hdc);
 		int GetSelectionStart() const {return ct_->SelStart();}
 		int GetSelectionEnd() const {return ct_->SelEnd();}

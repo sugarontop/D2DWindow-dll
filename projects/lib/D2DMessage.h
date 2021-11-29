@@ -75,7 +75,7 @@ struct D2DNMHDR
 #define WM_D2D_CREATE							(WM_APP+3)
 #define WM_D2D_DESTROY							(WM_APP+4)
 
-#define WM_D2D_TEXTBOX_KEYDOWN 					(WM_APP+5)
+
 
 
 #define WM_D2D_MDI_TOPCHANGE 					(WM_APP+6)
