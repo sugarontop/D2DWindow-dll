@@ -10,7 +10,7 @@ void work(IStream** ppJpg)
 	InternetInfo* info =  CreateInternetInfo();
 
 	info->bGet = true;
-	info->url =  SysAllocString(L"https://192.168.10.65/zaimu/temp/youtube [#168].png");
+	info->url =  SysAllocString(L"https://192.168.10.65/zaimu/temp/flag_argentina.png"); //youtube [#168].png");
 
 	DWORD dw;
 	auto h = CreateThread(0,0,InetAsync, info, 0, &dw);
@@ -37,30 +37,27 @@ bool FileReadStream( LPCWSTR fnm, IStream** sm )
 {
 	HRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, sm);
 
-	std::fstream fs;
-	fs.open(fnm, std::fstream::in|std::fstream::binary);
-	if (hr == 0 && fs)
+	
+	HANDLE h = ::CreateFile(fnm,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,0,nullptr);
+
+	if ( h != (HANDLE)-1)
 	{
-		fs.seekg(0, std::ios_base::beg);
-		while(!fs.eof())
-		{
-			char cb[256];
-			fs.read(cb,256);
+		byte cb[256];
+		DWORD dcb;
+		while( ReadFile(h,cb,256,&dcb,nullptr) && dcb != 0)
+		{			
 			ULONG dlen;
-
-			auto len = fs.readsome(cb, 256);
-
-			if ( len > 0 )
-				(*sm)->Write(cb, (ULONG)len, &dlen);		
+			(*sm)->Write(cb, (ULONG)dcb, &dlen);
 		}
-		fs.close();
+
+		::CloseHandle(h);
 
 		ULARGE_INTEGER ui;
 		LARGE_INTEGER uii={};
 		(*sm)->Seek(uii,STREAM_SEEK_SET,&ui);
-
 		return true;
 	}
+
 	return false;
 }
 
@@ -96,24 +93,7 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
 #include "D2DAccordionbar.h"
-static bool cnv_GlobalStream2(IStream* src, IStream** out)
-{
-	IStream* sm = nullptr;
-	if ( S_OK == CreateStreamOnHGlobal(NULL,TRUE,&sm))
-	{
-		LARGE_INTEGER x={0};
-		ULARGE_INTEGER x1,x2, len;
 
-		if ( S_OK==src->Seek(x, STREAM_SEEK_END, &len))
-			if ( S_OK == src->Seek(x,STREAM_SEEK_SET,&x1))			
-				if ( S_OK==src->CopyTo(sm,len, &x1, &x2 ))
-				{
-					*out = sm;
-					return true;
-				}
-	}
-	return false;
-}
 
 extern UIHandleWin hwin;
 
@@ -169,22 +149,35 @@ void CreateControl(HWND hWnd)
 	sq = D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, L"square paper1", 0);
 
 
-
-/*
-
 	D2DWindow* pw = (D2DWindow*)hwin.p;
-	LPCWSTR fnm = L"E:\\work\\png files\\flags\\flag_argentina.png";
-	ComPTR<IStream> sm;
+	
+	//ComPTR<IStream> sm;
+	//work(&sm);
+	//ComPTR<ID2D1Bitmap> bmp;
+	//Stream2Bitmap( sm, *(pw->cxt) , &bmp);
 
-	work(&sm);
-
-	ComPTR<ID2D1Bitmap> bmp;
-	//FileReadStream( fnm, &sm );
-
-	ComPTR<IStream> sm2;
-	if (cnv_GlobalStream2(sm,&sm2))
-		Stream2Bitmap( sm2, *(pw->cxt) , &bmp);
+	
+	auto ls = D2DCreateListbox(hwin, hd, FRectF(100,450,FSizeF(300,300)), STAT_DEFAULT, NONAME );
 
 
-*/
+	LPCWSTR fnm[] = {L"flag_canada.png",L"flag_andorra.png",L"flag_argentina.png",L"flag_australia.png",
+	L"flag_belgium.png",L"flag_botswana.png",L"flag_brasil.png",L"flag_bulgaria.png",L"flag_cameroon.png",
+	L"flag_canada.png",L"flag_central_african_republic.png",L"flag_chile.png",L"flag_colombia.png"
+	};
+	
+
+	for(int i = 0; i < _countof(fnm); i++)
+	{
+		std::wstring cfnm = L".\\res\\";
+		cfnm += fnm[i];
+		
+		ComPTR<IStream> sm;
+		ComPTR<ID2D1Bitmap> bmp;
+		if (FileReadStream( cfnm.c_str(), &sm ))
+			Stream2Bitmap( sm, *(pw->cxt) , &bmp);
+
+		auto p = bmp.Detach();
+
+		D2DSendMessage(ls, WM_D2D_LISTBOX_ADD_ITEM, 1,(LPARAM)p);
+	}
 }

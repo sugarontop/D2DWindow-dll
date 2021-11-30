@@ -113,6 +113,26 @@ DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, con
 	return r;
 }
 
+DLLEXPORT UIHandle D2DCreateListbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hwin.p);
+	_ASSERT(hctrls.p);
+
+	auto pgtx = new D2DSimpleListbox();
+
+	auto win = (D2DWindow*)hwin.p;
+	auto ctrls = (D2DControls*)hctrls.p;
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( std::shared_ptr<D2DSimpleListbox>(pgtx));	
+
+	UIHandle r;
+	r.p = pgtx;
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+
 
 DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
@@ -131,9 +151,6 @@ DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const
 	r.p = pgtx;
 	r.typ = TYP_CONTROLS;
 	return r;
-
-
-
 }
 DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id )
 {
@@ -447,7 +464,7 @@ DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
 	if ( h.typ == TYP_TEXTBOX )
 	{
 		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
-		tx->SetFont(fontnm, height );
+		//tx->SetFont(fontnm, height );
 
 	}
 }

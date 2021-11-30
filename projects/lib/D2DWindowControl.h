@@ -93,6 +93,9 @@ public:
 	virtual const FRectF& GetRect() const override { return rc_; }
 	virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 
+	std::shared_ptr<D2DControl> GetItem(UINT idx){ return controls_[idx]; }
+	UINT ChildCount() const { return controls_.size(); }
+
 protected :
 	virtual HRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	

@@ -483,7 +483,7 @@ int CTextEditor::CurrentCaretPos()
 //
 //
 //----------------------------------------------------------------
-void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, LPCWSTR editing_str )
+void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm)
 {	
 	int zCaretPos = CurrentCaretPos();
 
@@ -499,8 +499,8 @@ void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, LPCWSTR editi
 		}
 		else if ( ct_->bSingleLine_ )
 		{
-			LPCWSTR s = editing_str;
-			UINT len = wcslen(s);
+			LPCWSTR s = ct_->GetTextBuffer();
+			UINT len = ct_->GetTextLength();
 			
 			layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
 

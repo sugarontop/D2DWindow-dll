@@ -14,6 +14,7 @@ namespace V6
 			D2DListboxItemBase(int idx): idx_(idx){}
 			
 			virtual void Draw(D2DContext& cxt, float width, float height) = 0;
+			virtual float RowHeight() = 0;
 
 		protected :
 			int idx_;
@@ -25,15 +26,30 @@ namespace V6
 			D2DListboxItemString(){}
 			D2DListboxItemString(int idx, std::wstring title):D2DListboxItemBase(idx), title_(title){}
 			virtual void Draw(D2DContext& cxt, float width, float height) override;
+			virtual float RowHeight() override;
 
 		protected :			
 			std::wstring title_;
 
 	};
 
+	class D2DListboxItemImage : public D2DListboxItemBase
+	{
+		public :
+			D2DListboxItemImage(){}
+			D2DListboxItemImage(int idx,ComPTR<ID2D1Bitmap> item):D2DListboxItemBase(idx),img_(item){}
+			virtual void Draw(D2DContext& cxt, float width, float height) override;
+			virtual float RowHeight() override;
+
+		protected :			
+			ComPTR<ID2D1Bitmap> img_;
+
+	};
+
 	class D2DSimpleListbox : public D2DControl
 	{
 		friend class D2DDropdownListbox;
+		
 		public:
 			D2DSimpleListbox();
 
@@ -46,7 +62,9 @@ namespace V6
 
 			int GetSelectedIdx() const { return selected_idx_; }
 			virtual int GetTypeid() const override{ return TYP_SIMPLE_LISTBOX; }
-	
+			
+			float RowHeight() const;
+
 	protected:
 
 			bool OnEscape();

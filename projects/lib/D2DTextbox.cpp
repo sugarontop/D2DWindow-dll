@@ -22,6 +22,7 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 	rctext_ =  rc;
 	typ_ = typ;
 	tm_ = { 0 };
+	
 	ct_.bSingleLine_ = true;
 	if (IsMultiline())
 	{
@@ -84,7 +85,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		
 			if (ctrl()->ct_)
 			{
-				ctrl()->Render(cxt, &tm_, input_str_singleline_.c_str()); 
+				ctrl()->Render(cxt, &tm_);
 			
 	#ifdef DRAW_CHAR_RECT
 				// char RECTÇÃï\é¶
@@ -132,7 +133,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 }
 
 
-std::wstring D2DTextbox::ConvertInputText(const std::wstring& text, int typ)
+std::wstring D2DTextbox::ConvertInputText(LPCWSTR text, int typ)
 {
 	if ( typ == 1 )		
 		return MoneyString(text); 
@@ -141,27 +142,32 @@ std::wstring D2DTextbox::ConvertInputText(const std::wstring& text, int typ)
 	return text;
 }
 
+#define TESTTEST
+
+#ifdef TESTTEST
+
 void D2DTextbox::ActiveSw(bool bActive)
 { 
 
-	if ( !IsMultiline())
-	{
-		if (bActive == false)
-		{
-			// editÇî≤ÇØÇÈéû, input_str_singleline_Çconvert
-			auto s = ConvertInputText(input_str_singleline_, 0);
+	//if (!IsMultiline() && 1==0)
+	//{
+	//	if (bActive == false)
+	//	{
+	//		// editÇî≤ÇØÇÈéû, input_str_singleline_Çconvert
+	//		
+	//		auto s = ConvertInputText(input_str_singleline_, 0);
 
-			UINT cn;
-			ct_.Clear();
-			ct_.InsertText(0, s.c_str(), s.length(),cn);
-		}
-		else
-		{
-			UINT cn;
-			ct_.Clear();
-			ct_.InsertText(0, input_str_singleline_.c_str(),input_str_singleline_.length(),cn);
-		}
-	}
+	//		UINT cn;
+	//		ct_.Clear();
+	//		ct_.InsertText(0, s.c_str(), s.length(),cn);
+	//	}
+	//	else
+	//	{
+	//		UINT cn;
+	//		ct_.Clear();
+	//		ct_.InsertText(0, input_str_singleline_.c_str(),input_str_singleline_.length(),cn);
+	//	}
+	//}
 
 
 	D2DContext& cxt = parent_window_->cxt;
@@ -199,6 +205,56 @@ void D2DTextbox::StatActive(bool bActive)
 		//TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
 	}
 }
+#else
+
+
+void D2DTextbox::ActiveSw(bool bActive)
+{ 
+	D2DContext& cxt = this->parent_window_->cxt;
+
+	_ASSERT(ctrl());
+
+	ctrl()->SetContainer( &ct_, this ); 
+	_ASSERT(ctrl()->ct_);
+
+	ctrl()->CalcRender( cxt );
+	
+	text_layout_.Release();
+	ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
+}
+
+
+void D2DTextbox::StatActive(bool bActive)
+{ 
+	if (bActive)
+	{	
+		ActiveSw(bActive);
+		ctrl()->SetFocus(&mat_sc_);
+		stat_ |= STAT_CAPTURED;
+
+		
+
+		TRACE( L"D2DTextbox::StatActive(TRUE)   %x\n", this );
+
+	}
+	else
+	{
+		if ( ctrl()->GetContainer() == &ct_ )
+		{						
+			text_layout_.Release();
+			ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
+	
+
+			ctrl()->SetContainer( NULL, NULL );
+		}
+		
+		_ASSERT(ctrl()->ct_==nullptr);
+		TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
+		stat_ &= ~STAT_CAPTURED;
+		
+	}
+}
+#endif
 
 bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject* pnew)
 {
@@ -344,18 +400,13 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 			break;
 
 		}
-
+		 
 
 		if ( bl )
 			ret = ctrl()->WndProc( &app, msg, wp, lp ); // WM_CHAR,WM_KEYDOWNÇÃèàóùÇ»Ç«
 
 
-		if ( ret!=0 && (msg == WM_CHAR || msg == WM_KEYDOWN) && !IsMultiline())
-		{
-			WCHAR cb[256];			
-			auto len = ct_.GetText(0,cb, 256);
-			input_str_singleline_.assign(cb,len);
-		}
+		
 		
 		if (mouse_mode == 1)
 		{			
@@ -462,7 +513,7 @@ void D2DTextbox::SetSinglelineText(LPCWSTR str, int str_len, int insert_pos )
 
 	insert_pos = max(0, insert_pos);
 
-	input_str_singleline_ = s;
+	
 	
 	UINT n=0;
 	ct_.InsertText(insert_pos, s.c_str(), (UINT32)s.length(), n);

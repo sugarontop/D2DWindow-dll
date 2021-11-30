@@ -92,7 +92,7 @@ namespace V6
 
 	protected :
 		void ActiveSw(bool bActive);
-		static std::wstring ConvertInputText(const std::wstring& text, int typ);
+		static std::wstring ConvertInputText(LPCWSTR text, int typ);
 		
 		void AutoScroll();
 		FRectF GetVsrollbarRect() const;
@@ -126,7 +126,7 @@ namespace V6
 		ColorF back_;
 		ColorF fore_;
 		ColorF border_;
-		std::wstring input_str_singleline_;
+		
 
 	};
 };

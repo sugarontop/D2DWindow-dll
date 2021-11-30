@@ -182,6 +182,7 @@
     <ClInclude Include="..\lib\AppBase.h" />
     <ClInclude Include="..\lib\D2DButton.h" />
     <ClInclude Include="..\lib\D2DDropdownListbox.h" />
+    <ClInclude Include="..\lib\D2DImageControl.h" />
     <ClInclude Include="..\lib\D2DInterface.h" />
     <ClInclude Include="..\lib\D2DMessage.h" />
     <ClInclude Include="..\lib\D2DSimpleListbox.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="..\lib\D2DButon.cpp" />
     <ClCompile Include="..\lib\D2DClientControl.cpp" />
     <ClCompile Include="..\lib\D2DDropdownListbox.cpp" />
+    <ClCompile Include="..\lib\D2DImageControl.cpp" />
     <ClCompile Include="..\lib\D2DSimpleListbox.cpp" />
     <ClCompile Include="..\lib\D2DSquarePaper.cpp" />
     <ClCompile Include="..\lib\D2DStatic.cpp" />

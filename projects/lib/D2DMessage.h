@@ -57,6 +57,7 @@ struct D2DNMHDR
 #define TYP_MDISPLIT_CONTROLS  12
 #define TYP_ACCORDIONBAR  13
 #define TYP_WHITE_WINDOW 14
+#define TYP_IMAGE 15
 
 #define theWhite D2RGB(255,255,255)
 #define theBlack D2RGB(0,0,0)
@@ -87,3 +88,6 @@ struct D2DNMHDR
 #define WM_D2D_ONCLOSE							(WM_APP+10)
 #define WM_D2D_SET_SIZE							(WM_APP+11)
 #define WM_D2D_SET_COLOR						(WM_APP+12) // w=0:back,1:fore,l=ColorF
+
+
+#define WM_D2D_LISTBOX_ADD_ITEM					(WM_APP+13)

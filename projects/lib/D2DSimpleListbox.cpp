@@ -12,6 +12,15 @@ D2DSimpleListbox::D2DSimpleListbox()
 {
                 
 }
+float D2DSimpleListbox::RowHeight() const
+{
+	if ( !items_.empty())
+	{
+		return items_[0]->RowHeight();
+	}
+
+	return ROW_HEIGHT;
+}
 
 void D2DSimpleListbox::Draw(D2DContext& cxt)
 {
@@ -35,14 +44,14 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
         
         int i = 0;
 
-
+		const float h = RowHeight();
         mat.PushTransform();
         mat.Offset(0, -offbar_y_* scbai_);
         for(auto& it : items_ )
         {
-            float w, h;
+            float w;
             w = rc_.Width();
-            h = ROW_HEIGHT;
+            
 
             
             if (selected_idx_ == i )
@@ -139,6 +148,8 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
         return rc;
     };
 
+	const auto rowheight = RowHeight();
+
     switch( message )
     {
         case WM_LBUTTONDOWN:
@@ -161,7 +172,7 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
 
                 auto y = pt.y + offbar_y_* scbai_;
-                int idx = (int)(y / ROW_HEIGHT);
+                int idx = (int)(y / rowheight);
 
                 if (InnerRect(rc_).ZeroRect().PtInRect(pt) )
                     selected_idx_ = idx;
@@ -210,7 +221,7 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
             {
 
                 auto y = pt.y + offbar_y_ * scbai_;
-                int idx = (int)(y / ROW_HEIGHT);
+                int idx = (int)(y / rowheight);
 
 
                 if (rc_.ZeroRect().PtInRect(pt))
@@ -246,9 +257,9 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
             {
                 float a = 0;
                 if (mp->zDelta > 0)
-                    a = -ROW_HEIGHT;
+                    a = -rowheight;
                 if (mp->zDelta < 0)
-                     a= ROW_HEIGHT;
+                     a= rowheight;
 
                 offbar_y_ = max(0,min(sc_dataHeight(), offbar_y_+a ));
 
@@ -265,7 +276,8 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
         break;
         case WM_KEYDOWN:
         {
-            if (wParam == VK_ESCAPE && APP.IsCapture(this))
+			auto key = 0xff & wParam;
+            if (key == VK_ESCAPE ) 
             {
                 if ( OnEscape() )
                     ret = 1;
@@ -273,8 +285,23 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
         }
         break;
+		case WM_D2D_LISTBOX_ADD_ITEM:
+		{
+			int typ = wParam;
 
+			if ( typ == 1 )
+			{			
+				ID2D1Bitmap* cs = (ID2D1Bitmap*)lParam;
 
+				ComPTR<ID2D1Bitmap> t(cs);
+				
+				auto i = items_.size();
+				items_.push_back( std::shared_ptr<D2DListboxItemImage>(new D2DListboxItemImage(i, t))); 
+	
+			}
+			ret = 1;
+		}
+		break;
     }
 
     return ret;
@@ -282,9 +309,10 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 bool D2DSimpleListbox::OnEscape()
 {
     
-    if ( APP.IsCapture(this))
+    //if ( APP.IsCapture(this))
     {                
         selected_idx_ = -1;
+		float_idx_ = -1;
 
         OnClick();
         return true;
@@ -308,11 +336,6 @@ void D2DSimpleListbox::OnClick()
     }
 
 }
-void D2DListboxItemString::Draw(D2DContext& cxt, float width, float height)
-{
-    (*cxt)->DrawText( title_.c_str(), title_.length(), cxt.textformat_, FRectF(0, 0, width, height) , cxt.black_ );
-}
-
 float D2DSimpleListbox::sc_barThumbHeight()
 {
     return scbarThumbHeight_;
@@ -324,4 +347,23 @@ float D2DSimpleListbox::sc_barTotalHeight()
 float D2DSimpleListbox::sc_dataHeight()
 {
     return items_.size() * ROW_HEIGHT;
+}
+
+// /////////////////////////////////////////////////////////////////////////////////////
+void D2DListboxItemString::Draw(D2DContext& cxt, float width, float height)
+{
+    (*cxt)->DrawText( title_.c_str(), title_.length(), cxt.textformat_, FRectF(0, 0, width, height) , cxt.black_ );
+}
+float D2DListboxItemString::RowHeight()
+{
+	return ROW_HEIGHT;
+}
+
+void D2DListboxItemImage::Draw(D2DContext& cxt, float width, float height)
+{
+   (*cxt)->DrawImage(img_, FPointF());
+}
+float D2DListboxItemImage::RowHeight()
+{
+	return img_->GetSize().height;
 }
