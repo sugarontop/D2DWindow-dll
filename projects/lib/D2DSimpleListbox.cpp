@@ -7,6 +7,7 @@ using namespace V6;
 
 #define BUTTON_WIDTH BARW
 #define ROW_HEIGHT 22.0f
+#define _min_thum_height 24.0f
 
 D2DSimpleListbox::D2DSimpleListbox()
 {
@@ -74,7 +75,7 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
             mat.Offset(0.0f, offbar_y_);
             float overflow = max(0, sc_dataHeight() - sc_barTotalHeight());
             scbarThumbHeight_ = sc_barTotalHeight() - overflow;
-            const float min_thum_height = 8.0f;
+            const float min_thum_height = _min_thum_height;
             scbai_ = 1.0f;
             if (scbarThumbHeight_ < min_thum_height)
             {
@@ -296,8 +297,18 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 				ComPTR<ID2D1Bitmap> t(cs);
 				
 				auto i = items_.size();
-				items_.push_back( std::shared_ptr<D2DListboxItemImage>(new D2DListboxItemImage(i, t))); 
+				items_.push_back( std::make_shared<D2DListboxItemImage>(i, t)); 
 	
+			}
+			else if ( typ == 2 )
+			{
+				D2DControls* cs = (D2DControls*)lParam;
+
+				for(UINT i = 0; i < cs->ChildCount(); i++ ) 
+				{
+					auto ch = cs->GetItem(i);	
+					items_.push_back( std::make_shared<D2DListboxItemControl>(i, ch)); 
+				}
 			}
 			ret = 1;
 		}
@@ -346,7 +357,7 @@ float D2DSimpleListbox::sc_barTotalHeight()
 }
 float D2DSimpleListbox::sc_dataHeight()
 {
-    return items_.size() * ROW_HEIGHT;
+    return items_.size() * RowHeight();
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////
@@ -358,7 +369,7 @@ float D2DListboxItemString::RowHeight()
 {
 	return ROW_HEIGHT;
 }
-
+// /////////////////////////////////////////////////////////////////////////////////////
 void D2DListboxItemImage::Draw(D2DContext& cxt, float width, float height)
 {
    (*cxt)->DrawImage(img_, FPointF());
@@ -367,3 +378,14 @@ float D2DListboxItemImage::RowHeight()
 {
 	return img_->GetSize().height;
 }
+// /////////////////////////////////////////////////////////////////////////////////////
+void D2DListboxItemControl::Draw(D2DContext& cxt, float width, float height)
+{
+   ctrl_->Draw(cxt);
+}
+float D2DListboxItemControl::RowHeight()
+{
+	auto h =  ctrl_->GetRect().Height();
+	return h;
+}
+

@@ -37,8 +37,10 @@ bool FileReadStream( LPCWSTR fnm, IStream** sm )
 {
 	HRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, sm);
 
+	CREATEFILE2_EXTENDED_PARAMETERS cfprm = {};
+	cfprm.dwSize = sizeof(CREATEFILE2_EXTENDED_PARAMETERS);
 	
-	HANDLE h = ::CreateFile(fnm,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,0,nullptr);
+	HANDLE h = ::CreateFile2(fnm,GENERIC_READ,FILE_SHARE_READ,OPEN_EXISTING, &cfprm);
 
 	if ( h != (HANDLE)-1)
 	{
@@ -96,6 +98,8 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 
 
 extern UIHandleWin hwin;
+
+//#define TEST1
 
 void CreateControl(HWND hWnd)
 {
@@ -159,6 +163,7 @@ void CreateControl(HWND hWnd)
 	
 	auto ls = D2DCreateListbox(hwin, hd, FRectF(100,450,FSizeF(300,300)), STAT_DEFAULT, NONAME );
 
+#ifdef TEST1
 
 	LPCWSTR fnm[] = {L"flag_canada.png",L"flag_andorra.png",L"flag_argentina.png",L"flag_australia.png",
 	L"flag_belgium.png",L"flag_botswana.png",L"flag_brasil.png",L"flag_bulgaria.png",L"flag_cameroon.png",
@@ -180,4 +185,22 @@ void CreateControl(HWND hWnd)
 
 		D2DSendMessage(ls, WM_D2D_LISTBOX_ADD_ITEM, 1,(LPARAM)p);
 	}
+#else
+
+	UIHandle ctrls = D2DCreateControls(hwin, hd, FRectF(0,0,1,1), STAT_ENABLE, NONAME,-1);
+
+	for(int i = 0; i < 8; i++ )
+	{
+		auto c1 = D2DCreateControls(hwin, ctrls, FRectF(0,0,200,50), STAT_DEFAULT, NONAME,-1);
+		
+		
+		
+		D2DCreateStatic(hwin,c1,FRectF(10,10,FSizeF(50,25)), STAT_DEFAULT, L"TEXT:", NONAME );
+		//D2DCreateTextbox(hwin,c1,FRectF(60,10,FSizeF(200,25)), FALSE, STAT_DEFAULT, NONAME );
+		D2DCreateButton(hwin,c1,FRectF(60,10,FSizeF(100,25)),STAT_DEFAULT, NONAME,-1);
+	}
+
+
+	D2DSendMessage(ls, WM_D2D_LISTBOX_ADD_ITEM, 2,(LPARAM)ctrls.p);
+#endif
 }

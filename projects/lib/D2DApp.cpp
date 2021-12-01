@@ -34,6 +34,10 @@ void D2DApp::SetCapture(D2DCaptureObject* new_target)
 		if ( (test->GetStat()&STAT_MODAL) == STAT_MODAL && modal_dialog_ == nullptr)
 			modal_dialog_ = new_target;
 
+
+		//if ( (test->GetStat()&STAT_MODAL) == STAT_MODAL)
+		//	modal_dialog_.push(new_target);
+
 		 {
 			//@capture‚©‚ç‚Í‚¸‚ê‚½•ª‚Élostfocus
 			
@@ -64,6 +68,9 @@ D2DCaptureObject* D2DApp::ReleaseCapture()
 
 		if( ret == modal_dialog_)
 			modal_dialog_ = nullptr;
+
+		//if( !modal_dialog_.empty() && ret == modal_dialog_.top())
+		//	modal_dialog_.pop();
 
 		
 		capture_.top()->OnChangeFocus(false, nullptr);	
@@ -118,12 +125,28 @@ D2DCaptureObject* D2DApp::GetCapture()
   
 }
 
+//D2DCaptureObject* D2DApp::Pop2()
+//{
+//	if ( modal_dialog_.empty())
+//		return nullptr;
+//	auto r = modal_dialog_.top();
+//	modal_dialog_.pop();
+//	return r;
+//}
+//void D2DApp::Push2(D2DCaptureObject* target)
+//{
+//	modal_dialog_.push(target);
+//}
+
 
 D2DCaptureObject* D2DApp::GetCapture2()
 {
-
-
 	return modal_dialog_;
+
+	//if ( modal_dialog_.empty())
+	//	return nullptr;
+
+	//return modal_dialog_.top();
   
 }
 

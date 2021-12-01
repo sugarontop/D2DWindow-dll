@@ -242,7 +242,11 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 
 		if ( bl &&  vcapture )
 		{
+			//auto x = APP.Pop2();
 			static_cast<D2DControl*>(vcapture)->Draw(cxt);
+
+			//if ( x )
+				//APP.Push2(x);
 		}
 	}
 }

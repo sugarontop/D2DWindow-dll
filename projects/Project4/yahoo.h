@@ -52,6 +52,8 @@ namespace V6 {
 			virtual const FRectF& GetRect() const { return rc_; }
 			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
 
+			static ULONG Period(int yyyy, int mm, int dd );
+
 			FRectF rc_;
 			yahoo_finance* finance_;
 

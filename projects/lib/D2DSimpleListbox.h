@@ -43,8 +43,20 @@ namespace V6
 
 		protected :			
 			ComPTR<ID2D1Bitmap> img_;
-
 	};
+	class D2DListboxItemControl : public D2DListboxItemBase
+	{
+		public :
+			D2DListboxItemControl(){}
+			D2DListboxItemControl(int idx,std::shared_ptr<D2DControl> item):D2DListboxItemBase(idx),ctrl_(item){}
+			virtual void Draw(D2DContext& cxt, float width, float height) override;
+			virtual float RowHeight() override;
+
+		protected :			
+			std::shared_ptr<D2DControl> ctrl_;
+	};
+
+
 
 	class D2DSimpleListbox : public D2DControl
 	{
