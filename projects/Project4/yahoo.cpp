@@ -88,6 +88,9 @@ void yahoo_finance::InetComplete(InternetInfo* )
 	InvalidateRect(parent_window_->GetHwnd(),NULL,FALSE);
 
 }
+
+//#define YAHOO
+
 void yahoo_finance::StartDownload()
 {
 	if ( info_ == nullptr )
@@ -95,8 +98,19 @@ void yahoo_finance::StartDownload()
 		info_ = CreateInternetInfo();
 
 		info_->bGet = true;
-		//info_->url = ::SysAllocString(L"https://query1.finance.yahoo.com/v7/finance/download/AAPL?period1=1605085785&period2=1636621785&interval=1d&events=history&includeAdjustedClose=true");
+
+#ifdef YAHOO
+		WCHAR cb[256];
+		
+		auto dd = yahoo_chart::Period(0,0,0);
+		auto dds = yahoo_chart::Period(2021,1,1);
+
+		_snwprintf_s(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",L"SPY",dds, dd);
+		info_->url = ::SysAllocString(cb);
+#else
+
 		info_->url = ::SysAllocString(L"https://192.168.10.65/zaimu/XLE.csv");
+#endif
 					
 		info_->complete = std::bind(&yahoo_finance::InetComplete, this, _1);
 					
@@ -559,8 +573,20 @@ void yahoo_chart::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 
 ULONG yahoo_chart::Period(int yyyy, int mm, int dd )
 {
-	ULONG oneday = 86400; // 86400sec
+	if ( yyyy < 1970 )
+	{
+		struct tm tm_now;
+		__time64_t long_time;
+		_time64( &long_time );		
+		localtime_s(&tm_now, &long_time );
 
+		yyyy = 1900+ tm_now.tm_year;
+		mm = 1+ tm_now.tm_mon;
+		dd = tm_now.tm_mday;
+	}
+
+
+	const ULONG oneday = 86400; // 86400sec
 
 	SYSTEMTIME st={};
 	SYSTEMTIME st2={};
@@ -577,7 +603,6 @@ ULONG yahoo_chart::Period(int yyyy, int mm, int dd )
 	ULONGLONG number2 = (((ULONGLONG)ft2.dwHighDateTime) << 32) + ft2.dwLowDateTime;
 
 	auto distance = (number2-number)/_DAY;
-
 	auto ret = distance*oneday;
 
 

@@ -103,6 +103,7 @@ void D2DSimpleListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
     offbar_y_ = 0;
     scbarThumbHeight_ = scdata_ = 0;
     scbai_=1.0f;
+	typ_ = 0;
 
 //#ifdef  _DEBUG
 //    items_.push_back( std::shared_ptr<D2DListboxItemString>( new D2DListboxItemString(1, L"item1")));
@@ -138,8 +139,17 @@ bool D2DSimpleListbox::sc_MouseMove(FPointF& pt)
 }
 
 
-
 HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (typ_ == 0)
+		return WndProcNormal(b,message,wParam,lParam);
+	
+
+	return WndProcForControl(b,message,wParam,lParam);
+
+}
+
+HRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HRESULT ret = 0;
 
@@ -178,16 +188,26 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
                 if (InnerRect(rc_).ZeroRect().PtInRect(pt) )
                     selected_idx_ = idx;
 
+				
 
+				if (-1< selected_idx_ && selected_idx_ < items_.size())
+				{
+					APP.ReleaseCapture();
+					auto a = items_[selected_idx_];
+					auto a1 = dynamic_cast<D2DListboxItemControl*>(a.get());
+					auto a2 = a1->Control();
+
+					APP.SetCapture(a2.get());
+				}
                 return 1;
             }
             
             
-            if (!rc_.ZeroRect().PtInRect(pt))
+           /* if (!rc_.ZeroRect().PtInRect(pt))
             {
                 if ( OnEscape() )
                     ret = 1;
-            }
+            }*/
         }
         break;
         case WM_LBUTTONUP:
@@ -196,14 +216,15 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
             MouseParam* mp = (MouseParam*)lParam;
             auto pt = mat_.DPtoLP(mp->pt);
 
-            if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3)
-            {            
-                OnClick();
-            }
+            //if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3)
+            //{            
+            //    OnClick();
+            //}
 
             scstat_ = 0;
             break;
         }
+		break;
         case WM_MOUSEMOVE:
         {
             MouseParam* mp = (MouseParam*)lParam;
@@ -293,6 +314,7 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 			if ( typ == 1 )
 			{			
 				ID2D1Bitmap* cs = (ID2D1Bitmap*)lParam;
+				typ_ = 0;
 
 				ComPTR<ID2D1Bitmap> t(cs);
 				
@@ -303,6 +325,189 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 			else if ( typ == 2 )
 			{
 				D2DControls* cs = (D2DControls*)lParam;
+				typ_ = 1;
+
+				for(UINT i = 0; i < cs->ChildCount(); i++ ) 
+				{
+					auto ch = cs->GetItem(i);	
+					items_.push_back( std::make_shared<D2DListboxItemControl>(i, ch)); 
+				}
+			}
+			ret = 1;
+		}
+		break;
+    }
+
+    return ret;
+}
+
+
+HRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    HRESULT ret = 0;
+
+    auto InnerRect =[](FRectF rc)->FRectF
+    {
+        rc.right -= 30;
+        return rc;
+    };
+
+	const auto rowheight = RowHeight();
+
+    switch( message )
+    {
+        case WM_LBUTTONDOWN:
+        {
+            MouseParam* mp = (MouseParam*)lParam;
+            auto pt = mat_.DPtoLP(mp->pt);
+          
+            if (rc_.ZeroRect().PtInRect(pt))
+            {
+                ptold = pt;
+
+                if ( rc_.ZeroRect().right - 30 < pt.x && pt.x < rc_.ZeroRect().right)
+                {
+                    APP.SetCapture(this);
+                    scstat_ = 3;
+
+                }
+                else
+                    mouse_stat_ = 1;
+
+
+                auto y = pt.y + offbar_y_* scbai_;
+                int idx = (int)(y / rowheight);
+
+                if (InnerRect(rc_).ZeroRect().PtInRect(pt) )
+                    selected_idx_ = idx;
+
+
+                return 1;
+            }
+            
+            
+            if (!rc_.ZeroRect().PtInRect(pt))
+            {
+                if ( OnEscape() )
+                    ret = 1;
+            }
+        }
+        break;
+        case WM_LBUTTONUP:
+        {
+            
+            MouseParam* mp = (MouseParam*)lParam;
+            auto pt = mat_.DPtoLP(mp->pt);
+
+            if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3)
+            {            
+                OnClick();
+            }
+
+            scstat_ = 0;            
+        }
+		break;
+        case WM_MOUSEMOVE:
+        {
+            MouseParam* mp = (MouseParam*)lParam;
+            auto pt = mat_.DPtoLP(mp->pt);
+
+            auto md = (rc_.ZeroRect().PtInRect(pt) ? 1: 0 );
+
+            if (mouse_stat_ != md )
+            {
+                mouse_stat_ = md;
+                b.bRedraw = true;
+
+            }
+
+            if ( md == 1 )
+            {
+
+                auto y = pt.y + offbar_y_ * scbai_;
+                int idx = (int)(y / rowheight);
+
+
+                if (rc_.ZeroRect().PtInRect(pt))
+                {
+                    b.bRedraw = true;
+                    if ( idx != float_idx_  && -1 < idx  && InnerRect(rc_).ZeroRect().PtInRect(pt))
+                    {
+                        float_idx_ = idx;
+                    }
+                }
+
+            
+
+                if ( scstat_ == 3 && APP.IsCapture(this))
+                {
+                    float_idx_ = -1;
+                    sc_MouseMove(pt);
+                }
+
+                ret = 1;
+            }
+            else
+                float_idx_ = -1;
+        }
+        break;
+        case WM_MOUSEWHEEL :
+        {
+            MouseParam* mp = (MouseParam*)lParam;
+            auto pt = mat_.DPtoLP(mp->pt);
+            auto md = (rc_.ZeroRect().PtInRect(pt) ? 1 : 0);
+
+            if ( md == 1 )
+            {
+                float a = 0;
+                if (mp->zDelta > 0)
+                    a = -rowheight;
+                if (mp->zDelta < 0)
+                     a= rowheight;
+
+                offbar_y_ = max(0,min(sc_dataHeight(), offbar_y_+a ));
+
+
+                if ( offbar_y_ + sc_barThumbHeight() > rc_.Height())
+                    offbar_y_ = rc_.Height()- sc_barThumbHeight();
+
+                ret = 1;
+            }
+
+
+
+        }
+        break;
+        case WM_KEYDOWN:
+        {
+			auto key = 0xff & wParam;
+            if (key == VK_ESCAPE ) 
+            {
+                if ( OnEscape() )
+                    ret = 1;
+            }
+
+        }
+        break;
+		case WM_D2D_LISTBOX_ADD_ITEM:
+		{
+			int typ = wParam;
+
+			if ( typ == 1 )
+			{			
+				ID2D1Bitmap* cs = (ID2D1Bitmap*)lParam;
+				typ_ = 0;
+
+				ComPTR<ID2D1Bitmap> t(cs);
+				
+				auto i = items_.size();
+				items_.push_back( std::make_shared<D2DListboxItemImage>(i, t)); 
+	
+			}
+			else if ( typ == 2 )
+			{
+				D2DControls* cs = (D2DControls*)lParam;
+				typ_ = 1;
 
 				for(UINT i = 0; i < cs->ChildCount(); i++ ) 
 				{

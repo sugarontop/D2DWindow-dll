@@ -433,6 +433,13 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_WHITE_WINDOW;
 
 	}
+	else if  (dynamic_cast<D2DControls*>(p))
+	{
+		auto tx = dynamic_cast<D2DControls*>(p);
+		r.p = tx;
+		r.typ = TYP_CONTROLS;
+
+	}
 
 
 	else if ( p != nullptr )

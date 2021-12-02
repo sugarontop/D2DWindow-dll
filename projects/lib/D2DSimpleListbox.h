@@ -51,7 +51,7 @@ namespace V6
 			D2DListboxItemControl(int idx,std::shared_ptr<D2DControl> item):D2DListboxItemBase(idx),ctrl_(item){}
 			virtual void Draw(D2DContext& cxt, float width, float height) override;
 			virtual float RowHeight() override;
-
+			std::shared_ptr<D2DControl> Control(){ return ctrl_; }
 		protected :			
 			std::shared_ptr<D2DControl> ctrl_;
 	};
@@ -76,7 +76,9 @@ namespace V6
 			virtual int GetTypeid() const override{ return TYP_SIMPLE_LISTBOX; }
 			
 			float RowHeight() const;
-
+		protected :
+			HRESULT WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
+			HRESULT WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
 	protected:
 
 			bool OnEscape();
@@ -95,6 +97,7 @@ namespace V6
 			float offbar_y_;
 			int float_idx_;
 			int scstat_;
+			USHORT typ_;
 
 			float scbarThumbHeight_;
 			float scdata_;

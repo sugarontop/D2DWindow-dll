@@ -204,11 +204,12 @@ if (name == L"test" )
 			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"MySquarePaper",-1);
 
 
-
-
-			yahoo_finance* yf = new yahoo_finance();
-			yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(100,750,FSizeF(800,500)), STAT_DEFAULT, NONAME );
-			((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
+			for(int ij = 0; ij < 3; ij++ )
+			{
+				yahoo_finance* yf = new yahoo_finance();
+				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,150+ij*10,FSizeF(800,500)), STAT_DEFAULT, NONAME );
+				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
+			}
 		}
 
 	}

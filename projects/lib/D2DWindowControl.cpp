@@ -122,6 +122,18 @@ HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				}
 			}
 		}
+
+
+		if (message == WM_KEYDOWN)
+		{
+			auto key = 0xFF&wParam;
+			if ( key == VK_ESCAPE && capture == this)
+			{
+				APP.ReleaseCapture();
+				hr = 1;
+
+			}
+		}
 	}
 	else if ( capture != this )
 	{
