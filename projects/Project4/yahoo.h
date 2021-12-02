@@ -14,6 +14,8 @@ namespace V6 {
 		float ystart,yend;
 	};
 
+	class yahoo_chart;
+
 
 	class yahoo_finance : public D2DControls
 	{
@@ -33,6 +35,7 @@ namespace V6 {
 
 			std::vector<Rousoku> y1_;
 			std::vector<std::string> dates_;
+			yahoo_chart* chart_;
 
 
 			bool ConvCsv(IStream* ism);
@@ -53,9 +56,12 @@ namespace V6 {
 			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
 
 			static ULONG Period(int yyyy, int mm, int dd );
+			void SetParentRect(FRectF* prc);
 
 			FRectF rc_;
 			yahoo_finance* finance_;
+			FRectF* prc_;
+			FPointF mouse_pt_;
 
 	};
 

@@ -33,28 +33,53 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 
 	this->Add(tabs);
 
-	auto tab1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
+	{
+		auto tab1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
 
-	FSizeF sz = rc_.Size();
+		FSizeF sz = rc_.Size();
 
-	tab1->SetRect(FRectF(0,0,sz));
+		tab1->SetRect(FRectF(0,0,sz));
 
-	auto chart = std::make_shared<yahoo_chart>();
-	chart->CreateControl(parent_window_, tab1, FRectF(0,0,FSizeF(2222,1000)),  STAT_DEFAULT, L"yahoochart", 1910);
-	tab1->Add(chart);
+		auto chart = std::make_shared<yahoo_chart>();
+		chart->CreateControl(parent_window_, tab1, FRectF(0,0,FSizeF(0,0)),  STAT_DEFAULT, L"yahoochart", 1910);
+		tab1->Add(chart);
+
+		chart->SetParentRect(&rc_);
 
 
-	//tab1->Add(xxxxx);
+		//tab1->Add(xxxxx);
 
-	chart->finance_ = this;
+		chart->finance_ = this;
+		chart_ = chart.get();
 
-	UIHandleWin w={};
-	w.p = parent;
-	UIHandle c={};
-	c.p = this;
+		UIHandleWin w={};
+		w.p = parent;
+		UIHandle c={};
+		c.p = this;
 
-	D2DCreateButton(w,c , FRectF(500,0,FSizeF(150,20)), STAT_DEFAULT, L"msgbox", ID_BUTTON );
+		D2DCreateButton(w,c , FRectF(500,0,FSizeF(150,20)), STAT_DEFAULT, L"msgbox", ID_BUTTON );
+	}
 
+	{
+		auto ctrls = tabs->AddNewTab(L"table");
+
+		
+
+
+
+	}
+
+	
+
+	{
+		auto tab1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(1));
+		//FSizeF sz = rc_.Size();
+		//tab1->SetRect(FRectF(0,0,sz));
+
+
+
+
+	}
 
 }
 	
@@ -172,7 +197,7 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 						hr = 1;
 					}
-					else if ( idx == 3 )
+					else if ( idx == 3 && h.sender_parent == chart_ )
 					{
 						auto ctrls = dynamic_cast<D2DControls*>(parent_window_->name_map_[L"MySquarePaper"]);
 
@@ -348,7 +373,13 @@ yahoo_chart::yahoo_chart()
 {
 
 }
+void yahoo_chart::SetParentRect(FRectF* prc)
+{
+	prc_ = prc;
 
+	rc_.SetSize(prc->GetSize());
+
+}
 void yahoo_chart::Draw(D2DContext& cxt)
 {
 	D2DMatrix mat(*cxt);
@@ -361,11 +392,11 @@ void yahoo_chart::Draw(D2DContext& cxt)
 
 
 	WCHAR cb[256];
-	swprintf_s(cb,L" rc_ = (%f, %f, %f, %f)", rc_.left,rc_.top, rc_.right, rc_.bottom); 
+	swprintf_s(cb,L" prc = (%f, %f, %f, %f)", prc_->left,prc_->top, prc_->right, prc_->bottom); 
 	cxt.DText(FPointF(0,50), cb, theBlack);
 
 	auto rcparent = parent_control_->GetRect();
-	swprintf_s(cb,L" rc = (%f, %f, %f, %f)", rcparent.left,rcparent.top, rcparent.right, rcparent.bottom); 
+	swprintf_s(cb,L" pt= (%f, %f), rc_=(%f, %f, %f, %f)", mouse_pt_.x, mouse_pt_.y, rc_.left, rc_.top, rc_.right, rc_.bottom ); //.left,rcparent.top, rcparent.right, rcparent.bottom); 
 	cxt.DText(FPointF(0,80), cb, theBlack);
 
 
@@ -472,15 +503,12 @@ HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 		case WM_RBUTTONDOWN :
 		{
-			MouseParam pm = *(MouseParam*)lParam;
-
+			MouseParam& pm = *(MouseParam*)lParam;
 			FPointF pt = mat_.DPtoLP(pm.pt);
-			auto rc = GetParentControls()->GetRect();
-			_ASSERT(rc.top == 0 && rc.left == 0);
+			mouse_pt_ = pt;
 
-			if ( rc.PtInRect(pt))
-			{
-				
+			if (rc_.PtInRect(pt))
+			{				
 				UIHandleWin hwin;
 				hwin.p = this->GetParent();
 				MenuItem items[5];
@@ -488,11 +516,10 @@ HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 				items[0].id=1; items[0].str=L"test1"; items[0].typ = 0;
 				items[1].id=2; items[1].str=L"test2"; items[1].typ = 1;
 				items[2].id=3; items[2].str=L"test3"; items[2].typ = 0;
-				items[3].id=4; items[3].str=L"test4"; items[3].typ = 0;
+				items[3].id=4; items[3].str=L"move"; items[3].typ = 0;
 				items[4].id=5; items[4].str=L"test5"; items[4].typ = 0;
 
-
-				
+							
 
 				FRectF xrc(pm.pt, FSizeF(200,60));
 
