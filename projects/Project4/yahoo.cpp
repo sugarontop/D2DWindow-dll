@@ -26,13 +26,23 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	rc_ = rc;
 
 	/////////////////////////////////////////////////////////////////////////
+
+	auto ctrls = std::make_shared<D2DControls_with_Scrollbar>();
+	ctrls->CreateControl(parent_window_,this,FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol", 192);
+	this->Add(ctrls);
+
+
+
+
 	auto tabs = std::make_shared<D2DTabControls>();
-	tabs->CreateControl(parent_window_, this, FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_tabcontrol", 191);
+	tabs->CreateControl(parent_window_, ctrls.get(), FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol", 191);
 
 	tabs->SizeFix();
 
-	this->Add(tabs);
+	ctrls->Add(tabs);
 
+	
+	// TAB : chart
 	{
 		auto tab1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
 
@@ -43,11 +53,8 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 		auto chart = std::make_shared<yahoo_chart>();
 		chart->CreateControl(parent_window_, tab1, FRectF(0,0,FSizeF(0,0)),  STAT_DEFAULT, L"yahoochart", 1910);
 		tab1->Add(chart);
-
 		chart->SetParentRect(&rc_);
 
-
-		//tab1->Add(xxxxx);
 
 		chart->finance_ = this;
 		chart_ = chart.get();
@@ -60,35 +67,22 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 		D2DCreateButton(w,c , FRectF(500,0,FSizeF(150,20)), STAT_DEFAULT, L"msgbox", ID_BUTTON );
 	}
 
+	// TAB : data table
 	{
 		auto ctrls = tabs->AddNewTab(L"table");
-
-		
-
-
-
-	}
-
 	
-
-	{
-		auto tab1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(1));
-		//FSizeF sz = rc_.Size();
-		//tab1->SetRect(FRectF(0,0,sz));
-
-
-
+		auto tbl = std::make_shared<yahoo_table>();
+		tbl->CreateControl(parent_window_, ctrls, FRectF(0,0,FSizeF(0,0)),  STAT_DEFAULT, L"yahootable", 1911);
+		ctrls->Add(tbl);
+		tbl->finance_ = this;
+		table_ = tbl.get();
 
 	}
-
 }
 	
 
 void yahoo_finance::Draw(D2DContext& cxt)
 {
-TRACE( L"yf=%x name= %s\n", this, parent_control_->GetName().c_str());
-
-
 	D2DMatrix mat(*cxt);
 
 	mat_ = mat.PushTransform();
@@ -109,6 +103,11 @@ void yahoo_finance::InetComplete(InternetInfo* )
 	ConvCsv(info_->pstream);
 
 	//this->parent_window_->cxt.Redraw();
+
+
+
+	table_->Update( rc_.Width());
+
 
 	InvalidateRect(parent_window_->GetHwnd(),NULL,FALSE);
 
@@ -634,5 +633,74 @@ ULONG yahoo_chart::Period(int yyyy, int mm, int dd )
 
 
 	return (ULONG)ret;
+
+}
+
+/////////////////////////////////////////////////////////////////////////
+void yahoo_table::Draw(D2DContext& cxt)
+{
+	
+	D2DMatrix mat(*cxt);
+	mat_ = mat.PushTransform();
+	
+	auto& ar = finance_->y1_;
+
+
+	float h = 22.0f;
+
+	FRectF rc[] = { FRectF(0,0,FSizeF(100,h)),FRectF(100,0,FSizeF(100,h)),FRectF(200,0,FSizeF(100,h)),FRectF(300,0,FSizeF(100,h)) };
+
+	WCHAR cb[256];
+	float row = 0;
+	
+	size_t len = min(30,finance_->y1_.size());
+
+	for(auto i=0; i < len; i++)
+	{
+		auto st = ar[i];
+
+		cxt.DrawBlackLine(rc[0]); _snwprintf_s(cb,256,L"%f", st.ystart);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[0],cxt.black_);
+		cxt.DrawBlackLine(rc[1]); _snwprintf_s(cb,256,L"%f", st.ymax);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[1],cxt.black_);
+		cxt.DrawBlackLine(rc[2]); _snwprintf_s(cb,256,L"%f", st.ymin);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[2],cxt.black_);
+		cxt.DrawBlackLine(rc[3]); _snwprintf_s(cb,256,L"%f", st.yend);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[3],cxt.black_);
+
+
+		mat.Offset(0,h);
+
+	}
+
+	
+
+
+
+	mat.PopTransform();
+}
+
+HRESULT yahoo_table::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+
+	return 1;
+
+}
+void yahoo_table::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
+{
+	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
+
+	rc_ = rc;
+
+
+	
+
+
+}
+void yahoo_table::Update(float cx)
+{
+
+FRectF rc5(rc_);
+		rc5.SetWidth(cx);
+		rc5.SetHeight(262*22.0f);
+
+		AppBase b;
+		finance_->sc_control_->WndProc(b,WM_D2D_SET_SIZE,2,(LPARAM)&rc5);
 
 }

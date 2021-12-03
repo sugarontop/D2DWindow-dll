@@ -15,6 +15,8 @@ namespace V6 {
 	};
 
 	class yahoo_chart;
+	class yahoo_table;
+	class D2DControls_with_Scrollbar;
 
 
 	class yahoo_finance : public D2DControls
@@ -31,11 +33,12 @@ namespace V6 {
 	
 
 			InternetInfo* info_;
-			//FRectF rc_;
 
 			std::vector<Rousoku> y1_;
 			std::vector<std::string> dates_;
 			yahoo_chart* chart_;
+			yahoo_table* table_;
+			D2DControls_with_Scrollbar* sc_control_;
 
 
 			bool ConvCsv(IStream* ism);
@@ -65,6 +68,24 @@ namespace V6 {
 
 	};
 
+	class yahoo_table : public D2DControl
+	{
+		public :
+			yahoo_table(){};
+
+			virtual void Draw(D2DContext& cxt) override;
+			virtual int GetTypeid() const override { return 0; }
+			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
+
+			virtual const FRectF& GetRect() const { return rc_; }
+			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
+
+			void Update(float cx);
+			FRectF rc_;
+			yahoo_finance* finance_;
+
+	};
 
 };
 

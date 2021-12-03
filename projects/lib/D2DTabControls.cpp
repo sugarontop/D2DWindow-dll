@@ -184,7 +184,7 @@ if (name == L"test" )
 	for(int i = 0; i < 3; i++ )
 	{
 		WCHAR nm[64];
-		wsprintf(nm,L"NAME_%d", i);
+		wsprintf(nm,L"aNAME_%d", i);
 
 		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
 		page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
@@ -203,12 +203,15 @@ if (name == L"test" )
 
 			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"MySquarePaper",-1);
 
-
-			for(int ij = 0; ij < 3; ij++ )
+			auto krc = rc_;
+			for(int ij = 0; ij < 1; ij++ )
 			{
 				yahoo_finance* yf = new yahoo_finance();
 				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,150+ij*10,FSizeF(800,500)), STAT_DEFAULT, NONAME );
 				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
+
+				yf->sc_control_ = page1.get();
+
 			}
 		}
 
@@ -232,25 +235,18 @@ else {
 		WCHAR nm[64];
 		wsprintf(nm,L"NAME_%d", i);
 
-		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
-		page1->CreateControl(parent,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, nm );
-		Add(page1);
-
-
-		/*if (i==1)
+		if (BITFLG(STAT_SIMPLE))
 		{			
-			UIHandleWin hwin={};
-
-			hwin.p=parent;
-
-			UIHandle hs={};
-
-			hs.p = page1.get();
-
-			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
-		
-		}*/
-
+			auto page1 = std::make_shared<D2DControls>();
+			page1->CreateControl(parent,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, nm );
+			Add(page1);
+		}
+		else
+		{
+			auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
+			page1->CreateControl(parent,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, nm );
+			Add(page1);
+		}
 	}
 	for(int i=0; i < 1; i++ )
 	{
@@ -266,16 +262,31 @@ else {
 
 D2DControls* D2DTabControls::AddNewTab(LPCWSTR tabnm)
 {
-	auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
-	page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, tabnm );
-	Add(page1);
+	D2DControls* ret = nullptr;
+	if (BITFLG(STAT_SIMPLE))
+	{
+		auto page1 = std::make_shared<D2DControls>();
+		page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, tabnm );
+		Add(page1);
+		ret = page1.get();
+	}
+	else
+	{
+		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
+		page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, tabnm );
+		Add(page1);
+		ret = page1.get();
+
+	}
+
+
 
 	auto i = tabrects_.size();
 	FRectF rc(0,0,FSizeF(200,20));
 	rc.Offset(i*180,0);
 	tabrects_.push_back(rc);
 
-	return page1.get();
+	return ret;
 }
 void D2DTabControls::DelTab(USHORT idx)
 {

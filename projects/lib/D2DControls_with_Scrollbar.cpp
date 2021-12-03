@@ -51,6 +51,7 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HRESULT r = 0;
+	bool bl = true;
 
 	switch( message )
 	{
@@ -82,10 +83,50 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
 					crc = rc_.ZeroRect();
 					this->controls_[2]->WndProc(b,message,1,(LPARAM)&crc);
-				}				
+				}	
+				else if (wParam == 2)
+				{
+					FRectF& rc = *(FRectF*)(lParam);
+
+					
+					if ( wParam == 0 )
+						rc_.SetWH(rc);
+				
+					auto crc = rc; // this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
+
+					vscroll_x_ = rc_.Width()-BARW;
+					hscroll_x_ = 0;
+
+					scv_->SetStat(STAT_DEFAULT);
+					sch_->SetStat(STAT_DEFAULT);
+
+					scv_->SetMaxSize( crc.Height());
+					sch_->SetMaxSize(crc.Width());				
+					sch_->SetSize(rc_.Size());
+					scv_->SetSize(rc_.Size());
+
+					crc = rc_.ZeroRect();
+					//this->controls_[2]->WndProc(b,message,1,(LPARAM)&crc);
+				}
 			}
 
 			return 0;
+		}
+		break;
+		case WM_MOUSEMOVE:
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+
+			if ( !rc_.ZeroPtInRect(pt))
+			{
+				bl = false;
+			}
+
 		}
 		break;
 		
@@ -93,7 +134,7 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 	}
 
 
-	if ( r == 0 )
+	if ( r == 0 && bl )
 		r = D2DControls::WndProc(b,message,wParam,lParam);
 
 

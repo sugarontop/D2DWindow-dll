@@ -10,6 +10,7 @@
 
 #define STAT_DEBUG				0x20
 #define STAT_DEBUG1				0x40
+#define STAT_SIMPLE				0x80
 
 #define STAT_DEFAULT		(STAT_VISIBLE|STAT_ENABLE)
 

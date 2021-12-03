@@ -168,12 +168,6 @@ HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 		}
 		break;
-
-
-		default :
-			r = 0;
-
-
 	}
 
 	if ( r == 0 )
