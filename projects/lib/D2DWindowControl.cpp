@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "D2DWindow.h" 
 #include "D2DWindowControl.h"
+#include "D2D1UI_1.h"
 
 using namespace V6;
 
@@ -94,11 +95,11 @@ void D2DControls::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 }
 HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if ( message == WM_LBUTTONDOWN)
+	if( WM_D2D_LISTUP == message )
 	{
-		int a = 0;
+		parent_window_->ListUp(this);
 	}
-	
+
 	
 	auto capture = APP.GetCapture();
 	HRESULT hr = 0;
@@ -262,40 +263,7 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 		}
 	}
 }
-//void D2DControls::InnerDraw(D2DContext& cxt)
-//{
-//	auto capture = APP.GetCapture();
-//
-//	auto vcapture = capture;
-//	
-//
-//
-//	if (capture == nullptr || capture == this)
-//	{
-//		for (auto it = controls_.rbegin(); it != controls_.rend(); it++) 
-//			(*it)->Draw(cxt);
-//	}
-//	else
-//	{ 
-//		bool bl = false;
-//
-//		for (auto it = controls_.rbegin(); it != controls_.rend(); it++)
-//		{
-//			if (capture != it->get())
-//				(*it)->Draw(cxt);
-//			else
-//			{
-//				bl = true;
-//			}
-//		}
-//
-//		if ( bl )
-//		{
-//			static_cast<D2DControl*>(vcapture)->Draw(cxt);
-//		}
-//	}
-//
-//}
+
 
 void D2DControls::Draw(D2DContext& cxt)
 {

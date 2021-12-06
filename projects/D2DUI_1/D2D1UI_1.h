@@ -33,6 +33,10 @@ DLLEXPORT UIHandle D2DCreateListbox(UIHandleWin hwin, UIHandle hctrls, const FRe
 DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 
+DLLEXPORT bool D2DSetProcfunction(UIHandle, DelegateProcFunc func2);
+
+
+
 DLLEXPORT void D2DSetText(UIHandle h, LPCWSTR str);
 DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height);
 DLLEXPORT int D2DSetStat(UIHandle h, int stat);
@@ -52,7 +56,7 @@ DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm);
 
 DLLEXPORT UIHandle D2DGetParent(UIHandle h);
 
-DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  );
+DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main);
 
 DLLEXPORT void D2DSetCapture(UIHandle h);
 DLLEXPORT UIHandle D2DGetCapture();
@@ -81,4 +85,15 @@ DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r);
 
 
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style=0);
+
+
+// /////////////////////////////////////////////////////////////
+DLLEXPORT HANDLE DACreateList();
+DLLEXPORT bool  DAAddList(HANDLE h, void* p);
+DLLEXPORT UINT  DAListCount(HANDLE h);
+DLLEXPORT void* DAGet(HANDLE h,UINT idx);
+DLLEXPORT void  DADestroyList(HANDLE h);
+
+
+
 };

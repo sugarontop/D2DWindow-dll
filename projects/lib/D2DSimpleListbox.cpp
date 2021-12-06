@@ -190,7 +190,7 @@ HRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 
 				
 
-				if (-1< selected_idx_ && selected_idx_ < items_.size())
+				if (-1< selected_idx_ && selected_idx_ < (int)items_.size())
 				{
 					APP.ReleaseCapture();
 					auto a = items_[selected_idx_];

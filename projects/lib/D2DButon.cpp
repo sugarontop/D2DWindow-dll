@@ -86,6 +86,11 @@ HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 			
 		}
 		break;
+		case WM_D2D_LISTUP:
+
+			parent_window_->ListUp(this);
+
+		break;
 	}
 	return ret;
 }
@@ -105,7 +110,7 @@ FPointF CreateCenterTextLayout(D2DContext& cxt, const std::wstring& str, const F
 
 void  D2DButton::Draw(D2DContext& cxt) 
 {
-	if ( stat_&STAT_VISIBLE )
+	if ( BITFLG(STAT_VISIBLE) )
 	{
 		D2DMatrix mat(*cxt);
 		mat.PushTransform();
@@ -118,9 +123,10 @@ void  D2DButton::Draw(D2DContext& cxt)
 			mat.Offset(2, 2);
 
 		(*cxt)->DrawRectangle(rc, cxt.black_);
-		(*cxt)->FillRectangle(rc, cxt.white_);
 
-		//(*cxt)->DrawText(text_.c_str(), text_.length(), cxt.textformat_, rc, cxt.black_ );
+		auto b1 = (BITFLG(STAT_ENABLE) ? D2RGB(255,255,255) : D2RGB(205,205,205));
+
+		cxt.DFillRect(rc, b1);
 
 		if ( textlayout_ == nullptr )
 			ptText_ = CreateCenterTextLayout(cxt, text_, rc, &textlayout_ );

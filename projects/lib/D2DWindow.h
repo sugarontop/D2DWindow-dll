@@ -41,6 +41,8 @@ class D2DWindow
 		int FloatingMenu(LPVOID sender,const FRectF& rc, std::vector<MenuItem>& items);
 
 
+		void ListUp(D2DControl* p);
+
 		FRectF GetClientRect() const;
 
 		HWND GetHwnd() const { return hWnd_; }

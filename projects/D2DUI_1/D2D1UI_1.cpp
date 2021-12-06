@@ -366,6 +366,19 @@ DLLEXPORT bool D2DIsCapture(UIHandle h)
 	return ( p == dynamic_cast<D2DCaptureObject*>( (D2DControl*)h.p));
 
 }
+DLLEXPORT bool D2DSetProcfunction(UIHandle h, DelegateProcFunc func2)
+{
+	D2DControl* p = (D2DControl*)h.p;
+	auto sq = dynamic_cast<D2DSquarePaper*>(p);
+	
+	if ( sq )
+	{
+		sq->import_function_ = func2;
+		return true;
+	}
+	return false;
+}
+
 DLLEXPORT UIHandle D2DGetCapture()
 {
 	UIHandle r = {0};

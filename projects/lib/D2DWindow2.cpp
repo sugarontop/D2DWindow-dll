@@ -100,6 +100,7 @@ HRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		}
 		break;
 		
+		
 	}
 
 	if ( hr == 0 )
@@ -120,4 +121,11 @@ FRectF D2DWindow::GetClientRect() const
 	RECT rc;
 	::GetClientRect(hWnd_, &rc);
 	return FRectF( (float)rc.left, (float)rc.top, (float)rc.right, (float)rc.bottom );
+}
+void D2DWindow::ListUp(D2DControl* p)
+{
+	static std::vector<D2DControl*> ar;
+
+	ar.push_back(p);
+
 }

@@ -73,6 +73,7 @@ void CreateMDIControl(HWND hWnd)
 #include "D2DWhiteWindowControl.h"
 #include "D2DGrid.h"
 #include "D2DTabControls.h"
+#include "yahoo.h"
 
 void CreateMDISplitControl(HWND hWnd)
 {
@@ -108,13 +109,60 @@ void CreateMDISplitControl(HWND hWnd)
 	auto hcs3 = D2DCreateEmptyControls(hwin,hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"aaa", 180);
 
 
-	//UIHandle hcs3;
-	//hcs3.p = dws.get();
-	//hcs3.typ = 0;
-	hcs4 = D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG", 190);
+
+	UIHandle hcsLEFT = D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG_LEFT", 190);
 
 	ColorF clr(D2RGB(200,200,200));
-	D2DSendMessage(hcs4,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+	D2DSendMessage(hcsLEFT,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+
+
+	auto b1 = D2DCreateButton(hwin,hcsLEFT, FRectF(50,100,FSizeF(100,20)),STAT_VISIBLE,L"_b1", 191);
+
+
+	DelegateProcFunc f = [](LPVOID xp,AppBase& b, UINT message, WPARAM wp, LPARAM lp)->HRESULT
+	{
+		HRESULT h = 0;
+
+		switch( message )
+		{
+			case WM_D2D_TAB_CHANGE:
+			{
+				D2DControl* pc = (D2DControl*)wp;
+
+				auto nm1 = pc->GetName();
+
+
+				{
+					auto idx = lp;
+					auto bm = pc->GetParent()->name_map_[L"_b1"];
+
+					bm->SetStat((idx==2) ? STAT_DEFAULT: STAT_VISIBLE);
+								
+
+					h = 1;
+				}
+			}
+			break;
+			case WM_NOTIFY:
+			{
+				D2DNMHDR& d = *(D2DNMHDR*)lp;
+
+				if(wp == 191)
+				{
+					
+
+
+					h = 1;
+				}
+			}
+			break;
+		}
+		return h;
+	};
+
+	D2DSetProcfunction(hcsLEFT, f);
+
+
 
 
 
@@ -158,7 +206,7 @@ void CreateMDISplitControl(HWND hWnd)
 #endif
 	
 	auto tabs = std::make_shared<D2DTabControls>();
-	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"test", 191);
+	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"RIGHT_TAB", 191);
 	right_side_controls->Add(tabs);
 
 	auto p1 = tabs->GetControlFromIdx(0);
@@ -166,28 +214,64 @@ void CreateMDISplitControl(HWND hWnd)
 	UIHandle hcs_right={};
 	hcs_right.p = p1;
 
-	D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,2000,3000),  STAT_DEFAULT, L"DEBUG", 190);
+	//D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,2000,3000),  STAT_DEFAULT, L"DEBUG", 190);
 
 
-	for(int k = 0; k < 3; k++)
+	//for(int k = 10; k < 3; k++)
+	//{
+	//	p1 = tabs->AddNewTab(L"page1");
+	//	hcs_right.p = p1;
+	//	auto kr = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,2000,3000),  STAT_DEFAULT, L"DEBUG2", 191+k);
+
+
+	//	if (k ==1)
+	//	{
+	//		ColorF clr(ColorF::SteelBlue);
+	//		D2DSendMessage(kr,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+	//	}
+	//	if (k ==2)
+	//	{
+	//		ColorF clr(ColorF::MidnightBlue);
+	//		D2DSendMessage(kr,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+
+	//		ColorF clr2(ColorF::Red);
+	//		D2DSendMessage(kr,WM_D2D_SET_COLOR, 1, (LPARAM)&clr2);
+	//	}
+
+	//}
+
+	for(int i = 0; i < 3; i++ )
 	{
-		p1 = tabs->AddNewTab(L"page1");
-		hcs_right.p = p1;
-		auto kr = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,2000,3000),  STAT_DEFAULT, L"DEBUG2", 191+k);
+		WCHAR nm[64];
+		wsprintf(nm,L"aNAME_%d", i);
+
+		UIHandle hcs_right={};
+		hcs_right.p = p1 = tabs->AddNewTab(nm);
+
+		//auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
+		//page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
+		//Add(page1);
 
 
-		if (k ==1)
-		{
-			ColorF clr(ColorF::SteelBlue);
-			D2DSendMessage(kr,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+		if (i==1)
+		{			
+			auto ha = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"MySquarePaper",-1);
+
+			D2DWindow* parent = (D2DWindow*)hwin.p;
+
+			for(int ij = 0; ij < 1; ij++ )
+			{
+				yahoo_finance* yf = new yahoo_finance();
+				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,150+ij*10,FSizeF(800,500)), STAT_DEFAULT, NONAME );
+				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
+
+				yf->sc_control_ = (D2DControls_with_Scrollbar*)ha.p;
+
+			}
 		}
-		if (k ==2)
+		else
 		{
-			ColorF clr(ColorF::MidnightBlue);
-			D2DSendMessage(kr,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
-
-			ColorF clr2(ColorF::Red);
-			D2DSendMessage(kr,WM_D2D_SET_COLOR, 1, (LPARAM)&clr2);
+			auto kr = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1 );
 		}
 
 	}
