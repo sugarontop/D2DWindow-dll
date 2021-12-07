@@ -107,17 +107,17 @@ void CreateMDISplitControl(HWND hWnd)
 	//dws->CreateControl((D2DWindow*)hwin.p,left_side_controls, FRectF(0,0,300,1000),  STAT_DEFAULT, L"aaa", 180);
 	//left_side_controls->Add(dws);
 
-	auto hcs3 = D2DCreateEmptyControls(hwin,hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"aaa", 180);
+	auto hcs3 = D2DCreateEmptyControls(hwin,hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"LeftEmpty", 180);
 
 
 
-	UIHandle hcsLEFT = D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"DEBUG_LEFT", 190);
+	UIHandle hcsLEFT = D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"LeftEmptySQ", 190);
 
 	ColorF clr(D2RGB(200,200,200));
 	D2DSendMessage(hcsLEFT,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
 
 
-	auto b1 = D2DCreateButton(hwin,hcsLEFT, FRectF(50,100,FSizeF(100,20)),STAT_VISIBLE,L"_b1", 191);
+	auto b1 = D2DCreateButton(hwin,hcsLEFT, FRectF(50,100,FSizeF(100,20)),STAT_VISIBLE,L"LeftEmptySQb1", 191);
 
 
 	DelegateProcFunc f = [](LPVOID xp,AppBase& b, UINT message, WPARAM wp, LPARAM lp)->HRESULT
@@ -254,7 +254,7 @@ void CreateMDISplitControl(HWND hWnd)
 
 	//}
 
-	for(int i = 0; i < 3; i++ )
+	for(int i = 90; i < 3; i++ )
 	{
 		WCHAR nm[64];
 		wsprintf(nm,L"aNAME_%d", i);

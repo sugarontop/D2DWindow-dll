@@ -10,7 +10,7 @@ void D2DClassMap::Draw(D2DContext& cxt)
 	D2DMatrix mat(*cxt);
 	mat_ = mat.PushTransform();
 
-	mat.Scale(0.7f,0.7f);
+	mat.Scale(0.9f,0.9f);
 
 
 	//cxt.DText(FPointF(100,100), L"D2DClassMap", ColorF::Black);
