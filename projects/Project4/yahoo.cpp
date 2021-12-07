@@ -541,17 +541,19 @@ HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 				UIHandleWin hwin={};
 				hwin.p = parent_window_;
 
-				//rc = mat_.LPtoDP(rc);
+			
+				//D2DMessageBox(hwin, rc, L"sample",  L"this is **** message **** ");
 
-
-				D2DMessageBox(hwin, rc, L"sample",  L"this is **** message **** ");
-
-
+				//std::vector<ControlMapItem> ar;
+				//parent_window_->ListUp(ar);
 
 				hr = 1;
 			}
 			else if ( wParam == ID_FLOATING_MENU )
 			{
+				
+				
+				
 				h = *(D2DNMHDR*)lParam;
 
 

@@ -59,6 +59,7 @@ void D2DControl::SetNewParent(D2DControls* newparent)
 
 	newparent->Add( me );
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 D2DControls::D2DControls()
@@ -95,12 +96,6 @@ void D2DControls::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 }
 HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if( WM_D2D_LISTUP == message )
-	{
-		parent_window_->ListUp(this);
-	}
-
-	
 	auto capture = APP.GetCapture();
 	HRESULT hr = 0;
 
@@ -263,7 +258,67 @@ void D2DControls::InnerDraw(D2DContext& cxt)
 		}
 	}
 }
+void D2DControls::ListUp(std::vector<ControlMapItem>& ar, int* row, int* col)
+{
+	if ( BITFLG(STAT_VISIBLE))
+	{
+	
+		ControlMapItem it;
+		it.p = this;
+		it.row = *row;
+		it.col = *col;
 
+		if ( it.p->GetName() == L"aNAME_0" )
+		{
+			int a = 0;
+
+		}
+
+	
+		ar.push_back(it);
+
+		++(*row);
+		//*col=0;	
+		for(auto& it : controls_)
+		{
+			it->ListUp(ar, row, col);
+		}
+
+		*col=it.col;
+	
+	
+		++(*col);
+		//--(*row);
+
+
+		int c = *col;
+		int r = *row;
+	}
+}
+void D2DControl::ListUp(std::vector<ControlMapItem>& ar, int* row, int* col)
+{
+	if ( BITFLG(STAT_VISIBLE))
+	{
+	
+		ControlMapItem it;
+		it.p = this;
+		it.row = *row;
+		it.col = *col;
+
+		if ( it.row == 10 )
+		{
+			int a = 0;
+
+		}
+
+		ar.push_back(it);
+	
+		++(*col);
+		int c = *col;
+		int r = *row;
+	}
+
+}
 
 void D2DControls::Draw(D2DContext& cxt)
 {

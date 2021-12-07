@@ -7,8 +7,10 @@ namespace V6 {
 
 #define BARW 10.0f
 
-
+class D2DControl;
 class D2DControls;
+
+
 
 class D2DControl : public D2DCaptureObject
 {
@@ -25,7 +27,7 @@ public:
 	virtual const FRectF& GetRect() const  = 0;
 	virtual void SetRect(const FRectF& rc) = 0;
 	virtual void Draw(D2DContext& cxt) = 0;
-
+	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col);
 
 
 	//virtual void UpdateScrollbar(D2DScrollbar* bar) {};
@@ -95,6 +97,7 @@ public:
 
 	std::shared_ptr<D2DControl> GetItem(UINT idx){ return controls_[idx]; }
 	UINT ChildCount() const { return controls_.size(); }
+	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col) override;
 
 protected :
 	virtual HRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);

@@ -86,11 +86,6 @@ HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 			
 		}
 		break;
-		case WM_D2D_LISTUP:
-
-			parent_window_->ListUp(this);
-
-		break;
 	}
 	return ret;
 }

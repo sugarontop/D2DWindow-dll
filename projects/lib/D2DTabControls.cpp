@@ -145,11 +145,7 @@ HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 		}
 		break;
-		case WM_D2D_LISTUP:
-
-			parent_window_->ListUp(this);
-
-		break;
+		
 
 	}
 

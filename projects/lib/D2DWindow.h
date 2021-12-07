@@ -19,7 +19,14 @@ struct TSFIsland
 	void* ctrl;
 };
 
+class D2DControl;
 
+struct ControlMapItem
+{
+	D2DControl* p;
+	int row;
+	int col;
+};
 
 class D2DWindow
 {
@@ -41,7 +48,7 @@ class D2DWindow
 		int FloatingMenu(LPVOID sender,const FRectF& rc, std::vector<MenuItem>& items);
 
 
-		void ListUp(D2DControl* p);
+		void ListUp(std::vector<ControlMapItem>& ar);
 
 		FRectF GetClientRect() const;
 

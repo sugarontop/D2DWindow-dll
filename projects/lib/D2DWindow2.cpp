@@ -122,10 +122,10 @@ FRectF D2DWindow::GetClientRect() const
 	::GetClientRect(hWnd_, &rc);
 	return FRectF( (float)rc.left, (float)rc.top, (float)rc.right, (float)rc.bottom );
 }
-void D2DWindow::ListUp(D2DControl* p)
+void D2DWindow::ListUp(std::vector<ControlMapItem>& ar)
 {
-	static std::vector<D2DControl*> ar;
-
-	ar.push_back(p);
-
+	int row=0;
+	int col=0;
+	
+	top_control_->ListUp(ar, &row,&col);
 }

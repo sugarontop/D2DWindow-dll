@@ -10,6 +10,7 @@
 
 
 #include "D2DMDIControls.h"
+#include "D2DClassMap.h"
 		  
 
 using namespace V6;
@@ -209,7 +210,20 @@ void CreateMDISplitControl(HWND hWnd)
 	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"RIGHT_TAB", 191);
 	right_side_controls->Add(tabs);
 
-	auto p1 = tabs->GetControlFromIdx(0);
+	auto p1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
+
+
+
+	auto maps = std::make_shared<D2DClassMap>();
+	maps->CreateControl((D2DWindow*)hwin.p,p1, FRectF(0,0,0,0),  STAT_DEFAULT, L"Control map", 200);
+	p1->Add(maps);
+
+
+
+
+
+
+
 
 	UIHandle hcs_right={};
 	hcs_right.p = p1;
@@ -255,14 +269,14 @@ void CreateMDISplitControl(HWND hWnd)
 
 		if (i==1)
 		{			
-			auto ha = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"MySquarePaper",-1);
+			auto ha = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
 
 			D2DWindow* parent = (D2DWindow*)hwin.p;
 
 			for(int ij = 0; ij < 1; ij++ )
 			{
 				yahoo_finance* yf = new yahoo_finance();
-				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,150+ij*10,FSizeF(800,500)), STAT_DEFAULT, NONAME );
+				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,150+ij*10,FSizeF(800,500)), STAT_DEFAULT, L"yahoo_finance" );
 				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
 
 				yf->sc_control_ = (D2DControls_with_Scrollbar*)ha.p;

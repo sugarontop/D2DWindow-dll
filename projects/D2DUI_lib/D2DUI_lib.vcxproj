@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\lib\D2DAccordionbar.h" />
+    <ClInclude Include="..\lib\D2DClassMap.h" />
     <ClInclude Include="..\lib\D2DScrollbar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -170,6 +171,7 @@
   <ItemGroup>
     <ClCompile Include="..\lib\D2DAccordionbar.cpp" />
     <ClCompile Include="..\lib\D2DApp.cpp" />
+    <ClCompile Include="..\lib\D2DClassMap.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
     <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp" />
     <ClCompile Include="..\lib\D2DGrid.cpp" />
