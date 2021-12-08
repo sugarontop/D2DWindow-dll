@@ -164,6 +164,14 @@ HRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 	return 0;
 }
 
+void D2DScrollbar::Offset( float off )
+{
+
+	offset_ = max(0.0f, (offset_ + off));
+	offset_ = min(VIEW_SIZE-thumb_size_, offset_);
+
+}
+
 void D2DScrollbar::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);

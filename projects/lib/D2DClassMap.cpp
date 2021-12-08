@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "D2DClassMap.h"
-
+#include "D2DDropdownListbox.h"
 
 using namespace V6;
 
@@ -24,11 +24,11 @@ void D2DClassMap::Draw(D2DContext& cxt)
 		_snwprintf_s(cb, 256, L"row=%d col=%d", it.row, it.col);
 
 		auto cs = dynamic_cast<D2DControls*>(it.p);
-
+		auto ls = dynamic_cast<D2DDropdownListbox*>(it.p);
 
 		
 
-		if ( cs == nullptr )
+		if ( cs == nullptr || ls )
 		{
 			FRectF rc(x,y+25,FSizeF(100,25));
 

@@ -23,7 +23,7 @@ public :
 	float LogicalOffset() ;
 	void SetMaxSize(float h){ max_size_=h; }
 	void Draw2(D2DContext& cxt);
-
+	void Offset( float off );
 protected :
 
 	bool bVertical_;

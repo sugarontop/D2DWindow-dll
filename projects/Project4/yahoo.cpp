@@ -28,7 +28,7 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	/////////////////////////////////////////////////////////////////////////
 
 	auto ctrls = std::make_shared<D2DControls_with_Scrollbar>();
-	ctrls->CreateControl(parent_window_,this,FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol", 192);
+	ctrls->CreateControl(parent_window_,this,FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol_pa", 192);
 	this->Add(ctrls);
 
 
@@ -113,7 +113,7 @@ void yahoo_finance::InetComplete(InternetInfo* )
 
 }
 
-//#define YAHOO
+#define YAHOO
 
 void yahoo_finance::StartDownload()
 {
@@ -126,11 +126,18 @@ void yahoo_finance::StartDownload()
 #ifdef YAHOO
 		WCHAR cb[256];
 		
-		auto dd = yahoo_chart::Period(0,0,0);
 		auto dds = yahoo_chart::Period(2021,1,1);
+		auto now = yahoo_chart::Period(0,0,0);
 
-		_snwprintf_s(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",L"SPY",dds, dd);
+		std::wstring cd= L"QQQ";
+
+
+		_snwprintf_s(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",cd.c_str(),dds, now);
 		info_->url = ::SysAllocString(cb);
+
+		parent_window_->SendMessage(WM_D2D_TABCONTROL_TAB_NAME, (WPARAM)this, (LPARAM)cd.c_str());
+		
+
 #else
 
 		info_->url = ::SysAllocString(L"https://192.168.10.65/zaimu/XLE.csv");

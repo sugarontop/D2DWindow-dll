@@ -29,7 +29,6 @@ namespace V6
 		virtual bool xSetSelect(int idx);
 		virtual void xClear();
 
-
 	protected :
 		void OnClick();
 		void OnCloseListbox(int selected_idx);

@@ -50,8 +50,11 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 		}
 
 		cxt.DFillRect(it, clr1);
-		auto nm = this->controls_[k]->GetName();
-		cxt.DText(FPointF(it.left+5, it.top), nm.c_str(), clr2);
+		auto tab_nm = this->controls_[k]->GetName();
+
+
+
+		cxt.DText(FPointF(it.left+5, it.top), tab_nm.c_str(), clr2);
 
 		k++;
 	}
@@ -142,6 +145,18 @@ HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				it->WndProc(b,WM_D2D_SET_SIZE,0,(LPARAM)&rc);
 
 			return 0;
+
+		}
+		break;
+		case WM_D2D_TABCONTROL_TAB_NAME:
+		{
+			std::wstring s = (LPCWSTR)(LPARAM)lParam;
+
+
+
+
+			r = 0;
+
 
 		}
 		break;

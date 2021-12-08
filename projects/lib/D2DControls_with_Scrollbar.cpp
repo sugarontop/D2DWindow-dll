@@ -129,6 +129,28 @@ HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
 		}
 		break;
+		case WM_MOUSEWHEEL:
+		{
+			MouseParam* mp = (MouseParam*)lParam;
+            auto pt = mat_.DPtoLP(mp->pt);
+            auto md = (rc_.ZeroRect().PtInRect(pt) ? 1 : 0);
+
+            if ( md == 1 )
+            {
+                float a = 0;
+                if (mp->zDelta > 0)
+                    a = -10.0f;
+                if (mp->zDelta < 0)
+                     a= 10.0f;
+
+				scv_->Offset(a);
+
+                r = 1;
+            }
+
+
+		}
+		break;
 		
 
 	}

@@ -195,7 +195,7 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 		FRectF rc1(70,20,FSizeF(80,20));
 		auto ls = std::make_shared<D2DDropdownListbox>();
-		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"D2DDropdownListbox",1);
+		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"DropdownListbox",1);
 
 		ls->AddItem(0,L"50");
 		ls->AddItem(1,L"100");
@@ -219,7 +219,7 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 
 		FRectF rc1(170,20,FSizeF(80,20));
 		auto ls = std::make_shared<D2DDropdownListbox>();
-		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"D2DDropdownListbox",2);
+		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"DropdownListbox",2);
 
 		ls->AddItem(0,L"100");
 		ls->AddItem(1,L"80");
