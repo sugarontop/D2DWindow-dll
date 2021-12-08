@@ -2,6 +2,7 @@
 #include "D2DWindow.h" 
 #include "D2DWindowControl.h"
 #include "D2D1UI_1.h"
+#include "D2DDropdownListbox.h"
 
 using namespace V6;
 
@@ -268,54 +269,40 @@ void D2DControls::ListUp(std::vector<ControlMapItem>& ar, int* row, int* col)
 		it.row = *row;
 		it.col = *col;
 
-		if ( it.p->GetName() == L"aNAME_0" )
-		{
-			int a = 0;
-
-		}
-
 	
 		ar.push_back(it);
 
 		++(*row);
-		//*col=0;	
-		for(auto& it : controls_)
+		//*col=1;	
+		for(auto& itk : controls_)
 		{
-			it->ListUp(ar, row, col);
+			itk->ListUp(ar, row, col);
+
+			if ( dynamic_cast<D2DControls*>(itk.get()))
+			{
+				++(*row);
+
+				if ( !dynamic_cast<D2DDropdownListbox*>(itk.get()))
+					++(*col);
+			}
 		}
 
 		*col=it.col;
-	
-	
-		++(*col);
-		//--(*row);
-
-
-		int c = *col;
-		int r = *row;
+		*row=it.row;
 	}
 }
 void D2DControl::ListUp(std::vector<ControlMapItem>& ar, int* row, int* col)
 {
 	if ( BITFLG(STAT_VISIBLE))
-	{
-	
+	{	
 		ControlMapItem it;
 		it.p = this;
 		it.row = *row;
 		it.col = *col;
-
-		if ( it.row == 10 )
-		{
-			int a = 0;
-
-		}
-
+		
 		ar.push_back(it);
 	
-		++(*col);
-		int c = *col;
-		int r = *row;
+		++(*row);
 	}
 
 }

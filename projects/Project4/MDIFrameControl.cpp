@@ -137,7 +137,8 @@ void CreateMDISplitControl(HWND hWnd)
 					auto idx = lp;
 					auto bm = pc->GetParent()->name_map_[L"_b1"];
 
-					bm->SetStat((idx==2) ? STAT_DEFAULT: STAT_VISIBLE);
+					if ( bm )
+						bm->SetStat((idx==2) ? STAT_DEFAULT: STAT_VISIBLE);
 								
 
 					h = 1;
@@ -254,7 +255,7 @@ void CreateMDISplitControl(HWND hWnd)
 
 	//}
 
-	for(int i = 90; i < 3; i++ )
+	for(int i = 0; i < 3; i++ )
 	{
 		WCHAR nm[64];
 		wsprintf(nm,L"aNAME_%d", i);
@@ -266,6 +267,7 @@ void CreateMDISplitControl(HWND hWnd)
 		//page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
 		//Add(page1);
 
+		wsprintf(nm,L"aNAME_%d_ch", i);
 
 		if (i==1)
 		{			

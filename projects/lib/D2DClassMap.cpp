@@ -10,7 +10,7 @@ void D2DClassMap::Draw(D2DContext& cxt)
 	D2DMatrix mat(*cxt);
 	mat_ = mat.PushTransform();
 
-	mat.Scale(0.9f,0.9f);
+	mat.Scale(0.7f,0.7f);
 
 
 	//cxt.DText(FPointF(100,100), L"D2DClassMap", ColorF::Black);
@@ -57,11 +57,16 @@ HRESULT D2DClassMap::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 	switch(message )
 	{
 		case WM_LBUTTONDOWN:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
 
-			ListUp();
+			auto pt = mat_.DPtoLP(pm.pt);
+			FRectF rc(0,0,50,50);
+			if ( rc.PtInRect(pt))
+				ListUp();
 
 			h = 1;
-
+		}
 		break;
 	}
 

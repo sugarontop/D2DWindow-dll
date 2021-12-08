@@ -198,19 +198,22 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					}
 					else if ( idx == 3 && h.sender_parent == chart_ )
 					{
-						auto ctrls = dynamic_cast<D2DControls*>(parent_window_->name_map_[L"MySquarePaper"]);
+						//auto ctrls = dynamic_cast<D2DControls*>(parent_window_->name_map_[L"aNAME_1_ch"]);
+						auto ctrls = GetParentControls();
 
-						auto moveobj = std::make_shared<D2DControls_with_Move>();
+						if (ctrls) 
+						{
+							auto moveobj = std::make_shared<D2DControls_with_Move>();
 												
-						moveobj->CreateControl(parent_window_, ctrls, rc_, STAT_DEFAULT, NONAME);
+							moveobj->CreateControl(parent_window_, ctrls, rc_, STAT_DEFAULT, NONAME);
 
-						ctrls->Add(moveobj);
+							ctrls->Add(moveobj);
 
-						moveobj->prv_controls_ = this->GetParentControls();
-						moveobj->target_ = this;
+							moveobj->prv_controls_ = this->GetParentControls();
+							moveobj->target_ = this;
 						
-						this->SetNewParent(moveobj.get());
-
+							this->SetNewParent(moveobj.get());
+						}
 						
 
 						hr = 1;

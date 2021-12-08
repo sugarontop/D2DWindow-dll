@@ -189,13 +189,13 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	{
 		FRectF rc0(70,0,FSizeF(200,20));
 		auto t1 = std::make_shared<D2DStatic>(); 
-		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,NONAME);
+		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,L"STATIC");
 		t1->SetText(L"–Ú·‚è");
 		this->Add( t1);
 
 		FRectF rc1(70,20,FSizeF(80,20));
 		auto ls = std::make_shared<D2DDropdownListbox>();
-		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,NONAME,1);
+		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"D2DDropdownListbox",1);
 
 		ls->AddItem(0,L"50");
 		ls->AddItem(1,L"100");
@@ -213,13 +213,13 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	{
 		FRectF rc0(170,0,FSizeF(200,20));
 		auto t1 = std::make_shared<D2DStatic>(); 
-		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,NONAME);
+		t1->CreateControl(parent,this, rc0,STAT_DEFAULT,L"STATIC");
 		t1->SetText(L"SCALE");
 		this->Add( t1);
 
 		FRectF rc1(170,20,FSizeF(80,20));
 		auto ls = std::make_shared<D2DDropdownListbox>();
-		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,NONAME,2);
+		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"D2DDropdownListbox",2);
 
 		ls->AddItem(0,L"100");
 		ls->AddItem(1,L"80");
