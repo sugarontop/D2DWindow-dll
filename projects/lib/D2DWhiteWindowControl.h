@@ -22,7 +22,7 @@ namespace V6 {
 
 				return false;
 			}
-			virtual HRESULT WndProc( AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+			virtual LRESULT WndProc( AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 		protected :
 			enum STAT { NORMAL, MOVING };
 			STAT mstat_;
@@ -36,7 +36,7 @@ namespace V6 {
 		D2DWhiteWindowControls();
 
 		virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
-		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 		virtual void Draw(D2DContext& cxt) override;
 
 		

@@ -21,7 +21,7 @@ namespace V6
 	public :
 		D2DCaptureObject():stat_(STAT_VISIBLE){}
 
-		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) = 0;
+		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) = 0;
 		//virtual D2DCaptureObject* GetParent(){ return parent1_; }
 		virtual bool OnChangeFocus(bool bActive, D2DCaptureObject* pnew) { return false; }
 

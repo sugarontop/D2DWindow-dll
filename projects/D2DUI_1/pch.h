@@ -85,7 +85,7 @@ void Trace(LPCWSTR fm, ...);
 #define TRACE	 Trace
 
 
-inline void ThrowIfFailed( HRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
+inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 {
 	if (FAILED(hr))
 	{		

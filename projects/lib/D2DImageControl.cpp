@@ -13,9 +13,9 @@ void D2DImageControl::CreateControl(D2DWindow* parent, D2DControls* pacontrol, c
 }
 
 
-HRESULT D2DImageControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DImageControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT ret = 0;
+	LRESULT ret = 0;
 
 
 	return ret;

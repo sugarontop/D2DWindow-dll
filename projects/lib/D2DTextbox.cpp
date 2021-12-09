@@ -262,7 +262,7 @@ bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject* pnew)
 	return true;
 }
 
-HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 {
 	if ( (stat_&STAT_ENABLE) == 0 )
 		return 0;
@@ -270,7 +270,7 @@ HRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 
 	V6::D2DContextEx& cxt = this->parent_window_->cxt;
 
-		HRESULT ret = 0;
+		LRESULT ret = 0;
 		TSF::TSFApp app(b.hWnd,  cxt);
 		bool bl = false;
 		static int mouse_mode = 0;
@@ -508,7 +508,9 @@ void D2DTextbox::SetSinglelineText(LPCWSTR str, int str_len, int insert_pos )
 			sm << '\0';
 			break;
 		}
+		sm << ch;
 	}
+	
 	auto s = sm.str();
 
 	insert_pos = max(0, insert_pos);

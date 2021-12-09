@@ -62,10 +62,10 @@ void CToolboxControls::CreateControl(UIHandleWin hwin, UIHandle hcs,TYP typ, LPC
 		
 	};
 
-	obj.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+	obj.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 
 		CaptureObj& obj = *(CaptureObj*)captureobj;
-		HRESULT r = 0;
+		LRESULT r = 0;
 		switch (message)
 		{
 			case WM_D2D_CREATE:

@@ -78,7 +78,7 @@ void D2DControls::CreateControl(D2DWindow* win, D2DControls* parent, const FRect
 	rc_ = rc;
 }
 
-HRESULT D2DControls::SendMesage(UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DControls::SendMesage(UINT message, WPARAM wParam, LPARAM lParam)
 {	
 	AppBase a={};
 	a.hWnd = GetParent()->GetHwnd();
@@ -86,7 +86,7 @@ HRESULT D2DControls::SendMesage(UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 
-HRESULT D2DControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {	
 	return DefWndProc(b,message,wParam,lParam);
 }
@@ -95,10 +95,10 @@ void D2DControls::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 	for (auto& it  : controls_ )
 		it->WndProc(b, message, wParam, lParam);
 }
-HRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	auto capture = APP.GetCapture();
-	HRESULT hr = 0;
+	LRESULT hr = 0;
 
 
 	if ( capture && GetParentControls() == capture )

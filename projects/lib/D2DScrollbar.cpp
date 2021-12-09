@@ -100,9 +100,9 @@ void D2DScrollbar::Draw2(D2DContext& cxt)
 		mat.PopTransform();
 	}
 }
-HRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	if ( stat_ & STAT_ENABLE )
 	{

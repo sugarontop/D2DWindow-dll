@@ -43,7 +43,7 @@ void D2DContext::InitWICImagingType(UINT cx, UINT cy, IWICBitmap** pwicbitmap)
 	ComPTR<IWICImagingFactory> wic;
 	ComPTR<ID2D1Factory> fct;
 	ComPTR<ID2D1RenderTarget> bmpRt;
-	HRESULT hr;
+	LRESULT hr;
 
 	hr = ::CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_ALL, IID_IWICImagingFactory, (void**)&wic);
 
@@ -219,7 +219,7 @@ void D2DContext::DText(const D2D_POINT_2F& pt, LPCWSTR str, ColorF clr)
 	FRectF rc( pt, FSizeF(1000,1000));
 	ComPTR<ID2D1SolidColorBrush> br;
 	if ( S_OK == target_->CreateSolidColorBrush( clr, &br))	
-		target_->DrawText(str,wcslen(str),this->textformat_, rc, br );
+		target_->DrawText(str,(UINT32)wcslen(str),this->textformat_, rc, br );
 
 }
 
@@ -279,5 +279,5 @@ void D2DContextEx::OnRestructGraphicsResources()
 
 bool D2DContext::CreateTextLayout(LPCWSTR str, D2D1_SIZE_F sz, IDWriteTextLayout** ret )
 {
-	return (0== tsf_wfactory_->CreateTextLayout(str, wcslen(str), this->textformat_, sz.width, sz.height, ret ));
+	return (0== tsf_wfactory_->CreateTextLayout(str, (UINT32)wcslen(str), this->textformat_, sz.width, sz.height, ret ));
 }

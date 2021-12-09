@@ -25,12 +25,12 @@ void D2DButton::SetText(LPCWSTR str)
 	textlayout_ = nullptr;
 }
 
-HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if ( (stat_&STAT_ENABLE) == 0 )
 		return 0;
 
-	HRESULT ret = 0;
+	LRESULT ret = 0;
 	static int mouse_mode = 0;
 
 	switch( message )
@@ -68,6 +68,7 @@ HRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 						d.code = EVENT_PUSH;
 						d.sender.p = this;
 						d.sender.typ = TYP_BUTTON;
+						d.sender_parent = parent_control_;
 
 
 						ret = GetParentControls()->SendMesage(WM_NOTIFY, id_, (LPARAM)&d );
@@ -180,7 +181,7 @@ void InnerMessageBox::Draw(D2DContext& cxt)
 	}
 
 }
-HRESULT InnerMessageBox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
+LRESULT InnerMessageBox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
 {
 	switch( message )
 	{
@@ -311,7 +312,7 @@ void InnerFloatingMenu::Draw(D2DContext& cxt)
 	}
 
 }
-HRESULT InnerFloatingMenu::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
+LRESULT InnerFloatingMenu::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
 {
 	switch( message )
 	{

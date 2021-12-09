@@ -13,11 +13,11 @@ namespace V6
 			void SetImage(ComPTR<ID2D1Bitmap> img ){ img_ = img; }
 		public:
 			// D2DCaptureObject interface
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 			virtual int GetTypeid() const override{ return TYP_IMAGE; }
 		public:
 			// D2DControl
-			virtual const FRectF& GetRect() const override { return rc_; }
+			virtual FRectF GetRect() const override { return rc_; }
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
 

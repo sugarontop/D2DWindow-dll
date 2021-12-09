@@ -94,9 +94,9 @@ void D2DAccordionbar::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT hr = 0;
+	LRESULT hr = 0;
 
 	if ( mode_ == 0 )
 	{
@@ -183,7 +183,9 @@ HRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 }
 void D2DAccordionbar::OpenCloseBar(bool bOpen)
 {
-	rcmove_ = std::make_shared<FRectF[]>(STEP_CNT);
+	auto nf = std::shared_ptr<FRectF[]>( new FRectF[STEP_CNT]);
+	
+	rcmove_ = nf; //std::make_shared<FRectF[]>(STEP_CNT);
 
 	if ( bOpen )
 	{

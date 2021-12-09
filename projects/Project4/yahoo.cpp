@@ -78,6 +78,8 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 		table_ = tbl.get();
 
 	}
+
+
 }
 	
 
@@ -115,8 +117,15 @@ void yahoo_finance::InetComplete(InternetInfo* )
 
 #define YAHOO
 
-void yahoo_finance::StartDownload()
+void yahoo_finance::StartDownload(LPCWSTR cd1)
 {
+	if ( info_ )
+	{
+		DeleteInternetInfo(info_);
+		info_ = nullptr;
+	}
+	
+	
 	if ( info_ == nullptr )
 	{
 		info_ = CreateInternetInfo();
@@ -129,7 +138,7 @@ void yahoo_finance::StartDownload()
 		auto dds = yahoo_chart::Period(2021,1,1);
 		auto now = yahoo_chart::Period(0,0,0);
 
-		std::wstring cd= L"QQQ";
+		std::wstring cd= cd1;
 
 
 		_snwprintf_s(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",cd.c_str(),dds, now);
@@ -151,10 +160,10 @@ void yahoo_finance::StartDownload()
 }
 
 
-HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	
-	HRESULT hr = 0;
+	LRESULT hr = 0;
 
 	switch(message )
 	{
@@ -229,7 +238,7 @@ HRESULT yahoo_finance::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					
 				}
 			}
-
+			
 
 		}
 		break;
@@ -326,7 +335,7 @@ bool yahoo_finance::ConvCsv(IStream* ism)
 {
 
 	ULONG len;
-	HRESULT hr=0;
+	LRESULT hr=0;
 	char cb[64];
 
 	std::stringstream sm;
@@ -499,9 +508,9 @@ void yahoo_chart::Draw(D2DContext& cxt)
 
 	mat.PopTransform();
 }
-HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT hr = 0;
+	LRESULT hr = 0;
 
 	switch( message )
 	{
@@ -561,9 +570,6 @@ HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 			}
 			else if ( wParam == ID_FLOATING_MENU )
 			{
-				
-				
-				
 				h = *(D2DNMHDR*)lParam;
 
 
@@ -573,12 +579,29 @@ HRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 					int idx = h.prm1;
 
 					if ( idx == 1 )
-						finance_->StartDownload();
+					{
+						D2DSetText(txt_cd_,L"SPY");
+						finance_->StartDownload(L"SPY");
+					}
 
 					hr = 1;
 				}
 			}
+			else if ( wParam == 3000)
+			{
+				h = *(D2DNMHDR*)lParam;
+				if ( h.sender_parent == this )
+				{
+					
+					BSTR cd = D2DGetText(txt_cd_, true);
 
+					if( wcslen(cd) > 0 )
+						finance_->StartDownload(cd);
+
+
+					hr =1;
+				}
+			}
 
 
 		}
@@ -597,11 +620,19 @@ void yahoo_chart::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 
 	rc_ = rc;
 
+		// input
+	{
+		UIHandleWin hwin={};
+		hwin.p = parent_window_;
+		UIHandle hs={};
+		hs.p = this;
 
-	//auto btn = std::make_shared<D2DButton>();
-	//btn->CreateControl(parent,this, FRectF(100,10,FSizeF(150,20)), STAT_DEFAULT, NONAME );
+		auto txt = D2DCreateTextbox(hwin, hs, FRectF(10,20,FSizeF(100,20)), false, STAT_DEFAULT, L"input cd", 3001 );
 
+		auto btn = D2DCreateButton(hwin, hs, FRectF(120,20,FSizeF(100,20)), STAT_DEFAULT, L"seek", 3000 );
 
+		txt_cd_ = txt;
+	}
 }
 
 #define _SECOND ((__int64) 10000000)
@@ -688,7 +719,7 @@ void yahoo_table::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-HRESULT yahoo_table::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT yahoo_table::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
 	return 1;

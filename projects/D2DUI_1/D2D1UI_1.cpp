@@ -704,7 +704,7 @@ DLLEXPORT void D2DSetRect( UIHandle h, D2D1_RECT_F rc )
 	
 }
 
-DLLEXPORT HRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
+DLLEXPORT LRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );
 

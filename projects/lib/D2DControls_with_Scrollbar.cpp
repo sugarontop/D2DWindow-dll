@@ -48,9 +48,9 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-HRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 	bool bl = true;
 
 	switch( message )
@@ -238,9 +238,9 @@ void D2DControls_with_Move::CreateControl(D2DWindow* parent, D2DControls* pacont
 	rc_ = rc;
 
 }
-HRESULT D2DControls_with_Move::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DControls_with_Move::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	switch( message )
 	{

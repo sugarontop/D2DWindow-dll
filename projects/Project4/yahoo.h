@@ -28,7 +28,7 @@ namespace V6 {
 
 			virtual void Draw(D2DContext& cxt) override;
 			virtual int GetTypeid() const override { return 0; }
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 	
 
@@ -42,7 +42,7 @@ namespace V6 {
 
 
 			bool ConvCsv(IStream* ism);
-			void StartDownload();
+			void StartDownload(LPCWSTR cd);
 			void InetComplete(InternetInfo* );
 	};
 
@@ -53,9 +53,9 @@ namespace V6 {
 
 			virtual void Draw(D2DContext& cxt) override;
 			virtual int GetTypeid() const override { return 0; }
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
-			virtual const FRectF& GetRect() const { return rc_; }
+			virtual FRectF GetRect() const { return rc_; }
 			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
 
 			static ULONG Period(int yyyy, int mm, int dd );
@@ -65,6 +65,7 @@ namespace V6 {
 			yahoo_finance* finance_;
 			FRectF* prc_;
 			FPointF mouse_pt_;
+			UIHandle txt_cd_;
 
 	};
 
@@ -75,10 +76,10 @@ namespace V6 {
 
 			virtual void Draw(D2DContext& cxt) override;
 			virtual int GetTypeid() const override { return 0; }
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 
-			virtual const FRectF& GetRect() const { return rc_; }
+			virtual FRectF GetRect() const { return rc_; }
 			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
 
 			void Update(float cx);

@@ -238,10 +238,10 @@ void CreateControl(HWND hWnd)
             }
             mat.PopTransform();
     };
-    obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+    obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 
         CaptureObj1* obj = (CaptureObj1*)captureobj;
-        HRESULT r = 0;
+        LRESULT r = 0;
         switch( message )
         {
             case WM_LBUTTONDOWN:

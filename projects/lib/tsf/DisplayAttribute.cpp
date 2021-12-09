@@ -10,7 +10,7 @@ CDispAttrProps* TSF::GetDispAttrProps()
     IEnumGUID *pEnumProp = NULL;
     CDispAttrProps *pProps = NULL;
     ITfCategoryMgr *pcat;
-    HRESULT hr = E_FAIL;
+    LRESULT hr = E_FAIL;
     if (SUCCEEDED(hr = CoCreateInstance(CLSID_TF_CategoryMgr,
                                    NULL,
                                    CLSCTX_INPROC_SERVER,
@@ -53,7 +53,7 @@ CDispAttrProps* TSF::GetDispAttrProps()
 //
 //----------------------------------------------------------------------------
 
-HRESULT InitDisplayAttrbute()
+LRESULT InitDisplayAttrbute()
 {
 
     if (s_DisplayAttributeMgr)
@@ -80,7 +80,7 @@ HRESULT InitDisplayAttrbute()
 //
 //----------------------------------------------------------------------------
 
-HRESULT UninitDisplayAttrbute()
+LRESULT UninitDisplayAttrbute()
 {
 
     if (s_DisplayAttributeMgr)
@@ -98,10 +98,10 @@ HRESULT UninitDisplayAttrbute()
 //
 //----------------------------------------------------------------------------
 
-HRESULT TSF::GetDisplayAttributeTrackPropertyRange(TfEditCookie ec, ITfContext *pic, ITfRange *pRange, ITfReadOnlyProperty **ppProp, CDispAttrProps *pDispAttrProps)
+LRESULT TSF::GetDisplayAttributeTrackPropertyRange(TfEditCookie ec, ITfContext *pic, ITfRange *pRange, ITfReadOnlyProperty **ppProp, CDispAttrProps *pDispAttrProps)
 {
     ITfReadOnlyProperty *pProp = NULL;
-    HRESULT hr = E_FAIL;
+    LRESULT hr = E_FAIL;
     GUID  *pguidProp = NULL;
     const GUID **ppguidProp;
     ULONG ulNumProp = 0;
@@ -150,7 +150,7 @@ Exit:
 //
 //----------------------------------------------------------------------------
 
-HRESULT TSF::GetDisplayAttributeData(TfEditCookie ec, ITfReadOnlyProperty *pProp, ITfRange *pRange, TF_DISPLAYATTRIBUTE *pda, TfGuidAtom *pguid)
+LRESULT TSF::GetDisplayAttributeData(TfEditCookie ec, ITfReadOnlyProperty *pProp, ITfRange *pRange, TF_DISPLAYATTRIBUTE *pda, TfGuidAtom *pguid)
 {
     VARIANT var;
     IEnumTfPropertyValue *pEnumPropertyVal;
@@ -159,7 +159,7 @@ HRESULT TSF::GetDisplayAttributeData(TfEditCookie ec, ITfReadOnlyProperty *pProp
     TfGuidAtom gaVal;
     ITfDisplayAttributeInfo *pDAI;
 
-    HRESULT hr = E_FAIL;
+    LRESULT hr = E_FAIL;
 
     ITfCategoryMgr *pcat = NULL;
     if (FAILED(hr = CoCreateInstance(CLSID_TF_CategoryMgr,

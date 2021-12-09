@@ -64,9 +64,9 @@ void D2DDropdownListbox::Draw(D2DContext& cxt)
 
 }
 
-HRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM lp)
+LRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM lp)
 {
-    HRESULT ret = 0;
+    LRESULT ret = 0;
 
     switch (message)
     {

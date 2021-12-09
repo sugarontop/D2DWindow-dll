@@ -778,9 +778,9 @@ void CTextEditorCtrl::Clear()
 //
 //----------------------------------------------------------------
 
-HRESULT CTextEditorCtrl::WndProc(TSFApp* d, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CTextEditorCtrl::WndProc(TSFApp* d, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    HRESULT ret = 0;
+    LRESULT ret = 0;
 
     if ( ct_ )
     {

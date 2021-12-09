@@ -16,7 +16,7 @@ namespace V6 {
 			
 			virtual void Draw(D2DContext& cxt) override;
 			virtual int GetTypeid() const override { return TYP_CONTROLS; }
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
 			std::shared_ptr<D2DMDIChild> Add(const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 
@@ -42,7 +42,7 @@ namespace V6 {
 			
 			virtual void Draw(D2DContext& cxt) override;
 			virtual int GetTypeid() const override { return TYP_CONTROLS; }
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
 
 			enum TitleMouse{ MOVE, DESTROY,LARGE,SMALL};

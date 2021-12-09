@@ -42,9 +42,9 @@ void D2DListbox::Draw(D2DContext& cxt)
 
 }
 
-HRESULT D2DListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lp)
+LRESULT D2DListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lp)
 {
-	HRESULT ret = 0;
+	LRESULT ret = 0;
     
 	switch (message)
 	{

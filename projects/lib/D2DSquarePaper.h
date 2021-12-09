@@ -17,10 +17,10 @@ class D2DSquarePaper : public D2DControls
 
 		virtual void Draw(D2DContext& cxt) override;
 		virtual int GetTypeid() const override { return TYP_CONTROLS; }
-		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 		virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 
-		std::function<HRESULT(LPVOID,AppBase&,UINT,WPARAM,LPARAM)> import_function_;
+		std::function<LRESULT(LPVOID,AppBase&,UINT,WPARAM,LPARAM)> import_function_;
 	private :
 		float pitch_;
 		float scale_;

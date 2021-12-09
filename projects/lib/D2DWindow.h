@@ -41,7 +41,7 @@ class D2DWindow
 
 		bool CreateResource( FSizeF* size );
 
-		HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 		void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
 		int MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title);
@@ -60,7 +60,7 @@ class D2DWindow
 		std::shared_ptr<D2DControls> top_control_;
 		std::map<std::wstring, D2DControl*> name_map_;
 	protected :
-		HRESULT InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 		bool TSFInit(HWND hWnd);
 		void TSFExit();
 

@@ -32,9 +32,9 @@ void D2DWhiteControl::CreateControl(D2DWindow* parent, D2DControls* pacontrol, c
 
 	rc_ = rc;
 }
-HRESULT D2DWhiteControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DWhiteControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 	
 	if (stat_ & STAT_ENABLE)
 	{

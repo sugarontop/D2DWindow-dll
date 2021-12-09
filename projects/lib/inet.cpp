@@ -67,7 +67,7 @@ DWORD WINAPI InetAsync( LPVOID p )
 
 	CLSID clsid;
 	IServerXMLHTTPRequest* req = nullptr;
-	HRESULT hr;
+	LRESULT hr;
 
 	try 
 	{

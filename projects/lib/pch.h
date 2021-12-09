@@ -80,7 +80,7 @@ void Trace(LPCWSTR fm, ...);
 #define TRACE	 Trace
 
 #include "comptr.h"
-inline void ThrowIfFailed( HRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
+inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 {
 	if (FAILED(hr))
 	{		
@@ -91,5 +91,8 @@ inline void ThrowIfFailed( HRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 	}
 }
 #define THR(hr) ThrowIfFailed(hr,nullptr, __LINE__, __FILE__)
+
+
+
 
 

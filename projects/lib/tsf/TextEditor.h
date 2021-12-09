@@ -137,7 +137,7 @@ class CTextEditorCtrl : public CTextEditor
 	public :
 		HWND Create(HWND hwndParent, ITfThreadMgr2* tmgr, TfClientId clientid);
 
-		HRESULT  WndProc(TSFApp* d, UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT  WndProc(TSFApp* d, UINT message, WPARAM wParam, LPARAM lParam);
 		
 		void SetContainer( CTextContainer* ct, IBridgeTSFInterface* ib );
 		

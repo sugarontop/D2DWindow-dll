@@ -50,9 +50,9 @@ void D2DMDISplitFrame::Draw(D2DContext& cxt)
 
 	mat.PopTransform();
 }
-HRESULT D2DMDISplitFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DMDISplitFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	switch( message )
 	{
@@ -148,9 +148,9 @@ void D2DMDISplitChild::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-HRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	switch( message )
 	{

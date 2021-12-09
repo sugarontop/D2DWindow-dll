@@ -72,9 +72,9 @@ D2DControl* D2DTabControls::GetControlFromIdx(USHORT idx)
 	return nullptr;
 }
 
-HRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	switch( message )
 	{
@@ -272,7 +272,7 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	for(int i=0; i < 1; i++ )
 	{
 		FRectF rc(0,0,FSizeF(200,20));
-		rc.Offset(i*180,0);
+		rc.Offset(i*180.0f,0);
 		tabrects_.push_back(rc);
 
 	}
@@ -304,7 +304,7 @@ D2DControls* D2DTabControls::AddNewTab(LPCWSTR tabnm)
 
 	auto i = tabrects_.size();
 	FRectF rc(0,0,FSizeF(200,20));
-	rc.Offset(i*180,0);
+	rc.Offset(i*180.0f,0);
 	tabrects_.push_back(rc);
 
 	return ret;

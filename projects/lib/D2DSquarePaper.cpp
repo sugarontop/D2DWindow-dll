@@ -73,9 +73,9 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 	mat.PopTransform();
 
 } 
-HRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	switch( message )
 	{

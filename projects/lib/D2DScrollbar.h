@@ -12,9 +12,9 @@ public :
 
 
 	virtual void Draw(D2DContext& cxt) override;
-	virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
-	virtual const FRectF& GetRect() const override { return FRectF(0,0,sz_); }
+	virtual FRectF GetRect() const override { return FRectF(0,0,sz_); }
 	virtual void SetRect(const FRectF& rc)  override { sz_ = rc.Size(); }
 	void SetSize(const FSizeF& sz);
 	FSizeF GetSize() const;

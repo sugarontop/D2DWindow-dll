@@ -35,7 +35,7 @@ void work(IStream** ppJpg)
 
 bool FileReadStream( LPCWSTR fnm, IStream** sm )
 {
-	HRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, sm);
+	LRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, sm);
 
 	CREATEFILE2_EXTENDED_PARAMETERS cfprm = {};
 	cfprm.dwSize = sizeof(CREATEFILE2_EXTENDED_PARAMETERS);

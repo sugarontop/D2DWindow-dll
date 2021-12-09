@@ -114,9 +114,9 @@ D2DMDIChild* D2DMDIFrame::GetChild(short idx) const
 }
 
 
-HRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT hr = 0;
+	LRESULT hr = 0;
 
 	switch(message )
 	{
@@ -272,7 +272,7 @@ HRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 
 // /////////////////////////////////////////////////////////////////
 static void DrawTitlebar(D2DContext& cxt, const FRectF& rc, D2DMDIChild::TitleMouse tmd, LPCWSTR title);
-HRESULT TitleBarMoouseProc(D2DControls* ctrl,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT TitleBarMoouseProc(D2DControls* ctrl,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 #define bar_h 30.0f
 
 D2DMDIChild::D2DMDIChild():idx_(-1)
@@ -336,9 +336,9 @@ void D2DMDIChild::Draw(D2DContext& cxt)
 	}
 }
 
-HRESULT D2DMDIChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DMDIChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	switch(message )
 	{
@@ -443,9 +443,9 @@ static void DrawTitlebar(D2DContext& cxt, const FRectF& rc, D2DMDIChild::TitleMo
 	(*cxt)->DrawText(title, wcslen(title), cxt.textformat_, rcbar, cxt.black_);
 
 }
-HRESULT TitleBarMoouseProc(D2DControls* ctrls,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT TitleBarMoouseProc(D2DControls* ctrls,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 	
 
 	D2DMDIChild* obj = (D2DMDIChild*)ctrls;

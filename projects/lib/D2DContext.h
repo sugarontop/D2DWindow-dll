@@ -110,7 +110,7 @@ private :
 	int cnt;
 };
 
-inline void ThrowIfFailed( HRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
+inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 {
 	if (FAILED(hr))
 	{		
@@ -122,7 +122,7 @@ inline void ThrowIfFailed( HRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 }
 #define THR(hr) ThrowIfFailed(hr,nullptr, __LINE__, __FILE__)
 
-inline HRESULT NoThrowIfFailed(HRESULT hr)
+inline LRESULT NoThrowIfFailed(LRESULT hr)
 {
     if (FAILED(hr))
     {

@@ -65,20 +65,20 @@ namespace V6
 		public:
 			D2DSimpleListbox();
 
-			virtual const FRectF& GetRect() const { return rc_; }
+			virtual FRectF GetRect() const { return rc_; }
 			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt);
 
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
 			int GetSelectedIdx() const { return selected_idx_; }
 			virtual int GetTypeid() const override{ return TYP_SIMPLE_LISTBOX; }
 			
 			float RowHeight() const;
 		protected :
-			HRESULT WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
-			HRESULT WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
+			LRESULT WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
+			LRESULT WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
 	protected:
 
 			bool OnEscape();

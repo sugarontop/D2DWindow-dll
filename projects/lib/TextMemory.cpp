@@ -26,7 +26,7 @@ void TextMemory::ReAlloc( DWORD sz)
 
 TextSentence TextMemory::AddNewString( LPCWSTR str )
 { 
-	UINT len = wcslen(str) + 1;
+	UINT len = (UINT)wcslen(str) + 1;
 
 	if ( len > 50 )
 	{

@@ -31,7 +31,7 @@ void Scrollbar::Create(ScrollbarParent* parent, FRectF rc )
 	offbar_y_ = 0;
 	bvscrollbar_ = (rc.Width() < rc.Height() );
 }
-HRESULT Scrollbar::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
+LRESULT Scrollbar::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 {
 	static FPointF spt;
 	static Scrollbar* target = nullptr;

@@ -24,7 +24,7 @@ public:
 	int GetStat()  const { return stat_; }
 	void SetStat(int s) { stat_ = s; }
 
-	virtual const FRectF& GetRect() const  = 0;
+	virtual FRectF GetRect() const  = 0;
 	virtual void SetRect(const FRectF& rc) = 0;
 	virtual void Draw(D2DContext& cxt) = 0;
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col);
@@ -56,7 +56,7 @@ public:
 
 	D2DWindow* GetParent() const { return parent_window_; }
 	D2DControls* GetParentControls() const { return parent_control_; }
-	//virtual HRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+	//virtual LRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	void SetNewParent(D2DControls* newparent);
 protected:
 	D2DWindow* parent_window_;
@@ -82,8 +82,8 @@ public:
 	D2DControls();
 	virtual ~D2DControls();
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
-	virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
-	virtual HRESULT SendMesage(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+	virtual LRESULT SendMesage(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual void Draw(D2DContext& cxt) override;
 	void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	virtual int GetTypeid() const override{ return TYP_CONTROLS; }
@@ -92,7 +92,7 @@ public:
 	void Add(std::shared_ptr<D2DControl> p);
 	D2DControl* GetControl( std::wstring name );
 	D2DControl* GetControlFromID( int id ) const;
-	virtual const FRectF& GetRect() const override { return rc_; }
+	virtual FRectF GetRect() const override { return rc_; }
 	virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 
 	std::shared_ptr<D2DControl> GetItem(UINT idx){ return controls_[idx]; }
@@ -100,7 +100,7 @@ public:
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col) override;
 
 protected :
-	virtual HRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	
 	void InnerDraw(D2DContext& cxt);
 

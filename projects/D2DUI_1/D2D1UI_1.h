@@ -71,7 +71,7 @@ DLLEXPORT  void D2DDestroyControl(UIHandle hcs  );
 DLLEXPORT  void D2DDestroyWindow(UIHandleWin main  );
 
 
-DLLEXPORT HRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam);
+DLLEXPORT LRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam);
 DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPARAM wParam, LPARAM lParam);
 
 

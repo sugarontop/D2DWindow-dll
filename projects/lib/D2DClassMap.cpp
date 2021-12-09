@@ -49,9 +49,9 @@ void D2DClassMap::Draw(D2DContext& cxt)
 	}
 	mat.PopTransform();
 }
-HRESULT D2DClassMap::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DClassMap::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT h = 0;
+	LRESULT h = 0;
 
 
 	switch(message )

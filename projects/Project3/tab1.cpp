@@ -50,7 +50,7 @@ void CreateControl0(UIHandleWin hwin, UIHandle hcs)
 //	c.hwin = hwin;
 //	c.hcs = hcs;		
 //
-//	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+//	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 //
 //		switch(message )
 //		{
@@ -214,10 +214,10 @@ void CreateScrollControlBar(UIHandleWin hwin, UIHandle hcs)
 	c.offset_x = 50;
 	c.scale = 1.0f;
 
-	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+	c.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 
 		CapureObjTab1_1& c = *(CapureObjTab1_1*) captureobj;
-		HRESULT r = 0;
+		LRESULT r = 0;
 		switch( message )
 		{
 			case WM_D2D_CREATE:
@@ -461,8 +461,8 @@ UIHandle CreateEmptyControl(UIHandleWin hwin, UIHandle hcs)
 	CapureObjTab1_2* c = new CapureObjTab1_2();
 	c->hwin = hwin;
 
-	c->wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
-		HRESULT hr = 0;
+	c->wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
+		LRESULT hr = 0;
 		CapureObjTab1_2& c = *(CapureObjTab1_2*) captureobj;
 
 		switch( message )

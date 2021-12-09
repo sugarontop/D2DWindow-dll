@@ -17,9 +17,9 @@ void D2DGrid::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRe
 
 	rc_ = rc;
 }
-HRESULT D2DGrid::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DGrid::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT hr = 0;
+	LRESULT hr = 0;
 
 	switch(message)
 	{

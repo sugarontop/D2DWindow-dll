@@ -53,9 +53,9 @@ void D2DWhiteWindow::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-HRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	switch( message )
 	{

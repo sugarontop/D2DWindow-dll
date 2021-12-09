@@ -19,9 +19,9 @@ void D2DWhiteWindowControls::CreateControl(D2DWindow* parent, D2DControls* pacon
 	rc_ = rc;
 }
 
-HRESULT D2DWhiteWindowControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DWhiteWindowControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 { 
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	if ( message == WM_LBUTTONDOWN )
 	{
@@ -87,9 +87,9 @@ void D2DWhiteWindowControls::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-HRESULT MovableWithMouse::WndProc( AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT MovableWithMouse::WndProc( AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 
 	if ( mstat_ == STAT::MOVING )
 	{

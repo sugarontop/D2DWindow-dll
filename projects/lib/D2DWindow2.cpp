@@ -22,7 +22,7 @@ LRESULT D2DWindow::SendMessage(UINT msg, WPARAM wp, LPARAM lp)
 	return WndProc(b, msg, wp, lp);
 }
 
-HRESULT D2DWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if ( !post_message_queue_.empty() )
 	{
@@ -39,10 +39,10 @@ HRESULT D2DWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 
 	return InnerWndProc(b, message, wParam, lParam);
 }
-HRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static MouseParam mp;
-	HRESULT hr = 0;
+	LRESULT hr = 0;
 
 	_ASSERT(message != WM_SIZE);
 

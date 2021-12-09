@@ -29,7 +29,7 @@ namespace V6
 
 			void Create(ScrollbarParent* parent, FRectF rc );
 			void OnDraw(D2DContext& cxt);
-			virtual HRESULT WndProc(AppBase& hWnd, UINT msg, WPARAM wp, LPARAM lp) ;
+			virtual LRESULT WndProc(AppBase& hWnd, UINT msg, WPARAM wp, LPARAM lp) ;
 			void SetTotalHeight( float h );
 			float Scroll();
 			 float SetScroll(float offset);
@@ -79,7 +79,7 @@ namespace V6
 	public :
 		void CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP typ, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 		virtual void Draw(D2DContext& cxt) override;
-		virtual const FRectF& GetRect() const override { return rctext_; }
+		virtual FRectF GetRect() const override { return rctext_; }
 		virtual void SetRect(const FRectF& rc)  override { rctext_ = rc; }
 	public :
 		static void* CreateInputControl(D2DWindow* parent);
@@ -103,7 +103,7 @@ namespace V6
 
 	public:
 		// D2DCaptureObject interface
-		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 	public :
 		// IBridgeTSFInterface
 		virtual FRectF GetClientRect()  const override;

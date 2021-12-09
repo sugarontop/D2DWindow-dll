@@ -29,9 +29,9 @@ void D2DStatic::Draw(D2DContext& cxt)
 		editor_->Draw(cxt);	
 	
 }
-HRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 	
 	if ( editable_ )
 	{

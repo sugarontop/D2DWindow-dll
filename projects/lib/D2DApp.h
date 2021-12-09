@@ -1,5 +1,8 @@
 #pragma once
 
+#pragma warning( disable : 4267 )
+
+
 typedef std::wstring wstring;
 
 namespace V6 

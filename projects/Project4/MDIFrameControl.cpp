@@ -120,9 +120,9 @@ void CreateMDISplitControl(HWND hWnd)
 	auto b1 = D2DCreateButton(hwin,hcsLEFT, FRectF(50,100,FSizeF(100,20)),STAT_VISIBLE,L"LeftEmptySQb1", 191);
 
 
-	DelegateProcFunc f = [](LPVOID xp,AppBase& b, UINT message, WPARAM wp, LPARAM lp)->HRESULT
+	DelegateProcFunc f = [](LPVOID xp,AppBase& b, UINT message, WPARAM wp, LPARAM lp)->LRESULT
 	{
-		HRESULT h = 0;
+		LRESULT h = 0;
 
 		switch( message )
 		{

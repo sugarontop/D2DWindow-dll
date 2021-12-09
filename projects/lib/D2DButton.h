@@ -14,11 +14,11 @@ namespace V6
 			void SetText(LPCWSTR str);
 		public:
 			// D2DCaptureObject interface
-			virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 			virtual int GetTypeid() const override{ return TYP_BUTTON; }
 		public:
 			// D2DControl
-			virtual const FRectF& GetRect() const override { return rc_; }
+			virtual FRectF GetRect() const override { return rc_; }
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
 
@@ -41,14 +41,14 @@ namespace V6
 	public :
 		InnerMessageBox(){}
 
-		virtual const FRectF& GetRect() const { return rc_; }
+		virtual FRectF GetRect() const { return rc_; }
 		virtual void SetRect(const FRectF& rc) {rc_ = rc; }
 
 		void ModalShow(LPCWSTR text, LPCWSTR title);
 
 		virtual void Draw(D2DContext& cxt) override;		
 
-		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
 
 		FRectF rc_;
@@ -62,14 +62,14 @@ namespace V6
 	public :
 		InnerFloatingMenu(){}
 
-		virtual const FRectF& GetRect() const { return rc_; }
+		virtual FRectF GetRect() const { return rc_; }
 		virtual void SetRect(const FRectF& rc) {rc_ = rc; }
 
 		void ModalShow(LPVOID sender, std::vector<MenuItem>& ar);
 
 		virtual void Draw(D2DContext& cxt) override;		
 
-		virtual HRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 
 
 		std::vector<MenuItem> items_;

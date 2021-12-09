@@ -31,9 +31,9 @@ D2DClientControls::~D2DClientControls()
 	}
 
 }
-HRESULT D2DClientControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DClientControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HRESULT r = 0;
+	LRESULT r = 0;
 	
 	if (stat_ & STAT_ENABLE)
 	{

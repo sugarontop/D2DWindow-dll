@@ -139,7 +139,7 @@ bool D2DSimpleListbox::sc_MouseMove(FPointF& pt)
 }
 
 
-HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (typ_ == 0)
 		return WndProcNormal(b,message,wParam,lParam);
@@ -149,9 +149,9 @@ HRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
 }
 
-HRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    HRESULT ret = 0;
+    LRESULT ret = 0;
 
     auto InnerRect =[](FRectF rc)->FRectF
     {
@@ -309,7 +309,7 @@ HRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
         break;
 		case WM_D2D_LISTBOX_ADD_ITEM:
 		{
-			int typ = wParam;
+			int typ = (int)wParam;
 
 			if ( typ == 1 )
 			{			
@@ -342,9 +342,9 @@ HRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 }
 
 
-HRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    HRESULT ret = 0;
+    LRESULT ret = 0;
 
     auto InnerRect =[](FRectF rc)->FRectF
     {
@@ -491,7 +491,7 @@ HRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
         break;
 		case WM_D2D_LISTBOX_ADD_ITEM:
 		{
-			int typ = wParam;
+			int typ = (int)wParam;
 
 			if ( typ == 1 )
 			{			

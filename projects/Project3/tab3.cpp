@@ -111,10 +111,10 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 
         mat.PopTransform();
     };
-    obj.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+    obj.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 
         CaptureObj1* obj = (CaptureObj1*)captureobj;
-        HRESULT r = 0;
+        LRESULT r = 0;
         switch (message)
         {
             case WM_D2D_CREATE:
@@ -224,10 +224,10 @@ void Initialwbbox( WhiteBoard& wb )
 	};
 
 
-	wb.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->HRESULT {
+	wb.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 
 		CaptureObj1* obj = (CaptureObj1*)captureobj;
-		HRESULT r = 0;
+		LRESULT r = 0;
 		FRectF& rcbox = obj->rcwbbox;
 
 		switch( message )
