@@ -9,6 +9,7 @@
 #include "yahoo.h"
 #include "D2DTabControls.h"
 #include "D2DControls_with_Scrollbar.h"
+#include "D2DChildWindow.h"
 
 using namespace V6;
 
@@ -27,9 +28,22 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 
 	/////////////////////////////////////////////////////////////////////////
 
-	auto ctrls = std::make_shared<D2DControls_with_Scrollbar>();
-	ctrls->CreateControl(parent_window_,this,FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol_pa", 192);
-	this->Add(ctrls);
+	auto ctrlsEx = std::make_shared<D2DChildWidow>();
+	ctrlsEx->CreateControl(parent_window_,this,FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_childwin", 193);
+	this->Add(ctrlsEx);
+
+	auto pk1 = ctrlsEx.get();
+
+	auto ctrls=ctrlsEx;
+
+	//auto pk1 = this;
+
+	
+
+
+	//auto ctrls = std::make_shared<D2DControls_with_Scrollbar>();
+	//ctrls->CreateControl(parent_window_,pk1,FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol_pa", 192);
+	//pk1->Add(ctrls);
 
 
 
@@ -59,12 +73,11 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 		chart->finance_ = this;
 		chart_ = chart.get();
 
-		UIHandleWin w={};
-		w.p = parent;
-		UIHandle c={};
-		c.p = this;
-
-		D2DCreateButton(w,c , FRectF(500,0,FSizeF(150,20)), STAT_DEFAULT, L"msgbox", ID_BUTTON );
+		//UIHandleWin w={};
+		//w.p = parent;
+		//UIHandle c={};
+		//c.p = this;
+		//D2DCreateButton(w,c , FRectF(500,0,FSizeF(150,20)), STAT_DEFAULT, L"msgbox", ID_BUTTON );
 	}
 
 	// TAB : data table

@@ -33,6 +33,9 @@
     <ClInclude Include="..\lib\D2DClassMap.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\D2DChildWindow.h">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -78,6 +81,9 @@
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\D2DClassMap.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DChildWindow.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
   </ItemGroup>

@@ -134,6 +134,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>.\;..\lib;..\D2DUI_1;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -152,6 +153,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>.\;..\lib;..\D2DUI_1;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -163,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\lib\D2DAccordionbar.h" />
+    <ClInclude Include="..\lib\D2DChildWindow.h" />
     <ClInclude Include="..\lib\D2DClassMap.h" />
     <ClInclude Include="..\lib\D2DScrollbar.h" />
     <ClInclude Include="framework.h" />
@@ -171,6 +174,7 @@
   <ItemGroup>
     <ClCompile Include="..\lib\D2DAccordionbar.cpp" />
     <ClCompile Include="..\lib\D2DApp.cpp" />
+    <ClCompile Include="..\lib\D2DChildWindow.cpp" />
     <ClCompile Include="..\lib\D2DClassMap.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
     <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp" />
@@ -197,5 +201,4 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\Project1\packages\Microsoft.Windows.CppWinRT.2.0.210930.14\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\Project1\packages\Microsoft.Windows.CppWinRT.2.0.210930.14\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
-
 </Project>
