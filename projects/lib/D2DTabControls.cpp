@@ -123,27 +123,42 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			}
 		}
 		break;
+		case WM_D2D_SET_SIZE_SIZE:
+		{
+			FSizeF sz = *(FSizeF*)lParam;
+			rc_.SetSize(sz);
+
+			sz.height -= tabrects_[0].Height();
+
+			for(auto& it : controls_)
+				it->WndProc(b,WM_D2D_SET_SIZE_SIZE,wParam,(LPARAM)&sz);
+			return 0;
+		}
+		break;
 		case WM_D2D_SET_SIZE:
 		{
-			FRectF rc = *(FRectF*)lParam;
+			{					
+				FRectF rc = *(FRectF*)lParam;
 			
-			if ( size_fix_ )
-			{
-				rc = rc_.ZeroRect();
-				rc.top += tabrects_[0].Height();
-			}
-			else
-			{
-				rc_.SetWH(rc);
+				if ( size_fix_ )
+				{
+					rc = rc_.ZeroRect();
+					rc.top += tabrects_[0].Height();
+				}
+				else
+				{
+					rc_.SetWH(rc);
 			
-				rc.top += tabrects_[0].Height();
+					rc.top += tabrects_[0].Height();
 			
-				rc = rc.ZeroRect();
-			}
+					rc = rc.ZeroRect();
+				}
 			
-			for(auto& it : controls_)
-				it->WndProc(b,WM_D2D_SET_SIZE,0,(LPARAM)&rc);
+				for(auto& it : controls_)
+					it->WndProc(b,WM_D2D_SET_SIZE,wParam,(LPARAM)&rc);
 
+			}
+			
 			return 0;
 
 		}

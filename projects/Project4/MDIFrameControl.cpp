@@ -216,7 +216,7 @@ void CreateMDISplitControl(HWND hWnd)
 
 	UIHandle hcs5={};
 	hcs5.p = p1;
-	auto v1 = D2DCreateEmptyControls(hwin, hcs5, FRectF(0,0,2000,2000), STAT_DEFAULT,L"Control map parent", 201);
+	auto v1 = D2DCreateEmptyControls(hwin, hcs5, FRectF(0,0,2001,2001), STAT_DEFAULT,L"Control map parent", 201);
 
 	auto maps = std::make_shared<D2DClassMap>();
 	maps->CreateControl((D2DWindow*)hwin.p, (D2DControls*)v1.p, FRectF(0,0,0,0),  STAT_DEFAULT, L"Control map", 200);
@@ -272,13 +272,11 @@ void CreateMDISplitControl(HWND hWnd)
 
 			D2DWindow* parent = (D2DWindow*)hwin.p;
 
-			for(int ij = 0; ij < 2; ij++ )
+			for(int ij = 0; ij <1; ij++ )
 			{
 				yahoo_finance* yf = new yahoo_finance();
-				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,150+ij*10,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
+				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,100+ij*10,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
 				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
-
-				yf->sc_control_ = (D2DControls_with_Scrollbar*)ha.p;
 
 			}
 		}

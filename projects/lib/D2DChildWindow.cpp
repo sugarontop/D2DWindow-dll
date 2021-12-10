@@ -12,6 +12,7 @@ void D2DChildWidow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 {
 	D2DControls::CreateControl(parent, pacontrol,rc, stat, name, local_id);
 	mode_ = 0;
+	title_bar_mode_ = 0;
 
 }
 
@@ -44,12 +45,29 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		case WM_D2D_CREATE:
 			h = 1;
 		break;
+
+
+		case WM_SIZE:
+		case WM_D2D_SET_SIZE:
+		{
+			FSizeF sz( rc_.Width(), rc_.Height()-TITLEBAR_HEIGHT);
+
+			D2DControls::WndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
+
+			bl = false;
+
+		}
+		break;
+
 		case WM_LBUTTONDOWN:
 		case WM_MOUSEMOVE:
 		case WM_LBUTTONUP:
 		{
 			MouseParam& pm = *(MouseParam*)lParam;
 			auto pt = mat_.DPtoLP(pm.pt);
+
+			auto old = title_bar_mode_;
+			
 
 			if ( rc_.PtInRect(pt) || mode_ == 1)
 			{
@@ -60,6 +78,11 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else
 				bl = false;
+
+
+			if ( old != title_bar_mode_ )							
+				b.bRedraw = true;
+			
 		}
 		break;
 
@@ -80,17 +103,27 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 	{
 		case WM_LBUTTONDOWN:
 		{
-			APP.SetCapture(this);
-			mode_ = 1;
+			if ( title_bar_mode_ == 0)
+			{
+				APP.SetCapture(this);
+				mode_ = 1;
+			}
+			else if ( title_bar_mode_ > 0)
+			{
+				APP.SetCapture(this);
+				mode_ = 0;
+			}
+
 			h = 1;
 		}
 		break;
 		case WM_MOUSEMOVE:
 		{
+			auto pt = mat_.DPtoLP(pm.pt);
+			auto old = title_bar_mode_;
+
 			if ( APP.IsCapture(this))
-			{
-				
-				auto pt = mat_.DPtoLP(pm.pt);
+			{								
 				auto pt2 = mat_.DPtoLP(pm.ptprv);
 
 				rc_.Offset(pt.x-pt2.x, pt.y-pt2.y);
@@ -99,14 +132,52 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 
 				h = 1;
 			}
+			else
+			{
+				FRectF rc2(rc_.right-45,rc_.top,rc_.right,rc_.top+27);
+				
+				title_bar_mode_ = 0;
+				if ( rc2.PtInRect(pt))
+				{
+					title_bar_mode_ = 1; h=1;
+				}
+				else
+				{
+					rc2.Offset(-45,0);
+					if ( rc2.PtInRect(pt)){
+						title_bar_mode_ = 2; h=1;
+					}
+					else
+					{
+						rc2.Offset(-45,0);
+						if ( rc2.PtInRect(pt)) {
+							title_bar_mode_ = 3; h=1;
+						}
+						else
+							title_bar_mode_ = 0;
+					}
+				}
+			}
 
+			
 		}
 		break;
 		case WM_LBUTTONUP:
 		{
-			if ( APP.IsCapture(this))			
+			if ( APP.IsCapture(this))
+			{
 				APP.ReleaseCapture();
-			mode_ = 0;
+				mode_ = 0;
+
+
+				if ( title_bar_mode_ == 1 )
+				{
+					DestroyControl();
+
+				}
+			}
+
+
 			h = 1;
 		}
 		break;
@@ -117,13 +188,57 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 
 
 
-void D2DChildWidow::DrawTitlebar(D2DContext& cxt)
-{
-	cxt.DFillRect(FRectF(0,0,rc_.Width(),TITLEBAR_HEIGHT), ColorF::Black);
 
-
-
-}
 
  
 
+ static void DrawTitlebar2(D2DContext& cxt, const FRectF& rc,ColorF titlebar, LPCWSTR title, int tmd)
+{
+	FRectF rcbar = rc.ZeroRect(); 
+	cxt.DFillRect(rcbar, titlebar);
+
+	(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+
+	D2DMatrix mat(*cxt);
+	mat.PushTransform();
+	mat.Offset(rc.Width()-45, 0); // width:45, three buttons
+
+
+	FRectF rc2(0,0,45,27);
+	if ( tmd == 1 )
+		cxt.DFillRect(rc2, D2RGB(232,17,35)); // DESTROY
+
+	(*cxt)->DrawLine(FPointF(11+5,11), FPointF(21+5,21), cxt.black_);
+	(*cxt)->DrawLine(FPointF(21+5,11), FPointF(11+5,21), cxt.black_);
+
+
+
+	mat.Offset(-45, 0);
+
+	if ( tmd == 2 )
+		cxt.DFillRect(rc2, D2RGB(229,229,229)); // LARGE
+
+	(*cxt)->DrawRectangle(FRectF(11,11,21,21), cxt.black_);
+
+	mat.Offset(-45, 0);
+
+	if ( tmd == 3 )
+		cxt.DFillRect(rc2, D2RGB(229,229,229)); // CLOSE
+
+	(*cxt)->DrawRectangle(FRectF(11,15,21,15), cxt.black_);
+
+	mat.PopTransform();
+
+	(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+
+
+	(*cxt)->DrawText(title, wcslen(title), cxt.textformat_, rcbar, cxt.black_);
+
+}
+
+void D2DChildWidow::DrawTitlebar(D2DContext& cxt)
+{
+	DrawTitlebar2(cxt, FRectF(0,0,rc_.Width(),TITLEBAR_HEIGHT),ColorF::LightGreen, L"nothing", title_bar_mode_ );
+	
+
+}

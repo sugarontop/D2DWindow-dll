@@ -347,7 +347,39 @@ void CreateControl(HWND hWnd)
 
 
 }
+#include "D2DChildWindow.h"
+#include "D2DControls_with_Scrollbar.h"
+#include "D2DSquarePaper.h"
 
+void CreateControl0(HWND hWnd)
+{
+	hwin = D2DCreateMainHWnd(hWnd, 14);
+    
+    auto root = D2DGetRootControls(hwin);
+
+	auto ch = std::make_shared<D2DChildWidow>();
+
+	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(400,300)), STAT_DEFAULT, L"KOWAI" );
+
+	((D2DControls*)root.p)->Add(ch);
+
+
+
+	auto sc = std::make_shared<D2DControls_with_Scrollbar>();
+	sc->CreateControl((D2DWindow*)hwin.p, ch.get(), FRectF(0,0,0,0), STAT_DEFAULT, L"abc");
+	ch->Add(sc);
+
+
+	UIHandle hc={};
+	hc.p = sc.get();
+
+
+	D2DCreateSquarePaper(hwin,hc, FRectF(0,0,1000,1000), STAT_DEFAULT, L"abc", -1);
+
+
+
+
+}
 
 
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
@@ -369,7 +401,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			D2DApp::SetD2DAppForDLL(k);
 			D2DInitail((INT_PTR)k );
 
-            CreateControl(hWnd);
+            //CreateControl(hWnd);
+			CreateControl0(hWnd);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;

@@ -19,6 +19,7 @@ protected :
 	LRESULT TitleBarProc(AppBase& b, UINT message, MouseParam& pm);
 	
 	int mode_;
+	USHORT title_bar_mode_;
 	
 };
 

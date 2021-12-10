@@ -161,6 +161,9 @@ LRESULT D2DMDISplitChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 
 			this->controls_[0]->WndProc(b,WM_D2D_SET_SIZE,0,(LPARAM)&rc_);
 
+			//auto sz = rc_.Size();
+			//this->controls_[0]->WndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
+
 			return 0;
 		}
 		break;

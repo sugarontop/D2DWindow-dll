@@ -94,3 +94,5 @@ struct D2DNMHDR
 #define WM_D2D_LISTBOX_ADD_ITEM					(WM_APP+13)
 #define WM_D2D_TAB_CHANGE						(WM_APP+14)
 #define WM_D2D_TABCONTROL_TAB_NAME				(WM_APP+15)
+
+#define WM_D2D_SET_SIZE_SIZE					(WM_APP+16) // LPARAM is FSizeF
