@@ -359,7 +359,7 @@ void CreateControl0(HWND hWnd)
 
 	auto ch = std::make_shared<D2DChildWidow>();
 
-	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(400,300)), STAT_DEFAULT, L"KOWAI" );
+	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"KOWAI" );
 
 	((D2DControls*)root.p)->Add(ch);
 
@@ -484,10 +484,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONUP:
 			r = D2DDefWndProc(hwin, app, message, wParam,lParam);
 		break;
-		case WM_KEYUP:
+		 case WM_KEYUP:
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_MOUSEWHEEL:
+		case WM_LBUTTONDBLCLK:
         {
             r = D2DDefWndProc(hwin, app, message, wParam,lParam);
         }

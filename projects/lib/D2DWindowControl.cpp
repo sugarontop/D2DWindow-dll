@@ -363,7 +363,11 @@ std::shared_ptr<D2DControl> D2DControls::Detach(D2DControl* target)
 
 	return NULL;
 }
-
+void D2DControls::ResourceUpdate(bool bCreate, D2DContext& cxt)
+{
+	for(auto& it : controls_ )
+		it->ResourceUpdate(bCreate, cxt);
+}
 
 // ////////////////////////////////////////////////
 

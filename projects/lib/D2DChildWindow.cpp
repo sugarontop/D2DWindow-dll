@@ -13,7 +13,7 @@ void D2DChildWidow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	D2DControls::CreateControl(parent, pacontrol,rc, stat, name, local_id);
 	mode_ = 0;
 	title_bar_mode_ = 0;
-
+	window_mode_ = 0;
 }
 
 void D2DChildWidow::Draw(D2DContext& cxt)
@@ -22,23 +22,33 @@ void D2DChildWidow::Draw(D2DContext& cxt)
 
 	mat_ = mat.PushTransform();
 
-	cxt.DFillRect(rc_, ColorF::Pink);
+	if ( window_mode_ == 1 )
+		mini_window_->Draw(cxt);
+	else
+	{
+		cxt.DFillRect(rc_, ColorF::Pink);
 
-	mat.Offset(rc_.LeftTop());
+		mat.Offset(rc_.LeftTop());
 	
-	DrawTitlebar(cxt);
+		DrawTitlebar(cxt);
 
-	mat.Offset(0,TITLEBAR_HEIGHT);
+		mat.Offset(0,TITLEBAR_HEIGHT);
 
-	for(auto& it : controls_ )
-		it->Draw(cxt);
-
+		for(auto& it : controls_ )
+			it->Draw(cxt);
+	}
 	mat.PopTransform();
 }
 LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT h = 0;
 	bool bl = true;
+
+	if ( mini_window_ )
+	{
+		h = mini_window_->WndProc(b,message,wParam,lParam);
+		return h;
+	}
 
 	switch( message )
 	{
@@ -107,10 +117,14 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 			{
 				APP.SetCapture(this);
 				mode_ = 1;
+
+				//auto parentc =parent_control_;
+				//parentc->GetParentControls()->SetFirstControl(parentc);
+
 			}
 			else if ( title_bar_mode_ > 0)
 			{
-				APP.SetCapture(this);
+				//APP.SetCapture(this);
 				mode_ = 0;
 			}
 
@@ -122,7 +136,7 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 			auto pt = mat_.DPtoLP(pm.pt);
 			auto old = title_bar_mode_;
 
-			if ( APP.IsCapture(this))
+			if ( APP.IsCapture(this) && mode_ == 1)
 			{								
 				auto pt2 = mat_.DPtoLP(pm.ptprv);
 
@@ -134,24 +148,25 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 			}
 			else
 			{
+				mode_ = 0;
 				FRectF rc2(rc_.right-45,rc_.top,rc_.right,rc_.top+27);
 				
 				title_bar_mode_ = 0;
 				if ( rc2.PtInRect(pt))
 				{
-					title_bar_mode_ = 1; h=1;
+					title_bar_mode_ = 1; h=1; // close
 				}
 				else
 				{
 					rc2.Offset(-45,0);
 					if ( rc2.PtInRect(pt)){
-						title_bar_mode_ = 2; h=1;
+						title_bar_mode_ = 2; h=1; // maximum size
 					}
 					else
 					{
 						rc2.Offset(-45,0);
 						if ( rc2.PtInRect(pt)) {
-							title_bar_mode_ = 3; h=1;
+							title_bar_mode_ = 3; h=1; // minimum size
 						}
 						else
 							title_bar_mode_ = 0;
@@ -168,12 +183,23 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 			{
 				APP.ReleaseCapture();
 				mode_ = 0;
+			}
 
-
+			if (mode_ == 0)
+			{
 				if ( title_bar_mode_ == 1 )
 				{
 					DestroyControl();
+				}
+				else if ( title_bar_mode_ == 2 )
+				{
 
+				}
+				else if ( title_bar_mode_ == 3 )
+				{
+					window_mode_ = 1;
+
+					mini_window_ = std::make_shared<MinimumWindow>(this,FRectF(rc_.left,rc_.bottom, FSizeF(50,50)));
 				}
 			}
 
@@ -197,7 +223,7 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 	FRectF rcbar = rc.ZeroRect(); 
 	cxt.DFillRect(rcbar, titlebar);
 
-	(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+	//(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 
 	D2DMatrix mat(*cxt);
 	mat.PushTransform();
@@ -218,6 +244,8 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 	if ( tmd == 2 )
 		cxt.DFillRect(rc2, D2RGB(229,229,229)); // LARGE
 
+		
+	(*cxt)->FillRectangle(FRectF(11,11,21,21), cxt.transparent_);
 	(*cxt)->DrawRectangle(FRectF(11,11,21,21), cxt.black_);
 
 	mat.Offset(-45, 0);
@@ -229,7 +257,7 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 
 	mat.PopTransform();
 
-	(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	//(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 
 
 	(*cxt)->DrawText(title, wcslen(title), cxt.textformat_, rcbar, cxt.black_);
@@ -241,4 +269,81 @@ void D2DChildWidow::DrawTitlebar(D2DContext& cxt)
 	DrawTitlebar2(cxt, FRectF(0,0,rc_.Width(),TITLEBAR_HEIGHT),ColorF::LightGreen, L"nothing", title_bar_mode_ );
 	
 
+}
+
+
+
+
+void MinimumWindow::Draw(D2DContext& cxt)
+{
+	D2DMatrix mat(*cxt);
+	mat_ = mat.PushTransform();
+	
+	cxt.DFillRect(rc_, ColorF::Pink);
+
+	mat.PopTransform();
+
+}
+LRESULT MinimumWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT r = 0;
+
+	switch(message)
+	{
+		case WM_LBUTTONDOWN:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+
+			if ( rc_.PtInRect(pt))
+			{
+				APP.SetCapture(parent_);
+				r = 1;
+			}
+		}
+		break;
+		case WM_MOUSEMOVE:
+		{		
+			if ( APP.IsCapture(parent_))
+			{
+				MouseParam& pm = *(MouseParam*)lParam;
+				auto pt = mat_.DPtoLP(pm.pt);
+				auto pt2 = mat_.DPtoLP(pm.ptprv);
+
+				rc_.Offset( pt.x-pt2.x, pt.y-pt2.y );
+				r = 1;
+				b.bRedraw = true;
+			}
+			
+		}
+		break;
+		case WM_LBUTTONUP:
+		{
+			if ( APP.IsCapture(parent_))
+			{
+				APP.ReleaseCapture();
+
+				r = 1;
+			}
+		}
+		break;
+		case WM_LBUTTONDBLCLK:
+		{			
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+			if ( rc_.PtInRect(pt))
+			{
+				if ( APP.IsCapture(parent_))
+					APP.ReleaseCapture();
+
+
+				parent_->window_mode_ = 0;
+				parent_->mini_window_ = nullptr;
+				r = 1;
+			}
+		}
+		break;
+	}
+
+	return r;
 }

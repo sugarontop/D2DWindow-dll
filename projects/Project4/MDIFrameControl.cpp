@@ -272,10 +272,10 @@ void CreateMDISplitControl(HWND hWnd)
 
 			D2DWindow* parent = (D2DWindow*)hwin.p;
 
-			for(int ij = 0; ij <1; ij++ )
+			for(int ij = 0; ij <2; ij++ )
 			{
 				yahoo_finance* yf = new yahoo_finance();
-				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,100+ij*10,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
+				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*100,100+ij*100,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
 				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
 
 			}

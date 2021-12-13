@@ -34,6 +34,7 @@ void D2DContext::CreateDeviceResources(ID2D1DeviceContext* target)
 {
 	target_->CreateSolidColorBrush( D2RGB(0,0,0), &black_);
 	target_->CreateSolidColorBrush( D2RGB(255,255,255), &white_);
+	target_->CreateSolidColorBrush( D2RGBA(0,0,0,0), &transparent_);
 
 }
 
@@ -270,6 +271,7 @@ void D2DContextEx::OnDiscardGraphicsResources()
 {
 	black_.Release();
 	white_.Release();
+	transparent_.Release();
 }
 void D2DContextEx::OnRestructGraphicsResources()
 {	

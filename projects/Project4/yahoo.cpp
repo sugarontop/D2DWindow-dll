@@ -15,7 +15,7 @@ using namespace V6;
 
 #define ID_BUTTON 1911
 
-//#define YAHOO
+#define YAHOO
 
 yahoo_finance::~yahoo_finance()
 {

@@ -28,6 +28,7 @@ public:
 	virtual void SetRect(const FRectF& rc) = 0;
 	virtual void Draw(D2DContext& cxt) = 0;
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col);
+	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt){}
 
 
 	//virtual void UpdateScrollbar(D2DScrollbar* bar) {};
@@ -88,6 +89,8 @@ public:
 	void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	virtual int GetTypeid() const override{ return TYP_CONTROLS; }
 	void SetFirstControl(D2DControl* p);
+	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt);
+
 
 	void Add(std::shared_ptr<D2DControl> p);
 	D2DControl* GetControl( std::wstring name );

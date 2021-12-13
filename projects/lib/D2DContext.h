@@ -42,6 +42,7 @@ class D2DContext
 
 		ComPTR<ID2D1SolidColorBrush> black_;
 		ComPTR<ID2D1SolidColorBrush> white_;
+		ComPTR<ID2D1SolidColorBrush> transparent_;
 		ComPTR<IDXGISwapChain1> dxgiSwapChain_;
 
 		ComPTR<IDWriteTextFormat> textformat_;
