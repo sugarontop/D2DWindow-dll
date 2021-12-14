@@ -77,6 +77,9 @@ LRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM 
             if (rc_.PtInRect(pt))
             {
                 APP.SetCapture(this);
+
+				GetParentControls()->SetFirstControl(this);
+
                 ret = 1;
 
                 OnClick();

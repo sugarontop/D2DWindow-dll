@@ -70,7 +70,7 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		break;
 
 		case WM_LBUTTONDOWN:
-		case WM_MOUSEMOVE:
+		//case WM_MOUSEMOVE:
 		case WM_LBUTTONUP:
 		{
 			MouseParam& pm = *(MouseParam*)lParam;
@@ -92,6 +92,25 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 			if ( old != title_bar_mode_ )							
 				b.bRedraw = true;
+			
+		}
+		break;
+		case WM_MOUSEMOVE:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+
+			auto old = title_bar_mode_;
+
+			h = TitleBarProc(b,message,pm);
+
+
+			if ( old != title_bar_mode_ )							
+			{
+				b.bRedraw = true;
+				h = 1;
+			}
+
 			
 		}
 		break;
@@ -118,8 +137,8 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 				APP.SetCapture(this);
 				mode_ = 1;
 
-				//auto parentc =parent_control_;
-				//parentc->GetParentControls()->SetFirstControl(parentc);
+				
+				GetParentControls()->SetFirstControl(this);
 
 			}
 			else if ( title_bar_mode_ > 0)

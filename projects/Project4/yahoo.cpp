@@ -24,15 +24,18 @@ yahoo_finance::~yahoo_finance()
 
 void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
-	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
+	//InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
 	rc_ = rc;
+	parent_window_ = parent;
+	parent_control_ = pacontrol;
+	
 
 	/////////////////////////////////////////////////////////////////////////
 
 	auto ctrlsEx = std::make_shared<D2DChildWidow>();
-	ctrlsEx->CreateControl(parent_window_,this,FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_childwin", 193);
-	this->Add(ctrlsEx);
+	ctrlsEx->CreateControl(parent_window_,pacontrol,FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_childwin", 193);
+	pacontrol->Add(ctrlsEx);
 
 	auto pk1 = ctrlsEx.get();
 
