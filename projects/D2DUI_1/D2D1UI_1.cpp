@@ -12,6 +12,7 @@
 #include "D2DMDISplitControls.h"
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DAccordionbar.h"
+#include "D2DImageControl.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 //UIHandle Renewal_UIHandle(  UIHandle h );
@@ -28,7 +29,7 @@ DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight, int typ )
 {
 	auto win = new D2DWindow(hWnd);
 
-	V6::D2DContextEx& cxt = win->cxt;
+	V6::D2DContextEx& cxt = win->GetContext();
 	FSizeF size;
 	win->CreateResource( &size );
 
@@ -67,7 +68,7 @@ DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  )
 	if ( main.typ == TYP_MAIN_WINDOW )
 	{
 		auto win = (D2DWindow*)main.p;
-		return *(win->cxt);
+		return *(win->GetContext());
 	}
 	return nullptr;
 }
@@ -89,8 +90,20 @@ DLLEXPORT UIHandle D2DCreateWhiteWindow(UIHandleWin hwin, UIHandle hctrls, const
 	r.p = pgtx;
 	r.typ = TYP_CONTROLS;
 	return r;
+}
 
+DLLEXPORT UIHandle D2DCreateImage(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+{
+	auto pgtx = new D2DImageControl();
+	auto win = (D2DWindow*)hwin.p;
+	auto ctrls = (D2DControls*)hctrls.p;
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( std::shared_ptr<D2DImageControl>(pgtx));	
 
+	UIHandle r;
+	r.p = pgtx;
+	r.typ = TYP_IMAGE;
+	return r;
 
 }
 
@@ -660,7 +673,7 @@ DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r)
 DLLEXPORT void D2DSwapChain(UIHandleWin main, HWND hWnd  )
 {
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );
-	auto& cxt = ((D2DWindow*)main.p)->cxt;
+	auto& cxt = ((D2DWindow*)main.p)->GetContext();
 	
 	cxt.SwapChain();
 	cxt.DoRedraw( hWnd);
@@ -669,7 +682,7 @@ DLLEXPORT void D2DDraw(UIHandleWin main, void* hWnd  )
 {	
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );
 
-	auto& cxt = ((D2DWindow*)main.p)->cxt;
+	auto& cxt = ((D2DWindow*)main.p)->GetContext();
 	auto root = ((D2DWindow*)main.p)->top_control_;
 	root->Draw(cxt);
 

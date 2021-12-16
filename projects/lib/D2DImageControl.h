@@ -11,6 +11,7 @@ namespace V6
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 
 			void SetImage(ComPTR<ID2D1Bitmap> img ){ img_ = img; }
+			void SetImage(LPCWSTR name );
 		public:
 			// D2DCaptureObject interface
 			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
@@ -20,15 +21,14 @@ namespace V6
 			virtual FRectF GetRect() const override { return rc_; }
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
+			virtual void ResourceUpdate(bool bCreate, D2DContext& cxt) override;
 
+			static void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 		protected :
 			FRectF rc_;
-			//int part_stat_;
-			//std::wstring text_;
-
 			ComPTR<ID2D1Bitmap> img_;
-			//FPointF ptText_;
-		
+					
+			std::wstring img_name_;
 
 	};
 }

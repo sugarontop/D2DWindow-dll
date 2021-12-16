@@ -30,7 +30,7 @@ bool D2DWindow::CreateResource(FSizeF* size)
 	RECT rc;
 	::GetClientRect(hWnd_, &rc);
 
-	cxt.CreateDeviceResources(hWnd_, rc.right, rc.bottom);
+	cxt_.CreateDeviceResources(hWnd_, rc.right, rc.bottom);
 
 	size->height = (float)rc.bottom;
 	size->width = (float)rc.right;
@@ -41,15 +41,15 @@ bool D2DWindow::TSFInit(HWND hWnd)
 {
 	try
 	{
-		THR(CoCreateInstance(CLSID_TF_ThreadMgr, NULL, CLSCTX_INPROC_SERVER, IID_ITfThreadMgr2, (void**)&tsf.pThreadMgr));
-		THR(tsf.pThreadMgr->Activate(&tsf.TfClientId));
-		THR(tsf.pThreadMgr->QueryInterface(IID_ITfKeystrokeMgr, (void **)&tsf.pKeystrokeMgr));
-		THR(CoCreateInstance(CLSID_TF_DisplayAttributeMgr,	NULL, 	CLSCTX_INPROC_SERVER, IID_ITfDisplayAttributeMgr, (void**)&tsf.DisplayAttributeMgr));
+		THR(CoCreateInstance(CLSID_TF_ThreadMgr, NULL, CLSCTX_INPROC_SERVER, IID_ITfThreadMgr2, (void**)&tsf_.pThreadMgr));
+		THR(tsf_.pThreadMgr->Activate(&tsf_.TfClientId));
+		THR(tsf_.pThreadMgr->QueryInterface(IID_ITfKeystrokeMgr, (void **)&tsf_.pKeystrokeMgr));
+		THR(CoCreateInstance(CLSID_TF_DisplayAttributeMgr,	NULL, 	CLSCTX_INPROC_SERVER, IID_ITfDisplayAttributeMgr, (void**)&tsf_.DisplayAttributeMgr));
 
 		auto ctrl = new TSF::CTextEditorCtrl();
-		ctrl->Create( hWnd, tsf.pThreadMgr, tsf.TfClientId );	
+		ctrl->Create( hWnd, tsf_.pThreadMgr, tsf_.TfClientId );	
 
-		tsf.ctrl = ctrl;
+		tsf_.ctrl = ctrl;
 
 		return true;
 	}
@@ -60,9 +60,9 @@ bool D2DWindow::TSFInit(HWND hWnd)
 }
 void D2DWindow::TSFExit()
 {
-	auto k = (TSF::CTextEditorCtrl*)tsf.ctrl;
+	auto k = (TSF::CTextEditorCtrl*)tsf_.ctrl;
 	delete k;
-	tsf.ctrl = nullptr;
+	tsf_.ctrl = nullptr;
 
 }
 
@@ -85,7 +85,7 @@ void D2DWindow::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 
 			if (rc.left < rc.right && rc.top < rc.bottom)
 			{
-				cxt.OnSize(b.hWnd);
+				cxt_.OnSize(b.hWnd);
 			}
 		} 
 		break;
@@ -95,8 +95,9 @@ void D2DWindow::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 			{
 				case 0:
 				{
-					cxt.OnDiscardGraphicsResources();
-					top_control_->ResourceUpdate(false, cxt);
+					cxt_.OnDiscardGraphicsResources();
+					ResourceUpdate(false);
+					top_control_->ResourceUpdate(false, cxt_);
 					return;
 				}
 				break;
@@ -110,8 +111,9 @@ void D2DWindow::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 				break;
 				case 2:
 				{
-					cxt.OnRestructGraphicsResources();
-					top_control_->ResourceUpdate(true, cxt);
+					cxt_.OnRestructGraphicsResources();
+					ResourceUpdate(true);
+					top_control_->ResourceUpdate(true, cxt_);
 					return;
 				}
 				break;
@@ -122,6 +124,11 @@ void D2DWindow::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 	}
 
 	top_control_->ForceWndProc(b, message, wParam, lParam);
+}
+void D2DWindow::ResourceUpdate(bool bCreate)
+{
+
+	
 }
 
 //LRESULT D2DWindow::SendMessage(UINT msg, WPARAM wp, LPARAM lp)

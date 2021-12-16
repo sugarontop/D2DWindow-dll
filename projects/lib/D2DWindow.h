@@ -49,13 +49,14 @@ class D2DWindow
 
 
 		void ListUp(std::vector<ControlMapItem>& ar);
+		void ResourceUpdate(bool bCreate);
 
 		FRectF GetClientRect() const;
 
 		HWND GetHwnd() const { return hWnd_; }
-
-		V6::D2DContextEx cxt;
-		TSFIsland tsf;
+		D2DContextEx& GetContext(){ return cxt_; }
+		
+		TSFIsland tsf_;
 		
 		std::shared_ptr<D2DControls> top_control_;
 		std::map<std::wstring, D2DControl*> name_map_;
@@ -66,6 +67,7 @@ class D2DWindow
 
 	protected :
 		HWND hWnd_;
+		D2DContextEx cxt_;
 		
 		std::stack<D2DControl*> capture_obj_;
 		std::vector< std::shared_ptr<D2DControl>> death_objects_;

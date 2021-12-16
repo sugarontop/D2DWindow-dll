@@ -30,6 +30,9 @@ DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRec
 DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateListbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
+DLLEXPORT UIHandle D2DCreateImage(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
+
+
 DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
 

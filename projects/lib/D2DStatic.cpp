@@ -79,7 +79,7 @@ void D2DStatic::SetText( std::wstring str )
 	str_ = str;
 	text_ = nullptr;
 
-	auto& cxt = parent_window_->cxt;
+	auto& cxt = parent_window_->GetContext();
 
 	auto sz = rc_.Size();
 	cxt.CreateTextLayout(str.c_str(), sz, &text_);

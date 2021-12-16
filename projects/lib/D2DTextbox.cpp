@@ -42,7 +42,7 @@ bool D2DTextbox::IsMultiline() const
 
 TSF::CTextEditorCtrl* D2DTextbox::ctrl() const
 {
-	return (TSF::CTextEditorCtrl*)parent_window_->tsf.ctrl;
+	return (TSF::CTextEditorCtrl*)parent_window_->tsf_.ctrl;
 }
 void D2DTextbox::SetReadonly(bool bReadOnly)
 {
@@ -170,7 +170,7 @@ void D2DTextbox::ActiveSw(bool bActive)
 	//}
 
 
-	D2DContext& cxt = parent_window_->cxt;
+	D2DContext& cxt = parent_window_->GetContext();
 
 	_ASSERT(ctrl());
 
@@ -268,7 +268,7 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 		return 0;
 
 
-	V6::D2DContextEx& cxt = this->parent_window_->cxt;
+	V6::D2DContextEx& cxt = this->parent_window_->GetContext();
 
 		LRESULT ret = 0;
 		TSF::TSFApp app(b.hWnd,  cxt);
@@ -482,7 +482,7 @@ int D2DTextbox::CurrentPos() const
 bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight)
 {
 	ComPTR<IDWriteTextFormat> textformat;
-	auto hr = parent_window_->cxt.tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,fontheight, L"ja-jp", & textformat);
+	auto hr = parent_window_->GetContext().tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,fontheight, L"ja-jp", & textformat);
 
 	// NOT IMPLEMENT
 	
@@ -610,7 +610,7 @@ void D2DTextbox::Clear()
 	vscrollbar_.SetTotalHeight(0);
 	tm_ = {};
 
-	auto ctrl = (TSF::CTextEditorCtrl*)this->parent_window_->tsf.ctrl;
+	auto ctrl = (TSF::CTextEditorCtrl*)this->parent_window_->tsf_.ctrl;
 
 	if (ctrl)
 		ctrl->Clear();
@@ -628,19 +628,19 @@ FRectF D2DTextbox::GetVsrollbarRect() const
 //static
 void* D2DTextbox::CreateInputControl(D2DWindow* parent)
 { 
-	if ( parent->tsf.ctrl == nullptr)
+	if ( parent->tsf_.ctrl == nullptr)
 	{
 		auto ctrl = new TSF::CTextEditorCtrl();
 		
-		auto tmgr = parent->tsf.pThreadMgr;
-		auto id = parent->tsf.TfClientId;
-		auto hWnd = parent->tsf.hWnd;
+		auto tmgr = parent->tsf_.pThreadMgr;
+		auto id = parent->tsf_.TfClientId;
+		auto hWnd = parent->tsf_.hWnd;
 
 		ctrl->Create( hWnd, tmgr, id );	
 
-		parent->tsf.ctrl = ctrl;
+		parent->tsf_.ctrl = ctrl;
 	}
-	return parent->tsf.ctrl;
+	return parent->tsf_.ctrl;
 }
 
 // IBridgeTSFInterface

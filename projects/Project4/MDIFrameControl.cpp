@@ -95,7 +95,6 @@ void CreateMDISplitControl(HWND hWnd)
 	frame->CreateChildView(1);
 
 	auto left_side_controls =(D2DControls*) frame->GetControl(L"LEFT");
-
 	auto right_side_controls =(D2DControls*) frame->GetControl(L"RIGHT");
 
 
@@ -110,11 +109,18 @@ void CreateMDISplitControl(HWND hWnd)
 	auto hcs3 = D2DCreateEmptyControls(hwin,hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"LeftEmpty", 180);
 
 
-
+	
 	UIHandle hcsLEFT = D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"LeftEmptySQ", 190);
 
 	ColorF clr(D2RGB(200,200,200));
 	D2DSendMessage(hcsLEFT,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
+
+
+	auto img = D2DCreateImage(hwin, hcsLEFT, FRectF(100,200,FSizeF(200,200)), STAT_DEFAULT, L"test image");
+	D2DSendMessage(img,WM_D2D_SET_RESOURCE, 0, (LPARAM)L"star.png");
+
+	auto img2 = D2DCreateImage(hwin, hcsLEFT, FRectF(100,450,FSizeF(200,200)), STAT_DEFAULT, L"test image");
+	D2DSendMessage(img2,WM_D2D_SET_RESOURCE, 0, (LPARAM)L"splash_new_rose.png");
 
 
 	auto b1 = D2DCreateButton(hwin,hcsLEFT, FRectF(50,100,FSizeF(100,20)),STAT_VISIBLE,L"LeftEmptySQb1", 191);
@@ -165,7 +171,7 @@ void CreateMDISplitControl(HWND hWnd)
 	D2DSetProcfunction(hcsLEFT, f);
 
 
-
+	
 
 
 

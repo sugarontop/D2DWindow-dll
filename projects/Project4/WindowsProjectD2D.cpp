@@ -169,6 +169,7 @@ void CreateControl(HWND hWnd)
 
 #include "D2DSquarePaper.h"
 
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     AppBase app;
@@ -184,6 +185,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			auto k = _app.get();
 			D2DApp::SetD2DAppForDLL(k);
 			D2DInitail((INT_PTR)k );
+
+			
+			
 			//CreateMDIControl(hWnd);
 			CreateMDISplitControl(hWnd);
             return ::DefWindowProc(hWnd, message, wParam, lParam);

@@ -43,7 +43,7 @@ class D2DText
 		D2DText():offx_(0){}
 		D2DText(D2DWindow* parent, float width, LPCWSTR str, HTYP center_typ, int ty )
 		{
-			auto& cxt = parent->cxt;					
+			auto& cxt = parent->GetContext();					
 			std::wstring cstr = convert(str, ty );
 			cxt.tsf_wfactory_->CreateTextLayout(cstr.c_str(), cstr.length(),cxt.textformat_, 1000,1000,&layout_);
 			DWRITE_TEXT_METRICS t;

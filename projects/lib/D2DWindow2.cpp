@@ -2,7 +2,7 @@
 #include "D2DWindow.h" 
 #include "D2DWindowControl.h"
 #include "D2DContext.h"
-
+#include "FilePackTool.h"
 using namespace V6;
 LRESULT D2DWindow::PostMessage(UINT msg, WPARAM wp, LPARAM lp)
 {
@@ -97,6 +97,27 @@ LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		{
 			hr = ::SendMessage(b.hWnd,WM_NOTIFY,wParam,lParam);
 
+		}
+		break;
+		case WM_D2D_GET_RESOURCE_BINARY:
+		{			
+			LPCWSTR fnm = L"res.bin";
+			static ComPTR<IStream> sm;
+			static ComPTR<IStream> sm2;
+
+			if ( sm2 == nullptr ){
+				bool bl = FILEPACK::Convert2Stream(fnm,MAGIC_NUMBER, &sm);
+				if ( bl )
+				{
+					bl = FILEPACK::DeCompress(sm, &sm2);
+					sm.Release();
+				}
+			}
+
+			auto ppsm = (IStream**)lParam;
+			*ppsm = sm2; 
+
+			hr = 1;
 		}
 		break;
 		
