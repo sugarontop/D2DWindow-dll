@@ -116,10 +116,10 @@ void CreateMDISplitControl(HWND hWnd)
 	D2DSendMessage(hcsLEFT,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
 
 
-	auto img = D2DCreateImage(hwin, hcsLEFT, FRectF(100,200,FSizeF(200,200)), STAT_DEFAULT, L"test image");
+	auto img = D2DCreateImage(hwin, hcsLEFT, FRectF(100,200,FSizeF(48,48)), STAT_DEFAULT, L"test image");
 	D2DSendMessage(img,WM_D2D_SET_RESOURCE, 0, (LPARAM)L"star.png");
 
-	auto img2 = D2DCreateImage(hwin, hcsLEFT, FRectF(100,450,FSizeF(200,200)), STAT_DEFAULT, L"test image");
+	auto img2 = D2DCreateImage(hwin, hcsLEFT, FRectF(100,450,FSizeF(48,48)), STAT_DEFAULT, L"test image");
 	D2DSendMessage(img2,WM_D2D_SET_RESOURCE, 0, (LPARAM)L"splash_new_rose.png");
 
 

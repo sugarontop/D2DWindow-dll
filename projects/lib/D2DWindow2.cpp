@@ -100,18 +100,17 @@ LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		}
 		break;
 		case WM_D2D_GET_RESOURCE_BINARY:
-		{			
-			LPCWSTR fnm = L"res.bin";
-			static ComPTR<IStream> sm;
+		{									
 			static ComPTR<IStream> sm2;
 
-			if ( sm2 == nullptr ){
+			if ( sm2 == nullptr )
+			{
+				ComPTR<IStream> sm;
+				LPCWSTR fnm = L"res.bin";
+
 				bool bl = FILEPACK::Convert2Stream(fnm,MAGIC_NUMBER, &sm);
 				if ( bl )
-				{
 					bl = FILEPACK::DeCompress(sm, &sm2);
-					sm.Release();
-				}
 			}
 
 			auto ppsm = (IStream**)lParam;

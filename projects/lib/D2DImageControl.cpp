@@ -43,7 +43,7 @@ void D2DImageControl::Draw(D2DContext& cxt)
 	mat.Offset(rc_);
 
 	if ( img_ )
-		(*cxt)->DrawImage(img_,FPointF(0,0), rc_.ZeroRect());
+		(*cxt)->DrawBitmap(img_,rc_.ZeroRect());
 
 	mat.PopTransform();
 }
