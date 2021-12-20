@@ -19,6 +19,7 @@ class D2DSquarePaper : public D2DControls
 		virtual int GetTypeid() const override { return TYP_CONTROLS; }
 		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 		virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
+		virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
 		std::function<LRESULT(LPVOID,AppBase&,UINT,WPARAM,LPARAM)> import_function_;
 	private :

@@ -14,7 +14,9 @@ public :
 	virtual void Draw(D2DContext& cxt) override;
 	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
-	
+	virtual std::wstring GetTreeTyp(USHORT* typ) override;
+
+
 	void OpenCloseBar(bool bOpen);
 protected :
 	int mode_;

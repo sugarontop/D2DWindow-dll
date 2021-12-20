@@ -80,3 +80,8 @@ void D2DWhiteControl::Draw(D2DContext& cxt)
 	}
 	
 }
+std::wstring D2DWhiteControl::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DWhiteControl";
+}

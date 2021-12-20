@@ -29,6 +29,12 @@ void D2DStatic::Draw(D2DContext& cxt)
 		editor_->Draw(cxt);	
 	
 }
+std::wstring D2DStatic::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DStatic";
+}
+
 LRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT r = 0;

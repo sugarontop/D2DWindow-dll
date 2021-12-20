@@ -22,6 +22,7 @@ namespace V6
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
 			virtual void ResourceUpdate(bool bCreate, D2DContext& cxt) override;
+			virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
 			static void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 		protected :

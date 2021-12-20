@@ -179,7 +179,11 @@ LRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 	return r;
 }
-
+std::wstring D2DSquarePaper::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=3; 
+	return L"D2DSquarePaper";
+}
 void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);

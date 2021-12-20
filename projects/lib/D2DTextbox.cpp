@@ -845,3 +845,8 @@ std::wstring MoneyString( const std::wstring& text )
 	return ret;
 
 }
+std::wstring D2DTextbox::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DTextbox";
+}

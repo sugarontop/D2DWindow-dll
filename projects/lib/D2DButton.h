@@ -21,7 +21,7 @@ namespace V6
 			virtual FRectF GetRect() const override { return rc_; }
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
-
+			virtual std::wstring GetTreeTyp(USHORT* typ) override;
 		protected :
 			FRectF rc_;
 			int part_stat_;

@@ -289,7 +289,11 @@ void D2DChildWidow::DrawTitlebar(D2DContext& cxt)
 	
 
 }
-
+std::wstring D2DChildWidow::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=3; 
+	return L"D2DChildWidow";
+}
 
 
 

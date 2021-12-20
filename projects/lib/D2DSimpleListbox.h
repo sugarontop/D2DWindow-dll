@@ -74,6 +74,7 @@ namespace V6
 
 			int GetSelectedIdx() const { return selected_idx_; }
 			virtual int GetTypeid() const override{ return TYP_SIMPLE_LISTBOX; }
+			virtual std::wstring GetTreeTyp(USHORT* typ) override;
 			
 			float RowHeight() const;
 		protected :

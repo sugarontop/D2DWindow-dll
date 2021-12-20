@@ -127,7 +127,11 @@ void D2DMDISplitFrame::CreateChildView(int typ, float left_width)
 
 
 }
-
+std::wstring D2DMDISplitFrame::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=3; 
+	return L"D2DMDISplitFrame";
+}
 
 // /////////////////////////////////////////////////////////////////////////////////////
 
@@ -181,6 +185,11 @@ void D2DMDISplitChild::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	rc_ = rc;
 
+}
+std::wstring D2DMDISplitChild::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=3; 
+	return L"D2DMDISplitChild";
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////

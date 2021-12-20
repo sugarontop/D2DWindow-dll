@@ -20,6 +20,7 @@ class D2DStatic : public D2DControl
 		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 		virtual FRectF GetRect() const override { return rc_; }
 		virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
+		virtual std::wstring GetTreeTyp(USHORT* typ) override;
 	private :
 		ComPTR<IDWriteTextLayout> text_;		
 		std::wstring str_;

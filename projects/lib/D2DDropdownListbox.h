@@ -19,6 +19,7 @@ namespace V6
 
 		virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+		virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
 		virtual int GetTypeid() const override{ return TYP_DROPDOWNLISTBOX; }
 		void AddItem( int idx, std::wstring text);

@@ -32,6 +32,7 @@ public :
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 	
 	//void OpenCloseBar(bool bOpen);
+	virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
 	D2DMat GetMat() const { return this->mat_; }
 protected :

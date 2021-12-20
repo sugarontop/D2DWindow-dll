@@ -50,7 +50,11 @@ void D2DMDIFrame::Draw(D2DContext& cxt)
 		mat.PopTransform();
 	}
 }
-
+std::wstring D2DMDIFrame::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=3; 
+	return L"D2DMDIFrame";
+}
 
 std::shared_ptr<D2DMDIChild> D2DMDIFrame::Add(const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
@@ -335,7 +339,11 @@ void D2DMDIChild::Draw(D2DContext& cxt)
 		mat.PopTransform();
 	}
 }
-
+std::wstring D2DMDIChild::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DMDIChild";
+}
 LRESULT D2DMDIChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT r = 0;

@@ -24,6 +24,11 @@ void D2DButton::SetText(LPCWSTR str)
 	text_ = str;
 	textlayout_ = nullptr;
 }
+std::wstring D2DButton::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DButton";
+}
 
 LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {

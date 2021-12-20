@@ -27,6 +27,7 @@ public:
 	virtual FRectF GetRect() const  = 0;
 	virtual void SetRect(const FRectF& rc) = 0;
 	virtual void Draw(D2DContext& cxt) = 0;
+	virtual std::wstring GetTreeTyp(USHORT* typ){ *typ=1; return L"D2DControl";}
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col);
 	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt){}
 
@@ -90,7 +91,7 @@ public:
 	virtual int GetTypeid() const override{ return TYP_CONTROLS; }
 	void SetFirstControl(D2DControl* p);
 	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt);
-
+	virtual std::wstring GetTreeTyp(USHORT* typ){ *typ=10; return L"D2DControls";}
 
 	void Add(std::shared_ptr<D2DControl> p);
 	D2DControl* GetControl( std::wstring name );

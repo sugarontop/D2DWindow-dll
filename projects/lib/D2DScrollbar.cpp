@@ -163,6 +163,11 @@ LRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 
 	return 0;
 }
+std::wstring D2DScrollbar::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DScrollbar";
+}
 
 void D2DScrollbar::Offset( float off )
 {

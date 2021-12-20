@@ -19,6 +19,8 @@ public:
 	virtual void SetRect(const FRectF& rc) override { rc_ = rc; }
 	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual int GetTypeid() const override{ return TYP_WHITE_CONTROL; }
+	virtual std::wstring GetTreeTyp(USHORT* typ) override;
+
 protected :
 	DrawFunc DrawFunc_;
 	ProcFunc ProcFunc_;

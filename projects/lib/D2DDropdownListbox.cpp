@@ -241,3 +241,8 @@ void D2DDropdownListbox::xClear()
     selected_idx_ = -1;
     selected_item_ = nullptr;
 }
+std::wstring D2DDropdownListbox::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DDropdownListbox";
+}

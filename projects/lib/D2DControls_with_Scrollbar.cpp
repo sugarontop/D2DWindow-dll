@@ -61,6 +61,12 @@ void D2DControls_with_Scrollbar::SetViewMaxSize(FSizeF sz)
 	scv_->SetSize(rc_.Size());
 }
 
+
+std::wstring D2DControls_with_Scrollbar::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=3; 
+	return L"D2DControls_with_Scrollbar";
+}
 LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT r = 0;

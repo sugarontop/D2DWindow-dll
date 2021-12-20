@@ -330,7 +330,11 @@ void D2DTabControls::DelTab(USHORT idx)
 	
 
 }
-
+std::wstring D2DTabControls::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=3; 
+	return L"D2DTabControls";
+}
 
 
 

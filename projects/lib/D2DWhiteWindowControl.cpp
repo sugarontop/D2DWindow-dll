@@ -154,3 +154,8 @@ LRESULT MovableWithMouse::WndProc( AppBase& b, UINT message, WPARAM wParam, LPAR
 	return r;
 }
 
+std::wstring D2DWhiteWindowControls::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DWhiteWindowControls";
+}

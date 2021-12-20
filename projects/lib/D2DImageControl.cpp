@@ -113,3 +113,8 @@ void D2DImageControl::Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2
 
 	_ASSERT(hr == S_OK);
 }
+std::wstring D2DImageControl::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DImageControl";
+}

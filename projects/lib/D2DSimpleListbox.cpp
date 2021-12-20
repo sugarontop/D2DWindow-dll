@@ -564,6 +564,11 @@ float D2DSimpleListbox::sc_dataHeight()
 {
     return items_.size() * RowHeight();
 }
+std::wstring D2DSimpleListbox::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DSimpleListbox";
+}
 
 // /////////////////////////////////////////////////////////////////////////////////////
 void D2DListboxItemString::Draw(D2DContext& cxt, float width, float height)

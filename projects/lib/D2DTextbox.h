@@ -81,6 +81,7 @@ namespace V6
 		virtual void Draw(D2DContext& cxt) override;
 		virtual FRectF GetRect() const override { return rctext_; }
 		virtual void SetRect(const FRectF& rc)  override { rctext_ = rc; }
+		virtual std::wstring GetTreeTyp(USHORT* typ) override;
 	public :
 		static void* CreateInputControl(D2DWindow* parent);
 		static void DestroyInputControl(){};

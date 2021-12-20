@@ -214,3 +214,8 @@ void D2DAccordionbar::CreateControl(D2DWindow* parent, D2DControls* pacontrol, c
 	mode_ = 0;
 	text_ = L"ƒ{ƒ^ƒ“";
 }
+std::wstring D2DAccordionbar::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DAccordionbar";
+}
