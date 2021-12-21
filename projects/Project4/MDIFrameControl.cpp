@@ -293,4 +293,8 @@ void CreateMDISplitControl(HWND hWnd)
 
 	}
 
+
+
+	//D2DControl* x = (D2DControl*)root.p;
+	//x->ResourceUpdate(true, parent->GetContext());;
 }

@@ -118,10 +118,21 @@ inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 		//General access denied error 0x80070005 
 
 
-		int a = 0;
+		throw msg;
 	}
+	
 }
-#define THR(hr) ThrowIfFailed(hr,nullptr, __LINE__, __FILE__)
+#define THR(hr) ThrowIfFailed((hr),nullptr, __LINE__, __FILE__)
+
+
+inline bool SOK( LRESULT hr)
+{
+	if (FAILED(hr))
+	{		
+		return false;
+	}
+	return true;
+}
 
 inline LRESULT NoThrowIfFailed(LRESULT hr)
 {

@@ -181,15 +181,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
         {
             static std::shared_ptr<D2DApp> _app;
-			_app = std::make_shared<D2DApp>(D2DApp());
+			_app = std::make_shared<D2DApp>(D2DApp());			
 			auto k = _app.get();
-			D2DApp::SetD2DAppForDLL(k);
-			D2DInitail((INT_PTR)k );
+			
+			try 
+			{
+			
+				D2DApp::SetD2DAppForDLL(k);
+				D2DInitail((INT_PTR)k );
+			
+				//CreateMDIControl(hWnd);
+				CreateMDISplitControl(hWnd);
 
-			
-			
-			//CreateMDIControl(hWnd);
-			CreateMDISplitControl(hWnd);
+				D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
+			}
+			catch( ... )
+			{
+
+				return -1;
+			}
+
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;

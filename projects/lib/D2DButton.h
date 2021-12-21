@@ -8,7 +8,7 @@ namespace V6
 	class D2DButton: public D2DControl
 	{
 		public :
-			D2DButton();
+			D2DButton(){};
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 
 			void SetText(LPCWSTR str);
@@ -22,6 +22,7 @@ namespace V6
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
 			virtual std::wstring GetTreeTyp(USHORT* typ) override;
+			virtual void ResourceUpdate(bool bCreate, D2DContext& cxt) override;
 		protected :
 			FRectF rc_;
 			int part_stat_;
@@ -30,7 +31,7 @@ namespace V6
 			ComPTR<IDWriteTextLayout> textlayout_;
 			FPointF ptText_;
 		
-
+			ComPTR<ID2D1LinearGradientBrush> br_;
 	};
 
 

@@ -24,14 +24,11 @@ class D2DApp
 		int IsCaptureEx(D2DCaptureObject* target);
 		int Count() { return (int)capture_.size(); }
 
-		//D2DCaptureObject* Pop2();
-		//void Push2(D2DCaptureObject* target);
-		
+
 	protected :
 		std::stack<D2DCaptureObject*> capture_;
 		D2DCaptureObject* modal_dialog_;
 
-		//std::stack<D2DCaptureObject*> modal_dialog_;
 		static D2DApp* globalapp_;
 		
 		

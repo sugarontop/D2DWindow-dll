@@ -84,18 +84,18 @@ void Trace(LPCWSTR fm, ...);
 
 #define TRACE	 Trace
 
-
-inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
-{
-	if (FAILED(hr))
-	{		
-		//General access denied error 0x80070005 
-
-
-		int a = 0;
-	}
-}
-#define THR(hr) ThrowIfFailed(hr,nullptr, __LINE__, __FILE__)
+//
+//inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
+//{
+//	if (FAILED(hr))
+//	{		
+//		//General access denied error 0x80070005 
+//
+//
+//		int a = 0;
+//	}
+//}
+//#define THR(hr) ThrowIfFailed(hr,nullptr, __LINE__, __FILE__)
 
 
 

@@ -184,6 +184,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
             CreateControl(hWnd);
+			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;

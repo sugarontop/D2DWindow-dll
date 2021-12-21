@@ -5,18 +5,12 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
-D2DButton::D2DButton()
-{
-
-}
-
 void D2DButton::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
 	rc_ = rc;
 	text_ =name;
-
 
 }
 void D2DButton::SetText(LPCWSTR str)
@@ -99,10 +93,11 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 
 FPointF CreateCenterTextLayout(D2DContext& cxt, const std::wstring& str, const FRectF& rc, IDWriteTextLayout** ppout )
 {
-	if ( S_OK == cxt.wfactory_->CreateTextLayout(str.c_str(), str.length(), cxt.textformat_, rc.Width(), rc.Height(), ppout ))
+	if (SOK(cxt.wfactory_->CreateTextLayout(str.c_str(), str.length(), cxt.textformat_, rc.Width(), rc.Height(), ppout )))
 	{
 		DWRITE_TEXT_METRICS t;
-		(*ppout)->GetMetrics(&t);
+		THR((*ppout)->GetMetrics(&t));
+
 		return FPointF( (rc.Width()-t.width)/2.0f, (rc.Height()-t.height)/2.0f );
 	}
 	return FPointF();
@@ -124,22 +119,52 @@ void  D2DButton::Draw(D2DContext& cxt)
 			mat.Offset(2, 2);
 
 		(*cxt)->DrawRectangle(rc, cxt.black_);
-
-		auto b1 = (BITFLG(STAT_ENABLE) ? D2RGB(255,255,255) : D2RGB(205,205,205));
-
-		cxt.DFillRect(rc, b1);
+		
+		(*cxt)->FillRectangle(rc, br_);
 
 		if ( textlayout_ == nullptr )
 			ptText_ = CreateCenterTextLayout(cxt, text_, rc, &textlayout_ );
 
-		(*cxt)->DrawTextLayout(ptText_, textlayout_, cxt.black_ );
+		if ( BITFLG(STAT_ENABLE))
+			(*cxt)->DrawTextLayout(ptText_, textlayout_, cxt.black_ );
+		else
+		{
+			ComPTR<ID2D1SolidColorBrush> br;
+			cxt.CreateBrush(D2RGB(120,120,120), &br);
+			(*cxt)->DrawTextLayout(ptText_, textlayout_, br );
+		}
 
 
 		mat.PopTransform();
 
 	}
 }
+void D2DButton::ResourceUpdate(bool bCreate, D2DContext& cxt)
+{
+	if ( bCreate )
+	{
+		D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES linearGradientBrushProperties = D2D1::LinearGradientBrushProperties(
+            D2D1::Point2F(0,0),
+            D2D1::Point2F(0,rc_.Height()));
 
+		ComPTR<ID2D1GradientStopCollection> pGradientStops;
+
+		D2D1_GRADIENT_STOP gradientStops[2];
+		gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::White, 1);
+		gradientStops[0].position = 0.0f;
+		gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::LightGray, 1);
+		gradientStops[1].position = 1.0f;
+
+		THR((*cxt)->CreateGradientStopCollection(gradientStops, 2,&pGradientStops));
+		
+		THR((*cxt)->CreateLinearGradientBrush(linearGradientBrushProperties,pGradientStops,&br_));
+	}
+	else
+	{
+		br_.Release();		
+
+	}
+}
 
 // ///////////////////////////////////////////////////////////////////////////////////
 
