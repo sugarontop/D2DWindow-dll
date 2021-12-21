@@ -182,8 +182,7 @@ STDAPI CTextStore::RequestLock(DWORD dwLockFlags, HRESULT *phrSession)
 
 BOOL CTextStore::_LockDocument(DWORD dwLockFlags)
 {
-
-TRACE( L"_LockDocument %d\n", dwLockFlags );
+	//TRACE( L"_LockDocument %d\n", dwLockFlags );
 
     if(m_fLocked)
     {
@@ -200,7 +199,7 @@ TRACE( L"_LockDocument %d\n", dwLockFlags );
 
 void CTextStore::_UnlockDocument()
 {
-    TRACE( L"_UnlockDocument\n" );
+ //   TRACE( L"_UnlockDocument\n" );
     
     HRESULT hr;
     
@@ -522,7 +521,7 @@ STDAPI CTextStore::RetrieveRequestedAttrs(ULONG ulCount, TS_ATTRVAL *paAttrVals,
     for (int i = 0; (i < (int)ulCount) && (i < _nAttrVals) ; i++)
     {
         paAttrVals[i] = _attrval[i];
-        *pcFetched++;
+        (*pcFetched)++;
     }
 
     return S_OK;
@@ -614,7 +613,7 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
 	if ( prc->bottom == prc->top )
 	{
 		float height = _pEditor->GetLayout()->GetLineHeight();		
-		prc->bottom = prc->top+height;
+		prc->bottom = prc->top+(LONG)height;
 	}
 
 
@@ -703,7 +702,7 @@ STDAPI CTextStore::OnUpdateComposition(ITfCompositionView *pComposition,ITfRange
 }
 STDAPI CTextStore::OnEndComposition(ITfCompositionView *pComposition)
 {
-    _pEditor->OnComposition(3, -1 );
+    _pEditor->OnComposition(3, -1);
 
     return S_OK;
 }
@@ -813,8 +812,6 @@ void CTextStore::PrepareAttributes(ULONG cFilterAttrs, const TS_ATTRID *paFilter
 
 void CTextStore::OnSelectionChange()
 {
-
-
     if (TextStoreACPSink_)
         TextStoreACPSink_->OnSelectionChange();
 }

@@ -50,7 +50,6 @@ namespace V6
 			int pos_;
 	};
 
-
 	class D2DTextbox: 
 		public IBridgeTSFInterface, 
 		public ScrollbarParent,
@@ -101,7 +100,7 @@ namespace V6
 
 		void SetMultilineText(LPCWSTR str, int len, int insert_pos );
 		void SetSinglelineText(LPCWSTR str, int len, int insert_pos );
-
+		void ImeActive(bool bActive);
 	public:
 		// D2DCaptureObject interface
 		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
@@ -121,13 +120,11 @@ namespace V6
 		ComPTR<IDWriteTextFormat> fmt_;
 		ComPTR<IDWriteTextLayout> text_layout_;		
 		TSF::CTextContainer ct_;
-		D2DMat mat_, mat_sc_;
+		D2DMat mat_sc_;
 		Scrollbar vscrollbar_;
 		DWRITE_TEXT_METRICS tm_;
 		ColorF back_;
 		ColorF fore_;
 		ColorF border_;
-		
-
 	};
 };

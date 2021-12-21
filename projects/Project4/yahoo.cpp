@@ -777,20 +777,15 @@ void yahoo_table::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
 	rc_ = rc;
-
-
-	
-
-
 }
 void yahoo_table::Update(float cx)
 {
 
-FRectF rc5(rc_);
-		rc5.SetWidth(cx);
-		rc5.SetHeight(262*22.0f);
+	FRectF rc5(rc_);
+	rc5.SetWidth(cx);
+	rc5.SetHeight(262*22.0f);
 
-		AppBase b;
-		//finance_->sc_control_->WndProc(b,WM_D2D_SET_SIZE,2,(LPARAM)&rc5);
+	AppBase b;
+	//finance_->sc_control_->WndProc(b,WM_D2D_SET_SIZE,2,(LPARAM)&rc5);
 
 }

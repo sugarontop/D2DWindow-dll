@@ -5,8 +5,6 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
-#define TAB_WIDTH_4CHAR 4
-#define LEFT_MARGIN 3.0f
 
 std::wstring MoneyString( const std::wstring& text );
 
@@ -21,9 +19,9 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 
 	rctext_ =  rc;
 	typ_ = typ;
-	tm_ = { 0 };
-	
+	tm_ = {0};	
 	ct_.bSingleLine_ = true;
+	
 	if (IsMultiline())
 	{
 		vscrollbar_.Create(this, FRectF(rctext_.right, rctext_.top, rctext_.right + 20, rctext_.bottom));
@@ -50,17 +48,17 @@ void D2DTextbox::SetReadonly(bool bReadOnly)
 }
 void D2DTextbox::Draw(D2DContext& cxt)
 { 
-	ComPTR<ID2D1SolidColorBrush> back;
 	ComPTR<ID2D1SolidColorBrush> fore;
-	ComPTR<ID2D1SolidColorBrush> border;
-
-	(*cxt)->CreateSolidColorBrush(back_, &back);
 	(*cxt)->CreateSolidColorBrush(fore_, &fore);
-	(*cxt)->CreateSolidColorBrush(border_, &border);
-
 
 	if ( stat_&STAT_VISIBLE )
 	{
+		ComPTR<ID2D1SolidColorBrush> border;
+		ComPTR<ID2D1SolidColorBrush> back;
+	
+		(*cxt)->CreateSolidColorBrush(back_, &back);
+		(*cxt)->CreateSolidColorBrush(border_, &border);
+
 		D2DMatrix mat(*cxt);
 		mat_ = mat.PushTransform();
 
@@ -106,7 +104,11 @@ void D2DTextbox::Draw(D2DContext& cxt)
 					FRectF rc;
 					bool blf;
 					if(  ctrl()->GetLayout()->RectFromCharPosEx(xpos-1, &rc, &blf) )
-						cxt.DrawBlack(rc.right, rc.top, CARET_W, rc.Height());
+						if ((::GetTickCount() / 500)%2 == 0)							
+							cxt.DrawBlack(rc.right, rc.top, CARET_W, rc.Height());
+					
+					cxt.Redraw();
+					
 				}	
 
 			}
@@ -124,11 +126,14 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		mat.PopTransform();
 
 
-		float fonth = ctrl()->GetLineHeight();
-		int cnt = tm_.lineCount;
+		if (IsMultiline())
+		{
+			float h = ctrl()->GetLineHeight();
+			int cnt = tm_.lineCount;
 
-		if ( IsMultiline() &&  fonth*cnt > rctext_.Height())
-			vscrollbar_.OnDraw(cxt);
+			if ( h*cnt > rctext_.Height())
+				vscrollbar_.OnDraw(cxt);
+		}
 	}
 }
 
@@ -142,34 +147,10 @@ std::wstring D2DTextbox::ConvertInputText(LPCWSTR text, int typ)
 	return text;
 }
 
-#define TESTTEST
 
-#ifdef TESTTEST
 
 void D2DTextbox::ActiveSw(bool bActive)
 { 
-
-	//if (!IsMultiline() && 1==0)
-	//{
-	//	if (bActive == false)
-	//	{
-	//		// edit‚ð”²‚¯‚éŽž, input_str_singleline_‚ðconvert
-	//		
-	//		auto s = ConvertInputText(input_str_singleline_, 0);
-
-	//		UINT cn;
-	//		ct_.Clear();
-	//		ct_.InsertText(0, s.c_str(), s.length(),cn);
-	//	}
-	//	else
-	//	{
-	//		UINT cn;
-	//		ct_.Clear();
-	//		ct_.InsertText(0, input_str_singleline_.c_str(),input_str_singleline_.length(),cn);
-	//	}
-	//}
-
-
 	D2DContext& cxt = parent_window_->GetContext();
 
 	_ASSERT(ctrl());
@@ -205,224 +186,230 @@ void D2DTextbox::StatActive(bool bActive)
 		//TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
 	}
 }
-#else
-
-
-void D2DTextbox::ActiveSw(bool bActive)
-{ 
-	D2DContext& cxt = this->parent_window_->cxt;
-
-	_ASSERT(ctrl());
-
-	ctrl()->SetContainer( &ct_, this ); 
-	_ASSERT(ctrl()->ct_);
-
-	ctrl()->CalcRender( cxt );
-	
-	text_layout_.Release();
-	ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
-}
-
-
-void D2DTextbox::StatActive(bool bActive)
-{ 
-	if (bActive)
-	{	
-		ActiveSw(bActive);
-		ctrl()->SetFocus(&mat_sc_);
-		stat_ |= STAT_CAPTURED;
-
-		
-
-		TRACE( L"D2DTextbox::StatActive(TRUE)   %x\n", this );
-
-	}
-	else
-	{
-		if ( ctrl()->GetContainer() == &ct_ )
-		{						
-			text_layout_.Release();
-			ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
-	
-
-			ctrl()->SetContainer( NULL, NULL );
-		}
-		
-		_ASSERT(ctrl()->ct_==nullptr);
-		TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
-		stat_ &= ~STAT_CAPTURED;
-		
-	}
-}
-#endif
 
 bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject* pnew)
 {
+	if ( !bActive )
+	{
+		int a = 0;
+
+	}
+
+	
+	
+	
+	
 	StatActive(bActive);
 	return true;
 }
 
 LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 {
-	if ( (stat_&STAT_ENABLE) == 0 )
+	if ( !BITFLG(STAT_ENABLE) )
 		return 0;
 
 
 	V6::D2DContextEx& cxt = this->parent_window_->GetContext();
 
-		LRESULT ret = 0;
-		TSF::TSFApp app(b.hWnd,  cxt);
-		bool bl = false;
-		static int mouse_mode = 0;
+	LRESULT ret = 0;
+	TSF::TSFApp app(b.hWnd,  cxt);
+	bool bl = false;
+	static int mouse_mode = 0;
 
-		switch( msg )
+	switch( msg )
+	{
+		case WM_LBUTTONDOWN:
 		{
-			case WM_LBUTTONDOWN:
+			MouseParam* mp = (MouseParam*)lp;
+
+			mp->mat = mat_sc_;
+
+			auto pt = mat_.DPtoLP(mp->pt);
+
+			if (GetVsrollbarRect().PtInRect(pt))
+			{
+				APP.SetCapture(this);
+				ret = 1;
+				bl = false;
+				mouse_mode = 1;
+			}
+			else if ( rctext_.PtInRect(pt) )
+			{
+				APP.SetCapture(this);
+				mouse_mode = 0;
+				ret = 1;
+				bl = true;
+			}
+			else if (APP.IsCapture(this) )
+			{
+				ImeActive(false);
+				APP.ReleaseCapture();
+				
+				ret = 1;
+				bl = true;
+			}
+				
+		}
+		break;
+		case WM_LBUTTONUP:			
+		{
+			if (APP.IsCapture(this) )
 			{
 				MouseParam* mp = (MouseParam*)lp;
-
 				mp->mat = mat_sc_;
 
-				auto pt = mat_.DPtoLP(mp->pt);
-
-				if (GetVsrollbarRect().PtInRect(pt))
+				if (mouse_mode == 0 )
 				{
-					APP.SetCapture(this);
-					ret = 1;
-					bl = false;
-					mouse_mode = 1;
-				}
-				else if ( rctext_.PtInRect(pt) )
-				{
-					APP.SetCapture(this);
-					mouse_mode = 0;
+					auto pt = mat_.DPtoLP(mp->pt);
+					if ( !rctext_.PtInRect(pt) )
+					{
+						ImeActive(false);
+						APP.ReleaseCapture();						
+					}
 					ret = 1;
 					bl = true;
-				}
-				else if (APP.IsCapture(this) )
-				{
-					APP.ReleaseCapture();
-					ret = 1;
-					bl = true;
-				}
-				
+				}						
 			}
-			break;
-			case WM_LBUTTONUP:			
+
+		}
+		break;		
+
+
+		case WM_CHAR:		
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		case WM_MOUSEMOVE:			
+		{
+			if (APP.IsCapture(this))
 			{
-				if (APP.IsCapture(this) )
+				if (mouse_mode == 0)
+				{
+					bl = true;
+					ret = 1;
+					AutoScroll();
+				}
+				else if ( mouse_mode == 1)
+				{
+					bl = false;
+					ret = 1;
+				}
+
+				if ( msg == WM_MOUSEMOVE)
 				{
 					MouseParam* mp = (MouseParam*)lp;
 					mp->mat = mat_sc_;
-
-					if (mouse_mode == 0 )
-					{
-						auto pt = mat_.DPtoLP(mp->pt);
-						if ( !rctext_.PtInRect(pt) )
-						{
-							APP.ReleaseCapture();
-						}
-						ret = 1;
-						bl = true;
-					}						
+					b.bRedraw = true;
 				}
-
-			}
-			break;		
-
-
-			case WM_CHAR:		
-			case WM_KEYDOWN:
-			case WM_KEYUP:
-			case WM_MOUSEMOVE:			
-			{
-				if (APP.IsCapture(this))
-				{
-					if (mouse_mode == 0)
-					{
-						bl = true;
-						ret = 1;
-						AutoScroll();
-					}
-					else if ( mouse_mode == 1)
-					{
-						bl = false;
-						ret = 1;
-					}
-
-					if ( msg == WM_MOUSEMOVE)
-					{
-						MouseParam* mp = (MouseParam*)lp;
-						mp->mat = mat_sc_;
-						b.bRedraw = true;
-					}
 					
-					if ( msg == WM_KEYDOWN )
-					{
-						ret = 1;
-					}
-
-
-				}
-			}
-			break;
-			case WM_MOUSEWHEEL:
-			{
-				MouseParam* mp = (MouseParam*)lp;
-
-				auto pt = mat_.DPtoLP(mp->pt);
-				if (IsMultiline() && rctext_.PtInRect(pt) && APP.IsCapture(this) && ctrl()->ct_)
+				if ( msg == WM_KEYDOWN )
 				{
-					_ASSERT(ctrl());
-
 					ret = 1;
-					bl = false;
-					ctrl()->MoveSelectionUpDown((mp->zDelta > 0), false);
-					AutoScroll();
 				}
+
+
 			}
-			break;
-			case WM_D2D_SET_COLOR:
+		}
+		break;
+		case WM_MOUSEWHEEL:
+		{
+			MouseParam* mp = (MouseParam*)lp;
+
+			auto pt = mat_.DPtoLP(mp->pt);
+			if (IsMultiline() && rctext_.PtInRect(pt) && APP.IsCapture(this) && ctrl()->ct_)
 			{
-				ColorF clr = *(ColorF*)lp;
+				_ASSERT(ctrl());
 
-				if ( wp == 0 )
-					back_ = clr;
-				else if ( wp == 1 )
-					fore_ = clr;
-				else if ( wp == 2 )
-					border_ = clr;
-
-				bl = false;
 				ret = 1;
-
+				bl = false;
+				ctrl()->MoveSelectionUpDown((mp->zDelta > 0), false);
+				AutoScroll();
 			}
-			break;
+		}
+		break;
+		case WM_D2D_SET_COLOR:
+		{
+			ColorF clr = *(ColorF*)lp;
+
+			if ( wp == 0 )
+				back_ = clr;
+			else if ( wp == 1 )
+				fore_ = clr;
+			else if ( wp == 2 )
+				border_ = clr;
+
+			bl = false;
+			ret = 1;
 
 		}
+		break;
+		//case WM_IME_COMPOSITION: // ????
+		//{
+		//	if (lp & GCS_RESULTSTR)
+		//	{
+		//		HIMC himc = ImmGetContext(b.hWnd);
+
+		//		if (himc)
+		//		{
+		//			LONG nSize = ImmGetCompositionString(himc, GCS_RESULTSTR, NULL, 0);
+		//			if (nSize)
+		//			{
+		//				LPWSTR psz = (LPWSTR)LocalAlloc(LPTR, nSize + sizeof(WCHAR));
+		//				if (psz)
+		//				{
+		//					ImmGetCompositionString(himc, GCS_RESULTSTR, psz, nSize);
+		//					LocalFree(psz);
+		//				}
+		//			}
+		//		}
+		//		ImmReleaseContext(b.hWnd, himc);
+		//	}
+		//}
+		//break;
+		case WM_D2D_IME_ONOFF:
+		{
+			int d = (wp==0 ? 0 : 1);
+			HIMC himc = ImmGetContext(b.hWnd);			 
+			ImmSetOpenStatus(himc, d);
+			ImmReleaseContext(b.hWnd, himc);
+			bl=false;
+			ret = 1;
+		}
+		break;
+		
+
+	}
 		 
 
-		if ( bl )
-			ret = ctrl()->WndProc( &app, msg, wp, lp ); // WM_CHAR,WM_KEYDOWN‚Ìˆ—‚È‚Ç
+	if ( bl )
+		ret = ctrl()->WndProc( &app, msg, wp, lp ); // WM_CHAR,WM_KEYDOWN‚Ìˆ—‚È‚Ç
 
 
 		
 		
-		if (mouse_mode == 1)
-		{			
-			ret = vscrollbar_.WndProc(b, msg, wp, lp);
+	if (mouse_mode == 1)
+	{			
+		ret = vscrollbar_.WndProc(b, msg, wp, lp);
 
-			if (msg == WM_LBUTTONUP )
-				mouse_mode = 0;
-		}
+		if (msg == WM_LBUTTONUP )
+			mouse_mode = 0;
+	}
 
-		if (msg == WM_KEYDOWN && ret == 1)
-		{
+	if (msg == WM_KEYDOWN && ret == 1)
+	{
 
-			AutoScroll();
-		}
+		AutoScroll();
+	}
 		
 	return ret;
+}
+void D2DTextbox::ImeActive(bool bActive)
+{
+	if ( bActive )
+		parent_control_->SendMesage(WM_D2D_IME_ONOFF,1,0);
+	else
+		parent_control_->SendMesage(WM_D2D_IME_ONOFF,0,0);
+
+
 }
 
 
@@ -439,20 +426,22 @@ void D2DTextbox::AutoScroll()
 				int len;
 				const FRectF* rcs = ctrl()->GetLayout()->GetCharRects2(&len);
 				
-				auto drc = mat_sc_.LPtoDP(rcs[pos]);
-				auto drctext2 = mat_.LPtoDP(rctext_);
+				if ( pos < len )
+				{
+					auto drc = mat_sc_.LPtoDP(rcs[pos]);
+					auto drctext2 = mat_.LPtoDP(rctext_);
 
-				float rowheight = tm_.height / tm_.lineCount;
+					float rowheight = tm_.height / tm_.lineCount;
 
-				FSizeF s1(0,rowheight);
-				s1 = mat_sc_.LPtoDP(s1);
-				float dheight = s1.height;
+					FSizeF s1(0,rowheight);
+					s1 = mat_sc_.LPtoDP(s1);
+					float dheight = s1.height;
 			
-				if (drc.bottom + dheight > drctext2.bottom)
-					vscrollbar_.SetScroll(rowheight);
-				else if (drc.top - dheight < drctext2.top)
-					vscrollbar_.SetScroll(-rowheight);
-
+					if (drc.bottom + dheight > drctext2.bottom)	
+						vscrollbar_.SetScroll(rowheight);
+					else if (drc.top - dheight < drctext2.top)
+						vscrollbar_.SetScroll(-rowheight);
+				}
 			}
 			vscrollbar_.pos_ = pos;
 		}
@@ -696,14 +685,16 @@ float D2DTextbox::sc_dataHeight(bool bHbar)
 
 		//int cnt = ctrl()->GetLayout()->GetLineCount();
 
-		
-
 		return tm_.height + 50.0f;
 	}
 	return 0;
 
 }
-
+std::wstring D2DTextbox::GetTreeTyp(USHORT* typ)
+{ 
+	*typ=2; 
+	return L"D2DTextbox";
+}
 
 std::wstring D2DTextbox::Ascii2W( LPCSTR s )
 {
@@ -844,9 +835,4 @@ std::wstring MoneyString( const std::wstring& text )
 	
 	return ret;
 
-}
-std::wstring D2DTextbox::GetTreeTyp(USHORT* typ)
-{ 
-	*typ=2; 
-	return L"D2DTextbox";
 }
