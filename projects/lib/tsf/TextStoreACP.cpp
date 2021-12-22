@@ -132,8 +132,6 @@ STDAPI CTextStore::UnadviseSink(IUnknown *punk)
 
 STDAPI CTextStore::RequestLock(DWORD dwLockFlags, HRESULT *phrSession)
 {
-
-
 	if(m_fLocked)
     {
         //the document is locked
@@ -160,7 +158,7 @@ STDAPI CTextStore::RequestLock(DWORD dwLockFlags, HRESULT *phrSession)
             if(((m_dwLockType & TS_LF_READWRITE) == TS_LF_READ) && 
                 ((dwLockFlags & TS_LF_READWRITE) == TS_LF_READWRITE))
             {
-               // m_fPendingLockUpgrade = TRUE;
+                m_fPendingLockUpgrade = TRUE;
 
                 *phrSession = TS_S_ASYNC;
 

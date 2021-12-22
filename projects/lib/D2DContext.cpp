@@ -32,6 +32,8 @@ void D2DContext::CreateDeviceIndependentResources( float fontheight)
 
 void D2DContext::CreateDeviceResources(ID2D1DeviceContext* target)
 {
+	_ASSERT(black_ == nullptr);
+	
 	target_->CreateSolidColorBrush( D2RGB(0,0,0), &black_);
 	target_->CreateSolidColorBrush( D2RGB(255,255,255), &white_);
 	target_->CreateSolidColorBrush( D2RGBA(0,0,0,0), &transparent_);
@@ -147,7 +149,7 @@ void D2DContext::CreateDeviceResources(HWND hWnd, UINT cx, UINT cy)
 	THR(dxgiDevice->SetMaximumFrameLatency(1));
 	InitializeRenderTarget();
 
-	CreateDeviceResources(target_);
+	//CreateDeviceResources(target_);
 
 #endif
 }
