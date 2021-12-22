@@ -126,5 +126,6 @@ namespace V6
 		ColorF back_;
 		ColorF fore_;
 		ColorF border_;
+		bool ime_on_;
 	};
 };

@@ -88,5 +88,20 @@ namespace V6 {
 
 	};
 
+
+	class yahoo_sample : public D2DControls
+	{
+		public :
+			
+			yahoo_sample(){};
+			virtual ~yahoo_sample(){};
+
+			virtual void Draw(D2DContext& cxt) override;
+			virtual int GetTypeid() const override { return 0; }
+			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
+			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
+	
+	};
+
 };
 

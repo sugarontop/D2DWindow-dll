@@ -276,15 +276,24 @@ void CreateMDISplitControl(HWND hWnd)
 		{			
 			auto ha = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
 
+			auto clr = D2RGB(37,37,38);
+			D2DSendMessage(ha,WM_D2D_SET_COLOR, 0,(LPARAM)&clr);
+
+
 			D2DWindow* parent = (D2DWindow*)hwin.p;
 
-			for(int ij = 0; ij <2; ij++ )
+			for(int ij = 0; ij <1; ij++ )
 			{
 				yahoo_finance* yf = new yahoo_finance();
 				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*100,100+ij*100,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
 				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
 
 			}
+
+
+			auto ys = new yahoo_sample();
+			ys->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+2*100,100+2*100,FSizeF(1010,510)), STAT_DEFAULT, L"yahoo_black" );
+			((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_sample>(ys));
 		}
 		else
 		{

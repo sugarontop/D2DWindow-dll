@@ -132,6 +132,11 @@ STDAPI CTextStore::UnadviseSink(IUnknown *punk)
 
 STDAPI CTextStore::RequestLock(DWORD dwLockFlags, HRESULT *phrSession)
 {
+
+
+TRACE(L"CTextStore::RequestLock %d\n", dwLockFlags);
+
+
 	if(m_fLocked)
     {
         //the document is locked

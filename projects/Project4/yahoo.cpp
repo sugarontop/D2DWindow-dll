@@ -724,7 +724,7 @@ void yahoo_table::Draw(D2DContext& cxt)
 	
 	size_t len = min(30,finance_->y1_.size());
 
-	for(auto i=0; i < len; i++)
+	for(UINT i=0; i < len; i++)
 	{
 		auto st = ar[i];
 
@@ -789,3 +789,85 @@ void yahoo_table::Update(float cx)
 	//finance_->sc_control_->WndProc(b,WM_D2D_SET_SIZE,2,(LPARAM)&rc5);
 
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void yahoo_sample::Draw(D2DContext& cxt)
+{
+	//auto blk1 = D2RGB(37,37,38); // content
+	//auto blk0 = D2RGB(61,61,61); // line
+	//auto blk2 = D2RGB(46,46,46); // separator
+	//auto line = D2RGB(113,96,232);
+
+
+	auto blk1 = D2RGB(255,255,255);
+	auto blk0 = D2RGB(237,237,238);
+	
+	auto blk2 = D2RGB(246,246,246);
+	auto line = D2RGB(113,96,232);
+
+	D2DMatrix mat(*cxt);
+
+	mat_ = mat.PushTransform();
+
+	auto rc1 = rc_;
+	rc1.Offset(0,-60);
+
+	cxt.DFillRect(rc1, blk2);
+
+	auto rc = rc_;
+
+	cxt.DFillRect(rc, blk0);
+	rc.Inflate(-1,-1);
+	cxt.DFillRect(rc, blk1);
+	
+	rc.bottom = rc.top+5;
+	cxt.DFillRect(rc, line);
+
+
+	mat.Offset( rc_ );
+	InnerDraw(cxt);
+
+	mat.PopTransform();
+}
+
+LRESULT yahoo_sample::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT hr = 0;
+
+	switch( message )
+	{
+		case WM_D2D_SET_SIZE:
+		{
+			FRectF& rc = *(FRectF*)lParam;
+		}
+		break;
+		case WM_D2D_SET_SIZE_SIZE:
+		{
+			FSizeF& sz = *(FSizeF*)lParam;
+			rc_.SetSize(sz);
+
+		}
+		break;
+	}
+
+
+	hr = D2DControls::WndProc(b,message,wParam,lParam);
+
+
+	return hr;
+
+}
+void yahoo_sample::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
+{
+	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
+
+	rc_ = rc;
+
+
+	UIHandleWin  win={}; win.p = parent;
+	UIHandle ctrls={}; ctrls.p=this;
+
+	auto ct = D2DCreateTextbox(win,ctrls, FRectF(1,5,FSizeF(400,500)), true, STAT_DEFAULT, L"NVIDIA" );
+
+}
+	

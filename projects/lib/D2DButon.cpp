@@ -12,6 +12,8 @@ void D2DButton::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const F
 	rc_ = rc;
 	text_ =name;
 
+	ResourceUpdate(true, parent->GetContext());
+
 }
 void D2DButton::SetText(LPCWSTR str)
 {
@@ -26,7 +28,7 @@ std::wstring D2DButton::GetTreeTyp(USHORT* typ)
 
 LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if ( (stat_&STAT_ENABLE) == 0 )
+	if ( !BITFLG(STAT_ENABLE) )
 		return 0;
 
 	LRESULT ret = 0;
@@ -140,7 +142,9 @@ void  D2DButton::Draw(D2DContext& cxt)
 	}
 }
 void D2DButton::ResourceUpdate(bool bCreate, D2DContext& cxt)
-{
+{	
+	br_.Release();		
+
 	if ( bCreate )
 	{
 		D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES linearGradientBrushProperties = D2D1::LinearGradientBrushProperties(
@@ -158,11 +162,6 @@ void D2DButton::ResourceUpdate(bool bCreate, D2DContext& cxt)
 		THR((*cxt)->CreateGradientStopCollection(gradientStops, 2,&pGradientStops));
 		
 		THR((*cxt)->CreateLinearGradientBrush(linearGradientBrushProperties,pGradientStops,&br_));
-	}
-	else
-	{
-		br_.Release();		
-
 	}
 }
 

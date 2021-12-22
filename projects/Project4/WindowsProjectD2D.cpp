@@ -272,9 +272,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 r = D2DDefWndProc(hwin, app, message, wParam,lParam);
         }
         break;
+		case WM_KILLFOCUS:
+		case WM_SETFOCUS:
+		{
+            r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
+			DefWindowProc(hWnd, message, wParam, lParam);
+        }
+        break;
         case WM_CHAR:
         {
             r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
+			DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
         case WM_KEYUP:

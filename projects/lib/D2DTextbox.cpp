@@ -27,6 +27,8 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 		vscrollbar_.Create(this, FRectF(rctext_.right, rctext_.top, rctext_.right + 20, rctext_.bottom));
 		ct_.bSingleLine_ = false;
 	}
+
+	ime_on_ = false;
 }
 D2DTextbox::~D2DTextbox()
 {
@@ -185,6 +187,13 @@ void D2DTextbox::StatActive(bool bActive)
 		_ASSERT(ctrl()->ct_==nullptr);
 		//TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
 	}
+
+	if (ime_on_)
+	{
+		parent_control_->SendMesage(WM_D2D_IME_ONOFF,1,0);
+
+	}
+
 }
 
 bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject* pnew)
@@ -375,7 +384,29 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 			ret = 1;
 		}
 		break;
-		
+		//case WM_SETFOCUS:
+		//{
+		//	if (APP.IsCapture(this) ) // && ime_on_ )
+		//	{
+		//		HIMC himc = ImmGetContext(b.hWnd);			 
+		//		ImmSetOpenStatus(himc, 1);
+		//		ImmReleaseContext(b.hWnd, himc);
+		//		bl = false; ret=1;
+		//	}
+		//}
+		//break;
+		//case WM_KILLFOCUS:
+		//{
+		//	if (APP.IsCapture(this))
+		//	{
+		//		HIMC himc = ImmGetContext(b.hWnd);	
+		//		ime_on_ = (bool)ImmGetOpenStatus(himc);
+		//		ImmReleaseContext(b.hWnd, himc);
+		//		bl = false; ret=1;
+		//	}
+
+		//}
+		//break;
 
 	}
 		 
