@@ -99,3 +99,4 @@ struct D2DNMHDR
 #define WM_D2D_GET_RESOURCE_BINARY				(WM_APP+17) // LPARAM is IStream**
 #define WM_D2D_SET_RESOURCE						(WM_APP+18) // LPARAM is name
 #define WM_D2D_IME_ONOFF						(WM_APP+19) 
+#define WM_D2D_ONIME_ONOFF						(WM_APP+20) 

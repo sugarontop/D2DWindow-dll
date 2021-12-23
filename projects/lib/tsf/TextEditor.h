@@ -77,6 +77,8 @@ class CTextEditor
 
 		RECT CandidateRect( RECT rc) const;
 
+		BOOL IsImeOn() const;
+		void OnChangeIME(bool bOn);
 	public :
 		CTextLayout layout_;
 		CTextContainer* ct_;

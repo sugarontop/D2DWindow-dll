@@ -21,6 +21,7 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 	typ_ = typ;
 	tm_ = {0};	
 	ct_.bSingleLine_ = true;
+	isImeOn_ = false;
 	
 	if (IsMultiline())
 	{
@@ -28,7 +29,7 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 		ct_.bSingleLine_ = false;
 	}
 
-	ime_on_ = false;
+	
 }
 D2DTextbox::~D2DTextbox()
 {
@@ -188,26 +189,17 @@ void D2DTextbox::StatActive(bool bActive)
 		//TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
 	}
 
-	if (ime_on_)
+	/*if (ime_on_)
 	{
 		parent_control_->SendMesage(WM_D2D_IME_ONOFF,1,0);
 
-	}
+	}*/
 
 }
 
-bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject* pnew)
+bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject*)
 {
-	if ( !bActive )
-	{
-		int a = 0;
 
-	}
-
-	
-	
-	
-	
 	StatActive(bActive);
 	return true;
 }
@@ -351,29 +343,7 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 
 		}
 		break;
-		//case WM_IME_COMPOSITION: // ????
-		//{
-		//	if (lp & GCS_RESULTSTR)
-		//	{
-		//		HIMC himc = ImmGetContext(b.hWnd);
-
-		//		if (himc)
-		//		{
-		//			LONG nSize = ImmGetCompositionString(himc, GCS_RESULTSTR, NULL, 0);
-		//			if (nSize)
-		//			{
-		//				LPWSTR psz = (LPWSTR)LocalAlloc(LPTR, nSize + sizeof(WCHAR));
-		//				if (psz)
-		//				{
-		//					ImmGetCompositionString(himc, GCS_RESULTSTR, psz, nSize);
-		//					LocalFree(psz);
-		//				}
-		//			}
-		//		}
-		//		ImmReleaseContext(b.hWnd, himc);
-		//	}
-		//}
-		//break;
+		
 		case WM_D2D_IME_ONOFF:
 		{
 			int d = (wp==0 ? 0 : 1);
@@ -384,29 +354,37 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 			ret = 1;
 		}
 		break;
-		//case WM_SETFOCUS:
-		//{
-		//	if (APP.IsCapture(this) ) // && ime_on_ )
-		//	{
-		//		HIMC himc = ImmGetContext(b.hWnd);			 
-		//		ImmSetOpenStatus(himc, 1);
-		//		ImmReleaseContext(b.hWnd, himc);
-		//		bl = false; ret=1;
-		//	}
-		//}
-		//break;
-		//case WM_KILLFOCUS:
-		//{
-		//	if (APP.IsCapture(this))
-		//	{
-		//		HIMC himc = ImmGetContext(b.hWnd);	
-		//		ime_on_ = (bool)ImmGetOpenStatus(himc);
-		//		ImmReleaseContext(b.hWnd, himc);
-		//		bl = false; ret=1;
-		//	}
+		case WM_D2D_ONIME_ONOFF:
+		{
+			if (APP.IsCapture(this))
+			{
+				bool on_bl = (WPARAM)(wp==1);
 
-		//}
-		//break;
+
+				isImeOn_ = on_bl;
+
+				bl = false; ret=1; 
+			}
+		}
+		break;
+		case WM_SETFOCUS:
+		{
+			if (APP.IsCapture(this))
+			{
+				OnChangeFocus(true,nullptr);
+
+				bl = false; ret=1;
+			}
+
+
+			TRACE( L"WM_SETFOCUS\n");
+		}
+		break;
+		case WM_KILLFOCUS:
+		{
+			TRACE( L"WM_KILLFOCUS\n");
+		}
+		break;
 
 	}
 		 
@@ -442,6 +420,7 @@ void D2DTextbox::ImeActive(bool bActive)
 
 
 }
+
 
 
 void D2DTextbox::AutoScroll()

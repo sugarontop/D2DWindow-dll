@@ -4,6 +4,7 @@ namespace TSF {
 
 class CTextEditor;
 
+
 class CTextStore : 
 	public ITextStoreACP2, 
 	public ITfContextOwnerCompositionSink,
@@ -93,7 +94,7 @@ class CTextStore :
 		int _nAttrVals;
 		long _cRef;
 		DWORD opencloseck_;
-
+		ComPTR<ITfThreadMgr2> mgr2_;
 
 
 		// from tsfapp.

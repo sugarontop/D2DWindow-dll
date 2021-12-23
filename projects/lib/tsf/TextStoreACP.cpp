@@ -163,7 +163,7 @@ TRACE(L"CTextStore::RequestLock %d\n", dwLockFlags);
             if(((m_dwLockType & TS_LF_READWRITE) == TS_LF_READ) && 
                 ((dwLockFlags & TS_LF_READWRITE) == TS_LF_READWRITE))
             {
-                m_fPendingLockUpgrade = TRUE;
+                //m_fPendingLockUpgrade = TRUE;
 
                 *phrSession = TS_S_ASYNC;
 
@@ -846,8 +846,28 @@ void CTextStore::OnLayoutChange()
 
 HRESULT STDMETHODCALLTYPE CTextStore::OnChange(REFGUID rguid)
 {
-    //_pEditor->WndProc(WM_D2D_IME_STATUS_CHANGED, (INT_PTR)&rguid, 0);
+    // EVENT HANDLER IME ONOFF
+	
+	//_pEditor->WndProc(WM_D2D_IME_STATUS_CHANGED, (INT_PTR)&rguid, 0);
 
+	if (IsEqualGUID(rguid, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE))
+	{
+		ComPTR<ITfCompartmentMgr> cmgr;
+		ComPTR<ITfCompartment> cp1;	
+
+		if ( SUCCEEDED(mgr2_->QueryInterface(IID_PPV_ARGS(&cmgr))))
+		{
+			if (SUCCEEDED(cmgr->GetCompartment(GUID_COMPARTMENT_KEYBOARD_OPENCLOSE, &cp1)))
+			{
+				VARIANT v;
+				cp1->GetValue(&v);
+
+				bool isIMEOn = !(v.lVal == 0);
+
+				_pEditor->OnChangeIME(isIMEOn);
+			}
+		}
+	}
     return S_OK;
 }
 
@@ -859,6 +879,9 @@ void CTextStore::InitSink(ITfThreadMgr2* mgr, TfClientId TfClientId)
     ComPTR <ITfCompartment> ctt;
     ComPTR <ITfSource> ps;     
     ComPTR <IUnknown> pUnknown;
+
+	mgr->AddRef();
+	mgr2_.Attach(mgr);
 
     QueryInterface(IID_PPV_ARGS(&pUnknown));
 

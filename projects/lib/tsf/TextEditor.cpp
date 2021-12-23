@@ -556,6 +556,29 @@ RECT CTextEditor::CandidateRect(RECT rclog) const
      return rclog;
 }
 
+
+
+BOOL CTextEditor::IsImeOn() const
+{
+	ComPTR<ITfCompartmentMgr>  pCompartmentMgr;
+	BOOL isIMEOn = FALSE;
+
+	if (0 == weak_tmgr_->QueryInterface(IID_ITfCompartmentMgr, (LPVOID*)&pCompartmentMgr))
+	{
+		ComPTR<ITfCompartment> cp1;
+
+		if (S_OK == pCompartmentMgr->GetCompartment(GUID_COMPARTMENT_KEYBOARD_OPENCLOSE, &cp1))
+		{
+			VARIANT v;
+			cp1->GetValue(&v);
+
+			isIMEOn = !(v.lVal == 0);
+
+		}
+	}
+	return isIMEOn;
+}
+
 //----------------------------------------------------------------
 //
 //
@@ -568,11 +591,11 @@ void CTextEditor::SetFocus(D2DMat* pmat)
 {
     if (pDocumentMgr_)
     {
-        pmat_ = pmat;
+        if ( pmat )
+			pmat_ = pmat;
+
         weak_tmgr_->SetFocus(pDocumentMgr_);
     }
-
-
 }
 
 
@@ -644,6 +667,14 @@ void CTextEditor::OnComposition( int msg, int len )
         }
         break;
     }
+}
+
+void CTextEditor::OnChangeIME(bool bOn)
+{
+	#define WM_D2D_ONIME_ONOFF (WM_APP+20)
+
+	SendMessage(GetWnd(),WM_D2D_ONIME_ONOFF, (bOn?1:0), 0);
+
 }
 
 RECT CTextEditor::ClientToScreen(RECT rc) const
