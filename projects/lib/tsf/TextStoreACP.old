@@ -134,9 +134,6 @@ STDAPI CTextStore::RequestLock(DWORD dwLockFlags, HRESULT *phrSession)
 {
 
 
-TRACE(L"CTextStore::RequestLock %d\n", dwLockFlags);
-
-
 	if(m_fLocked)
     {
         //the document is locked
@@ -163,7 +160,7 @@ TRACE(L"CTextStore::RequestLock %d\n", dwLockFlags);
             if(((m_dwLockType & TS_LF_READWRITE) == TS_LF_READ) && 
                 ((dwLockFlags & TS_LF_READWRITE) == TS_LF_READWRITE))
             {
-                //m_fPendingLockUpgrade = TRUE;
+               // m_fPendingLockUpgrade = TRUE;
 
                 *phrSession = TS_S_ASYNC;
 
@@ -185,7 +182,8 @@ TRACE(L"CTextStore::RequestLock %d\n", dwLockFlags);
 
 BOOL CTextStore::_LockDocument(DWORD dwLockFlags)
 {
-	//TRACE( L"_LockDocument %d\n", dwLockFlags );
+
+TRACE( L"_LockDocument %d\n", dwLockFlags );
 
     if(m_fLocked)
     {
@@ -202,7 +200,7 @@ BOOL CTextStore::_LockDocument(DWORD dwLockFlags)
 
 void CTextStore::_UnlockDocument()
 {
- //   TRACE( L"_UnlockDocument\n" );
+    TRACE( L"_UnlockDocument\n" );
     
     HRESULT hr;
     
@@ -226,10 +224,10 @@ void CTextStore::_UnlockDocument()
 }
 BOOL CTextStore::_IsLocked(DWORD dwLockType) 
 { 
-   /*if(m_dwInternalLockType)
-   {
-        return TRUE;
-   }*/
+   // if(m_dwInternalLockType)
+   // {
+   //     return TRUE;
+  //  }
 
     return m_fLocked && (m_dwLockType & dwLockType); 
 }
@@ -283,14 +281,11 @@ STDAPI CTextStore::GetSelection(ULONG ulIndex, ULONG ulCount, TS_SELECTION_ACP *
     *pcFetched = 0;
     if ((ulCount > 0) && ((ulIndex == 0) || (ulIndex == TS_DEFAULT_SELECTION)))
     {
-        if (_pEditor->GetContainer())
-        {
-            pSelection[0].acpStart = _pEditor->GetSelectionStart();
-            pSelection[0].acpEnd = _pEditor->GetSelectionEnd();
-            pSelection[0].style.ase = TS_AE_END;
-            pSelection[0].style.fInterimChar = FALSE;
-            *pcFetched = 1;
-        }
+        pSelection[0].acpStart = _pEditor->GetSelectionStart();
+        pSelection[0].acpEnd = _pEditor->GetSelectionEnd();
+        pSelection[0].style.ase = TS_AE_END;
+        pSelection[0].style.fInterimChar = FALSE;
+        *pcFetched = 1;
     }
 
     return S_OK;
@@ -589,7 +584,7 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
    *prc={0};
 
 
-   //TRACE( L"candidate3  left=%f  top=%f-%f, acp=%d  LOCK=%d %d\n", rcStart.left, rcStart.top, rcEnd.top, acpStart, m_dwLockType,  (int)*pfClipped  );
+   //TRACE( L"candidate3  left=%f  top=%f, acp=%d  LOCK=%d %d\n", rcStart.left, rcStart.top,acpStart, m_dwLockType,  (int)*pfClipped  );
 
     if (b1 && b2 )
     {
@@ -613,13 +608,6 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
         }
     }
 
-	if ( prc->bottom == prc->top )
-	{
-		float height = _pEditor->GetLayout()->GetLineHeight();		
-		prc->bottom = prc->top+(LONG)height;
-	}
-
-
     // 候補ダイアログボックスの位置	, candidate
     *prc = _pEditor->CandidateRect(*prc);
 
@@ -630,8 +618,7 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
     }
 
 
-    TRACE( L"候補ダイアログボックス  left=%d top=%d,size=(%d,%d)\n", prc->left, prc->top, prc->right-prc->left, prc->bottom-prc->top );
-
+    TRACE( L"candidate4  left=%d  top=%d   (%d,%d)\n", prc->left, prc->top, prc->right-prc->left, prc->bottom-prc->top );
 
     *pfClipped = FALSE;
     return S_OK;
@@ -645,10 +632,7 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
 
 STDAPI CTextStore::GetScreenExt(TsViewCookie vcView, RECT *prc)
 {
-    
-	if ( _pEditor->ct_ ) {
-	
-	FRectF rc(0,0,0,0); // = _pEditor->bri_->GetClientRect();
+    FRectF rc(0,0,0,0); // = _pEditor->bri_->GetClientRect();
     int pos = _pEditor->GetSelectionStart();
 
     _pEditor->GetLayout()->RectFromCharPos(pos, &rc);
@@ -658,7 +642,6 @@ STDAPI CTextStore::GetScreenExt(TsViewCookie vcView, RECT *prc)
 
     //TRACE( L"candidate2  %d %d\n" ,prc->left, prc->top);
 
-	}
 
     return S_OK;
 }
@@ -705,7 +688,7 @@ STDAPI CTextStore::OnUpdateComposition(ITfCompositionView *pComposition,ITfRange
 }
 STDAPI CTextStore::OnEndComposition(ITfCompositionView *pComposition)
 {
-    _pEditor->OnComposition(3, -1);
+    _pEditor->OnComposition(3, -1 );
 
     return S_OK;
 }
@@ -815,6 +798,8 @@ void CTextStore::PrepareAttributes(ULONG cFilterAttrs, const TS_ATTRID *paFilter
 
 void CTextStore::OnSelectionChange()
 {
+
+
     if (TextStoreACPSink_)
         TextStoreACPSink_->OnSelectionChange();
 }
@@ -846,28 +831,8 @@ void CTextStore::OnLayoutChange()
 
 HRESULT STDMETHODCALLTYPE CTextStore::OnChange(REFGUID rguid)
 {
-    // EVENT HANDLER IME ONOFF
-	
-	//_pEditor->WndProc(WM_D2D_IME_STATUS_CHANGED, (INT_PTR)&rguid, 0);
+    //_pEditor->WndProc(WM_D2D_IME_STATUS_CHANGED, (INT_PTR)&rguid, 0);
 
-	if (IsEqualGUID(rguid, GUID_COMPARTMENT_KEYBOARD_OPENCLOSE))
-	{
-		ComPTR<ITfCompartmentMgr> cmgr;
-		ComPTR<ITfCompartment> cp1;	
-
-		if ( SUCCEEDED(mgr2_->QueryInterface(IID_PPV_ARGS(&cmgr))))
-		{
-			if (SUCCEEDED(cmgr->GetCompartment(GUID_COMPARTMENT_KEYBOARD_OPENCLOSE, &cp1)))
-			{
-				VARIANT v;
-				cp1->GetValue(&v);
-
-				bool isIMEOn = !(v.lVal == 0);
-
-				_pEditor->OnChangeIME(isIMEOn);
-			}
-		}
-	}
     return S_OK;
 }
 
@@ -879,9 +844,6 @@ void CTextStore::InitSink(ITfThreadMgr2* mgr, TfClientId TfClientId)
     ComPTR <ITfCompartment> ctt;
     ComPTR <ITfSource> ps;     
     ComPTR <IUnknown> pUnknown;
-
-	mgr->AddRef();
-	mgr2_.Attach(mgr);
 
     QueryInterface(IID_PPV_ARGS(&pUnknown));
 
