@@ -1,7 +1,4 @@
 #pragma once
-
-
-#pragma once
 #include "D2DApp.h"
 #include "D2DCapture.h"
 #include "D2DWindowControl.h"

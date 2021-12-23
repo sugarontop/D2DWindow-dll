@@ -36,6 +36,9 @@
     <ClInclude Include="..\lib\D2DChildWindow.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\D2DFileManage.h">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\FilePackTool.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DFileManage.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

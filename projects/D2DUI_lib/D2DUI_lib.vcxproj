@@ -167,6 +167,7 @@
     <ClInclude Include="..\lib\D2DAccordionbar.h" />
     <ClInclude Include="..\lib\D2DChildWindow.h" />
     <ClInclude Include="..\lib\D2DClassMap.h" />
+    <ClInclude Include="..\lib\D2DFileManage.h" />
     <ClInclude Include="..\lib\D2DScrollbar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="..\lib\D2DClassMap.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
     <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp" />
+    <ClCompile Include="..\lib\D2DFileManage.cpp" />
     <ClCompile Include="..\lib\D2DGrid.cpp" />
     <ClCompile Include="..\lib\D2DMDIControls.cpp" />
     <ClCompile Include="..\lib\D2DMDISplitControls.cpp" />
