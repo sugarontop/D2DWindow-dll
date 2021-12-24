@@ -24,22 +24,24 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 	cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
 #endif
 	
-	//_ASSERT(rc_.Width() != 0 && rc_.Height()!=0 );
-	D2DRectFilter f(cxt, rc_);
+	
+	//D2DRectFilter f(cxt, rc_);
 
-	mat.PushTransform();
+	
+
+	mat.PushTransform();	
 	mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
 
 	D2DControls::Draw(cxt);
 
 	mat.PopTransform();
 
-	mat.PushTransform();
+	mat.PushTransform();	
 	mat.Offset(vscroll_x_, 0 );
 	scv_->Draw2(cxt);
 	mat.PopTransform();
 
-	mat.PushTransform();
+	mat.PushTransform();	
 	mat.Offset(hscroll_x_, rc_.Height()-BARW );
 	sch_->Draw2(cxt);
 	mat.PopTransform();
@@ -86,6 +88,10 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 					
 					if ( wParam == 0 )
 						rc_.SetWH(rc);
+					else if ( wParam == 1 )
+					{
+						int a = 0;
+					}
 				
 					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
 
@@ -158,9 +164,20 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 			}
 			return 0;
 		}
+		break;		
+		case WM_LBUTTONDOWN:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+
+			if ( !rc_.ZeroPtInRect(pt))
+			{
+				//bl = false;
+			}
+
+		}
 		break;
 		case WM_MOUSEMOVE:
-		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
 		case WM_RBUTTONDOWN:
 		case WM_RBUTTONUP:
@@ -170,7 +187,7 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
 			if ( !rc_.ZeroPtInRect(pt))
 			{
-				bl = false;
+				//bl = false;
 			}
 
 		}

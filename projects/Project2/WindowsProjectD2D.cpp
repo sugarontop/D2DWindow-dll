@@ -382,6 +382,28 @@ void CreateControl0(HWND hWnd)
 }
 
 
+#include "D2DFileManage.h"
+void CreateControl1(HWND hWnd)
+{
+	hwin = D2DCreateMainHWnd(hWnd, 14);
+    
+    auto root = D2DGetRootControls(hwin);
+
+	
+	auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
+	sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(0,0,FSizeF(400,400)), STAT_DEFAULT, L"filemng_sc");
+	((D2DControls*)root.p)->Add(sccontrols);
+
+	auto fmg = std::make_shared<D2DFileManage>();
+	fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(300,500)), STAT_DEFAULT, L"filemng");
+	sccontrols->Add(fmg);
+
+	FSizeF sz(350,800);
+	//sccontrols->SendMesage(WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
+
+}
+
+
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 
 #include "D2DSquarePaper.h"
@@ -402,7 +424,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			D2DInitail((INT_PTR)k );
 
             //CreateControl(hWnd);
-			CreateControl0(hWnd);
+			//CreateControl0(hWnd);
+			CreateControl1(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
             return ::DefWindowProc(hWnd, message, wParam, lParam);
         }

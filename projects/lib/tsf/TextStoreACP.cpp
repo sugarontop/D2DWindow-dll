@@ -520,11 +520,11 @@ STDAPI CTextStore::FindNextAttrTransition(LONG acpStart, LONG acpHalt, ULONG cFi
 
 STDAPI CTextStore::RetrieveRequestedAttrs(ULONG ulCount, TS_ATTRVAL *paAttrVals, ULONG *pcFetched)
 {
-    *pcFetched = 0;
+    //*pcFetched = 0;
     for (int i = 0; (i < (int)ulCount) && (i < _nAttrVals) ; i++)
     {
         paAttrVals[i] = _attrval[i];
-        *pcFetched++;
+        //*pcFetched++;
     }
 
     return S_OK;

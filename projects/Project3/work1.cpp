@@ -95,7 +95,7 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
 #include "D2DAccordionbar.h"
-
+#include "D2DFileManage.h"
 
 extern UIHandleWin hwin;
 
@@ -151,6 +151,12 @@ void CreateControl(HWND hWnd)
 
 	hctrls.p = bar.get();
 	sq = D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, L"square paper1", 0);
+
+
+
+
+	
+
 
 
 	D2DWindow* pw = (D2DWindow*)hwin.p;
