@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "D2DWindow.h" 
 #include "D2DScrollbar.h"
 
 using namespace V6;
@@ -28,7 +27,13 @@ void D2DScrollbar::SetSize(const FSizeF& sz)
 }
 float D2DScrollbar::LogicalOffset() 
 {
-	if (max_size_ <= VIEW_SIZE )
+	if (max_size_==view_size_)
+	{
+		// scrollbar‚È‚µó‘Ô
+		thumb_size_ = VIEW_SIZE;
+		return 0;
+	}
+	else if (max_size_ <= VIEW_SIZE )
 	{
 		thumb_size_ = VIEW_SIZE;
 		return offset_ * 1.0f;
@@ -36,7 +41,7 @@ float D2DScrollbar::LogicalOffset()
 	else if (max_size_ < VIEW_SIZE * 2 )
 	{
 		thumb_size_ = (max_size_-VIEW_SIZE);
-		return offset_ * 1.0f;
+		return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
 	}
 	else if (max_size_ < VIEW_SIZE * 3 )
 	{
@@ -118,7 +123,6 @@ LRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 				{
 					APP.SetCapture(this);
 					r = 1;
-
 				}
 			}
 			break;
@@ -139,6 +143,7 @@ LRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 						offset_ = max(0.0f, (offset_ + (bVertical_ ? pt1.y-pt2.y : pt1.x-pt2.x )));
 
 						offset_ = min(VIEW_SIZE-thumb_size_, offset_);
+
 					}
 
 					b.bRedraw = true;
@@ -161,7 +166,7 @@ LRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 		}
 	}
 
-	return 0;
+	return r;
 }
 std::wstring D2DScrollbar::GetTreeTyp(USHORT* typ)
 { 

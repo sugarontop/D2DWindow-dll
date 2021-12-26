@@ -1,12 +1,10 @@
 #include "pch.h"
-#include "D2DWindow.h" 
 #include "D2DFileManage.h"
-#include "D2D1UI_1.h"
 
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
-#define ROWHEIGHT 26
+#define ROWHEIGHT 20.0f
 
 typedef std::function<void (LPCWSTR dir, WIN32_FIND_DATA* findData)> FindFunction;
 void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& func );
@@ -43,8 +41,13 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				APP.SetCapture(this);
 				root_.OnClick(pm.pt);
 
-				FSizeF sz = rc_.Size();
-				parent_control_->WndProc(b,WM_D2D_SET_SIZE_SIZE,1,(LPARAM)&sz);
+				UINT cnt = root_.ChildCount();
+				root_.height_ = ROWHEIGHT * cnt;
+				rc_.SetHeight(root_.height_);
+
+				parent_control_->SendMesage(WM_D2D_SET_SIZE,1,0);
+
+				
 
 				r = 1;
 			}
@@ -52,8 +55,11 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		break;
 		case WM_MOUSEMOVE:
 		{
-			//if ( APP.IsCapture(this))
-			//	r = 1;			
+			if ( APP.IsCapture(this))
+			{
+				r = 1;			
+				b.bRedraw = true;
+			}
 		}
 		break;
 		case WM_LBUTTONUP:
@@ -265,4 +271,16 @@ bool BOnes::OnClick(const FPointF& ptdev)
 	}
 
 	return bl;
+}
+UINT BOnes::ChildCount()
+{
+	if (bOpen_)
+	{
+		UINT cnt=1;
+		for(auto& it : ar_)
+			cnt += it->ChildCount();
+		
+		return cnt;
+	}
+	return 1;
 }

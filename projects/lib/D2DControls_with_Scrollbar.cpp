@@ -1,6 +1,5 @@
 
 #include "pch.h"
-#include "D2DWindow.h" 
 #include "D2DControls_with_Scrollbar.h"
 
 using namespace V6;
@@ -23,27 +22,32 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 #ifdef _DEBUG
 	cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
 #endif
-	
-	
-	//D2DRectFilter f(cxt, rc_);
+		
+	D2DRectFilter f(cxt, rc_);
 
-	
+	mat.Offset(rc_);
+
+	cxt.DFillRect(rc_.ZeroRect(), ColorF::AliceBlue);
+
 
 	mat.PushTransform();	
-	mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
 
-	D2DControls::Draw(cxt);
+	
+		mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
+
+		//D2DControls::Draw(cxt);
+		InnerDraw(cxt);
 
 	mat.PopTransform();
 
 	mat.PushTransform();	
-	mat.Offset(vscroll_x_, 0 );
-	scv_->Draw2(cxt);
+		mat.Offset(vscroll_x_, 0 );
+		scv_->Draw2(cxt);
 	mat.PopTransform();
 
 	mat.PushTransform();	
-	mat.Offset(hscroll_x_, rc_.Height()-BARW );
-	sch_->Draw2(cxt);
+		mat.Offset(hscroll_x_, rc_.Height()-BARW );
+		sch_->Draw2(cxt);
 	mat.PopTransform();
 
 
@@ -161,6 +165,10 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 				sch_->SetMaxSize(crc.Width());				
 				sch_->SetSize(sz);
 				scv_->SetSize(sz);
+
+
+				TRACE( L"scroll content:%f  scrollbar hight=%f\n", crc.Height(), sz.height );
+
 			}
 			return 0;
 		}
@@ -178,6 +186,18 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 		}
 		break;
 		case WM_MOUSEMOVE:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+
+			if ( !rc_.ZeroPtInRect(pt))
+			{
+				//bl = false;
+				int a = 0;
+			}
+
+		}
+		break;
 		case WM_LBUTTONUP:
 		case WM_RBUTTONDOWN:
 		case WM_RBUTTONUP:

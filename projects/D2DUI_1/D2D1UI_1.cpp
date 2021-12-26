@@ -466,6 +466,13 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_CONTROLS;
 
 	}
+	else if  (dynamic_cast<D2DScrollbar*>(p))
+	{
+		auto tx = dynamic_cast<D2DScrollbar*>(p);
+		r.p = tx;
+		r.typ = TYP_SCROLLBAR;
+
+	}
 
 
 	else if ( p != nullptr )

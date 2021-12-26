@@ -359,7 +359,7 @@ void CreateControl0(HWND hWnd)
 
 	auto ch = std::make_shared<D2DChildWidow>();
 
-	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"KOWAI" );
+	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
 
 	((D2DControls*)root.p)->Add(ch);
 
@@ -374,7 +374,7 @@ void CreateControl0(HWND hWnd)
 	hc.p = sc.get();
 
 
-	D2DCreateSquarePaper(hwin,hc, FRectF(0,0,1000,1000), STAT_DEFAULT, L"abc", -1);
+	D2DCreateSquarePaper(hwin,hc, FRectF(0,0,1000,1000), STAT_DEFAULT, L"abc1", -1);
 
 
 
@@ -389,13 +389,18 @@ void CreateControl1(HWND hWnd)
     
     auto root = D2DGetRootControls(hwin);
 
+    auto ch = std::make_shared<D2DChildWidow>();
+	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
+	((D2DControls*)root.p)->Add(ch);
+
+
 	
 	auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
-	sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(0,0,FSizeF(400,400)), STAT_DEFAULT, L"filemng_sc");
-	((D2DControls*)root.p)->Add(sccontrols);
+	sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)ch.get(), FRectF(0,0,FSizeF(0,0)), STAT_DEFAULT, L"filemng_sc");
+	((D2DControls*)ch.get())->Add(sccontrols);
 
 	auto fmg = std::make_shared<D2DFileManage>();
-	fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(300,500)), STAT_DEFAULT, L"filemng");
+	fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(700,500)), STAT_DEFAULT, L"filemng");
 	sccontrols->Add(fmg);
 
 	FSizeF sz(350,800);

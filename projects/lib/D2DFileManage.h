@@ -11,8 +11,10 @@ class BOne
 		BOne():nn_(0),text_(nullptr),bOpen_(false){};
 		BOne(LPCWSTR txt,LPCWSTR dir):nn_(0),dir_(dir),bOpen_(false){ text_ = ::SysAllocString(txt);}
 		virtual void Draw(D2DContext& cxt, D2DMatrix& mat);
+		void SetText(LPCWSTR txt){text_ = ::SysAllocString(txt);}
 
 		virtual bool OnClick(const FPointF& pt);
+		virtual UINT ChildCount(){ return 1;}
 
 		bool bOpen_;
 	protected :
@@ -26,20 +28,16 @@ class BOnes : public BOne
 {
 	public :
 		BOnes(){}
-		BOnes(LPCWSTR txt,LPCWSTR dir):BOne(txt,dir)
-		{
-			bOpen_ = false;
-
-
-			_ASSERT(text_);
-		}
+		BOnes(LPCWSTR txt,LPCWSTR dir):BOne(txt,dir){}
 		virtual void Draw(D2DContext& cxt, D2DMatrix& mat) override;
-		void SetText(LPCWSTR txt)
-		{
-			text_ = ::SysAllocString(txt);
-		}
+		
 		virtual bool OnClick(const FPointF& pt) override;
+
+		float Height() const{ return height_;}
+		virtual UINT ChildCount();
+
 		std::vector<std::shared_ptr<BOne>> ar_;
+		float height_;
 	protected:
 		
 
