@@ -15,10 +15,12 @@ class BOne
 
 		virtual bool OnClick(const FPointF& pt);
 		virtual UINT ChildCount(){ return 1;}
+		virtual bool operator < (BOne& a );
 
 		bool bOpen_;
-	protected :
 		BSTR text_;
+	protected :
+		
 		WORD nn_;
 		D2DMat mat_;
 		std::wstring dir_;
@@ -35,6 +37,7 @@ class BOnes : public BOne
 
 		float Height() const{ return height_;}
 		virtual UINT ChildCount();
+		virtual bool operator < (BOne& a );
 
 		std::vector<std::shared_ptr<BOne>> ar_;
 		float height_;

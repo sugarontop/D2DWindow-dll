@@ -210,6 +210,16 @@ bool BOne::OnClick(const FPointF& ptdev)
 	return false;
 }
 
+bool BOne::operator < (BOne& a )
+{
+	if (dynamic_cast<BOnes*>( &a ))
+	{
+		return false;
+	}
+
+	return text_ < a.text_;
+}
+
 static std::wstring XD(const std::wstring& dir)
 {
 	if (dir[dir.length()-1] == L'\\' )
@@ -218,7 +228,7 @@ static std::wstring XD(const std::wstring& dir)
 	return dir+L'\\';
 }
 
-
+#include <algorithm>
 bool BOnes::OnClick(const FPointF& ptdev)
 {
 	bool bl = BOne::OnClick(ptdev);
@@ -267,6 +277,20 @@ bool BOnes::OnClick(const FPointF& ptdev)
 
 			ListDirectoryContents(dir.c_str(), L"*.*", fn );
 
+
+			auto sort = [](std::shared_ptr<BOne>& a, std::shared_ptr<BOne>& b)->bool
+			{
+				
+				return a < b;
+
+			};
+
+			std::sort(ar_.begin(),ar_.end(), sort );
+
+		}
+		else if ( !bOpen_ )
+		{
+			ar_.clear();
 		}
 	}
 
@@ -283,4 +307,13 @@ UINT BOnes::ChildCount()
 		return cnt;
 	}
 	return 1;
+}
+bool BOnes::operator < (BOne& a )
+{
+	if (dynamic_cast<BOnes*>( &a ))
+	{
+		return text_ < a.text_;
+	}
+
+	return false;
 }
