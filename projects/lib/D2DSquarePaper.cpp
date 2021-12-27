@@ -190,6 +190,8 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	rc_ = rc;
 	scale_ = 1.0f;
 
+
+
 	{
 		FRectF rc0(70,0,FSizeF(200,20));
 		auto t1 = std::make_shared<D2DStatic>(); 
@@ -236,16 +238,19 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		this->Add(ls);
 	}
 
-	{
-		auto btn = std::make_shared<D2DButton>();
-		btn->CreateControl(parent,this, FRectF(300,20,FSizeF(100,25)), STAT_DEFAULT,L"DialogBox",3);
-		this->Add(btn);
+		
 
-		btn = std::make_shared<D2DButton>();
-		btn->CreateControl(parent,this, FRectF(450,20,FSizeF(100,25)), STAT_DEFAULT,L"1000 button", 1000);
-		this->Add(btn);
 
-	}
+	//{
+	//	auto btn = std::make_shared<D2DButton>();
+	//	btn->CreateControl(parent,this, FRectF(300,20,FSizeF(100,25)), STAT_DEFAULT,L"DialogBox",3);
+	//	this->Add(btn);
+
+	//	btn = std::make_shared<D2DButton>();
+	//	btn->CreateControl(parent,this, FRectF(450,20,FSizeF(100,25)), STAT_DEFAULT,L"1000 button", 1000);
+	//	this->Add(btn);
+
+	//}
 
 
 }

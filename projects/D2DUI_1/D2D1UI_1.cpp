@@ -796,3 +796,26 @@ DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT
 	return p;
 
 }
+DLLEXPORT bool D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
+{
+	ComPTR<IWICImagingFactory> d2dWICFactory;
+	ComPTR<IWICBitmapDecoder> d2dDecoder;
+	ComPTR<IWICFormatConverter> d2dConverter;
+	ComPTR<IWICBitmapFrameDecode> d2dBmpSrc;
+
+	auto hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, 
+		__uuidof(IWICImagingFactory), (void**)(&d2dWICFactory));
+	
+	if (hr != S_OK) return false;
+	hr = d2dWICFactory->CreateDecoderFromStream(bmpstream, 0, WICDecodeMetadataCacheOnLoad, &d2dDecoder);
+	if (hr != S_OK) return false;
+	hr = d2dWICFactory->CreateFormatConverter(&d2dConverter);
+	if (hr != S_OK) return false;
+	hr = d2dDecoder->GetFrame(0, &d2dBmpSrc);
+	if (hr != S_OK) return false;
+	hr = d2dConverter->Initialize(d2dBmpSrc, GUID_WICPixelFormat32bppPBGRA,	WICBitmapDitherTypeNone, NULL, 0.f, WICBitmapPaletteTypeMedianCut);
+	if (hr != S_OK) return false;
+	hr = target->CreateBitmapFromWicBitmap(d2dConverter, NULL, bmp);
+
+	return (hr == S_OK);
+}

@@ -118,13 +118,13 @@ void CreateControl(HWND hWnd)
 	//auto p1 = center->GetMainControls();
 
 
-	auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
-	sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)hd.p, FRectF(700,100,FSizeF(500,600)), STAT_DEFAULT, L"filemng_sc");
-	((D2DControls*)hd.p)->Add(sccontrols);
+	//auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
+	//sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)hd.p, FRectF(700,100,FSizeF(500,600)), STAT_DEFAULT, L"filemng_sc");
+	//((D2DControls*)hd.p)->Add(sccontrols);
 
-	auto fmg = std::make_shared<D2DFileManage>();
-	fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(700,500)), STAT_DEFAULT, L"filemng");
-	sccontrols->Add(fmg);
+	//auto fmg = std::make_shared<D2DFileManage>();
+	//fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(700,500)), STAT_DEFAULT, L"filemng");
+	//sccontrols->Add(fmg);
 
 
 

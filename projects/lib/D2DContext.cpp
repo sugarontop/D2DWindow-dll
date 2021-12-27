@@ -225,6 +225,12 @@ void D2DContext::DText(const D2D_POINT_2F& pt, LPCWSTR str, ColorF clr)
 		target_->DrawText(str,(UINT32)wcslen(str),this->textformat_, rc, br );
 
 }
+void D2DContext::DText(const D2D_POINT_2F& pt, const std::wstring& str)
+{
+	FRectF rc( pt, FSizeF(1000,1000));	
+	target_->DrawText(str.c_str(),(UINT32)str.length(),this->textformat_, rc, black_ );
+
+}
 
 void D2DContextEx::DoRedraw(HWND hwnd)
 {

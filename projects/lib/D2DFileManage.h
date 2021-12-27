@@ -10,7 +10,7 @@ class BOne
 	public :
 		BOne():nn_(0),text_(nullptr),bOpen_(false){};
 		BOne(LPCWSTR txt,LPCWSTR dir):nn_(0),dir_(dir),bOpen_(false){ text_ = ::SysAllocString(txt);}
-		virtual void Draw(D2DContext& cxt, D2DMatrix& mat);
+		virtual void Draw(D2DContext& cxt, D2DMatrix& mat, ID2D1Bitmap** img);
 		void SetText(LPCWSTR txt){text_ = ::SysAllocString(txt);}
 
 		virtual bool OnClick(const FPointF& pt);
@@ -31,7 +31,7 @@ class BOnes : public BOne
 	public :
 		BOnes(){}
 		BOnes(LPCWSTR txt,LPCWSTR dir):BOne(txt,dir){}
-		virtual void Draw(D2DContext& cxt, D2DMatrix& mat) override;
+		virtual void Draw(D2DContext& cxt, D2DMatrix& mat, ID2D1Bitmap** img) override;
 		
 		virtual bool OnClick(const FPointF& pt) override;
 
@@ -54,6 +54,8 @@ class D2DFileManage : public D2DControls
 public :
 	D2DFileManage(){};	
 
+	enum bmp { folder=0, file=1 };
+
 	virtual void Draw(D2DContext& cxt) override;
 	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
@@ -63,6 +65,7 @@ public :
 	
 protected :
 	BOnes root_;
+	ComPTR<ID2D1Bitmap> bmp_[2];
 	
 };
 

@@ -175,7 +175,17 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 		}
 		break;
-		
+		case WM_D2D_SET_TEXT:
+		{
+			UINT idx = (UINT)wParam;
+
+			if ( idx < controls_.size())
+				controls_[idx]->SetName((LPCWSTR)lParam);
+
+			r = 1;
+
+		};
+		break;
 
 	}
 

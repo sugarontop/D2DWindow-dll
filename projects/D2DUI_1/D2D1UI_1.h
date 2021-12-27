@@ -88,14 +88,14 @@ DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r);
 
 
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style=0);
+DLLEXPORT bool D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
-
-// /////////////////////////////////////////////////////////////
-DLLEXPORT HANDLE DACreateList();
-DLLEXPORT bool  DAAddList(HANDLE h, void* p);
-DLLEXPORT UINT  DAListCount(HANDLE h);
-DLLEXPORT void* DAGet(HANDLE h,UINT idx);
-DLLEXPORT void  DADestroyList(HANDLE h);
+//// /////////////////////////////////////////////////////////////
+//DLLEXPORT HANDLE DACreateList();
+//DLLEXPORT bool  DAAddList(HANDLE h, void* p);
+//DLLEXPORT UINT  DAListCount(HANDLE h);
+//DLLEXPORT void* DAGet(HANDLE h,UINT idx);
+//DLLEXPORT void  DADestroyList(HANDLE h);
 
 
 

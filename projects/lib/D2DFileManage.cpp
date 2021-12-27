@@ -1,14 +1,19 @@
 #include "pch.h"
 #include "D2DFileManage.h"
+#include "FilePackTool.h"
+//#include "D2DImageControl.h"
+#include <algorithm>
+
 
 using namespace V6;
+using namespace FILEPACK;
 
 #define  APP (D2DApp::GetInstance())
 #define ROWHEIGHT 20.0f
 
 typedef std::function<void (LPCWSTR dir, WIN32_FIND_DATA* findData)> FindFunction;
 void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& func );
-
+static void _Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
 #define BFLG(a,bit)	((a&bit)==bit)
 
@@ -20,7 +25,9 @@ void D2DFileManage::Draw(D2DContext& cxt)
 
 	//cxt.DFillRect(rc_.ZeroRect(), ColorF::LightGray);
 
-	root_.Draw(cxt, mat);
+	ID2D1Bitmap* x[2] = {bmp_[0],bmp_[1]};
+
+	root_.Draw(cxt, mat, x );
 	
 	mat.PopTransform();
 }
@@ -96,6 +103,32 @@ void D2DFileManage::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	make_root();
 	root_.SetText(L"c:\\");
 	root_.bOpen_ = true;
+
+
+	ComPTR<IStream> sm;
+	if ( 1 == parent_window_->SendMessage(WM_D2D_GET_RESOURCE_BINARY, 0, (LPARAM)&sm))
+	{
+		std::vector<Item> ar;
+		ListContents(sm, ar);
+
+		for(auto& it : ar )
+		{
+			if ( it.fnm == L"folder.png" )
+			{
+				ComPTR<IStream> sm1;
+				if (DeSerialize( sm, it, &sm1 ))
+					_Stream2Bitmap(sm1,*(parent->GetContext()), &(bmp_[bmp::folder]));
+			}
+			else if ( it.fnm == L"file.png" )
+			{
+				ComPTR<IStream> sm1;
+				if (DeSerialize( sm, it, &sm1 ))
+					_Stream2Bitmap(sm1,*(parent->GetContext()), &(bmp_[bmp::file]));
+			}
+
+		}
+
+	}
 }
 std::wstring D2DFileManage::GetTreeTyp(USHORT* typ)
 {
@@ -171,20 +204,24 @@ void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& fun
 
 //////////////////////////////////////////////////////////////////
 
-void BOne::Draw(D2DContext& cxt,D2DMatrix& mat)
+void BOne::Draw(D2DContext& cxt,D2DMatrix& mat,ID2D1Bitmap** img)
 {
 	mat_ = mat.Copy();
 	(*cxt)->SetTransform(mat_);
 
-	cxt.DText(FPointF(), text_,D2RGB(0,0,0));
+	(*cxt)->DrawBitmap(img[1]);
+	cxt.DText(FPointF(15,0), text_,D2RGB(0,0,0));
 	mat.Offset(0,ROWHEIGHT);
 }
-void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat)
+void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat, ID2D1Bitmap** img)
 {
 	mat_ = mat.Copy();
 	(*cxt)->SetTransform(mat_);
 
-	cxt.DText(FPointF(), L"->", D2RGB(0,0,0));
+	//cxt.DText(FPointF(), L"->", D2RGB(0,0,0));
+
+	(*cxt)->DrawBitmap(img[0]);
+
 	cxt.DText(FPointF(25,0), text_, D2RGB(0,0,0));
 	mat.Offset(0,ROWHEIGHT);
 
@@ -194,7 +231,7 @@ void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat)
 		mat.Offset(30,0);
 		for(auto& it : ar_)
 		{
-			it->Draw(cxt,mat);			
+			it->Draw(cxt,mat,img);			
 		}
 		mat._31=x;
 	}
@@ -228,7 +265,6 @@ static std::wstring XD(const std::wstring& dir)
 	return dir+L'\\';
 }
 
-#include <algorithm>
 bool BOnes::OnClick(const FPointF& ptdev)
 {
 	bool bl = BOne::OnClick(ptdev);
@@ -316,4 +352,29 @@ bool BOnes::operator < (BOne& a )
 	}
 
 	return false;
+}
+
+static void _Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
+{
+	ComPTR<IWICImagingFactory> d2dWICFactory;
+	ComPTR<IWICBitmapDecoder> d2dDecoder;
+	ComPTR<IWICFormatConverter> d2dConverter;
+	ComPTR<IWICBitmapFrameDecode> d2dBmpSrc;
+
+	auto hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, 
+		__uuidof(IWICImagingFactory), (void**)(&d2dWICFactory));
+	
+	_ASSERT(hr == S_OK);
+	hr = d2dWICFactory->CreateDecoderFromStream(sm, 0, WICDecodeMetadataCacheOnLoad, &d2dDecoder);
+	_ASSERT(hr == S_OK);
+	hr = d2dWICFactory->CreateFormatConverter(&d2dConverter);
+	_ASSERT(hr == S_OK);
+	hr = d2dDecoder->GetFrame(0, &d2dBmpSrc);
+	_ASSERT(hr == S_OK);
+	hr = d2dConverter->Initialize(d2dBmpSrc, GUID_WICPixelFormat32bppPBGRA,
+		WICBitmapDitherTypeNone, NULL, 0.f, WICBitmapPaletteTypeMedianCut);
+	_ASSERT(hr == S_OK);
+	hr = target->CreateBitmapFromWicBitmap(d2dConverter, NULL, bmp);
+
+	_ASSERT(hr == S_OK);
 }

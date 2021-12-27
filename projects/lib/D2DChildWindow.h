@@ -20,12 +20,26 @@ class MinimumWindow
 		D2DMat mat_;
 };
 
+class XColorF
+{
+	public :
+		XColorF():clr(ColorF::White){}
+
+		XColorF& operator=(ColorF c){ clr=c; return *this; }
+		operator ColorF() { return clr;}
+
+	private:
+		ColorF clr;
+};
+
 
 class D2DChildWidow : public D2DControls
 {
 	friend class MinimumWindow;
 public :
 	D2DChildWidow(){};	
+
+	enum CLR { TITLEBAR=0, BACKCOLOR=1 };
 
 	virtual void Draw(D2DContext& cxt) override;
 	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
@@ -43,6 +57,8 @@ protected :
 	int mode_;
 	USHORT title_bar_mode_, window_mode_;
 	std::shared_ptr<MinimumWindow> mini_window_;
+	std::wstring title_;
+	XColorF colors_[2];
 	
 };
 

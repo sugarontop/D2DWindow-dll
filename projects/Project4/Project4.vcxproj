@@ -165,7 +165,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ResourceBin.cpp" />
-    <ClCompile Include="s1.cpp" />
     <ClCompile Include="tab3.cpp" />
     <ClCompile Include="WindowsProjectD2D.cpp" />
     <ClCompile Include="yahoo.cpp" />

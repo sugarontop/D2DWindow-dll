@@ -367,6 +367,15 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 			}
 		}
 		break;
+		case WM_D2D_SET_TEXT:
+		{
+			LPCWSTR str = (LPCWSTR)lp;
+
+			this->SetText(str,wcslen(str),0);
+
+			bl = false; ret=1; 
+		}
+		break;
 		case WM_SETFOCUS:
 		{
 			if (APP.IsCapture(this))

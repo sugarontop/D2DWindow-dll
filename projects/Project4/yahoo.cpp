@@ -17,6 +17,13 @@ using namespace V6;
 
 #define YAHOO
 
+std::wstring wstr(int v)
+{
+	WCHAR cb[256];
+	swprintf_s(cb,256,L"%d", v);
+	return cb;
+}
+
 yahoo_finance::~yahoo_finance()
 {
 	DeleteInternetInfo(info_);
@@ -36,6 +43,7 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	auto ctrlsEx = std::make_shared<D2DChildWidow>();
 	ctrlsEx->CreateControl(parent_window_,pacontrol,FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_childwin", 193);
 	pacontrol->Add(ctrlsEx);
+	ctrlsEx->SendMesage(WM_D2D_SET_TEXT, 0, (LPARAM)(LPCWSTR)L"chart");
 
 	auto pk1 = ctrlsEx.get();
 
@@ -54,6 +62,7 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 		auto tab1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
 		FSizeF sz = rc_.Size();
 		tab1->SetRect(FRectF(0,0,sz));
+		tabs->SendMesage(WM_D2D_SET_TEXT,0, (LPARAM)L"yahoo");
 
 
 		auto ctrls = std::make_shared<D2DControls_with_Scrollbar>();
@@ -418,18 +427,13 @@ void yahoo_chart::Draw(D2DContext& cxt)
 
 	mat_ = mat.PushTransform();
 
-	//cxt.DFillRect(rc_,theGray1);
 
 	mat.Offset(rc_);
 
-
-	WCHAR cb[256];
-	//swprintf_s(cb,L" prc = (%f, %f, %f, %f)", prc_->left,prc_->top, prc_->right, prc_->bottom); 
-	//cxt.DText(FPointF(0,50), cb, theBlack);
-
+//	WCHAR cb[256];
 	auto rcparent = parent_control_->GetRect();
-	swprintf_s(cb,L" pt= (%f, %f), rc_=(%f, %f, %f, %f)", mouse_pt_.x, mouse_pt_.y, rc_.left, rc_.top, rc_.right, rc_.bottom ); //.left,rcparent.top, rcparent.right, rcparent.bottom); 
-	cxt.DText(FPointF(0,80), cb, theBlack);
+//	swprintf_s(cb,L" pt= (%f, %f), rc_=(%f, %f, %f, %f)", mouse_pt_.x, mouse_pt_.y, rc_.left, rc_.top, rc_.right, rc_.bottom ); //.left,rcparent.top, rcparent.right, rcparent.bottom); 
+//	cxt.DText(FPointF(0,80), cb, theBlack);
 
 
 	auto info = finance_->info_;
@@ -515,6 +519,14 @@ void yahoo_chart::Draw(D2DContext& cxt)
 
 				x += 4;
 			}
+		}
+		else
+		{
+			WCHAR cb[256];
+
+			std::wstring str = L"internet err:" + wstr(info->result);
+			cxt.DText(FPointF(0,0), str );
+
 		}
 	}
 	D2DControls::Draw(cxt);
@@ -646,7 +658,7 @@ void yahoo_chart::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 
 	rc_ = rc;
 
-		// input
+	// input
 	{
 		UIHandleWin hwin={};
 		hwin.p = parent_window_;
@@ -655,10 +667,13 @@ void yahoo_chart::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 
 		auto txt = D2DCreateTextbox(hwin, hs, FRectF(10,20,FSizeF(100,20)), false, STAT_DEFAULT, L"input cd", 3001 );
 
+		D2DSendMessage(txt,WM_D2D_SET_TEXT,0,(LPARAM)L"SPY"); // SPY:SP500 ETF, QQQ:NASDAQ 100 ETF
+
 		auto btn = D2DCreateButton(hwin, hs, FRectF(120,20,FSizeF(100,20)), STAT_DEFAULT, L"seek", 3000 );
 
 		txt_cd_ = txt;
 	}
+
 }
 
 #define _SECOND ((__int64) 10000000)

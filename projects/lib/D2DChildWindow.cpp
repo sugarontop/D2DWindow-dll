@@ -14,6 +14,10 @@ void D2DChildWidow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	mode_ = 0;
 	title_bar_mode_ = 0;
 	window_mode_ = 0;
+	title_ = L"no title";
+
+	colors_[0] = D2RGB(170,170,170);
+	colors_[1] = D2RGB(200,200,200);
 }
 
 void D2DChildWidow::Draw(D2DContext& cxt)
@@ -26,7 +30,7 @@ void D2DChildWidow::Draw(D2DContext& cxt)
 		mini_window_->Draw(cxt);
 	else
 	{
-		cxt.DFillRect(rc_, ColorF::Pink);
+		cxt.DFillRect(rc_, colors_[CLR::BACKCOLOR]);
 
 		mat.Offset(rc_.LeftTop());
 	
@@ -112,6 +116,13 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 
 			
+		}
+		break;
+		case WM_D2D_SET_TEXT:
+		{
+			title_ = (LPCWSTR)lParam;
+
+			h = 1;
 		}
 		break;
 
@@ -279,13 +290,14 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 	//(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 
 
+	rcbar.Offset(2,0);
 	(*cxt)->DrawText(title, wcslen(title), cxt.textformat_, rcbar, cxt.black_);
 
 }
 
 void D2DChildWidow::DrawTitlebar(D2DContext& cxt)
 {
-	DrawTitlebar2(cxt, FRectF(0,0,rc_.Width(),TITLEBAR_HEIGHT),ColorF::LightGreen, L"nothing", title_bar_mode_ );
+	DrawTitlebar2(cxt, FRectF(0,0,rc_.Width(),TITLEBAR_HEIGHT),colors_[CLR::TITLEBAR], title_.c_str(), title_bar_mode_ );
 	
 
 }
@@ -302,7 +314,7 @@ void MinimumWindow::Draw(D2DContext& cxt)
 	D2DMatrix mat(*cxt);
 	mat_ = mat.PushTransform();
 	
-	cxt.DFillRect(rc_, ColorF::Pink);
+	cxt.DFillRect(rc_, ColorF::White); //colors_[CLR::BACKCOLOR]);
 
 	mat.PopTransform();
 
