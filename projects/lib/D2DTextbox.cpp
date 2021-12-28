@@ -490,11 +490,12 @@ int D2DTextbox::CurrentPos() const
 bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight)
 {
 	ComPTR<IDWriteTextFormat> textformat;
-	auto hr = parent_window_->GetContext().tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,fontheight, L"ja-jp", & textformat);
+	auto hr = parent_window_->GetContext().tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		fontheight, L"ja-jp", & textformat);
 
-	// NOT IMPLEMENT
+	// not yet IMPLEMENT
 	
-	return (hr==0);
+	return false; // (hr==0);
 }
 
 void D2DTextbox::SetText(LPCWSTR str, int str_len, int insert_pos)

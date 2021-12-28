@@ -314,7 +314,7 @@ void MinimumWindow::Draw(D2DContext& cxt)
 	D2DMatrix mat(*cxt);
 	mat_ = mat.PushTransform();
 	
-	cxt.DFillRect(rc_, ColorF::White); //colors_[CLR::BACKCOLOR]);
+	cxt.DFillRect(rc_, ColorF::LightGray); 
 
 	mat.PopTransform();
 

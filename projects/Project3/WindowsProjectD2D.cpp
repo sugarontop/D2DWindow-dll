@@ -6,9 +6,12 @@
 #include "D2DContext.h"
 
 ////////////////////////////////////
-#include "AppBase.h"
+#include "D2DApp.h"
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
+#include "D2DControls_with_Scrollbar.h"
+#include "D2DSquarePaper.h"
+
 
 using namespace V6;
 
@@ -155,9 +158,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 
 
-#include "D2DControls_with_Scrollbar.h"
-#include "D2DSquarePaper.h"
-
 void CreateControl(HWND hWnd);
 
 static float scale = 1.0f;
@@ -185,7 +185,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             CreateControl(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
     
@@ -193,7 +192,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
 			FRectF rc(0,0,(float)LOWORD(lParam), (float)HIWORD(lParam));          
 			D2DForceWndProc(hwin, app, message, 0, (LPARAM)&rc);
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
         case WM_PAINT:
@@ -228,6 +226,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                 }
                 EndPaint(hWnd, &ps);
+				return 0;
             }
             break;
         case WM_KEYDOWN:
@@ -290,6 +289,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {        
             D2DDestroyWindow(hwin);
             PostQuitMessage(0);
+			return 0;
         }
          break;
 
@@ -307,11 +307,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		 }
 		 break;
-
-        default:
-       
-            return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
+	r = ::DefWindowProc(hWnd, message, wParam, lParam);
 
     if ( app.bRedraw )
         InvalidateRect(hWnd, NULL, FALSE);

@@ -10,6 +10,8 @@ class BOne
 	public :
 		BOne():nn_(0),text_(nullptr),bOpen_(false){};
 		BOne(LPCWSTR txt,LPCWSTR dir):nn_(0),dir_(dir),bOpen_(false){ text_ = ::SysAllocString(txt);}
+		virtual ~BOne();
+
 		virtual void Draw(D2DContext& cxt, D2DMatrix& mat, ID2D1Bitmap** img);
 		void SetText(LPCWSTR txt){text_ = ::SysAllocString(txt);}
 
@@ -19,18 +21,22 @@ class BOne
 
 		bool bOpen_;
 		BSTR text_;
+		std::wstring dir_;
+
+		static std::function<int(BOne*)> click_;
+
 	protected :
 		
 		WORD nn_;
 		D2DMat mat_;
-		std::wstring dir_;
+		
 		
 };
 class BOnes : public BOne
 {
 	public :
 		BOnes(){}
-		BOnes(LPCWSTR txt,LPCWSTR dir):BOne(txt,dir){}
+		BOnes(LPCWSTR dir,LPCWSTR parent_dir):BOne(dir,parent_dir){}
 		virtual void Draw(D2DContext& cxt, D2DMatrix& mat, ID2D1Bitmap** img) override;
 		
 		virtual bool OnClick(const FPointF& pt) override;
@@ -62,6 +68,9 @@ public :
 	virtual std::wstring GetTreeTyp(USHORT* typ) override;
 	
 	void make_root();
+
+
+	static std::function<void(std::wstring)> OnClick_;
 	
 protected :
 	BOnes root_;

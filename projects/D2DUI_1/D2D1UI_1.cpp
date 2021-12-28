@@ -504,7 +504,7 @@ DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
 	if ( h.typ == TYP_TEXTBOX )
 	{
 		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
-		//tx->SetFont(fontnm, height );
+		tx->SetFont(fontnm, height );
 
 	}
 }

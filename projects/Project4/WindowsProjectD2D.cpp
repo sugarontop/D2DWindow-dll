@@ -6,9 +6,10 @@
 #include "D2DContext.h"
 
 ////////////////////////////////////
-#include "AppBase.h"
+#include "D2DApp.h"
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
+#include "D2DSquarePaper.h"
 
 using namespace V6;
 
@@ -167,7 +168,7 @@ void CreateControl(HWND hWnd)
     auto root = D2DGetRootControls(hwin);
 }
 
-#include "D2DSquarePaper.h"
+
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -200,8 +201,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				return -1;
 			}
-
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
     
@@ -209,8 +208,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {			
 			FRectF rc(0,0,(float)LOWORD(lParam), (float)HIWORD(lParam));          
 			D2DForceWndProc(hwin, app, message, 0, (LPARAM)&rc);
-
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
         case WM_PAINT:
@@ -245,6 +242,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                 }
                 EndPaint(hWnd, &ps);
+				return 0;
             }
             break;
         case WM_KEYDOWN:
@@ -275,11 +273,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_KILLFOCUS:
 		case WM_SETFOCUS:
         case WM_CHAR:
-        {
-            r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
-			DefWindowProc(hWnd, message, wParam, lParam);
-        }
-        break;
         case WM_KEYUP:
         case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
@@ -301,6 +294,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {        
             D2DDestroyWindow(hwin);
             PostQuitMessage(0);
+			return 0;
         }
          break;
 
@@ -341,8 +335,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				 case IDM_EXIT:
 					DestroyWindow(hWnd);
 				 break;
-				 default:
-				 return DefWindowProc(hWnd, message, wParam, lParam);
 			 }
 		 }
 		 break;
@@ -351,12 +343,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			D2DDefWndProc(hwin ,app, message, wParam, lParam);
 
 		 }
-		 break;
-
-        default:
-       
-            return DefWindowProc(hWnd, message, wParam, lParam);
+		 break;  
     }
+
+	r = ::DefWindowProc(hWnd, message, wParam, lParam);
 
     if ( app.bRedraw )
         InvalidateRect(hWnd, NULL, FALSE);

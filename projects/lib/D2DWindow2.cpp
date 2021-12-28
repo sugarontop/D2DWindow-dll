@@ -116,6 +116,8 @@ LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			auto ppsm = (IStream**)lParam;
 			*ppsm = sm2; 
 
+			sm2.AddRef();
+
 			hr = 1;
 		}
 		break;

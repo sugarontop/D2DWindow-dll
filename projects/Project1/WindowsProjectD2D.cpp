@@ -4,17 +4,21 @@
 #include "pch.h"
 #include "WindowsProjectD2D.h"
 #include "D2DContext.h"
-
-////////////////////////////////////
-#include "AppBase.h"
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
+#include "D2DApp.h"
+
 
 using namespace V6;
 
 #pragma comment(lib,"D2DUI_1.lib") // $(OutDir)
 
 UIHandleWin hwin;
+
+static float scale = 1.0f;
+
+void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool copy);
+
 
 //////////////////////////////////////
 
@@ -182,118 +186,103 @@ void CreateControl(HWND hWnd)
     auto root = D2DGetRootControls(hwin);
 
     FRectF rctextbox(10, 40, FSizeF(400, 700));
-    UIHandle htextbox = D2DCreateTextbox(hwin, root, rctextbox, true, STAT_VISIBLE | STAT_ENABLE, L"textbox1");
-    D2DSetText(htextbox, L"Hello world");
+    UIHandle htextbox = D2DCreateTextbox(hwin, root, rctextbox, true, STAT_DEFAULT, L"textbox1");
+    D2DSetText(htextbox, L"Hello world\nHello world");
+
+	D2DSetFont(htextbox, L"ＭＳ ゴシック", 10.0f);
 
 
-//    FRectF rccmb(500, 800, FSizeF(100, 26));
-//    UIHandle cb1 = D2DCreateDropdownListbox(hwin, root, rccmb,  STAT_VISIBLE | STAT_ENABLE, L"comb1", COMBOBOX_ID_1);
-//    D2DAddItem(cb1, 0, L"scale1.0");
-//    D2DAddItem(cb1, 1, L"scale1.2");
-//    D2DAddItem(cb1, 2,L"scale0.8");
+    //struct WhiteBoard
+    //{     
+    //    DelegateDrawFunc f1;
+    //    DelegateProcFunc f2;
+    //    int typ;
+    //    D2DMat mat;
+    //};
+    //struct CaptureObj1
+    //{
+    //    FRectF rc;
+    //    UIHandle cc1;
+    //    UIHandle cc2;
+    //    int active_idx;
+    //    D2DMat mat;
+    //    WhiteBoard wboard;
+    //};
 
+    //static CaptureObj1 obj;
+    //obj.active_idx = 0;
+    //obj.wboard.typ = 0;
+    //obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt) {
+    // 
+    //    CaptureObj1* obj = (CaptureObj1*)captureobj;
+    //    WhiteBoard& wb = obj->wboard;
 
+    //        D2DMatrix mat(*cxt);
+    //        mat.PushTransform();
 
-    struct WhiteBoard
-    {     
-        DelegateDrawFunc f1;
-        DelegateProcFunc f2;
-        int typ;
-        D2DMat mat;
-    };
-    struct CaptureObj1
-    {
-        FRectF rc;
-        UIHandle cc1;
-        UIHandle cc2;
-        int active_idx;
-        D2DMat mat;
-        WhiteBoard wboard;
-    };
+    //        auto rc = obj->rc;
+    //        wb.mat = mat.Offset(rc);
+    //        obj->mat = wb.mat;
+    //        {
+    //            cxt.DDrawRect(rc.ZeroRect(), D2RGB(0,0,0), D2RGB(255, 255, 255));
 
-    static CaptureObj1 obj;
-    obj.active_idx = 0;
-    obj.wboard.typ = 0;
-    obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt) {
-     
-        CaptureObj1* obj = (CaptureObj1*)captureobj;
-        WhiteBoard& wb = obj->wboard;
+    //            // draw top buttons
 
-            D2DMatrix mat(*cxt);
-            mat.PushTransform();
+    //            FSizeF tabbtn(100,26 );
+    //            LPCWSTR str[] = { L"tab1", L"tab2" };
 
-            auto rc = obj->rc;
-            wb.mat = mat.Offset(rc);
-            obj->mat = wb.mat;
-            {
-                cxt.DDrawRect(rc.ZeroRect(), D2RGB(0,0,0), D2RGB(255, 255, 255));
+    //            DrawTabButton( cxt, tabbtn, str, 2, obj->active_idx );
 
-                // draw top buttons
+    //        }
+    //        mat.PopTransform();
+    //};
+    //obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 
-                FSizeF tabbtn(100,26 );
-                LPCWSTR str[] = { L"tab1", L"tab2" };
+    //    CaptureObj1* obj = (CaptureObj1*)captureobj;
+    //    LRESULT r = 0;
+    //    switch( message )
+    //    {
+    //        case WM_LBUTTONDOWN:
+    //        {
+    //            MouseParam* mp = (MouseParam*)lParam;
+    //            auto pt = obj->mat.DPtoLP(mp->pt);
 
-                DrawTabButton( cxt, tabbtn, str, 2, obj->active_idx );
+    //            FRectF rcs[] = { FRectF(0,0,100,26), FRectF(100,0,200,26) };
+    //            if ( rcs[0].PtInRect( pt ) )
+    //            {
+    //                obj->active_idx = 0;
+    //                D2DSetStat(obj->cc2, 0);
+    //                D2DSetStat(obj->cc1, STAT_VISIBLE | STAT_ENABLE);
 
-            }
-            mat.PopTransform();
-    };
-    obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
+    //                r = 1;
+    //            }
+    //            else if ( rcs[1].PtInRect( pt ) )
+    //            {
+    //                obj->active_idx = 1;
+    //                D2DSetStat(obj->cc1, 0);
+    //                D2DSetStat(obj->cc2, STAT_VISIBLE | STAT_ENABLE);
+    //                r = 1;
+    //            }
+    //        }
+    //        break;
+    //    }        
+    //    return r;
+    //};
 
-        CaptureObj1* obj = (CaptureObj1*)captureobj;
-        LRESULT r = 0;
-        switch( message )
-        {
-            case WM_LBUTTONDOWN:
-            {
-                MouseParam* mp = (MouseParam*)lParam;
-                auto pt = obj->mat.DPtoLP(mp->pt);
+    //FRectF rc(500, 40, FSizeF(500, 700));
+    //auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
 
-                FRectF rcs[] = { FRectF(0,0,100,26), FRectF(100,0,200,26) };
-                if ( rcs[0].PtInRect( pt ) )
-                {
-                    obj->active_idx = 0;
-                    D2DSetStat(obj->cc2, 0);
-                    D2DSetStat(obj->cc1, STAT_VISIBLE | STAT_ENABLE);
+    //
+    //obj.rc = rc;
 
-                    r = 1;
-                }
-                else if ( rcs[1].PtInRect( pt ) )
-                {
-                    obj->active_idx = 1;
-                    D2DSetStat(obj->cc1, 0);
-                    D2DSetStat(obj->cc2, STAT_VISIBLE | STAT_ENABLE);
-                    r = 1;
-                }
-            }
-            break;
-        }        
-        return r;
-    };
+    //obj.cc1 =  D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"cs1", 112);
+    //obj.cc2 = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"cs2", 113);
 
-    FRectF rc(500, 40, FSizeF(500, 700));
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
-
-    
-    obj.rc = rc;
-
-    obj.cc1 =  D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"cs1", 112);
-    obj.cc2 = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"cs2", 113);
-
-    FRectF rc2(10, 40, FSizeF(400, 600));
-    UIHandle x2 = D2DCreateTextbox(hwin, obj.cc2, rc2, true, STAT_VISIBLE | STAT_ENABLE, L"textbox2");
-    D2DSetText(x2, L"Hello world1");
-
-
-    D2DSetFont(x2, L"メイリオ", 10.0f);
-
+    //FRectF rc2(10, 40, FSizeF(400, 600));
+    //UIHandle x2 = D2DCreateTextbox(hwin, obj.cc2, rc2, true, STAT_VISIBLE | STAT_ENABLE, L"textbox2");
+    //D2DSetText(x2, L"Hello world1");
 
 }
-
-
-static float scale = 1.0f;
-void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
-#include "D2DSquarePaper.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -312,51 +301,50 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			D2DInitail((INT_PTR)k );
 
             CreateControl(hWnd);
-			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
+			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0); //<--OnRestructGraphicsResources(cxt,hWnd);
         }
         break;
     
         case WM_SIZE:
         {
             D2DForceWndProc(hwin, app, message, wParam,lParam);
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
         case WM_PAINT:
         {
-                auto cxt = D2DGetDeviceContext(hwin);
+            auto cxt = D2DGetDeviceContext(hwin);
 
-                PAINTSTRUCT ps;
-                HDC hdc = BeginPaint(hWnd, &ps);
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hWnd, &ps);
+            {
+                cxt->BeginDraw();
+                D2D1_MATRIX_3X2_F mat = {0};
+
+                mat._11 = scale;
+                mat._22 = scale;
+
+                cxt->SetTransform(mat);
+                cxt->Clear(D2RGB(255,255,255));
+
+                D2DDraw(hwin, hWnd);
+
+                auto hr = cxt->EndDraw();
+
+                if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
                 {
-                   cxt->BeginDraw();
-                    D2D1_MATRIX_3X2_F mat = {0};
-
-                    mat._11 = scale;
-                    mat._22 = scale;
-
-                    cxt->SetTransform(mat);
-                    cxt->Clear(D2RGB(255,255,255));
-
-                    D2DDraw(hwin, hWnd);
-
-                    auto hr = cxt->EndDraw();
-
-                    if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
-                    {
-                        D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 0, 0);  //<--OnDiscardGraphicsResources(cxt);
-                        D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 1, 0);  // create resource
-                        D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);   //<--OnRestructGraphicsResources(cxt,hWnd);
-                    }
-                    else
-                    {
-                        D2DSwapChain(hwin, hWnd);
-                    }
+                    D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 0, 0);  //<--OnDiscardGraphicsResources(cxt);
+                    D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 1, 0);  // create Context
+                    D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);   //<--OnRestructGraphicsResources(cxt,hWnd);
                 }
-                EndPaint(hWnd, &ps);
+                else
+                {
+                    D2DSwapChain(hwin, hWnd);
+                }
             }
-            break;
+            EndPaint(hWnd, &ps);
+			return 0;
+        }
+		break;
         case WM_KEYDOWN:
         {
             bool bShift   = ((GetKeyState(VK_SHIFT)& 0x80) != 0);       
@@ -368,12 +356,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {                
                 if (wParam == 0x56 && bCtrl) // ctrl-V
                 {
-                    CopyPasteTEXT(hWnd, c, true );
+                    ClipboardCopyPasteText(hWnd, c, true );
                     r =  1;
                 }
                 else if (wParam == 0x43 && bCtrl) // ctrl-C
                 {
-                    CopyPasteTEXT(hWnd, c, false);
+                    ClipboardCopyPasteText(hWnd, c, false);
                     r = 1;
                 }
             }
@@ -387,17 +375,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_CHAR:
         {
             r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
-			DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
-        case WM_KEYUP:
+		case WM_KEYUP:
         case WM_LBUTTONDOWN:
-        case WM_LBUTTONUP:
+		case WM_LBUTTONUP:
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_MOUSEWHEEL:
+		case WM_LBUTTONDBLCLK:
         {
-            r = D2DDefWndProc(hwin, app, message, wParam,lParam);
+            r = D2DDefWndProc(hwin, app, message, wParam,lParam);			
         }
         break;
 
@@ -411,6 +399,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {        
             D2DDestroyWindow(hwin);
             PostQuitMessage(0);
+			return 0;
         }
          break;
 
@@ -439,11 +428,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		 }
 		 break;
-
-        default:
-       
-            return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
+	
+	r = ::DefWindowProc(hWnd, message, wParam, lParam);
 
     if ( app.bRedraw )
         InvalidateRect(hWnd, NULL, FALSE);
@@ -451,7 +439,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return r; 
 }
 
-void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
+void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool bPaste )
 {
     if (OpenClipboard(hWnd))
     {

@@ -5,8 +5,6 @@
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
-#define BOTTOM_BAR		25.0f
-
 
 D2DControls_with_Scrollbar::D2DControls_with_Scrollbar()
 {
@@ -19,37 +17,32 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 	D2DMatrix mat(*cxt);
 
 	mat_ = mat.PushTransform();
-#ifdef _DEBUG
-	cxt.DText(FPointF(), this->name_.c_str(), D2RGB(170,170,170));
-#endif
-		
+	
 	D2DRectFilter f(cxt, rc_);
 
 	mat.Offset(rc_);
 
 	cxt.DFillRect(rc_.ZeroRect(), ColorF::AliceBlue);
 
-
-	mat.PushTransform();	
-
+	{
+		mat.PushTransform();	
 	
-		mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
+			mat.Offset(-sch_->LogicalOffset(), -scv_->LogicalOffset());
 
-		//D2DControls::Draw(cxt);
-		InnerDraw(cxt);
+			InnerDraw(cxt);
 
-	mat.PopTransform();
+		mat.PopTransform();
 
-	mat.PushTransform();	
-		mat.Offset(vscroll_x_, 0 );
-		scv_->Draw2(cxt);
-	mat.PopTransform();
+		mat.PushTransform();	
+			mat.Offset(vscroll_x_, 0 );
+			scv_->Draw2(cxt);
+		mat.PopTransform();
 
-	mat.PushTransform();	
-		mat.Offset(hscroll_x_, rc_.Height()-BARW );
-		sch_->Draw2(cxt);
-	mat.PopTransform();
-
+		mat.PushTransform();	
+			mat.Offset(hscroll_x_, rc_.Height()-BARW );
+			sch_->Draw2(cxt);
+		mat.PopTransform();
+	}
 
 	mat.PopTransform();
 }
@@ -113,30 +106,6 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 					crc = rc_.ZeroRect();
 					this->controls_[2]->WndProc(b,message,1,(LPARAM)&crc);
 				}	
-				//else if (wParam == 2)
-				//{
-				//	FRectF& rc = *(FRectF*)(lParam);
-
-				//	
-				//	if ( wParam == 0 )
-				//		rc_.SetWH(rc);
-				//
-				//	auto crc = rc; // this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
-
-				//	vscroll_x_ = rc_.Width()-BARW;
-				//	hscroll_x_ = 0;
-
-				//	scv_->SetStat(STAT_DEFAULT);
-				//	sch_->SetStat(STAT_DEFAULT);
-
-				//	scv_->SetMaxSize( crc.Height());
-				//	sch_->SetMaxSize(crc.Width());				
-				//	sch_->SetSize(rc_.Size());
-				//	scv_->SetSize(rc_.Size());
-
-				//	crc = rc_.ZeroRect();
-				//	//this->controls_[2]->WndProc(b,message,1,(LPARAM)&crc);
-				//}
 			}
 
 			return 0;
@@ -242,7 +211,28 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 	if ( r == 0 && bl )
 		r = D2DControls::WndProc(b,message,wParam,lParam);
 
+	if (r==0)
+	{
+		// 内部で処理済みとすることで、外へイベントを渡さない。
+		switch(message)
+		{
+			case WM_MOUSEMOVE:
+			case WM_LBUTTONDOWN:			
+			case WM_LBUTTONUP:
+			case WM_RBUTTONDOWN:
+			case WM_RBUTTONUP:
+			case WM_LBUTTONDBLCLK:
+			case WM_MOUSEHWHEEL:
+			{				
+				MouseParam& pm = *(MouseParam*)lParam;
+				auto pt = mat_.DPtoLP(pm.pt);
 
+				if ( rc_.PtInRect(pt))
+					r = 1;
+			}
+			break;
+		}
+	}
 
 
 	return r;

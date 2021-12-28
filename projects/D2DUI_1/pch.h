@@ -33,6 +33,7 @@
 #include <functional>
 #include <memory>
 #include <type_traits>
+#include <algorithm>
 
 #include <msxml6.h>
 #define MSXML	L"MSXML2.DOMDocument.6.0"	// CLSID clsid; hr = CLSIDFromProgID( MSXML, &clsid );CComPtr<IXMLDOMDocument> xml;	hr = CoCreateInstance( clsid, NULL,CLSCTX_ALL,IID_IXMLDOMDocument,(void**)&xml );

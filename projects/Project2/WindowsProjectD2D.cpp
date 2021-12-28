@@ -6,9 +6,12 @@
 #include "D2DContext.h"
 
 ////////////////////////////////////
-#include "AppBase.h"
+#include "D2DApp.h"
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
+#include "D2DSquarePaper.h"
+
+
 
 using namespace V6;
 
@@ -389,29 +392,45 @@ void CreateControl1(HWND hWnd)
     
     auto root = D2DGetRootControls(hwin);
 
-    auto ch = std::make_shared<D2DChildWidow>();
-	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
-	((D2DControls*)root.p)->Add(ch);
 
+	for(int i = 0; i < 2; i++ ){
+
+		auto r = i*100;
+
+		auto ch = std::make_shared<D2DChildWidow>();
+		ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50+r,250+r,FSizeF(200,600)), STAT_DEFAULT, L"childwin" );
+		((D2DControls*)root.p)->Add(ch);
+	
+		auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
+		sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)ch.get(), FRectF(0,0,FSizeF(0,0)), STAT_DEFAULT, L"filemng_sc");
+		((D2DControls*)ch.get())->Add(sccontrols);
+
+		auto fmg = std::make_shared<D2DFileManage>();
+		fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(200,600)), STAT_DEFAULT, L"filemng");
+		sccontrols->Add(fmg);
 
 	
-	auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
-	sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)ch.get(), FRectF(0,0,FSizeF(0,0)), STAT_DEFAULT, L"filemng_sc");
-	((D2DControls*)ch.get())->Add(sccontrols);
 
-	auto fmg = std::make_shared<D2DFileManage>();
-	fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(700,500)), STAT_DEFAULT, L"filemng");
-	sccontrols->Add(fmg);
+	}
 
-	FSizeF sz(350,800);
-	//sccontrols->SendMesage(WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
+
+	auto txt = D2DCreateTextbox(hwin,root, FRectF(5,5,FSizeF(800,20)), false, STAT_DEFAULT, NONAME );
+	D2DReadOnly(txt, true);
+
+	D2DFileManage::OnClick_ = [txt](std::wstring fnm)->int
+	{
+		D2DSetText(txt, fnm.c_str());
+		return 0;
+	};
+
+
 
 }
 
 
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 
-#include "D2DSquarePaper.h"
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     AppBase app;
@@ -432,50 +451,49 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			//CreateControl0(hWnd);
 			CreateControl1(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
     
         case WM_SIZE:
         {
             D2DForceWndProc(hwin, app, message, wParam,lParam);
-            return ::DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
         case WM_PAINT:
         {
-                auto cxt = D2DGetDeviceContext(hwin);
+            auto cxt = D2DGetDeviceContext(hwin);
 
-                PAINTSTRUCT ps;
-                HDC hdc = BeginPaint(hWnd, &ps);
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hWnd, &ps);
+            {
+                cxt->BeginDraw();
+                D2D1_MATRIX_3X2_F mat = {0};
+
+                mat._11 = scale;
+                mat._22 = scale;
+
+                cxt->SetTransform(mat);
+                cxt->Clear(D2RGB(255,255,255));
+
+                D2DDraw(hwin, hWnd);
+
+                auto hr = cxt->EndDraw();
+
+                if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
                 {
-                   cxt->BeginDraw();
-                    D2D1_MATRIX_3X2_F mat = {0};
-
-                    mat._11 = scale;
-                    mat._22 = scale;
-
-                    cxt->SetTransform(mat);
-                    cxt->Clear(D2RGB(255,255,255));
-
-                    D2DDraw(hwin, hWnd);
-
-                    auto hr = cxt->EndDraw();
-
-                    if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
-                    {
-                        D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 0, 0);  //<--OnDiscardGraphicsResources(cxt);
-                        D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 1, 0);  // create resource
-                        D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);   //<--OnRestructGraphicsResources(cxt,hWnd);
-                    }
-                    else
-                    {
-                        D2DSwapChain(hwin, hWnd);
-                    }
+                    D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 0, 0);  //<--OnDiscardGraphicsResources(cxt);
+                    D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 1, 0);  // create resource
+                    D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);   //<--OnRestructGraphicsResources(cxt,hWnd);
                 }
-                EndPaint(hWnd, &ps);
+                else
+                {
+                    D2DSwapChain(hwin, hWnd);
+                }
             }
-            break;
+            EndPaint(hWnd, &ps);
+			return 0;
+        }
+        break;
         case WM_KEYDOWN:
         {
             bool bShift   = ((GetKeyState(VK_SHIFT)& 0x80) != 0);       
@@ -504,19 +522,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_KILLFOCUS:
 		case WM_SETFOCUS:
         case WM_CHAR:
-        {
-            r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
-			DefWindowProc(hWnd, message, wParam, lParam);
-        }
-        break;
-        
         case WM_LBUTTONDOWN:
-			r = D2DDefWndProc(hwin, app, message, wParam,lParam);
-		break;
         case WM_LBUTTONUP:
-			r = D2DDefWndProc(hwin, app, message, wParam,lParam);
-		break;
-		 case WM_KEYUP:
+		case WM_KEYUP:
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_MOUSEWHEEL:
@@ -536,6 +544,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {        
             D2DDestroyWindow(hwin);
             PostQuitMessage(0);
+			return 0;
         }
          break;
 
@@ -563,11 +572,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		 }
 		 break;
-
-        default:
-       
-            return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
+	r = DefWindowProc(hWnd, message, wParam, lParam);
 
     if ( app.bRedraw )
         InvalidateRect(hWnd, NULL, FALSE);

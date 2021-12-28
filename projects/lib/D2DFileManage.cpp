@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "D2DFileManage.h"
 #include "FilePackTool.h"
-//#include "D2DImageControl.h"
-#include <algorithm>
+
 
 
 using namespace V6;
@@ -15,7 +14,19 @@ typedef std::function<void (LPCWSTR dir, WIN32_FIND_DATA* findData)> FindFunctio
 void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& func );
 static void _Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
+ std::function<int(BOne*)> BOne::click_;
+ std::function<void(std::wstring)> D2DFileManage::OnClick_;
+
 #define BFLG(a,bit)	((a&bit)==bit)
+
+static std::wstring XD(const std::wstring& dir)
+{
+	if (dir[dir.length()-1] == L'\\' )
+		return dir;
+
+	return dir+L'\\';
+}
+
 
 void D2DFileManage::Draw(D2DContext& cxt)
 {
@@ -23,9 +34,7 @@ void D2DFileManage::Draw(D2DContext& cxt)
 	mat_ = mat.PushTransform();
 	mat.Offset(rc_);
 
-	//cxt.DFillRect(rc_.ZeroRect(), ColorF::LightGray);
-
-	ID2D1Bitmap* x[2] = {bmp_[0],bmp_[1]};
+	ID2D1Bitmap* x[] = {bmp_[0],bmp_[1]};
 
 	root_.Draw(cxt, mat, x );
 	
@@ -51,6 +60,7 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				UINT cnt = root_.ChildCount();
 				root_.height_ = ROWHEIGHT * cnt;
 				rc_.SetHeight(root_.height_);
+				rc_.SetWidth(600);
 
 				parent_control_->SendMesage(WM_D2D_SET_SIZE,1,0);
 
@@ -129,6 +139,19 @@ void D2DFileManage::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 		}
 
 	}
+
+
+	BOne::click_ = [this](BOne* pb)->int
+	{		
+		if ( !dynamic_cast<BOnes*>(pb) && OnClick_ )
+		{
+			auto fnm = XD(pb->dir_) + pb->text_;
+
+			OnClick_(fnm);
+		}
+
+		return 0;
+	};
 }
 std::wstring D2DFileManage::GetTreeTyp(USHORT* typ)
 {
@@ -204,6 +227,12 @@ void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& fun
 
 //////////////////////////////////////////////////////////////////
 
+
+BOne::~BOne()
+{
+	::SysFreeString(text_);
+}
+
 void BOne::Draw(D2DContext& cxt,D2DMatrix& mat,ID2D1Bitmap** img)
 {
 	mat_ = mat.Copy();
@@ -217,8 +246,6 @@ void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat, ID2D1Bitmap** img)
 {
 	mat_ = mat.Copy();
 	(*cxt)->SetTransform(mat_);
-
-	//cxt.DText(FPointF(), L"->", D2RGB(0,0,0));
 
 	(*cxt)->DrawBitmap(img[0]);
 
@@ -242,7 +269,12 @@ bool BOne::OnClick(const FPointF& ptdev)
 	auto pt = mat_.DPtoLP(ptdev);
 		
 	if ( 0 <= pt.y && pt.y <= ROWHEIGHT && pt.x < 100 )
+	{
+		if ( click_ )
+			click_(this);
+
 		return true;
+	}
 
 	return false;
 }
@@ -257,13 +289,6 @@ bool BOne::operator < (BOne& a )
 	return text_ < a.text_;
 }
 
-static std::wstring XD(const std::wstring& dir)
-{
-	if (dir[dir.length()-1] == L'\\' )
-		return dir;
-
-	return dir+L'\\';
-}
 
 bool BOnes::OnClick(const FPointF& ptdev)
 {

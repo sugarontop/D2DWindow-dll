@@ -9,21 +9,21 @@ using namespace V6;
 
 D2DScrollbar::D2DScrollbar()
 {
+	bVertical_ = false;
+	offset_ = 0; 
+	max_size_ = 0;
+	view_size_ = 0;
 	thumb_size_ = 0;
-
+	other_scrollbar_size_ = 0;
 }
 float D2DScrollbar::Thumheight() const
 {
-
 	return thumb_size_;
-
 }
 void D2DScrollbar::SetSize(const FSizeF& sz)
 { 
 	sz_ = sz; 
-
 	view_size_ = (bVertical_ ? sz_.height : sz_.width );
-
 }
 float D2DScrollbar::LogicalOffset() 
 {
@@ -40,22 +40,18 @@ float D2DScrollbar::LogicalOffset()
 	}
 	else if (max_size_ < VIEW_SIZE * 2 )
 	{
-		thumb_size_ = (max_size_-VIEW_SIZE);
-		return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
+		thumb_size_ = (max_size_-VIEW_SIZE)/2; // ‹C•ª‚Å/2
 	}
 	else if (max_size_ < VIEW_SIZE * 3 )
 	{
 		thumb_size_ = 100;
-		return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
 	}
 	else
 	{
 		thumb_size_ = 10;
-		return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
 	}
 
-
-
+	return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
 }
 FSizeF D2DScrollbar::GetSize() const
 {
@@ -156,16 +152,12 @@ LRESULT D2DScrollbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lP
 				if ( APP.GetCapture() == this )
 				{
 					APP.ReleaseCapture();
-
-
 					r = 1;
 				}
 			}
 			break;
-
 		}
 	}
-
 	return r;
 }
 std::wstring D2DScrollbar::GetTreeTyp(USHORT* typ)
@@ -176,18 +168,14 @@ std::wstring D2DScrollbar::GetTreeTyp(USHORT* typ)
 
 void D2DScrollbar::Offset( float off )
 {
-
 	offset_ = max(0.0f, (offset_ + off));
 	offset_ = min(VIEW_SIZE-thumb_size_, offset_);
-
 }
 
 void D2DScrollbar::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	sz_ = rc.Size();
-
-
 
 	bVertical_ = ( sz_.height > sz_.width );
 
