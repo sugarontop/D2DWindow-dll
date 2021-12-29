@@ -398,7 +398,7 @@ void CreateControl1(HWND hWnd)
 		auto r = i*100;
 
 		auto ch = std::make_shared<D2DChildWidow>();
-		ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50+r,250+r,FSizeF(200,600)), STAT_DEFAULT, L"childwin" );
+		ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50+r,250+r,FSizeF(400,600)), STAT_DEFAULT, L"childwin" );
 		((D2DControls*)root.p)->Add(ch);
 	
 		auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
@@ -406,7 +406,7 @@ void CreateControl1(HWND hWnd)
 		((D2DControls*)ch.get())->Add(sccontrols);
 
 		auto fmg = std::make_shared<D2DFileManage>();
-		fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(200,600)), STAT_DEFAULT, L"filemng");
+		fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(400,600)), STAT_DEFAULT, L"filemng");
 		sccontrols->Add(fmg);
 
 	

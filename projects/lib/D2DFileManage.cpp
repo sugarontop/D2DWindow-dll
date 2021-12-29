@@ -14,10 +14,67 @@ typedef std::function<void (LPCWSTR dir, WIN32_FIND_DATA* findData)> FindFunctio
 void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& func );
 static void _Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
- std::function<int(BOne*)> BOne::click_;
- std::function<void(std::wstring)> D2DFileManage::OnClick_;
+std::function<int(BOne*)> BOne::click_;
+std::function<void(std::wstring)> D2DFileManage::OnClick_;
 
 #define BFLG(a,bit)	((a&bit)==bit)
+
+
+struct FullPath
+{
+	FullPath(){};
+
+
+	void Parse(std::wstring _fullpath)
+	{
+		fullpath = _fullpath;
+		auto len = _fullpath.length();
+
+		_ASSERT(len >= 3);
+		
+		WCHAR d = fullpath[0];
+		if (('a' <= d && d <= 'z' ) || ('A' <= d && d <= 'Z' ))
+			if ( fullpath[1] == L':' )
+				drive = fullpath.substr(0,3);
+		
+		updir = drive;
+
+		for(UINT i=len-1; i > 0; i-- )
+		{
+			if (fullpath[i] == L'\\')
+			{
+				if ( fnm.length() == 0)
+				{
+					fnm = fullpath.substr((i+1),len-(i+1));				
+					dir = fullpath.substr(0,i+1);
+				}
+				else
+				{
+					updir = fullpath.substr(0,i+1);
+					break;
+				}								
+			}
+		}
+	}
+
+	void Parse(std::wstring path, std::wstring fnm)
+	{
+		if ( path[path.length()-1] != L'\\' )
+			path += L'\\';
+
+		auto fullpath = path + fnm;
+		Parse(fullpath);
+	}
+
+	//ex C:\windows\system32\my.txt
+	std::wstring drive;		// "C:\"
+	std::wstring fullpath;	// "C:\windows\system32\my.txt"
+	std::wstring fnm;		// "my.txt"
+	std::wstring dir;		// "C:\windows\system32\"
+	std::wstring updir;		// "C:\windows\"
+};
+
+
 
 static std::wstring XD(const std::wstring& dir)
 {
@@ -25,6 +82,37 @@ static std::wstring XD(const std::wstring& dir)
 		return dir;
 
 	return dir+L'\\';
+}
+static std::wstring XDN(const std::wstring& dir)
+{
+	auto len = dir.length();
+	UINT s = 0;
+	for(UINT i = len-1; i > 0; i-- )
+	{	
+		if (dir[i] == L'\\' )
+		{
+			s = i+1;
+			break;
+		}
+	}
+
+	return dir.substr(s, len-s);
+}
+
+static std::wstring XDUP(const std::wstring& dir)
+{
+	auto len = dir.length();
+	UINT s = 0;
+	for(UINT i = len-2; i > 0; i-- )
+	{	
+		if (dir[i] == L'\\' )
+		{
+			s = i+1;
+			break;
+		}
+	}
+
+	return dir.substr(0, s);
 }
 
 
@@ -36,7 +124,7 @@ void D2DFileManage::Draw(D2DContext& cxt)
 
 	ID2D1Bitmap* x[] = {bmp_[0],bmp_[1]};
 
-	root_.Draw(cxt, mat, x );
+	root_->Draw(cxt, mat, x );
 	
 	mat.PopTransform();
 }
@@ -55,17 +143,19 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			if ( rc_.PtInRect(pt))
 			{
 				APP.SetCapture(this);
-				root_.OnClick(pm.pt);
 
-				UINT cnt = root_.ChildCount();
-				root_.height_ = ROWHEIGHT * cnt;
-				rc_.SetHeight(root_.height_);
+				if (typ_ == TYP::SOLO)
+					root_->OnDblClick(pm.pt);
+				else if (typ_ == TYP::RECURSIVE)
+					root_->OnClick(pm.pt);
+				
+
+				UINT cnt = root_->ChildCount();
+				root_->height_ = ROWHEIGHT * cnt;
+				rc_.SetHeight(root_->height_);
 				rc_.SetWidth(600);
 
 				parent_control_->SendMesage(WM_D2D_SET_SIZE,1,0);
-
-				
-
 				r = 1;
 			}
 		}
@@ -85,8 +175,26 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			{
 				APP.ReleaseCapture();
 				r = 1;
+			}
+		}
+		break;
+		case WM_RBUTTONDOWN:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;			
 
+			auto pt = mat_.DPtoLP(pm.pt);
+
+			if ( rc_.PtInRect(pt))
+			{
+				auto dir = XDUP(root_->fullname_);
 				
+				if ( dir != L"" )
+				{
+					rc_.SetHeight(800);
+
+					RootChange(dir);
+				}
+
 
 			}
 		}
@@ -110,9 +218,12 @@ void D2DFileManage::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	D2DControls::CreateControl(parent, pacontrol,rc, stat, name, local_id);
 	rc_ = rc;
 
-	make_root();
-	root_.SetText(L"c:\\");
-	root_.bOpen_ = true;
+	root_ = std::make_shared<BOnes>();
+	typ_ = TYP::SOLO;
+
+	make_root(L"C:\\");
+	root_->SetText(L"c:\\");
+	root_->bOpen_ = true;
 
 
 	ComPTR<IStream> sm;
@@ -152,6 +263,7 @@ void D2DFileManage::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 
 		return 0;
 	};
+
 }
 std::wstring D2DFileManage::GetTreeTyp(USHORT* typ)
 {
@@ -159,7 +271,7 @@ std::wstring D2DFileManage::GetTreeTyp(USHORT* typ)
 	return L"D2DFileManage";
 }
 
-void D2DFileManage::make_root()
+void D2DFileManage::make_root( LPCWSTR root_dir )
 {
 	FindFunction fn = [this](LPCWSTR dir, WIN32_FIND_DATA* fd)
 	{
@@ -169,20 +281,36 @@ void D2DFileManage::make_root()
 		{
 			if ( att&FILE_ATTRIBUTE_DIRECTORY)
 			{
-				auto bones = std::make_shared<BOnes>(fd->cFileName, dir);	
-				root_.ar_.push_back(bones);
+				if ( wcscmp(fd->cFileName,L".") && wcscmp(fd->cFileName,L"..") ) 
+				{
+					auto bones = std::make_shared<BOnes>(fd->cFileName, dir);	
+					root_->ar_.push_back(bones);
+				}
 			}
 			else if ( att&FILE_ATTRIBUTE_ARCHIVE)
 			{
 				auto bone = std::make_shared<BOne>(fd->cFileName,dir);
-				root_.ar_.push_back(bone);
+				root_->ar_.push_back(bone);
 			}
 		}
 	};
 
-	ListDirectoryContents(L"c:\\", L"*.*", fn);
+	ListDirectoryContents(root_dir, L"*.*", fn);
 }
+int D2DFileManage::RootChange(std::wstring dir)
+{
+	std::wstring nm = XDN(dir);
 
+	root_->fullname_ = dir;
+
+	root_->clear();
+
+	root_->SetText(nm.c_str());
+
+	make_root( dir.c_str() );
+
+	return 0;
+}
 
 void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& func )
 {
@@ -249,7 +377,11 @@ void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat, ID2D1Bitmap** img)
 
 	(*cxt)->DrawBitmap(img[0]);
 
-	cxt.DText(FPointF(25,0), text_, D2RGB(0,0,0));
+	
+	WCHAR cb[256];
+	swprintf_s(cb,256,L"%s   (%s)", text_, fullname_.c_str());
+	
+	cxt.DText(FPointF(25,0), cb, D2RGB(0,0,0));
 	mat.Offset(0,ROWHEIGHT);
 
 	if ( bOpen_ )
@@ -288,7 +420,49 @@ bool BOne::operator < (BOne& a )
 
 	return text_ < a.text_;
 }
+bool BOne::OnDblClick(const FPointF& ptdev)
+{
+	return false;
+}
+bool BOnes::OnDblClick(const FPointF& ptdev)
+{
+	bool bl = false;
+	auto pt = mat_.DPtoLP(ptdev);		
+	if ( 0 <= pt.y && pt.y <= ROWHEIGHT && pt.x < 100 )
+		bl = true;
 
+	if (!bl)
+	{
+		for(auto& it : ar_)
+		{
+			if (it->OnDblClick(ptdev))
+			{
+				bl = true;
+				break;
+			}
+		}
+	}	
+	else if (bl)
+	{
+		auto parent = dynamic_cast<D2DFileManage*>(APP.GetCapture());
+		_ASSERT(parent);
+
+		if (dir_ != L"")
+		{
+			std::wstring dir = XD(dir_);
+			dir = dir + text_;
+
+			parent->RootChange(dir);
+		}
+	}
+	return bl;
+}
+
+void BOnes::clear()
+{
+
+	ar_.clear();
+}
 
 bool BOnes::OnClick(const FPointF& ptdev)
 {
@@ -322,7 +496,7 @@ bool BOnes::OnClick(const FPointF& ptdev)
 				{
 					if ( BFLG(att,FILE_ATTRIBUTE_DIRECTORY))
 					{
-						if ( wcscmp( fd->cFileName, L"." ) && wcscmp( fd->cFileName, L".." ))
+						//if ( wcscmp( fd->cFileName, L"." ) && wcscmp( fd->cFileName, L".." ))
 						{
 							auto bones = std::make_shared<BOnes>(fd->cFileName, dir);	
 							ar_.push_back(bones);

@@ -4,7 +4,7 @@
 #include "D2DWindowControl.h"
 namespace V6 {
 
-
+class D2DFileManage;
 class BOne
 {
 	public :
@@ -16,6 +16,7 @@ class BOne
 		void SetText(LPCWSTR txt){text_ = ::SysAllocString(txt);}
 
 		virtual bool OnClick(const FPointF& pt);
+		virtual bool OnDblClick(const FPointF& pt);
 		virtual UINT ChildCount(){ return 1;}
 		virtual bool operator < (BOne& a );
 
@@ -43,17 +44,19 @@ class BOnes : public BOne
 
 		float Height() const{ return height_;}
 		virtual UINT ChildCount();
+		virtual bool OnDblClick(const FPointF& pt);
 		virtual bool operator < (BOne& a );
+
+		void clear();
 
 		std::vector<std::shared_ptr<BOne>> ar_;
 		float height_;
+
+		std::wstring fullname_;
 	protected:
 		
 
 };
-
-
-
 
 class D2DFileManage : public D2DControls
 {
@@ -67,14 +70,17 @@ public :
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 	virtual std::wstring GetTreeTyp(USHORT* typ) override;
 	
-	void make_root();
-
+	void make_root( LPCWSTR root_dir );
+	int RootChange(std::wstring dir);
 
 	static std::function<void(std::wstring)> OnClick_;
 	
+	enum TYP { SOLO, RECURSIVE };
+	
 protected :
-	BOnes root_;
+	std::shared_ptr<BOnes> root_;
 	ComPTR<ID2D1Bitmap> bmp_[2];
+	TYP typ_;
 	
 };
 
