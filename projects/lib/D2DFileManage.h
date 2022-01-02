@@ -45,7 +45,7 @@ class BOnes : public BOne
 		float Height() const{ return height_;}
 		virtual UINT ChildCount();
 		virtual bool OnDblClick(const FPointF& pt);
-		virtual bool operator < (BOne& a );
+		virtual bool operator < (BOnes& a );
 
 		void clear();
 
@@ -76,6 +76,7 @@ public :
 	static std::function<void(std::wstring)> OnClick_;
 	
 	enum TYP { SOLO, RECURSIVE };
+	void ChangeTyp(TYP ty){ typ_ = ty; }
 	
 protected :
 	std::shared_ptr<BOnes> root_;

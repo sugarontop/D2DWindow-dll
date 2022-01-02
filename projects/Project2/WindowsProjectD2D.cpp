@@ -409,6 +409,9 @@ void CreateControl1(HWND hWnd)
 		fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(400,600)), STAT_DEFAULT, L"filemng");
 		sccontrols->Add(fmg);
 
+        if ( i==0)
+            fmg->ChangeTyp(D2DFileManage::TYP::RECURSIVE);
+
 	
 
 	}

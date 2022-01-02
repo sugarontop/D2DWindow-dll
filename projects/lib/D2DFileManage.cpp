@@ -18,6 +18,24 @@ std::function<int(BOne*)> BOne::click_;
 std::function<void(std::wstring)> D2DFileManage::OnClick_;
 
 #define BFLG(a,bit)	((a&bit)==bit)
+#define TEMP_VALUE 100
+
+static bool bone_sort(std::shared_ptr<BOne>& a, std::shared_ptr<BOne>& b)
+{
+	bool ba = (dynamic_cast<BOnes*>(a.get()) != nullptr);
+	bool bb = (dynamic_cast<BOnes*>(b.get()) != nullptr);
+
+
+	if (ba && bb)
+		return *a < *b;
+	else if (ba && !bb)
+		return true;
+	else if (!ba && bb)
+		return false;
+
+	return *a < *b;
+
+};
 
 
 struct FullPath
@@ -28,7 +46,7 @@ struct FullPath
 	void Parse(std::wstring _fullpath)
 	{
 		fullpath = _fullpath;
-		auto len = _fullpath.length();
+		int len = (int)_fullpath.length();
 
 		_ASSERT(len >= 3);
 		
@@ -39,7 +57,7 @@ struct FullPath
 		
 		updir = drive;
 
-		for(UINT i=len-1; i > 0; i-- )
+		for(int i=len-1; i > 0; i-- )
 		{
 			if (fullpath[i] == L'\\')
 			{
@@ -78,16 +96,19 @@ struct FullPath
 
 static std::wstring XD(const std::wstring& dir)
 {
-	if (dir[dir.length()-1] == L'\\' )
+	if (dir.length() == 0 )
+		return dir;
+
+	if ( dir[dir.length()-1] == L'\\' )
 		return dir;
 
 	return dir+L'\\';
 }
 static std::wstring XDN(const std::wstring& dir)
 {
-	auto len = dir.length();
+	int len = (int)dir.length();
 	UINT s = 0;
-	for(UINT i = len-1; i > 0; i-- )
+	for(int i = len-1; i > 0; i-- )
 	{	
 		if (dir[i] == L'\\' )
 		{
@@ -101,9 +122,9 @@ static std::wstring XDN(const std::wstring& dir)
 
 static std::wstring XDUP(const std::wstring& dir)
 {
-	auto len = dir.length();
+	int len = (int)dir.length();
 	UINT s = 0;
-	for(UINT i = len-2; i > 0; i-- )
+	for(int i = len-2; i > 0; i-- )
 	{	
 		if (dir[i] == L'\\' )
 		{
@@ -180,6 +201,7 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		break;
 		case WM_RBUTTONDOWN:
 		{
+			// 1’iã‚Ö
 			MouseParam& pm = *(MouseParam*)lParam;			
 
 			auto pt = mat_.DPtoLP(pm.pt);
@@ -191,11 +213,8 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				if ( dir != L"" )
 				{
 					rc_.SetHeight(800);
-
 					RootChange(dir);
 				}
-
-
 			}
 		}
 		break;
@@ -296,6 +315,8 @@ void D2DFileManage::make_root( LPCWSTR root_dir )
 	};
 
 	ListDirectoryContents(root_dir, L"*.*", fn);
+
+	std::sort(root_->ar_.begin(),root_->ar_.end(), bone_sort );
 }
 int D2DFileManage::RootChange(std::wstring dir)
 {
@@ -400,7 +421,7 @@ bool BOne::OnClick(const FPointF& ptdev)
 {	
 	auto pt = mat_.DPtoLP(ptdev);
 		
-	if ( 0 <= pt.y && pt.y <= ROWHEIGHT && pt.x < 100 )
+	if ( 0 <= pt.y && pt.y <= ROWHEIGHT && pt.x < TEMP_VALUE )
 	{
 		if ( click_ )
 			click_(this);
@@ -411,14 +432,18 @@ bool BOne::OnClick(const FPointF& ptdev)
 	return false;
 }
 
+std::wstring str_toupper(std::wstring s) 
+{
+	std::transform(s.begin(), s.end(), s.begin(), [](WCHAR c){ return std::toupper(c); });
+    return s;
+}
+
 bool BOne::operator < (BOne& a )
 {
-	if (dynamic_cast<BOnes*>( &a ))
-	{
-		return false;
-	}
+	std::wstring aa = str_toupper(a.text_);
+	std::wstring bb = str_toupper(text_);
 
-	return text_ < a.text_;
+	return bb < aa;
 }
 bool BOne::OnDblClick(const FPointF& ptdev)
 {
@@ -428,7 +453,7 @@ bool BOnes::OnDblClick(const FPointF& ptdev)
 {
 	bool bl = false;
 	auto pt = mat_.DPtoLP(ptdev);		
-	if ( 0 <= pt.y && pt.y <= ROWHEIGHT && pt.x < 100 )
+	if ( 0 <= pt.y && pt.y <= ROWHEIGHT && pt.x < TEMP_VALUE )
 		bl = true;
 
 	if (!bl)
@@ -460,7 +485,6 @@ bool BOnes::OnDblClick(const FPointF& ptdev)
 
 void BOnes::clear()
 {
-
 	ar_.clear();
 }
 
@@ -496,7 +520,7 @@ bool BOnes::OnClick(const FPointF& ptdev)
 				{
 					if ( BFLG(att,FILE_ATTRIBUTE_DIRECTORY))
 					{
-						//if ( wcscmp( fd->cFileName, L"." ) && wcscmp( fd->cFileName, L".." ))
+						if ( wcscmp( fd->cFileName, L"." ) && wcscmp( fd->cFileName, L".." ))
 						{
 							auto bones = std::make_shared<BOnes>(fd->cFileName, dir);	
 							ar_.push_back(bones);
@@ -510,17 +534,9 @@ bool BOnes::OnClick(const FPointF& ptdev)
 				}
 			};
 
-			ListDirectoryContents(dir.c_str(), L"*.*", fn );
+			ListDirectoryContents(dir.c_str(), L"*.*", fn );			
 
-
-			auto sort = [](std::shared_ptr<BOne>& a, std::shared_ptr<BOne>& b)->bool
-			{
-				
-				return a < b;
-
-			};
-
-			std::sort(ar_.begin(),ar_.end(), sort );
+			std::sort(ar_.begin(),ar_.end(), bone_sort );
 
 		}
 		else if ( !bOpen_ )
@@ -543,14 +559,12 @@ UINT BOnes::ChildCount()
 	}
 	return 1;
 }
-bool BOnes::operator < (BOne& a )
+bool BOnes::operator < (BOnes& a )
 {
-	if (dynamic_cast<BOnes*>( &a ))
-	{
-		return text_ < a.text_;
-	}
+	std::wstring aa = str_toupper(a.text_);
+	std::wstring bb = str_toupper(text_);
 
-	return false;
+	return bb < aa;
 }
 
 static void _Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
