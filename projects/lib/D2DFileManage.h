@@ -5,6 +5,7 @@
 namespace V6 {
 
 class D2DFileManage;
+
 class BOne
 {
 	public :
@@ -27,11 +28,9 @@ class BOne
 		static std::function<int(BOne*)> click_;
 
 	protected :
-		
 		WORD nn_;
 		D2DMat mat_;
-		
-		
+		ComPTR<IDWriteTextLayout> textlayout_; 
 };
 class BOnes : public BOne
 {

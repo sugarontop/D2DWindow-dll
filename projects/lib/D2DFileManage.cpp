@@ -77,6 +77,8 @@ struct FullPath
 
 	void Parse(std::wstring path, std::wstring fnm)
 	{
+		_ASSERT(path.length() != 0);
+
 		if ( path[path.length()-1] != L'\\' )
 			path += L'\\';
 
@@ -116,6 +118,9 @@ static std::wstring XDN(const std::wstring& dir)
 			break;
 		}
 	}
+
+	if ( len == s )
+		return dir;
 
 	return dir.substr(s, len-s);
 }
@@ -388,7 +393,14 @@ void BOne::Draw(D2DContext& cxt,D2DMatrix& mat,ID2D1Bitmap** img)
 	(*cxt)->SetTransform(mat_);
 
 	(*cxt)->DrawBitmap(img[1]);
-	cxt.DText(FPointF(15,0), text_,D2RGB(0,0,0));
+
+	if ( textlayout_ == nullptr )
+	{				
+		cxt.CreateTextLayout(text_, FSizeF(1000,1000), &textlayout_);
+	}
+	
+	(*cxt)->DrawTextLayout(FPointF(15,0),textlayout_, cxt.black_);
+
 	mat.Offset(0,ROWHEIGHT);
 }
 void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat, ID2D1Bitmap** img)
@@ -399,10 +411,19 @@ void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat, ID2D1Bitmap** img)
 	(*cxt)->DrawBitmap(img[0]);
 
 	
-	WCHAR cb[256];
-	swprintf_s(cb,256,L"%s   (%s)", text_, fullname_.c_str());
+	if ( textlayout_ == nullptr )
+	{		
+		WCHAR cb[256];
+		if ( fullname_.length() > 0 && fullname_!=text_)
+			swprintf_s(cb,256,L"%s   (%s)", text_, fullname_.c_str());		
+		else
+			lstrcpy(cb, text_);
+
+		cxt.CreateTextLayout(cb, FSizeF(1000,1000), &textlayout_);
+	}
 	
-	cxt.DText(FPointF(25,0), cb, D2RGB(0,0,0));
+	(*cxt)->DrawTextLayout(FPointF(25,0),textlayout_, cxt.black_);
+	
 	mat.Offset(0,ROWHEIGHT);
 
 	if ( bOpen_ )
@@ -486,6 +507,8 @@ bool BOnes::OnDblClick(const FPointF& ptdev)
 void BOnes::clear()
 {
 	ar_.clear();
+	textlayout_.Release();
+
 }
 
 bool BOnes::OnClick(const FPointF& ptdev)
