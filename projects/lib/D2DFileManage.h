@@ -9,12 +9,13 @@ class D2DFileManage;
 class BOne
 {
 	public :
-		BOne():nn_(0),text_(nullptr),bOpen_(false){};
-		BOne(LPCWSTR txt,LPCWSTR dir):nn_(0),dir_(dir),bOpen_(false){ text_ = ::SysAllocString(txt);}
-		virtual ~BOne();
+		BOne():nn_(0),bOpen_(false){};
+		BOne(LPCWSTR txt,LPCWSTR dir):nn_(0),dir_(dir),bOpen_(false){}; // text_ = ::SysAllocString(txt);}
+		
+		virtual ~BOne(){};
 
 		virtual void Draw(D2DContext& cxt, D2DMatrix& mat, ID2D1Bitmap** img);
-		void SetText(LPCWSTR txt){text_ = ::SysAllocString(txt);}
+		void SetText(LPCWSTR txt){lstrcpy(info_.cFileName, txt);  }
 
 		virtual bool OnClick(const FPointF& pt);
 		virtual bool OnDblClick(const FPointF& pt);
@@ -22,8 +23,8 @@ class BOne
 		virtual bool operator < (BOne& a );
 
 		bool bOpen_;
-		BSTR text_;
 		std::wstring dir_;
+		WIN32_FIND_DATA info_;
 
 		static std::function<int(BOne*)> click_;
 
@@ -74,13 +75,14 @@ public :
 
 	static std::function<void(std::wstring)> OnClick_;
 	
-	enum TYP { SOLO, RECURSIVE };
+	enum TYP { SOLO, TREE };
 	void ChangeTyp(TYP ty){ typ_ = ty; }
 	
 protected :
 	std::shared_ptr<BOnes> root_;
 	ComPTR<ID2D1Bitmap> bmp_[2];
 	TYP typ_;
+	
 	
 };
 

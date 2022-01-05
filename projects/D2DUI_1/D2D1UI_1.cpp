@@ -201,12 +201,9 @@ DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRe
 
 
 	if ( ext == 1 )
-	{
-		pgtx->SetBackColor(D2RGBA(0,0,0,0));
-		pgtx->SetBorderColor(D2RGBA(0,0,0,0));
-
-
-	}
+		pgtx->SetTypPassword();
+	else if ( ext == 2 )
+		pgtx->SetReadonly(true);
 
 
 	UIHandle r;
@@ -706,7 +703,16 @@ DLLEXPORT void D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF border )
 		tx->SetBackColor(back);
 		tx->SetForeColor(fore);
 		tx->SetBorderColor(border);
+	}
+	else
+	{
+		auto tx = static_cast<D2DControl*>(h.p);
+		
+		AppBase b={};
 
+		tx->WndProc(b,WM_D2D_SET_COLOR, 0, (LPARAM)&back);
+		tx->WndProc(b,WM_D2D_SET_COLOR, 1, (LPARAM)&fore);
+		
 	}
 }
 
@@ -744,6 +750,20 @@ DLLEXPORT  void D2DDestroyControl(UIHandle h)
 
 
 	h2->DestroyControl();
+
+}
+DLLEXPORT void D2DEventHandlerOnClick( UIHandle h, D2DEventHandler handler)
+{
+	auto p = dynamic_cast<D2DButton*>(D2DCastControl( h ));	
+
+	if ( p )
+	{
+		p->click_ = handler;
+
+
+	}
+
+
 
 }
 

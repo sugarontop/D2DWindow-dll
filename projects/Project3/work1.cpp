@@ -3,35 +3,15 @@
 #include "inet.h"
 #include "D2DMisc.h"
 #include <fstream>
+#include "D2D1UI_1.h"
+#include "D2DControls_with_Scrollbar.h"
+#include "D2DSquarePaper.h"
+#include "D2DAccordionbar.h"
+#include "D2DFileManage.h"
+
+
 
 using namespace V6;
-void work(IStream** ppJpg)
-{
-	InternetInfo* info =  CreateInternetInfo();
-
-	info->bGet = true;
-	info->url =  SysAllocString(L"https://192.168.10.65/zaimu/temp/flag_argentina.png"); //youtube [#168].png");
-
-	DWORD dw;
-	auto h = CreateThread(0,0,InetAsync, info, 0, &dw);
-
-	::WaitForSingleObject(h, INFINITE);
-
-
-	
-	if ( info->result == 200 )
-	{		
-		*ppJpg = info->pstream;
-
-		long rc = (*ppJpg)->AddRef();
-
-		_ASSERT(rc==2);
-
-	}
-
-
-	DeleteInternetInfo(info);
-}
 
 bool FileReadStream( LPCWSTR fnm, IStream** sm )
 {
@@ -91,15 +71,14 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 }
 
 
-#include "D2D1UI_1.h"
-#include "D2DControls_with_Scrollbar.h"
-#include "D2DSquarePaper.h"
-#include "D2DAccordionbar.h"
-#include "D2DFileManage.h"
 
 extern UIHandleWin hwin;
 
 //#define TEST1
+
+#include "D2DLogin.h"
+#define  APP (D2DApp::GetInstance())
+
 
 void CreateControl(HWND hWnd)
 {
@@ -108,7 +87,107 @@ void CreateControl(HWND hWnd)
 
 	auto hctrls = D2DCreateEmptyControls(hwin, root, FRectF(), STAT_DEFAULT, NONAME,-1);
 
+	auto hctrlsA = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_VISIBLE, L"sqare",-1);
+
+	D2DSetColor(hctrlsA, ColorF::Black, ColorF::White,ColorF::Black);
+
+
+	auto login = std::make_shared<D2DLogin>();
+
+	auto kc = (D2DControls*)hctrlsA.p;
+	login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(100,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
+	kc->Add( login );
+
+
+	login->on_try_login_ = [](void* sender, void* p)->DWORD
+	{
+		BSTR* p1 = (BSTR*)p;
+
+		std::wstring cd = p1[0];
+		std::wstring pwd = p1[1];
+
+		if ( cd == pwd )
+		{
+			
+			((D2DControls*)sender)->GetParentControls()->SetStat(STAT_DEFAULT);
+
+
+			UIHandle h = {};
+			h.p = ((D2DControls*)sender)->GetParentControls();
+
+			D2DSetColor(h, ColorF::Green, ColorF::White,ColorF::Black);		
+			
+			return 0;
+
+		}
+		p1[2] = ::SysAllocString( L"login fail.");
+
+
+		return 1;
+	};
+
+	APP.SetCapture(login.get());
+
+
+
+}
+
+
+
+void CreateControl2(HWND hWnd)
+{
+	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
+    auto root = D2DGetRootControls(hwin);
+
+	auto hctrls = D2DCreateEmptyControls(hwin, root, FRectF(), STAT_DEFAULT, NONAME,-1);
+
 	auto hd = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_DEFAULT, L"sqare",-1);
+
+
+
+	auto tlog = D2DCreateButton(hwin, hd, FRectF(700,100,FSizeF(200,200)), STAT_DEFAULT, NONAME,999);
+	D2DSetText(tlog, L"LOGIN");
+
+	
+	auto func = [](void* sender, void*)->DWORD
+	{
+		int a = 0;
+
+		auto login = std::make_shared<D2DLogin>();
+
+		auto kc = ((D2DControl*)sender)->GetParentControls(); 
+		login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(100,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
+		kc->Add( login );
+
+
+		login->on_try_login_ = [](void* sender, void* p)->DWORD
+		{
+			BSTR* p1 = (BSTR*)p;
+
+			std::wstring cd = p1[0];
+			std::wstring pwd = p1[1];
+
+			if ( cd == pwd )
+				return 0;
+
+
+			p1[2] = ::SysAllocString( L"login fail.");
+
+
+			return 1;
+		};
+
+		APP.SetCapture(login.get());
+
+		return 0;
+	};
+	
+	
+	D2DEventHandlerOnClick(tlog, func );
+	
+	
+
+
 
 	auto clr = D2RGBA(170,170,170,150);
 	D2DSendMessage(hd, WM_D2D_SET_COLOR,1,(LPARAM)&clr);
@@ -219,5 +298,17 @@ void CreateControl(HWND hWnd)
 
 
 	D2DSendMessage(ls, WM_D2D_LISTBOX_ADD_ITEM, 2,(LPARAM)ctrls.p);
+
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
 #endif
 }

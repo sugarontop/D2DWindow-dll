@@ -84,8 +84,8 @@ namespace V6
 	public :
 		static void* CreateInputControl(D2DWindow* parent);
 		static void DestroyInputControl(){};
-		void StatActive(bool bActive);
-
+		void StatActive(bool bActive);		
+		void SetTypPassword();
 
 		static std::wstring Ascii2W( LPCSTR s );
 		static std::string W2Ascii( LPCWSTR s );

@@ -25,7 +25,8 @@ class CBstr
 		}
 		void clear()
 		{
-			if ( bs )	::SysFreeString(bs); 
+			if ( bs )	
+				::SysFreeString(bs); 
 			bs = nullptr;
 		}
 

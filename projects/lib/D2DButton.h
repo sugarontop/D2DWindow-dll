@@ -23,6 +23,9 @@ namespace V6
 			virtual void Draw(D2DContext& cxt)  override;
 			virtual std::wstring GetTreeTyp(USHORT* typ) override;
 			virtual void ResourceUpdate(bool bCreate, D2DContext& cxt) override;
+
+		public :
+			std::function<DWORD(void* sender, void* p )> click_;
 		protected :
 			FRectF rc_;
 			int part_stat_;
@@ -32,6 +35,7 @@ namespace V6
 			FPointF ptText_;
 		
 			ComPTR<ID2D1LinearGradientBrush> br_;
+			
 	};
 
 

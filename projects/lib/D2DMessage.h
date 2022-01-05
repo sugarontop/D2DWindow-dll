@@ -38,6 +38,9 @@ struct D2DNMHDR
 	LPCWSTR prm2;
 };
 
+typedef DWORD (*D2DEventHandler)(void* sender, void* param);
+
+
 #define NONAME		(L"__NONAME")
 
 #define ID_FLOATING_MENU	-10

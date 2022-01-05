@@ -36,6 +36,12 @@ D2DTextbox::~D2DTextbox()
 	Clear();
 }
 
+void D2DTextbox::SetTypPassword()
+{
+	typ_ = IBridgeTSFInterface::TYP::PASSWORD;
+
+}
+
 bool D2DTextbox::IsMultiline() const
 {
 	return (typ_ == IBridgeTSFInterface::MULTILINE );

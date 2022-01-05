@@ -410,7 +410,7 @@ void CreateControl1(HWND hWnd)
 		sccontrols->Add(fmg);
 
         if ( i==0)
-            fmg->ChangeTyp(D2DFileManage::TYP::RECURSIVE);
+            fmg->ChangeTyp(D2DFileManage::TYP::TREE);
 
 	
 

@@ -95,6 +95,9 @@
     <ClCompile Include="..\lib\D2DFileManage.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\D2DLogin.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

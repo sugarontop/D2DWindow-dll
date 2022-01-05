@@ -72,10 +72,18 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 						d.sender_parent = parent_control_;
 
 
-						ret = GetParentControls()->SendMesage(WM_NOTIFY, id_, (LPARAM)&d );
+						if ( click_ )
+						{
+							click_(this, nullptr);
 
-						if ( ret == 0 )
-							parent_window_->SendMessage( WM_NOTIFY, id_, (LPARAM)&d );
+						}
+						else
+						{
+							ret = GetParentControls()->SendMesage(WM_NOTIFY, id_, (LPARAM)&d );
+
+							if ( ret == 0 )
+								parent_window_->SendMessage( WM_NOTIFY, id_, (LPARAM)&d );
+						}
 
 					}
 

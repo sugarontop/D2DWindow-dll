@@ -172,7 +172,7 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 				if (typ_ == TYP::SOLO)
 					root_->OnDblClick(pm.pt);
-				else if (typ_ == TYP::RECURSIVE)
+				else if (typ_ == TYP::TREE)
 					root_->OnClick(pm.pt);
 				
 
@@ -280,7 +280,9 @@ void D2DFileManage::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	{		
 		if ( !dynamic_cast<BOnes*>(pb) && OnClick_ )
 		{
-			auto fnm = XD(pb->dir_) + pb->text_;
+			auto text = pb->info_.cFileName;
+
+			auto fnm = XD(pb->dir_) + text;
 
 			OnClick_(fnm);
 		}
@@ -309,12 +311,14 @@ void D2DFileManage::make_root( LPCWSTR root_dir )
 				{
 					auto bones = std::make_shared<BOnes>(fd->cFileName, dir);	
 					root_->ar_.push_back(bones);
+					bones->info_ = *fd;
 				}
 			}
 			else if ( att&FILE_ATTRIBUTE_ARCHIVE)
 			{
 				auto bone = std::make_shared<BOne>(fd->cFileName,dir);
 				root_->ar_.push_back(bone);
+				bone->info_ = *fd;
 			}
 		}
 	};
@@ -381,10 +385,14 @@ void ListDirectoryContents( LPCWSTR dirName, LPCWSTR fileMask, FindFunction& fun
 
 //////////////////////////////////////////////////////////////////
 
-
-BOne::~BOne()
+LPCWSTR FILETIME_YYYYMMDD( const FILETIME& ftm)
 {
-	::SysFreeString(text_);
+	static WCHAR cb[256];
+
+	SYSTEMTIME st;
+	FileTimeToSystemTime( &ftm, &st );
+	swprintf_s(cb,256,L"%d/%02d/%02d", st.wYear, st.wMonth, st.wDay );
+	return cb;
 }
 
 void BOne::Draw(D2DContext& cxt,D2DMatrix& mat,ID2D1Bitmap** img)
@@ -396,7 +404,11 @@ void BOne::Draw(D2DContext& cxt,D2DMatrix& mat,ID2D1Bitmap** img)
 
 	if ( textlayout_ == nullptr )
 	{				
-		cxt.CreateTextLayout(text_, FSizeF(1000,1000), &textlayout_);
+		WCHAR cb[256];
+		auto text = info_.cFileName;
+		swprintf_s(cb,256,L"%s   %s %d", text, FILETIME_YYYYMMDD(info_.ftCreationTime), info_.nFileSizeLow );		
+
+		cxt.CreateTextLayout(cb, FSizeF(1000,ROWHEIGHT), &textlayout_);
 	}
 	
 	(*cxt)->DrawTextLayout(FPointF(15,0),textlayout_, cxt.black_);
@@ -414,12 +426,13 @@ void BOnes::Draw(D2DContext& cxt,D2DMatrix& mat, ID2D1Bitmap** img)
 	if ( textlayout_ == nullptr )
 	{		
 		WCHAR cb[256];
-		if ( fullname_.length() > 0 && fullname_!=text_)
-			swprintf_s(cb,256,L"%s   (%s)", text_, fullname_.c_str());		
+		auto text = info_.cFileName;
+		if ( fullname_.length() > 0 && fullname_!=text)
+			swprintf_s(cb,256,L"%s   (%s)", text, fullname_.c_str());		
 		else
-			lstrcpy(cb, text_);
+			lstrcpy(cb, text);
 
-		cxt.CreateTextLayout(cb, FSizeF(1000,1000), &textlayout_);
+		cxt.CreateTextLayout(cb, FSizeF(1000,ROWHEIGHT), &textlayout_);
 	}
 	
 	(*cxt)->DrawTextLayout(FPointF(25,0),textlayout_, cxt.black_);
@@ -461,8 +474,11 @@ std::wstring str_toupper(std::wstring s)
 
 bool BOne::operator < (BOne& a )
 {
-	std::wstring aa = str_toupper(a.text_);
-	std::wstring bb = str_toupper(text_);
+	auto atext = a.info_.cFileName;
+	auto text = info_.cFileName;
+
+	std::wstring aa = str_toupper(atext);
+	std::wstring bb = str_toupper(text);
 
 	return bb < aa;
 }
@@ -496,7 +512,7 @@ bool BOnes::OnDblClick(const FPointF& ptdev)
 		if (dir_ != L"")
 		{
 			std::wstring dir = XD(dir_);
-			dir = dir + text_;
+			dir = dir + info_.cFileName; //text_;
 
 			parent->RootChange(dir);
 		}
@@ -533,7 +549,7 @@ bool BOnes::OnClick(const FPointF& ptdev)
 		if ( bOpen_ && ar_.empty() )
 		{			
 			std::wstring dir = XD(dir_);
-			dir = dir + text_;
+			dir = dir + info_.cFileName; //text_;
 
 			FindFunction fn = [this](LPCWSTR dir, WIN32_FIND_DATA* fd)
 			{
@@ -547,12 +563,15 @@ bool BOnes::OnClick(const FPointF& ptdev)
 						{
 							auto bones = std::make_shared<BOnes>(fd->cFileName, dir);	
 							ar_.push_back(bones);
+
+							bones->info_ = *fd;
 						}
 					}
 					else if ( BFLG(att,FILE_ATTRIBUTE_ARCHIVE))
 					{
 						auto bone = std::make_shared<BOne>(fd->cFileName,dir);
 						ar_.push_back(bone);
+						bone->info_ = *fd;
 					}
 				}
 			};
@@ -584,8 +603,11 @@ UINT BOnes::ChildCount()
 }
 bool BOnes::operator < (BOnes& a )
 {
-	std::wstring aa = str_toupper(a.text_);
-	std::wstring bb = str_toupper(text_);
+	auto atext = a.info_.cFileName;
+	auto text = info_.cFileName;
+
+	std::wstring aa = str_toupper(atext);
+	std::wstring bb = str_toupper(text);
 
 	return bb < aa;
 }
