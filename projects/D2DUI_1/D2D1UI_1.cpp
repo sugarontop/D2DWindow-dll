@@ -106,8 +106,7 @@ DLLEXPORT UIHandle D2DCreateImage(UIHandleWin hwin, UIHandle hctrls, const FRect
 	return r;
 
 }
-
-DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle D2DCreateControlsWithScrollbar(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
@@ -122,6 +121,25 @@ DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, con
 
 	UIHandle r;
 	r.p = pgtx;
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hwin.p);
+	_ASSERT(hctrls.p);
+
+	auto pgtx = std::make_shared<D2DControls>(); 
+
+	auto win = (D2DWindow*)hwin.p;
+	auto ctrls = (D2DControls*)hctrls.p;
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( pgtx);	
+
+	UIHandle r;
+	r.p = pgtx.get();
 	r.typ = TYP_CONTROLS;
 	return r;
 }
@@ -239,6 +257,8 @@ D2DControl* D2DCastControl(UIHandle h )
 
 	return p2;
 }
+
+
 
 DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin hwin, UIHandle hctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
@@ -389,10 +409,12 @@ DLLEXPORT bool D2DSetProcfunction(UIHandle h, DelegateProcFunc func2)
 	return false;
 }
 
-DLLEXPORT UIHandle D2DGetCapture()
+
+DLLEXPORT UIHandle D2DCast(void* target)
 {
+	D2DControl* p = (D2DControl*)target;
+
 	UIHandle r = {0};
-	auto p = APP.GetCapture();
 
 	if ( dynamic_cast<D2DTextbox*>(p))
 	{
@@ -470,16 +492,27 @@ DLLEXPORT UIHandle D2DGetCapture()
 		r.typ = TYP_SCROLLBAR;
 
 	}
+	else if  (dynamic_cast<D2DButton*>(p))
+	{
+		auto tx = dynamic_cast<D2DButton*>(p);
+		r.p = tx;
+		r.typ = TYP_BUTTON;
 
-
+	}
 	else if ( p != nullptr )
 	{
 		_ASSERT( 1==0); // –¢‘Î‰ž
 	}
 
-
-
 	return r;
+
+}
+
+DLLEXPORT UIHandle D2DGetCapture()
+{
+	auto p = APP.GetCapture();
+
+	return D2DCast(p);
 }
 DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
 {
@@ -752,15 +785,19 @@ DLLEXPORT  void D2DDestroyControl(UIHandle h)
 	h2->DestroyControl();
 
 }
-DLLEXPORT void D2DEventHandlerOnClick( UIHandle h, D2DEventHandler handler)
+DLLEXPORT void D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler)
 {
 	auto p = dynamic_cast<D2DButton*>(D2DCastControl( h ));	
-
 	if ( p )
 	{
 		p->click_ = handler;
-
-
+		return;
+	}
+	auto p1 = dynamic_cast<D2DDropdownListbox*>(D2DCastControl( h ));	
+	if ( p1 )
+	{
+		p1->click_ = handler;
+		return;
 	}
 
 

@@ -115,21 +115,21 @@ void D2DLogin::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FR
 	w.p = parent;
 	c.p = this;
 
-	usercd_  = D2DCreateTextbox(w, c, FRectF(200,100, FSizeF(100,20)), false, STAT_DEFAULT, NONAME);
-	password_ = D2DCreateTextbox(w, c, FRectF(200,130, FSizeF(100,20)), false, STAT_DEFAULT, NONAME, -1,1);
+	usercd_  = D2DCreateTextbox(w, c, FRectF(150,100, FSizeF(100,20)), false, STAT_DEFAULT, NONAME);
+	password_ = D2DCreateTextbox(w, c, FRectF(150,130, FSizeF(100,20)), false, STAT_DEFAULT, NONAME, -1,1);
 	message_  = D2DCreateTextbox(w, c, FRectF(20,250, FSizeF(300,20)), false, STAT_DEFAULT, NONAME,-1,2);
 
-	auto btn_logon = D2DCreateButton(w,c,FRectF(50, 180, FSizeF(100,20)), STAT_DEFAULT, NONAME, 1);
-	auto btn_cancel = D2DCreateButton(w,c,FRectF(200, 180, FSizeF(100,20)), STAT_DEFAULT, NONAME, 2);
+	auto btn_logon = D2DCreateButton(w,c,FRectF(50, 180, FSizeF(250,20)), STAT_DEFAULT, NONAME, 1);
+	//auto btn_cancel = D2DCreateButton(w,c,FRectF(200, 180, FSizeF(100,20)), STAT_DEFAULT, NONAME, 2);
 
-	auto usercde_t  = D2DCreateStatic(w, c, FRectF(100,100, FSizeF(100,26)), STAT_DEFAULT,L"  USERCD:", NONAME);
-	auto password_t = D2DCreateStatic(w, c, FRectF(100,130, FSizeF(100,26)), STAT_DEFAULT,L"PASSWORD:", NONAME);
+	auto usercde_t  = D2DCreateStatic(w, c, FRectF(50,100, FSizeF(100,26)), STAT_DEFAULT,L"  USERCD:", NONAME);
+	auto password_t = D2DCreateStatic(w, c, FRectF(50,130, FSizeF(100,26)), STAT_DEFAULT,L"PASSWORD:", NONAME);
 
-	D2DSetText(btn_logon, L"logon");
-	D2DSetText(btn_cancel, L"cancel");
+	D2DSetText(btn_logon, L"Sign in");
+	//D2DSetText(btn_cancel, L"cancel");
 
 	D2DSetText(usercd_, L"admin");
-	D2DSetText(password_, L"*****");
+	D2DSetText(password_, L"admin");
 
 
 	D2DSetText(message_, L"----");

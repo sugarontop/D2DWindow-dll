@@ -84,6 +84,9 @@ using namespace std::placeholders;
 void Trace(LPCWSTR fm, ...);
 
 #define TRACE	 Trace
+typedef _bstr_t BS;
+
+
 
 //
 //inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )

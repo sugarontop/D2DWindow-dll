@@ -7,6 +7,7 @@
 #define STAT_CAPTURED			0x4
 #define STAT_DEAD				0x8
 #define STAT_ENABLE				0x10
+#define STAT_FLOATING			0x20
 
 #define STAT_DEBUG				0x20
 #define STAT_DEBUG1				0x40
@@ -38,7 +39,7 @@ struct D2DNMHDR
 	LPCWSTR prm2;
 };
 
-typedef DWORD (*D2DEventHandler)(void* sender, void* param);
+typedef DWORD (*D2DEventHandlerDelegate)(void* sender,LPCWSTR eventName, void* param);
 
 
 #define NONAME		(L"__NONAME")
@@ -105,3 +106,4 @@ typedef DWORD (*D2DEventHandler)(void* sender, void* param);
 #define WM_D2D_IME_ONOFF						(WM_APP+19) 
 #define WM_D2D_ONIME_ONOFF						(WM_APP+20) 
 #define WM_D2D_SET_TEXT							(WM_APP+21) 
+#define WM_D2D_CB_GETSELECT						(WM_APP+22)

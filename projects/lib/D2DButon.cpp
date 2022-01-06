@@ -36,6 +36,21 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 
 	switch( message )
 	{
+		case WM_MOUSEMOVE:
+		{
+			MouseParam* mp = (MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(mp->pt);
+
+			auto old = stat_;
+			if ( rc_.ZeroPtInRect( pt ) )
+				stat_ |= STAT_FLOATING;
+			else
+				stat_ &= ~STAT_FLOATING;
+
+			if ( old != stat_ )
+				b.bRedraw = true;
+		}
+		break;
 		case WM_LBUTTONDOWN:
 		{			
 			MouseParam* mp = (MouseParam*)lParam;
@@ -50,7 +65,6 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 				part_stat_ = 1;
 				ret = 1;
 			}
-
 		}
 		break;
 		case WM_LBUTTONUP:
@@ -74,7 +88,7 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 
 						if ( click_ )
 						{
-							click_(this, nullptr);
+							click_(this, L"CLICK", nullptr);
 
 						}
 						else
@@ -130,7 +144,12 @@ void  D2DButton::Draw(D2DContext& cxt)
 
 		(*cxt)->DrawRectangle(rc, cxt.black_);
 		
-		(*cxt)->FillRectangle(rc, br_);
+		
+		
+		if ( BITFLG(STAT_FLOATING))
+			(*cxt)->FillRectangle(rc, cxt.white_);
+		else		
+			(*cxt)->FillRectangle(rc, br_);
 
 		if ( textlayout_ == nullptr )
 			ptText_ = CreateCenterTextLayout(cxt, text_, rc, &textlayout_ );

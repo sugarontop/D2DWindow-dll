@@ -28,6 +28,7 @@ DLLEXPORT UIHandle D2DMessageBox(UIHandleWin win,  const D2D1_RECT_F& rc, LPCWST
 DLLEXPORT UIHandle D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& rc, LPVOID sender, MenuItem* items, int items_cnt);
 DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle D2DCreateControlsWithScrollbar(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateListbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
 DLLEXPORT UIHandle D2DCreateImage(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
@@ -38,7 +39,7 @@ DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc f
 
 DLLEXPORT bool D2DSetProcfunction(UIHandle, DelegateProcFunc func2);
 
-
+DLLEXPORT UIHandle D2DCast(void* target);
 
 DLLEXPORT void D2DSetText(UIHandle h, LPCWSTR str);
 DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height);
@@ -83,7 +84,8 @@ DLLEXPORT void D2DSetRect( UIHandle h, D2D1_RECT_F rc );
 DLLEXPORT void D2DMDISetTopControl(UIHandle h);
 
 
-DLLEXPORT void D2DEventHandlerOnClick( UIHandle h, D2DEventHandler handler);
+//DLLEXPORT void D2DEventHandlerOnClick( UIHandle h, D2DEventHandler handler);
+DLLEXPORT void D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler);
 
 ////////
 //DLLEXPORT UIHandle D2DCreateDropdownListbox(D2DWindow* win, D2DControls* ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
@@ -93,12 +95,6 @@ DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r);
 DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style=0);
 DLLEXPORT bool D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
-//// /////////////////////////////////////////////////////////////
-//DLLEXPORT HANDLE DACreateList();
-//DLLEXPORT bool  DAAddList(HANDLE h, void* p);
-//DLLEXPORT UINT  DAListCount(HANDLE h);
-//DLLEXPORT void* DAGet(HANDLE h,UINT idx);
-//DLLEXPORT void  DADestroyList(HANDLE h);
 
 
 

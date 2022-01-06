@@ -25,7 +25,7 @@ namespace V6
 			virtual void ResourceUpdate(bool bCreate, D2DContext& cxt) override;
 
 		public :
-			std::function<DWORD(void* sender, void* p )> click_;
+			std::function<DWORD(void* sender,LPCWSTR funcnm, void* p )> click_;
 		protected :
 			FRectF rc_;
 			int part_stat_;

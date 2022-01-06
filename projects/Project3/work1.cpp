@@ -78,7 +78,8 @@ extern UIHandleWin hwin;
 
 #include "D2DLogin.h"
 #define  APP (D2DApp::GetInstance())
-
+void CreateDocumentControl(UIHandle h);
+void CreateLoginControl(UIHandle h);
 
 void CreateControl(HWND hWnd)
 {
@@ -91,10 +92,16 @@ void CreateControl(HWND hWnd)
 
 	D2DSetColor(hctrlsA, ColorF::Black, ColorF::White,ColorF::Black);
 
+	CreateLoginControl(hctrlsA);
 
+	CreateDocumentControl(hctrlsA);
+
+}
+void CreateLoginControl(UIHandle h)
+{
 	auto login = std::make_shared<D2DLogin>();
 
-	auto kc = (D2DControls*)hctrlsA.p;
+	auto kc = (D2DControls*)h.p;
 	login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(100,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
 	kc->Add( login );
 
@@ -116,7 +123,12 @@ void CreateControl(HWND hWnd)
 			h.p = ((D2DControls*)sender)->GetParentControls();
 
 			D2DSetColor(h, ColorF::Green, ColorF::White,ColorF::Black);		
-			
+
+			h = D2DGetControlFromName(hwin, L"document");
+
+			D2DSetStat(h, STAT_DEFAULT);
+
+
 			return 0;
 
 		}
@@ -129,186 +141,88 @@ void CreateControl(HWND hWnd)
 	APP.SetCapture(login.get());
 
 
-
 }
 
+#include "xml.h"
 
+std::vector<DocFunc> ar;
 
-void CreateControl2(HWND hWnd)
+void CreateDocumentControl(UIHandle h)
 {
-	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
-    auto root = D2DGetRootControls(hwin);
-
-	auto hctrls = D2DCreateEmptyControls(hwin, root, FRectF(), STAT_DEFAULT, NONAME,-1);
-
-	auto hd = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_DEFAULT, L"sqare",-1);
+	
+	LoadDocument(L"doc.xml", ar);
 
 
+	auto hdoc = D2DCreateEmptyControls(hwin, h, FRectF(), 0, L"document",-1); // login‚·‚é‚Ü‚Å‘€ì‚³‚¹‚È‚¢A•\Ž¦‚µ‚È‚¢B
 
-	auto tlog = D2DCreateButton(hwin, hd, FRectF(700,100,FSizeF(200,200)), STAT_DEFAULT, NONAME,999);
-	D2DSetText(tlog, L"LOGIN");
+	auto hlsb = D2DCreateDropdownListbox(hwin, hdoc, FRectF(100,100, FSizeF(400,20)), STAT_DEFAULT, L"ls",-1);
 
 	
-	auto func = [](void* sender, void*)->DWORD
-	{
-		int a = 0;
+	int i = 0;
+	for(auto& it : ar)
+		D2DAddItem(hlsb,i++, it.title);
+	
 
-		auto login = std::make_shared<D2DLogin>();
+	auto hparams = D2DCreateTextbox(hwin,hdoc,FRectF(100,150,FSizeF(400,20)), false,STAT_DEFAULT, L"params" );
 
-		auto kc = ((D2DControl*)sender)->GetParentControls(); 
-		login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(100,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
-		kc->Add( login );
+	auto htxt1 = D2DCreateTextbox(hwin,hdoc,FRectF(100,200,FSizeF(400,400)), true,STAT_DEFAULT, L"note1" );
 
+	auto b1 = D2DCreateButton(hwin,hdoc,FRectF(100,650,FSizeF(100,26)), STAT_DEFAULT, L"save", -1);
 
-		login->on_try_login_ = [](void* sender, void* p)->DWORD
+	
+	auto sel_change = [](void* sender, LPCWSTR eventnm, void* prm)->DWORD{
+
+		if ( !wcscmp(L"SELECT_CHANGE", eventnm))
 		{
-			BSTR* p1 = (BSTR*)p;
+			int idx = *(int*)prm;
 
-			std::wstring cd = p1[0];
-			std::wstring pwd = p1[1];
-
-			if ( cd == pwd )
-				return 0;
+			auto doc = ar[idx];
 
 
-			p1[2] = ::SysAllocString( L"login fail.");
+			auto h = D2DCast(sender);
+			auto h1 = D2DGetControlFromName(hwin, L"params");
+			D2DSetText(h1, doc.param);
+
+			h1 = D2DGetControlFromName(hwin, L"note1");
+			D2DSetText(h1, doc.note);
+		}
+
+		return 0;
+
+	};
+
+	D2DEventHandler(hlsb, sel_change);
 
 
-			return 1;
-		};
 
-		APP.SetCapture(login.get());
+	auto save = [](void* sender, LPCWSTR eventnm, void* prm)->DWORD{
+		
+		if ( !wcscmp(L"CLICK", eventnm))
+		{
+			auto h = D2DCast(sender);
+			auto h1 = D2DGetControlFromName(hwin, L"ls");
+
+
+			int idx=0;
+			D2DSendMessage(h1, WM_D2D_CB_GETSELECT, 0, (LPARAM)&idx );
+			auto doc = ar[idx];
+
+			h1 = D2DGetControlFromName(hwin, L"params");
+			BS b1 = D2DGetText(h1, true);
+
+			h1 = D2DGetControlFromName(hwin, L"note1");
+			BS b2 = D2DGetText(h1, true);
+
+			doc.param = b1;
+			doc.note = b2;
+
+			SaveDocument(idx, doc);
+		}
 
 		return 0;
 	};
-	
-	
-	D2DEventHandlerOnClick(tlog, func );
-	
-	
+
+	D2DEventHandler(b1, save);
 
 
-
-	auto clr = D2RGBA(170,170,170,150);
-	D2DSendMessage(hd, WM_D2D_SET_COLOR,1,(LPARAM)&clr);
-
-	clr = D2RGBA(200,200,200,255);
-	D2DSendMessage(hd, WM_D2D_SET_COLOR,0,(LPARAM)&clr);
-	//auto p1 = center->GetMainControls();
-
-
-	//auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
-	//sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)hd.p, FRectF(700,100,FSizeF(500,600)), STAT_DEFAULT, L"filemng_sc");
-	//((D2DControls*)hd.p)->Add(sccontrols);
-
-	//auto fmg = std::make_shared<D2DFileManage>();
-	//fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(700,500)), STAT_DEFAULT, L"filemng");
-	//sccontrols->Add(fmg);
-
-
-
-
-	FRectF rc(200,100,FSizeF(300,20));
-
-	for(int i=0; i < 10; i++ )
-	{
-		auto tx = D2DCreateTextbox(hwin, hd, rc, false, STAT_DEFAULT, NONAME );
-
-		auto clr = D2RGBA(255,0,0,0);
-		D2DSendMessage(tx, WM_D2D_SET_COLOR,0,(LPARAM)&clr); // back
-		clr = D2RGBA(255,255,255,255);
-		D2DSendMessage(tx, WM_D2D_SET_COLOR,1,(LPARAM)&clr); // fore
-		clr = D2RGB(100,100,100);
-		D2DSendMessage(tx, WM_D2D_SET_COLOR,2,(LPARAM)&clr); // border
-
-		rc.Offset(0, 30);
-	}
-
-	
-	auto bar = std::make_shared<D2DAccordionbar>();
-	bar->CreateControl((D2DWindow*)hwin.p, (D2DControls*)hd.p, FRectF(550,100,FSizeF(20,100)), STAT_DEFAULT,  L"my accordion");
-	((D2DControls*)hd.p)->Add(bar);
-
-	
-	hctrls.p = bar.get();
-	auto sq = D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, L"square paper", 0);
-
-	
-	// //////////////////////////////////////////////////
-	
-	bar = std::make_shared<D2DAccordionbar>();
-	bar->CreateControl((D2DWindow*)hwin.p, (D2DControls*)hd.p, FRectF(550,250,FSizeF(20,100)), STAT_DEFAULT, L"my accordion1");
-	((D2DControls*)hd.p)->Add(bar);
-
-	hctrls.p = bar.get();
-	sq = D2DCreateSquarePaper(hwin,hctrls, FRectF(0,0,FSizeF(800,100)), STAT_DEFAULT, L"square paper1", 0);
-
-
-
-
-
-
-
-	D2DWindow* pw = (D2DWindow*)hwin.p;
-	
-	//ComPTR<IStream> sm;
-	//work(&sm);
-	//ComPTR<ID2D1Bitmap> bmp;
-	//Stream2Bitmap( sm, *(pw->cxt) , &bmp);
-
-	
-	auto ls = D2DCreateListbox(hwin, hd, FRectF(100,450,FSizeF(300,300)), STAT_DEFAULT, NONAME );
-
-#ifdef TEST1
-
-	LPCWSTR fnm[] = {L"flag_canada.png",L"flag_andorra.png",L"flag_argentina.png",L"flag_australia.png",
-	L"flag_belgium.png",L"flag_botswana.png",L"flag_brasil.png",L"flag_bulgaria.png",L"flag_cameroon.png",
-	L"flag_canada.png",L"flag_central_african_republic.png",L"flag_chile.png",L"flag_colombia.png"
-	};
-	
-
-	for(int i = 0; i < _countof(fnm); i++)
-	{
-		std::wstring cfnm = L".\\res\\";
-		cfnm += fnm[i];
-		
-		ComPTR<IStream> sm;
-		ComPTR<ID2D1Bitmap> bmp;
-		if (FileReadStream( cfnm.c_str(), &sm ))
-			Stream2Bitmap( sm, *(pw->cxt) , &bmp);
-
-		auto p = bmp.Detach();
-
-		D2DSendMessage(ls, WM_D2D_LISTBOX_ADD_ITEM, 1,(LPARAM)p);
-	}
-#else
-
-	UIHandle ctrls = D2DCreateControls(hwin, hd, FRectF(0,0,1,1), STAT_ENABLE, NONAME,-1);
-
-	for(int i = 0; i < 8; i++ )
-	{
-		auto c1 = D2DCreateControls(hwin, ctrls, FRectF(0,0,200,50), STAT_DEFAULT, NONAME,-1);
-		
-		
-		
-		D2DCreateStatic(hwin,c1,FRectF(10,10,FSizeF(50,25)), STAT_DEFAULT, L"TEXT:", NONAME );
-		//D2DCreateTextbox(hwin,c1,FRectF(60,10,FSizeF(200,25)), FALSE, STAT_DEFAULT, NONAME );
-		D2DCreateButton(hwin,c1,FRectF(60,10,FSizeF(100,25)),STAT_DEFAULT, NONAME,-1);
-	}
-
-
-	D2DSendMessage(ls, WM_D2D_LISTBOX_ADD_ITEM, 2,(LPARAM)ctrls.p);
-
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-#endif
 }

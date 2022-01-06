@@ -130,6 +130,19 @@ LRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM 
 
         }
         break;
+		case WM_D2D_CB_GETSELECT:
+		{			
+			int* r = (int*)lp;
+			
+			*r = selected_idx_;
+
+			ret=1;
+
+		}
+		break;
+
+
+
 		case WM_KEYDOWN:
 		{
 			auto key = 0xff & wp;
@@ -196,14 +209,20 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
 
         int a = GetID();
 
+		if ( click_ )
+		{
+			click_(this, L"SELECT_CHANGE", &selected_idx_);
+
+		}
+		else
+		{
+
 		
-		auto hr = parent_control_->SendMesage(WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh);
+			auto hr = parent_control_->SendMesage(WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh);
 
-		if ( hr == 0 )
-			parent_window_->SendMessage( WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh );
-
-
-
+			if ( hr == 0 )
+				parent_window_->SendMessage( WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh );
+		}
     }
 }
 

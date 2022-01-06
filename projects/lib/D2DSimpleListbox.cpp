@@ -518,6 +518,17 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 			ret = 1;
 		}
 		break;
+		case WM_D2D_CB_GETSELECT:
+		{			
+			int* r = (int*)lParam;
+			
+			*r = selected_idx_;
+
+			ret=1;
+
+		}
+		break;
+
     }
 
     return ret;

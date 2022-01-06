@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<t>
+		<title>D2DCreateTextbox</title>
+		<params>UIHandleWin hwin, UIHandle hctrls, const FRectF&amp; rc, DWORD stat, LPCWSTR name, int id=-1</params>
+		<note>リストボックスを作成</note>
+	</t>
+	<t>
+		<title>D2DCreateListbox</title>
+		<params>UIHandleWin hwin, UIHandle hctrls, const FRectF&amp; rc, DWORD stat, LPCWSTR name, int id=-1</params>
+		<note>リストボックスを作成22</note>
+	</t>
+</root>
