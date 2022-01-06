@@ -40,6 +40,7 @@
 *.tlh
 *.tli
 *.tlog
+*.bak
 
 #folder
 Generated Files
