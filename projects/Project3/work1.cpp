@@ -8,7 +8,8 @@
 #include "D2DSquarePaper.h"
 #include "D2DAccordionbar.h"
 #include "D2DFileManage.h"
-
+#include "xml.h"
+#include "D2DWhiteWindowControl.h"
 
 
 using namespace V6;
@@ -74,12 +75,13 @@ void Stream2Bitmap( IStream* sm, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 
 extern UIHandleWin hwin;
 
-//#define TEST1
 
 #include "D2DLogin.h"
 #define  APP (D2DApp::GetInstance())
 void CreateDocumentControl(UIHandle h);
 void CreateLoginControl(UIHandle h);
+std::vector<DocFunc> ar;
+
 
 void CreateControl(HWND hWnd)
 {
@@ -143,9 +145,9 @@ void CreateLoginControl(UIHandle h)
 
 }
 
-#include "xml.h"
 
-std::vector<DocFunc> ar;
+
+
 
 void CreateDocumentControl(UIHandle h)
 {
@@ -153,8 +155,9 @@ void CreateDocumentControl(UIHandle h)
 	LoadDocument(L"doc.xml", ar);
 
 
-	auto hdoc = D2DCreateEmptyControls(hwin, h, FRectF(), 0, L"document",-1); // loginするまで操作させない、表示しない。
+	auto hdoc = D2DCreateXXXControls(hwin, h, FRectF(), 0, L"document",-1); // 0:loginするまで表示しない。
 
+	auto d1 = std::make_shared<D2DWhiteWindowControls>();
 	auto hlsb = D2DCreateDropdownListbox(hwin, hdoc, FRectF(100,100, FSizeF(400,20)), STAT_DEFAULT, L"ls",-1);
 
 	
@@ -168,6 +171,8 @@ void CreateDocumentControl(UIHandle h)
 	auto htxt1 = D2DCreateTextbox(hwin,hdoc,FRectF(100,200,FSizeF(400,400)), true,STAT_DEFAULT, L"note1" );
 
 	auto b1 = D2DCreateButton(hwin,hdoc,FRectF(100,650,FSizeF(100,26)), STAT_DEFAULT, L"save", -1);
+
+	auto b2 = D2DCreateButton(hwin,hdoc,FRectF(300,650,FSizeF(100,26)), STAT_DEFAULT, L"minimum", -1);
 
 	
 	auto sel_change = [](void* sender, LPCWSTR eventnm, void* prm)->DWORD{
@@ -227,4 +232,19 @@ void CreateDocumentControl(UIHandle h)
 	D2DEventHandler(b1, save);
 
 
+	auto mini = [](void* sender, LPCWSTR eventnm, void* prm)->DWORD{
+
+		if ( !wcscmp(L"CLICK", eventnm))
+		{
+			auto h = D2DCast(sender);
+			auto h1 = D2DGetControlFromName(hwin, L"document");
+			
+			D2DSendMessage(h1, WM_D2D_MINIMUM_SIZE, 0, (LPARAM)0 );
+
+		
+		}
+		return 0;
+	};
+
+	D2DEventHandler(b2, mini);
 }

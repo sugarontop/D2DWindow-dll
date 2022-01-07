@@ -13,6 +13,7 @@
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DAccordionbar.h"
 #include "D2DImageControl.h"
+#include "D2DXXXControls.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 //UIHandle Renewal_UIHandle(  UIHandle h );
@@ -131,6 +132,25 @@ DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, con
 	_ASSERT(hctrls.p);
 
 	auto pgtx = std::make_shared<D2DControls>(); 
+
+	auto win = (D2DWindow*)hwin.p;
+	auto ctrls = (D2DControls*)hctrls.p;
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( pgtx);	
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+DLLEXPORT UIHandle D2DCreateXXXControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hwin.p);
+	_ASSERT(hctrls.p);
+
+	auto pgtx = std::make_shared<D2DXXXControls>(); 
 
 	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;

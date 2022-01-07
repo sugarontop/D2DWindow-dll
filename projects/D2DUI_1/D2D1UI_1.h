@@ -18,16 +18,17 @@ class FRectF;
 DLLEXPORT bool D2DResource(D2DWindow* win,  FRectF& rc );
 DLLEXPORT void D2DInitail(INT_PTR p );
 
-DLLEXPORT UIHandle D2DCreateWhiteWindow(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id );
-DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id );
+DLLEXPORT UIHandle D2DCreateWhiteWindow(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin win, UIHandle ctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id=-1, int ext=-1 );
-DLLEXPORT UIHandle D2DCreateButton(UIHandleWin win, UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id);
-DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin win, UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id);
-DLLEXPORT UIHandle D2DCreateControls(UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
+DLLEXPORT UIHandle D2DCreateButton(UIHandleWin win, UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1);
+DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin win, UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1);
+DLLEXPORT UIHandle D2DCreateControls(UIHandleWin win, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1);
 DLLEXPORT UIHandle D2DMessageBox(UIHandleWin win,  const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message);
 DLLEXPORT UIHandle D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& rc, LPVOID sender, MenuItem* items, int items_cnt);
 DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle D2DCreateXXXControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateControlsWithScrollbar(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle D2DCreateListbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
 

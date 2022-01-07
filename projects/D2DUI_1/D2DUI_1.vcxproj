@@ -188,6 +188,7 @@
     <ClInclude Include="..\lib\D2DSimpleListbox.h" />
     <ClInclude Include="..\lib\D2DWhiteControl.h" />
     <ClInclude Include="..\lib\D2DWhiteWindow.h" />
+    <ClInclude Include="..\lib\D2DXXXControls.h" />
     <ClInclude Include="D2D1UI_1.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="..\lib\D2DWhiteWindow.cpp" />
     <ClCompile Include="..\lib\D2DWindow.cpp" />
     <ClCompile Include="..\lib\D2DWindow2.cpp" />
+    <ClCompile Include="..\lib\D2DXXXControls.cpp" />
     <ClCompile Include="..\lib\TextMemory.cpp" />
     <ClCompile Include="..\lib\tsf\D2DCharRect.cpp" />
     <ClCompile Include="..\lib\tsf\DisplayAttribute.cpp" />

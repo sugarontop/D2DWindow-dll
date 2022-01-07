@@ -158,7 +158,7 @@ void yahoo_finance::StartDownload(LPCWSTR cd1)
 #ifdef YAHOO
 		WCHAR cb[256];
 		
-		auto dds = yahoo_chart::Period(2021,1,1);
+		auto dds = yahoo_chart::Period(2021,2,1);
 		auto now = yahoo_chart::Period(0,0,0);
 
 		std::wstring cd= cd1;

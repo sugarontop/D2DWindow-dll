@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "D2DDropdownListbox.h"
-
+#include "D2DButton.h"
 
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
@@ -35,13 +35,13 @@ void D2DDropdownListbox::Draw(D2DContext& cxt)
         }
         else if (mouse_mode_ == 1)
         {
-            ComPTR<ID2D1SolidColorBrush> br;
-            (*cxt)->CreateSolidColorBrush(D2RGB(0,0,255), &br);
+			ComPTR<ID2D1LinearGradientBrush> br;
+            D2DButton::CreateButtonBrush(cxt, button_rc_.Height(), false, &br);
 
-            (*cxt)->DrawRectangle(rc_, br);
+            (*cxt)->DrawRectangle(rc_, cxt.black_);
             (*cxt)->FillRectangle(rc_, cxt.white_);
 
-            (*cxt)->DrawRectangle(button_rc_, br);
+            (*cxt)->FillRectangle(button_rc_, br);
         }
 		
 

@@ -57,6 +57,9 @@
     <ClInclude Include="..\lib\D2DImageControl.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\D2DXXXControls.h">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -132,6 +135,9 @@
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\D2DImageControl.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DXXXControls.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
   </ItemGroup>
