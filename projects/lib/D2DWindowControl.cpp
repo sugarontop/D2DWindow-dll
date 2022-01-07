@@ -143,11 +143,10 @@ LRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			if ( capture2 == nullptr )
 			{
 				// captureの切り替え、次のオブジェクトへメッセージをまわす
-
 				hr = DefWndProc(b,message,wParam,lParam);
-
 			}
 		}
+		
 	}
 
 	return hr;

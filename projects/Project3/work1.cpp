@@ -216,6 +216,8 @@ void CreateDocumentControl(UIHandle h)
 			doc.param = b1;
 			doc.note = b2;
 
+			ar[idx] = doc;
+
 			SaveDocument(idx, doc);
 		}
 

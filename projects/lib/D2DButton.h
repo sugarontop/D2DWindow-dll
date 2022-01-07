@@ -26,7 +26,9 @@ namespace V6
 
 		public :
 			std::function<DWORD(void* sender,LPCWSTR funcnm, void* p )> click_;
+			static void CreateButtonBrush(D2DContext& cxt,float height, bool normal, ID2D1LinearGradientBrush** pbr);
 		protected :
+			
 			FRectF rc_;
 			int part_stat_;
 			std::wstring text_;

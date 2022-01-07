@@ -2,8 +2,10 @@
 <root>
 	<t>
 		<title>D2DCreateTextbox</title>
-		<params>UIHandleWin hwin, UIHandle hctrls, const FRectF&amp; rc, DWORD stat, LPCWSTR name, int id=-1</params>
-		<note>リストボックスを作成</note>
+		<params>UIHandleWin hwin</params>
+		<note>textを作成
+ ---
+textを作成</note>
 	</t>
 	<t>
 		<title>D2DCreateListbox</title>

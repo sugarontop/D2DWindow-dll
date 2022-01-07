@@ -147,7 +147,11 @@ void  D2DButton::Draw(D2DContext& cxt)
 		
 		
 		if ( BITFLG(STAT_FLOATING))
-			(*cxt)->FillRectangle(rc, cxt.white_);
+		{
+			ComPTR<ID2D1LinearGradientBrush> br;
+			CreateButtonBrush(cxt, rc_.Height(), false, &br);
+			(*cxt)->FillRectangle(rc, br);
+		}
 		else		
 			(*cxt)->FillRectangle(rc, br_);
 
@@ -173,23 +177,28 @@ void D2DButton::ResourceUpdate(bool bCreate, D2DContext& cxt)
 	br_.Release();		
 
 	if ( bCreate )
-	{
-		D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES linearGradientBrushProperties = D2D1::LinearGradientBrushProperties(
+		CreateButtonBrush(cxt, rc_.Height(), true, &br_);
+}
+void D2DButton::CreateButtonBrush(D2DContext& cxt, float height, bool normal, ID2D1LinearGradientBrush** pbr)
+{
+	D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES linearGradientBrushProperties = D2D1::LinearGradientBrushProperties(
             D2D1::Point2F(0,0),
-            D2D1::Point2F(0,rc_.Height()));
+            D2D1::Point2F(0,height));
 
-		ComPTR<ID2D1GradientStopCollection> pGradientStops;
+	ComPTR<ID2D1GradientStopCollection> pGradientStops;
 
-		D2D1_GRADIENT_STOP gradientStops[2];
-		gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::White, 1);
-		gradientStops[0].position = 0.0f;
-		gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::LightGray, 1);
-		gradientStops[1].position = 1.0f;
+	auto clr = (normal ? D2D1::ColorF::LightGray : D2D1::ColorF::LightSlateGray);
 
-		THR((*cxt)->CreateGradientStopCollection(gradientStops, 2,&pGradientStops));
+	D2D1_GRADIENT_STOP gradientStops[2];
+	gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::White, 1);
+	gradientStops[0].position = 0.0f;
+	gradientStops[1].color = D2D1::ColorF(clr, 1);
+	gradientStops[1].position = 1.0f;
+
+	THR((*cxt)->CreateGradientStopCollection(gradientStops, 2,&pGradientStops));
 		
-		THR((*cxt)->CreateLinearGradientBrush(linearGradientBrushProperties,pGradientStops,&br_));
-	}
+	THR((*cxt)->CreateLinearGradientBrush(linearGradientBrushProperties,pGradientStops,pbr));
+
 }
 
 // ///////////////////////////////////////////////////////////////////////////////////

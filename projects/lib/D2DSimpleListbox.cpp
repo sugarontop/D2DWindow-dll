@@ -402,6 +402,17 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
             if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3)
             {            
                 OnClick();
+
+				auto a = APP.GetCapture();
+
+				if ( dynamic_cast<D2DDropdownListbox*>(a))
+				{
+					APP.ReleaseCapture();
+					auto xa = APP.GetCapture();
+					_ASSERT(xa == nullptr);
+				}
+
+				ret = 1;
             }
 
             scstat_ = 0;            
