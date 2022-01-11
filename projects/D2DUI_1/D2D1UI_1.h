@@ -93,7 +93,8 @@ DLLEXPORT void D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler);
 DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r);
 
 
-DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style=0);
+DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style);
+DLLEXPORT void SmoothRect(int typ, UIHandleWin win, FRectF* target, FRectF dstRect);
 DLLEXPORT bool D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
 

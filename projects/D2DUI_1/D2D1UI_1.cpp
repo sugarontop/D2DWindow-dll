@@ -739,9 +739,22 @@ DLLEXPORT void D2DDraw(UIHandleWin main, void* hWnd  )
 {	
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );
 
-	auto& cxt = ((D2DWindow*)main.p)->GetContext();
-	auto root = ((D2DWindow*)main.p)->top_control_;
+	auto pwin = (D2DWindow*)main.p;
+
+	auto& cxt = pwin->GetContext();
+	auto root = pwin->top_control_;
 	root->Draw(cxt);
+
+	
+	{
+		static int no=0;
+
+		if ( pwin->Smooth_ )
+			no = pwin->Smooth_(pwin, no);
+		else
+			no = 0;
+	}
+
 
 	if ( cxt.bRedraw_ )
 		cxt.DoRedraw((HWND)hWnd);
@@ -867,12 +880,46 @@ DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT
 			p[i] = rc;
 		}
 	}
-
-
 	p[p_size-1] = rcEnd;
 	return p;
-
 }
+
+
+DLLEXPORT void SmoothRect(int typ, UIHandleWin win, FRectF* target, FRectF dstRect)
+{
+	if ( typ == 0 )
+		*target = dstRect;
+	else if ( typ == 1 )
+	{
+		int cnt = 25;
+		FRectF* prc = new FRectF[cnt];
+		FRectF srect = target[0];
+		int atyp = typ - 1;
+	
+		RectAnimation(srect, dstRect, prc, cnt, atyp);
+
+		D2DWindow* pwin = (D2DWindow*)win.p;
+		pwin->Smooth_ = [prc, cnt,target](D2DWindow* win, int no)->int
+		{						
+			if ( no < cnt )
+			{
+				*target = prc[no];
+				win->GetContext().bRedraw_ = true;
+			}
+			else if ( no == cnt )
+			{
+				*target = prc[no-1];
+				win->GetContext().bRedraw_ = true;
+				delete [] prc;
+				win->Smooth_ = nullptr;
+			}
+
+			return (no+1);
+		};
+	}
+}
+
+
 DLLEXPORT bool D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 {
 	ComPTR<IWICImagingFactory> d2dWICFactory;

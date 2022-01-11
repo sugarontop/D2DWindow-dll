@@ -123,6 +123,7 @@ LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		break;
 		
 		
+		
 	}
 
 	if ( hr == 0 )
@@ -134,7 +135,7 @@ LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 		
 	}
-
+	
 
 	return hr;
 }

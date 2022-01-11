@@ -337,10 +337,9 @@ void D2DControls::Draw(D2DContext& cxt)
 
 		InnerDraw(cxt);
 
-		mat.PopTransform();
-
-		
+		mat.PopTransform();		
 	}
+
 }
 std::shared_ptr<D2DControl> D2DControls::Detach(D2DControl* target)
 {
