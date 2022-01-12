@@ -66,6 +66,7 @@ namespace V6 {
 			FRectF* prc_;
 			FPointF mouse_pt_;
 			UIHandle txt_cd_;
+			ComPTR<ID2D1StrokeStyle> dotline_;
 
 	};
 

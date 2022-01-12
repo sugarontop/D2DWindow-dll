@@ -410,6 +410,22 @@ bool yahoo_finance::ConvCsv(IStream* ism)
 }
 #pragma endregion
 /////////////////////////////////////////////////////////////////////////
+
+
+
+float CalcPlotSetpLine( float fmax, float fmin, float* calc_fstart, float* calc_fend)
+{
+	float step =  (fmax-fmin)/10;
+
+	*calc_fstart = floor(fmin-step);
+	*calc_fend = floor(fmax+step+1);
+
+	step =  floor((*calc_fend-*calc_fstart)/10);
+
+	return max(1.0f,step);
+}
+
+
 yahoo_chart::yahoo_chart()
 {
 
@@ -519,6 +535,31 @@ void yahoo_chart::Draw(D2DContext& cxt)
 
 				x += 4;
 			}
+
+			float fstart,fend;
+			float plotstep = CalcPlotSetpLine(fmax, fmin, &fstart, &fend);
+
+
+			
+
+			(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+
+
+			float futosa = 1.0f/mat._11;
+
+			for(float yyy=fstart; yyy < fend; yyy+=plotstep )
+			{			
+				float ploty = h - (yyy-fmin)*step;
+
+
+				FPointF pt1(0,ploty);
+				FPointF pt2(rc_.right-rc_.left,ploty);
+
+				(*cxt)->DrawLine(pt1,pt2,cxt.black_, futosa, dotline_);
+			}
+
+			(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+
 		}
 		else
 		{
@@ -673,6 +714,29 @@ void yahoo_chart::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 
 		txt_cd_ = txt;
 	}
+
+
+	float dashes[] = {3.0f, 4.0f };
+	{
+		auto& cxt = parent->GetContext();
+		ComPTR<ID2D1Factory> fac;
+		(*cxt)->GetFactory(&fac);
+			fac->CreateStrokeStyle(
+			D2D1::StrokeStyleProperties(
+				D2D1_CAP_STYLE_FLAT,
+				D2D1_CAP_STYLE_FLAT,
+				D2D1_CAP_STYLE_ROUND,
+				D2D1_LINE_JOIN_MITER,
+				10.0f,
+				D2D1_DASH_STYLE_CUSTOM,
+				0.0f),
+			dashes,
+			ARRAYSIZE(dashes),
+			&dotline_
+			);
+	}
+
+
 
 }
 
