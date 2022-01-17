@@ -100,6 +100,24 @@ LRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	auto capture = APP.GetCapture();
 	LRESULT hr = 0;
 
+	// capture‚Í–³Ž‹
+	if ( WM_D2D_BROADCAST_MESSAGE_FIRST <= message )
+	{
+		for(auto& it : controls_ )
+		{
+			if ( it->GetStat() & STAT_ENABLE )
+			{
+				hr = it->WndProc(b,message,wParam,lParam);
+				if ( hr != 0 )
+				{
+					return hr;
+				}
+			}
+		}
+
+		return hr;
+	}
+
 
 	if ( capture && GetParentControls() == capture )
 	{

@@ -110,3 +110,6 @@ typedef DWORD (*D2DEventHandlerDelegate)(void* sender,LPCWSTR eventName, void* p
 
 
 #define WM_D2D_MINIMUM_SIZE						(WM_APP+23)
+
+
+#define WM_D2D_BROADCAST_MESSAGE_FIRST			(WM_APP+5000) // capture‚Í–³Ž‹‚·‚é
