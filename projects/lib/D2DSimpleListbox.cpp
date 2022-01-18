@@ -529,6 +529,8 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 			ret = 1;
 		}
 		break;
+
+		case WM_D2D_SELECTED_ITEM:
 		case WM_D2D_CB_GETSELECT:
 		{			
 			int* r = (int*)lParam;
@@ -544,6 +546,12 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 
     return ret;
 }
+void D2DSimpleListbox::AddItem(int idx, LPCWSTR str)
+{
+	items_.push_back( std::make_shared<D2DListboxItemString>(idx, str)); 
+}
+
+
 bool D2DSimpleListbox::OnEscape()
 {
     

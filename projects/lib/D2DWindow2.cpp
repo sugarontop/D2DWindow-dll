@@ -7,12 +7,12 @@ using namespace V6;
 LRESULT D2DWindow::PostMessage(UINT msg, WPARAM wp, LPARAM lp)
 {
 	EnterCriticalSection( &message_lock_ );
-	{
-		MSG m(msg,wp,lp);
-		post_message_queue_.push_back( m );
-	}
+	
+	MSG m(msg,wp,lp);
+	post_message_queue_.push_back( m );
+	
 	LeaveCriticalSection(&message_lock_);
-
+	
 	return 0;
 }
 
@@ -28,17 +28,22 @@ LRESULT D2DWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 	{
 		if (TryEnterCriticalSection(&message_lock_))
 		{
+			auto queue = post_message_queue_;
+			post_message_queue_.clear();
+
+			LeaveCriticalSection(&message_lock_);
+			
 			AppBase bb(hWnd_, nullptr);
-			for(auto& it : post_message_queue_ )
+			for(auto& it : queue )
 				InnerWndProc(bb, it.msg, it.wp, it.lp);
 
-			post_message_queue_.clear();
-			LeaveCriticalSection(&message_lock_);
+			b.bRedraw=bb.bRedraw;
 		}
 	}
 
 	return InnerWndProc(b, message, wParam, lParam);
 }
+
 LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static MouseParam mp;

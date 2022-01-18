@@ -305,6 +305,14 @@ DLLEXPORT int D2DAddItem(UIHandle h, int idx, LPCWSTR str)
 		cb->AddItem(idx, str );
 
 	}
+	else if ( h.typ == TYP_SIMPLE_LISTBOX )
+	{
+		auto ls = (D2DSimpleListbox*)h.p;
+
+		ls->AddItem(idx, str);
+
+
+	}
 
 	return 0;
 }

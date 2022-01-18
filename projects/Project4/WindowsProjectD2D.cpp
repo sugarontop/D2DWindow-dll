@@ -190,7 +190,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			
 				D2DApp::SetD2DAppForDLL(k);
 				D2DInitail((INT_PTR)k );
-			
+				::SetTimer(hWnd,0,1000,0);
 				//CreateMDIControl(hWnd);
 				CreateMDISplitControl(hWnd);
 
@@ -203,7 +203,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
         }
         break;
-    
+		case WM_TIMER:
+		{
+			D2DDefWndProc(hwin, app, message, wParam,lParam);
+			r=1;
+		}
+		break;
         case WM_SIZE:
         {			
 			FRectF rc(0,0,(float)LOWORD(lParam), (float)HIWORD(lParam));          

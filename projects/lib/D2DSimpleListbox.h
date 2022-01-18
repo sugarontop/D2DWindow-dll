@@ -77,6 +77,7 @@ namespace V6
 			virtual std::wstring GetTreeTyp(USHORT* typ) override;
 			
 			float RowHeight() const;
+			void AddItem(int idx, LPCWSTR str);
 		protected :
 			LRESULT WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
 			LRESULT WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
