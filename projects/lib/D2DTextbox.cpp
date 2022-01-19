@@ -82,9 +82,6 @@ void D2DTextbox::Draw(D2DContext& cxt)
 
 		if (APP.IsCaptureEx(this)==1)
 		{
-			cxt.DFillRect(rctext_, ColorF::White);
-
-			
 			mat.Offset(rctext_);
 			mat.Offset(-ct_.offpt_.x, -vscrollbar_.Scroll());
 		
@@ -92,7 +89,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		
 			if (ctrl()->ct_)
 			{
-				ctrl()->Render(cxt, &tm_);
+				ctrl()->Render(cxt, &tm_, fore);
 			
 	#ifdef DRAW_CHAR_RECT
 				// char RECT‚Ì•\Ž¦
@@ -114,7 +111,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 					bool blf;
 					if(  ctrl()->GetLayout()->RectFromCharPosEx(xpos-1, &rc, &blf) )
 						if ((::GetTickCount() / 500)%2 == 0)							
-							cxt.DrawBlack(rc.right, rc.top, CARET_W, rc.Height());
+							(*cxt)->FillRectangle( FRectF(rc.right, rc.top, FSizeF(CARET_W, rc.Height())), fore );
 					
 					cxt.Redraw();
 					
@@ -310,6 +307,15 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 					
 				if ( msg == WM_KEYDOWN )
 				{
+					if ( wp == VK_RETURN && !IsMultiline() )
+					{
+						
+						parent_window_->SendMessage(WM_D2D_ON_TEXTBOX_RETURN, (WPARAM)this,0);
+						
+						ret = 1;
+
+						
+					}
 					ret = 1;
 				}
 

@@ -178,13 +178,15 @@ BOOL CTextLayout::GetCharInfo( int pos, CHPOS* info )
 
 }
 
-BOOL CTextLayout::Render(D2DContext& cxt, const FRectF& rcText,LPCWSTR psz,  int nCnt, int nSelStart, int nSelEnd,bool bTrail,
+
+
+BOOL CTextLayout::Render(D2DContext& cxt, ID2D1SolidColorBrush* brtxt, const FRectF& rcText,LPCWSTR psz,  int nCnt, int nSelStart, int nSelEnd,bool bTrail,
 	const COMPOSITIONRENDERINFO *pCompositionRenderInfo, UINT nCompositionRenderInfo)
 {
 	{
 		_ASSERT( DWTextLayout_ );
 
-		(*cxt)->DrawTextLayout( FPointF(0,0), DWTextLayout_, cxt.black_ ); // D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_CLIP);
+		(*cxt)->DrawTextLayout( FPointF(0,0), DWTextLayout_, brtxt); // D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_CLIP);
 	}
 
 	if ( nSelStart < nSelEnd && -1 < nSelStart )

@@ -51,8 +51,7 @@ class CTextLayout
 		virtual ~CTextLayout();
 
 		BOOL CreateLayout(D2DContext& hdc, const WCHAR *psz,  int nCnt, const SIZE& sz, bool bSingleLine, int nSelEnd,int& StarCharPos, IDWriteTextFormat* fmt);		
-		BOOL Render(D2DContext& hdc, const FRectF& rc, const WCHAR *psz,  int nCnt, int nSelStart, int nSelEnd,bool bSelTrail,const COMPOSITIONRENDERINFO *pCompositionRenderInfo, UINT nCompositionRenderInfo);
-
+		BOOL Render(D2DContext& cxt, ID2D1SolidColorBrush* br, const FRectF& rc, const WCHAR *psz,  int nCnt, int nSelStart, int nSelEnd,bool bSelTrail,const COMPOSITIONRENDERINFO *pCompositionRenderInfo, UINT nCompositionRenderInfo);
 	public :
 		int CharPosFromPoint(const FPointF& pt);
 		BOOL RectFromCharPos(UINT nPos, FRectF *prc);

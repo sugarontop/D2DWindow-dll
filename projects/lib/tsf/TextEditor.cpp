@@ -483,7 +483,7 @@ int CTextEditor::CurrentCaretPos()
 //
 //
 //----------------------------------------------------------------
-void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm)
+void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, ID2D1SolidColorBrush* br)
 {	
 	int zCaretPos = CurrentCaretPos();
 
@@ -515,7 +515,9 @@ void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm)
 	int selstart = (int)ct_->SelStart() - ct_->nStartCharPos_;
 	int selend = (int)ct_->SelEnd() - ct_->nStartCharPos_;
 
-	layout_.Render(cxt, ct_->rc_, ct_->GetTextBuffer(), ct_->GetTextLength(), selstart, selend,ct_->bSelTrail_,pCompositionRenderInfo_, nCompositionRenderInfo_);
+	layout_.Render(cxt,br, ct_->rc_, ct_->GetTextBuffer(), (int)ct_->GetTextLength(), selstart, selend,ct_->bSelTrail_,pCompositionRenderInfo_, nCompositionRenderInfo_);
+
+	
 
     *ptm = layout_.GetTextMetrics();
 }
