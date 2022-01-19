@@ -1,7 +1,4 @@
 #include "pch.h"
-
-//#import "msxml6.dll"
-#include "msxml6.tlh"
 #pragma comment( lib, "msxml6")
 
 #include "xml.h"

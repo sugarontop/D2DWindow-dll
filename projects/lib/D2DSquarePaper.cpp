@@ -175,7 +175,10 @@ LRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		r = import_function_(this,b,message,wParam,lParam);
 		
 	if (r == 0)
-		r = D2DControls::WndProc(b,message,wParam,lParam);
+	{
+		//r = D2DControls::WndProc(b,message,wParam,lParam);
+		r = InnerWndProc(b,message,wParam,lParam);
+	}
 
 	return r;
 }

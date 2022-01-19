@@ -95,30 +95,35 @@ void D2DControls::ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 	for (auto& it  : controls_ )
 		it->WndProc(b, message, wParam, lParam);
 }
-LRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DControls::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	auto capture = APP.GetCapture();
+	LRESULT hr = 0;
+	for(auto& it : controls_ )
+	{
+		if ( it->GetStat() & STAT_ENABLE )
+		{
+			hr = it->WndProc(b,message,wParam,lParam);
+			if ( hr != 0 )
+			{
+				break;
+			}
+		}
+	}
+	return hr;
+}
+LRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{	
 	LRESULT hr = 0;
 
 	// capture‚Í–³Ž‹
-	if ( WM_D2D_BROADCAST_MESSAGE_FIRST <= message )
+	if ( WM_D2D_BROADCAST_MESSAGE_FIRST <= message || message == WM_TIMER)
 	{
-		for(auto& it : controls_ )
-		{
-			if ( it->GetStat() & STAT_ENABLE )
-			{
-				hr = it->WndProc(b,message,wParam,lParam);
-				if ( hr != 0 )
-				{
-					return hr;
-				}
-			}
-		}
+		hr = InnerWndProc(b,message,wParam,lParam);
 
 		return hr;
 	}
 
-
+	auto capture = APP.GetCapture();
 	if ( capture && GetParentControls() == capture )
 	{
 		capture = nullptr; // stop stackoverflow

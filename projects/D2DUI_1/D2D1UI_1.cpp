@@ -16,7 +16,7 @@
 #include "D2DXXXControls.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
-//UIHandle Renewal_UIHandle(  UIHandle h );
+
 UIHandle ConvertUIHandle(D2DControl* p);
 
 DLLEXPORT void D2DInitail(INT_PTR p )
@@ -403,6 +403,21 @@ DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc f
 	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
 
 	return r;
+}
+
+DLLEXPORT void D2DSetFocus( UIHandle h )
+{
+	if ( h.typ == TYP_TEXTBOX )
+	{
+		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
+		tx->StatActive(true);
+
+
+		APP.ReleaseCapture();
+		APP.SetCapture(tx);
+
+	}
+
 }
 
 DLLEXPORT void D2DSetCapture(UIHandle h)

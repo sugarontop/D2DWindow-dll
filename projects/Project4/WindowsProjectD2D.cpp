@@ -190,7 +190,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			
 				D2DApp::SetD2DAppForDLL(k);
 				D2DInitail((INT_PTR)k );
-				::SetTimer(hWnd,0,1000,0);
+				::SetTimer(hWnd,HEART_BEET_ID,1000,0);
 				//CreateMDIControl(hWnd);
 				CreateMDISplitControl(hWnd);
 

@@ -688,7 +688,7 @@ LRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 	}
 
 	if ( hr == 0 )
-		hr = D2DControls::WndProc(b,message,wParam,lParam);
+		hr = InnerWndProc(b,message,wParam,lParam);
 
 
 	return hr;

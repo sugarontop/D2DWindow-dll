@@ -209,7 +209,10 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
 
 	if ( r == 0 && bl )
-		r = D2DControls::WndProc(b,message,wParam,lParam);
+	{
+		//r = D2DControls::WndProc(b,message,wParam,lParam);
+		r = InnerWndProc(b,message,wParam,lParam);
+	}
 
 	if (r==0)
 	{

@@ -129,7 +129,15 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 	}
 
 	if ( h==0 && bl )
-		h = D2DControls::WndProc(b,message,wParam,lParam);
+	{
+	//	h = D2DControls::WndProc(b,message,wParam,lParam);
+		//h = D2DControls::DefWndProc(b,message,wParam,lParam);
+
+		h = InnerWndProc(b,message,wParam,lParam);
+
+
+
+	}
 
 
 

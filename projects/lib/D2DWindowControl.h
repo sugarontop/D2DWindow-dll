@@ -102,9 +102,11 @@ public:
 	std::shared_ptr<D2DControl> GetItem(UINT idx){ return controls_[idx]; }
 	UINT ChildCount() const { return controls_.size(); }
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col) override;
-
+	LRESULT InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 protected :
 	virtual LRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+
+	
 	
 	void InnerDraw(D2DContext& cxt);
 

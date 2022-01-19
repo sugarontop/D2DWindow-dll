@@ -1,8 +1,7 @@
 #include "pch.h"
-#include <msxml6.h>
-#pragma comment( lib, "msxml6")
-
 #include "inet.h"
+
+#pragma comment( lib, "msxml6")
 
 class CBstr
 {

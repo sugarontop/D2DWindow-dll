@@ -42,6 +42,7 @@ DLLEXPORT bool D2DSetProcfunction(UIHandle, DelegateProcFunc func2);
 
 DLLEXPORT UIHandle D2DCast(void* target);
 
+DLLEXPORT void D2DSetFocus(UIHandle h);
 DLLEXPORT void D2DSetText(UIHandle h, LPCWSTR str);
 DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height);
 DLLEXPORT int D2DSetStat(UIHandle h, int stat);

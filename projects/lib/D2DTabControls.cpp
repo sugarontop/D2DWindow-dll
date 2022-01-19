@@ -191,7 +191,11 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 	if ( r == 0 )
 	{
-		r = controls_[tab_idx_]->WndProc(b,message,wParam,lParam);
+		auto ctrls = dynamic_cast<D2DControls*>(controls_[tab_idx_].get());
+
+		r = ctrls->InnerWndProc(b,message,wParam,lParam);
+
+
 		//r = D2DControls::DefWndProc(b,message,wParam,lParam);
 	}
 

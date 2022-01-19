@@ -36,8 +36,7 @@
 #include <algorithm>
 
 #include <msxml6.h>
-#define MSXML	L"MSXML2.DOMDocument.6.0"	// CLSID clsid; hr = CLSIDFromProgID( MSXML, &clsid );CComPtr<IXMLDOMDocument> xml;	hr = CoCreateInstance( clsid, NULL,CLSCTX_ALL,IID_IXMLDOMDocument,(void**)&xml );
-#define MSXMLHTTP L"MSXML2.XMLHTTP.6.0"	// 自動キャッシュが効く　CComPtr<IXMLHTTPRequest> req; CLSIDFromProgID( MSXMLHTTP, &clsid ); hr = CoCreateInstance( clsid,NULL,CLSCTX_INPROC_SERVER,IID_IXMLHTTPRequest,(LPVOID*)&req );
+#import <msxml6.dll> 
 
 #include <comutil.h>
 #include <mmsystem.h>
@@ -85,7 +84,7 @@ void Trace(LPCWSTR fm, ...);
 
 #define TRACE	 Trace
 typedef _bstr_t BS;
-
+#define HEART_BEET_ID 1000
 
 
 //

@@ -143,28 +143,26 @@ void CTextEditor::MoveSelection(int nSelStart, int nSelEnd, bool bTrail)
 {
 	if ( nSelEnd < nSelStart )
 		std::swap( nSelStart, nSelEnd );
+	
+	if ( ct_ )
+	{
+		int nTextLength = (int)ct_->GetTextLength();
+		if (nSelStart >= nTextLength)
+			nSelStart = nTextLength;
 
-    int nTextLength = (int)ct_->GetTextLength();
-    if (nSelStart >= nTextLength)
-        nSelStart = nTextLength;
+		if (nSelEnd >= nTextLength)
+			nSelEnd = nTextLength;
 
-    if (nSelEnd >= nTextLength)
-        nSelEnd = nTextLength;
+		// set caret position
+		ct_->SetSelStart(nSelStart); 
+		ct_->SetSelEnd(nSelEnd);
 
-    if (nSelStart == 0)
-    {
-        int a = 0;
-    }
-
-    // set caret position
-    ct_->SetSelStart(nSelStart); 
-    ct_->SetSelEnd(nSelEnd);
-
-	ct_->bSelTrail_ = bTrail;
+		ct_->bSelTrail_ = bTrail;
 
     
 
-    pTextStore_->OnSelectionChange();
+		pTextStore_->OnSelectionChange();
+	}
 }
 
 
