@@ -88,9 +88,9 @@ void CreateControl(HWND hWnd)
 	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
     auto root = D2DGetRootControls(hwin);
 
-	auto hctrls = D2DCreateEmptyControls(hwin, root, FRectF(), STAT_DEFAULT, NONAME,-1);
+	auto hctrls = D2DCreateEmptyControls( root, FRectF(), STAT_DEFAULT, NONAME,-1);
 
-	auto hctrlsA = D2DCreateSquarePaper(hwin, hctrls,  FRectF(0,0,9000,9000), STAT_VISIBLE, L"sqare",-1);
+	auto hctrlsA = D2DCreateSquarePaper( hctrls,  FRectF(0,0,9000,9000), STAT_VISIBLE, L"sqare",-1);
 
 	D2DSetColor(hctrlsA, ColorF::Black, ColorF::White,ColorF::Black);
 
@@ -155,10 +155,10 @@ void CreateDocumentControl(UIHandle h)
 	LoadDocument(L"doc.xml", ar);
 
 
-	auto hdoc = D2DCreateXXXControls(hwin, h, FRectF(), 0, L"document",-1); // 0:loginするまで表示しない。
+	auto hdoc = D2DCreateXXXControls( h, FRectF(), 0, L"document",-1); // 0:loginするまで表示しない。
 
 	auto d1 = std::make_shared<D2DWhiteWindowControls>();
-	auto hlsb = D2DCreateDropdownListbox(hwin, hdoc, FRectF(100,100, FSizeF(400,20)), STAT_DEFAULT, L"ls",-1);
+	auto hlsb = D2DCreateDropdownListbox( hdoc, FRectF(100,100, FSizeF(400,20)), STAT_DEFAULT, L"ls",-1);
 
 	
 	int i = 0;
@@ -166,13 +166,13 @@ void CreateDocumentControl(UIHandle h)
 		D2DAddItem(hlsb,i++, it.title);
 	
 
-	auto hparams = D2DCreateTextbox(hwin,hdoc,FRectF(100,150,FSizeF(400,20)), false,STAT_DEFAULT, L"params" );
+	auto hparams = D2DCreateTextbox(hdoc,FRectF(100,150,FSizeF(400,20)), false,STAT_DEFAULT, L"params" );
 
-	auto htxt1 = D2DCreateTextbox(hwin,hdoc,FRectF(100,200,FSizeF(400,400)), true,STAT_DEFAULT, L"note1" );
+	auto htxt1 = D2DCreateTextbox(hdoc,FRectF(100,200,FSizeF(400,400)), true,STAT_DEFAULT, L"note1" );
 
-	auto b1 = D2DCreateButton(hwin,hdoc,FRectF(100,650,FSizeF(100,26)), STAT_DEFAULT, L"save", -1);
+	auto b1 = D2DCreateButton(hdoc,FRectF(100,650,FSizeF(100,26)), STAT_DEFAULT, L"save", -1);
 
-	auto b2 = D2DCreateButton(hwin,hdoc,FRectF(300,650,FSizeF(100,26)), STAT_DEFAULT, L"minimum", -1);
+	auto b2 = D2DCreateButton(hdoc,FRectF(300,650,FSizeF(100,26)), STAT_DEFAULT, L"minimum", -1);
 
 	
 	auto sel_change = [](void* sender, LPCWSTR eventnm, void* prm)->DWORD{

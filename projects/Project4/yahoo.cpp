@@ -706,11 +706,11 @@ void yahoo_chart::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 		UIHandle hs={};
 		hs.p = this;
 
-		auto txt = D2DCreateTextbox(hwin, hs, FRectF(10,20,FSizeF(100,20)), false, STAT_DEFAULT, L"input cd", 3001 );
+		auto txt = D2DCreateTextbox( hs, FRectF(10,20,FSizeF(100,20)), false, STAT_DEFAULT, L"input cd", 3001 );
 
 		D2DSendMessage(txt,WM_D2D_SET_TEXT,0,(LPARAM)L"SPY"); // SPY:SP500 ETF, QQQ:NASDAQ 100 ETF
 
-		auto btn = D2DCreateButton(hwin, hs, FRectF(120,20,FSizeF(100,20)), STAT_DEFAULT, L"seek", 3000 );
+		auto btn = D2DCreateButton( hs, FRectF(120,20,FSizeF(100,20)), STAT_DEFAULT, L"seek", 3000 );
 
 		txt_cd_ = txt;
 	}
@@ -946,7 +946,7 @@ void yahoo_sample::CreateControl(D2DWindow* parent, D2DControls* pacontrol, cons
 	UIHandleWin  win={}; win.p = parent;
 	UIHandle ctrls={}; ctrls.p=this;
 
-	auto ct = D2DCreateTextbox(win,ctrls, FRectF(1,5,FSizeF(400,500)), true, STAT_DEFAULT, L"NVIDIA" );
+	auto ct = D2DCreateTextbox(ctrls, FRectF(1,5,FSizeF(400,500)), true, STAT_DEFAULT, L"NVIDIA" );
 
 }
 	

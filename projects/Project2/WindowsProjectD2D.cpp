@@ -190,7 +190,7 @@ void CreateControl(HWND hWnd)
     auto root = D2DGetRootControls(hwin);
 
     FRectF rctextbox(10, 40, FSizeF(400, 700));
-    UIHandle htextbox = D2DCreateTextbox(hwin, root, rctextbox, true, STAT_VISIBLE | STAT_ENABLE, L"textbox1");
+    UIHandle htextbox = D2DCreateTextbox(root, rctextbox, true, STAT_VISIBLE | STAT_ENABLE, L"textbox1");
     D2DSetText(htextbox, L"Hello world");
 
 //    FRectF rccmb(500, 800, FSizeF(100, 26));
@@ -333,14 +333,14 @@ void CreateControl(HWND hWnd)
     };
 
     FRectF rc(500, 40, FSizeF(500, 700));
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
+    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
 
     
     obj.rc = rc;
 
-    obj.page[0] =  D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
-    obj.page[1] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"tab2", 113);
-    obj.page[2] = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"tab3", 113);
+    obj.page[0] =  D2DCreateControls( whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
+    obj.page[1] = D2DCreateControls( whb2, FRectF(0, 0, 0, 0), 0, L"tab2", 113);
+    obj.page[2] = D2DCreateControls( whb2, FRectF(0, 0, 0, 0), 0, L"tab3", 113);
 
 	CreateControl0( hwin, obj.page[0]);
 
@@ -377,7 +377,7 @@ void CreateControl0(HWND hWnd)
 	hc.p = sc.get();
 
 
-	D2DCreateSquarePaper(hwin,hc, FRectF(0,0,1000,1000), STAT_DEFAULT, L"abc1", -1);
+	D2DCreateSquarePaper(hc, FRectF(0,0,1000,1000), STAT_DEFAULT, L"abc1", -1);
 
 
 
@@ -417,7 +417,7 @@ void CreateControl1(HWND hWnd)
 	}
 
 
-	auto txt = D2DCreateTextbox(hwin,root, FRectF(5,5,FSizeF(800,20)), false, STAT_DEFAULT, NONAME );
+	auto txt = D2DCreateTextbox(root, FRectF(5,5,FSizeF(800,20)), false, STAT_DEFAULT, NONAME );
 	D2DReadOnly(txt, true);
 
 	D2DFileManage::OnClick_ = [txt](std::wstring fnm)->int

@@ -179,109 +179,17 @@ void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, 
 
 #define COMBOBOX_ID_1 10
 
-void CreateControl(HWND hWnd)
+static void CreateControl(HWND hWnd)
 {
     hwin = D2DCreateMainHWnd(hWnd, 14);
     
     auto root = D2DGetRootControls(hwin);
 
     FRectF rctextbox(10, 40, FSizeF(400, 700));
-    UIHandle htextbox = D2DCreateTextbox(hwin, root, rctextbox, true, STAT_DEFAULT, L"textbox1");
-    D2DSetText(htextbox, L"Hello world\nHello world");
+    UIHandle htextbox = D2DCreateTextbox(root, rctextbox, true, STAT_DEFAULT, L"textbox1");
+    D2DSetText(htextbox, L"Hello world");
 
 	D2DSetFont(htextbox, L"ＭＳ ゴシック", 10.0f);
-
-
-    //struct WhiteBoard
-    //{     
-    //    DelegateDrawFunc f1;
-    //    DelegateProcFunc f2;
-    //    int typ;
-    //    D2DMat mat;
-    //};
-    //struct CaptureObj1
-    //{
-    //    FRectF rc;
-    //    UIHandle cc1;
-    //    UIHandle cc2;
-    //    int active_idx;
-    //    D2DMat mat;
-    //    WhiteBoard wboard;
-    //};
-
-    //static CaptureObj1 obj;
-    //obj.active_idx = 0;
-    //obj.wboard.typ = 0;
-    //obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt) {
-    // 
-    //    CaptureObj1* obj = (CaptureObj1*)captureobj;
-    //    WhiteBoard& wb = obj->wboard;
-
-    //        D2DMatrix mat(*cxt);
-    //        mat.PushTransform();
-
-    //        auto rc = obj->rc;
-    //        wb.mat = mat.Offset(rc);
-    //        obj->mat = wb.mat;
-    //        {
-    //            cxt.DDrawRect(rc.ZeroRect(), D2RGB(0,0,0), D2RGB(255, 255, 255));
-
-    //            // draw top buttons
-
-    //            FSizeF tabbtn(100,26 );
-    //            LPCWSTR str[] = { L"tab1", L"tab2" };
-
-    //            DrawTabButton( cxt, tabbtn, str, 2, obj->active_idx );
-
-    //        }
-    //        mat.PopTransform();
-    //};
-    //obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
-
-    //    CaptureObj1* obj = (CaptureObj1*)captureobj;
-    //    LRESULT r = 0;
-    //    switch( message )
-    //    {
-    //        case WM_LBUTTONDOWN:
-    //        {
-    //            MouseParam* mp = (MouseParam*)lParam;
-    //            auto pt = obj->mat.DPtoLP(mp->pt);
-
-    //            FRectF rcs[] = { FRectF(0,0,100,26), FRectF(100,0,200,26) };
-    //            if ( rcs[0].PtInRect( pt ) )
-    //            {
-    //                obj->active_idx = 0;
-    //                D2DSetStat(obj->cc2, 0);
-    //                D2DSetStat(obj->cc1, STAT_VISIBLE | STAT_ENABLE);
-
-    //                r = 1;
-    //            }
-    //            else if ( rcs[1].PtInRect( pt ) )
-    //            {
-    //                obj->active_idx = 1;
-    //                D2DSetStat(obj->cc1, 0);
-    //                D2DSetStat(obj->cc2, STAT_VISIBLE | STAT_ENABLE);
-    //                r = 1;
-    //            }
-    //        }
-    //        break;
-    //    }        
-    //    return r;
-    //};
-
-    //FRectF rc(500, 40, FSizeF(500, 700));
-    //auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, hwin, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
-
-    //
-    //obj.rc = rc;
-
-    //obj.cc1 =  D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"cs1", 112);
-    //obj.cc2 = D2DCreateControls(hwin, whb2, FRectF(0, 0, 0, 0), 0, L"cs2", 113);
-
-    //FRectF rc2(10, 40, FSizeF(400, 600));
-    //UIHandle x2 = D2DCreateTextbox(hwin, obj.cc2, rc2, true, STAT_VISIBLE | STAT_ENABLE, L"textbox2");
-    //D2DSetText(x2, L"Hello world1");
-
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -441,7 +349,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool bPaste )
 {
-    if (OpenClipboard(hWnd))
+   if (OpenClipboard(hWnd))
     {
         if (bPaste)
         {
@@ -471,5 +379,6 @@ void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool bPaste )
 
         }
         ::CloseClipboard();
+
     }
 }

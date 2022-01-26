@@ -106,24 +106,24 @@ void CreateMDISplitControl(HWND hWnd)
 	//dws->CreateControl((D2DWindow*)hwin.p,left_side_controls, FRectF(0,0,300,1000),  STAT_DEFAULT, L"aaa", 180);
 	//left_side_controls->Add(dws);
 
-	auto hcs3 = D2DCreateEmptyControls(hwin,hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"LeftEmpty", 180);
+	auto hcs3 = D2DCreateEmptyControls(hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"LeftEmpty", 180);
 
 
 	
-	UIHandle hcsLEFT = D2DCreateSquarePaper(hwin,hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"LeftEmptySQ", 190);
+	UIHandle hcsLEFT = D2DCreateSquarePaper(hcs3, FRectF(0,0,600,3000),  STAT_DEFAULT, L"LeftEmptySQ", 190);
 
 	ColorF clr(D2RGB(200,200,200));
 	D2DSendMessage(hcsLEFT,WM_D2D_SET_COLOR, 0, (LPARAM)&clr);
 
 
-	auto img = D2DCreateImage(hwin, hcsLEFT, FRectF(100,200,FSizeF(48,48)), STAT_DEFAULT, L"test image");
+	auto img = D2DCreateImage( hcsLEFT, FRectF(100,200,FSizeF(48,48)), STAT_DEFAULT, L"test image");
 	D2DSendMessage(img,WM_D2D_SET_RESOURCE, 0, (LPARAM)L"star.png");
 
-	auto img2 = D2DCreateImage(hwin, hcsLEFT, FRectF(100,450,FSizeF(48,48)), STAT_DEFAULT, L"test image");
+	auto img2 = D2DCreateImage( hcsLEFT, FRectF(100,450,FSizeF(48,48)), STAT_DEFAULT, L"test image");
 	D2DSendMessage(img2,WM_D2D_SET_RESOURCE, 0, (LPARAM)L"splash_new_rose.png");
 
 
-	auto b1 = D2DCreateButton(hwin,hcsLEFT, FRectF(50,100,FSizeF(100,20)),STAT_VISIBLE,L"LeftEmptySQb1", 191);
+	auto b1 = D2DCreateButton(hcsLEFT, FRectF(50,100,FSizeF(100,20)),STAT_VISIBLE,L"LeftEmptySQb1", 191);
 
 
 	DelegateProcFunc f = [](LPVOID xp,AppBase& b, UINT message, WPARAM wp, LPARAM lp)->LRESULT
@@ -222,7 +222,7 @@ void CreateMDISplitControl(HWND hWnd)
 
 	UIHandle hcs5={};
 	hcs5.p = p1;
-	auto v1 = D2DCreateEmptyControls(hwin, hcs5, FRectF(0,0,2001,2001), STAT_DEFAULT,L"Control map parent", 201);
+	auto v1 = D2DCreateEmptyControls(hcs5, FRectF(0,0,2001,2001), STAT_DEFAULT,L"Control map parent", 201);
 
 	auto maps = std::make_shared<D2DClassMap>();
 	maps->CreateControl((D2DWindow*)hwin.p, (D2DControls*)v1.p, FRectF(0,0,0,0),  STAT_DEFAULT, L"Control map", 200);
@@ -274,7 +274,7 @@ void CreateMDISplitControl(HWND hWnd)
 
 		if (i==1)
 		{			
-			auto ha = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
+			auto ha = D2DCreateSquarePaper(hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1);
 
 			auto clr = D2RGB(37,37,38);
 			D2DSendMessage(ha,WM_D2D_SET_COLOR, 0,(LPARAM)&clr);
@@ -297,7 +297,7 @@ void CreateMDISplitControl(HWND hWnd)
 		}
 		else
 		{
-			auto kr = D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1 );
+			auto kr = D2DCreateSquarePaper(hcs_right, FRectF(0,0,6000,9000),  STAT_DEFAULT, nm,-1 );
 		}
 
 	}

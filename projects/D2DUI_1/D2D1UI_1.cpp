@@ -19,14 +19,14 @@ using namespace V6;
 
 UIHandle ConvertUIHandle(D2DControl* p);
 
-DLLEXPORT void D2DInitail(INT_PTR p )
+DLLEXPORT void WINAPI D2DInitail(INT_PTR p )
 {
 	D2DApp::SetD2DAppForDLL((D2DApp*)p);
 
 
 }
 
-DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight, int typ )
+DLLEXPORT UIHandleWin WINAPI D2DCreateMainHWnd( HWND hWnd,  float fontheight, int typ )
 {
 	auto win = new D2DWindow(hWnd);
 
@@ -58,13 +58,13 @@ DLLEXPORT UIHandleWin D2DCreateMainHWnd( HWND hWnd,  float fontheight, int typ )
 	return r;
 
 }
-DLLEXPORT void D2DDestroyWindow(UIHandleWin main  )
+DLLEXPORT void WINAPI D2DDestroyWindow(UIHandleWin main  )
 {
 	auto win = (D2DWindow*)main.p;
 	delete win;
 }
 
-DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  )
+DLLEXPORT ID2D1DeviceContext* WINAPI D2DGetDeviceContext(UIHandleWin main  )
 {
 	if ( main.typ == TYP_MAIN_WINDOW )
 	{
@@ -73,15 +73,14 @@ DLLEXPORT ID2D1DeviceContext* D2DGetDeviceContext(UIHandleWin main  )
 	}
 	return nullptr;
 }
-DLLEXPORT UIHandle D2DCreateWhiteWindow(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 
 	auto pgtx = new D2DWhiteWindow(); 
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DWhiteWindow>(pgtx));	
@@ -93,11 +92,13 @@ DLLEXPORT UIHandle D2DCreateWhiteWindow(UIHandleWin hwin, UIHandle hctrls, const
 	return r;
 }
 
-DLLEXPORT UIHandle D2DCreateImage(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
 	auto pgtx = new D2DImageControl();
-	auto win = (D2DWindow*)hwin.p;
+
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DImageControl>(pgtx));	
 
@@ -107,15 +108,14 @@ DLLEXPORT UIHandle D2DCreateImage(UIHandleWin hwin, UIHandle hctrls, const FRect
 	return r;
 
 }
-DLLEXPORT UIHandle D2DCreateControlsWithScrollbar(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 
 	auto pgtx = new D2DControls_with_Scrollbar(); 
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DControls_with_Scrollbar>(pgtx));	
@@ -126,15 +126,14 @@ DLLEXPORT UIHandle D2DCreateControlsWithScrollbar(UIHandleWin hwin, UIHandle hct
 	return r;
 }
 
-DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 
 	auto pgtx = std::make_shared<D2DControls>(); 
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( pgtx);	
@@ -145,15 +144,14 @@ DLLEXPORT UIHandle D2DCreateEmptyControls(UIHandleWin hwin, UIHandle hctrls, con
 	return r;
 }
 
-DLLEXPORT UIHandle D2DCreateXXXControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 
 	auto pgtx = std::make_shared<D2DXXXControls>(); 
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( pgtx);	
@@ -164,15 +162,14 @@ DLLEXPORT UIHandle D2DCreateXXXControls(UIHandleWin hwin, UIHandle hctrls, const
 	return r;
 }
 
-DLLEXPORT UIHandle D2DCreateListbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 
 	auto pgtx = new D2DSimpleListbox();
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DSimpleListbox>(pgtx));	
@@ -185,15 +182,14 @@ DLLEXPORT UIHandle D2DCreateListbox(UIHandleWin hwin, UIHandle hctrls, const FRe
 
 
 
-DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateSquarePaper(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 
 	auto pgtx = new D2DSquarePaper(); 
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DSquarePaper>(pgtx));	
@@ -203,15 +199,14 @@ DLLEXPORT UIHandle D2DCreateSquarePaper(UIHandleWin hwin, UIHandle hctrls, const
 	r.typ = TYP_CONTROLS;
 	return r;
 }
-DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 
 	auto pgtx = new D2DStatic(); 
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DStatic>(pgtx));	
@@ -223,16 +218,15 @@ DLLEXPORT UIHandle D2DCreateStatic(UIHandleWin hwin, UIHandle hctrls, const FRec
 	return r;
 }
 
-DLLEXPORT UIHandle D2DCreateTextbox(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id, int ext )
+DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id, int ext )
 {
-	_ASSERT(hwin.p);
 	_ASSERT(hctrls.p);
 	
 	auto pgtx = new D2DTextbox(); 
 	auto typ = ( multiline ?  IBridgeTSFInterface::MULTILINE :  IBridgeTSFInterface::SINGLELINE );
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, typ, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DTextbox>(pgtx));	
@@ -280,12 +274,12 @@ D2DControl* D2DCastControl(UIHandle h )
 
 
 
-DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin hwin, UIHandle hctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateDropdownListbox(UIHandle hctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto pgtx = new D2DDropdownListbox();
 
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DDropdownListbox>(pgtx));	
@@ -296,7 +290,7 @@ DLLEXPORT UIHandle D2DCreateDropdownListbox(UIHandleWin hwin, UIHandle hctrls , 
 	return r;
 }
 
-DLLEXPORT int D2DAddItem(UIHandle h, int idx, LPCWSTR str)
+DLLEXPORT int WINAPI D2DAddItem(UIHandle h, int idx, LPCWSTR str)
 {
 	if ( h.typ == TYP_DROPDOWNLISTBOX )
 	{
@@ -317,13 +311,13 @@ DLLEXPORT int D2DAddItem(UIHandle h, int idx, LPCWSTR str)
 	return 0;
 }
 
-DLLEXPORT UIHandle D2DGetParent(UIHandle h)
+DLLEXPORT UIHandle WINAPI D2DGetParent(UIHandle h)
 {
 	D2DControl* pc = (D2DControl*)h.p;
 	return ConvertUIHandle(pc->GetParentControls());
 }
 
-DLLEXPORT UIHandle D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)
+DLLEXPORT UIHandle WINAPI D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)
 {	
 	auto win = (D2DWindow*)hwin.p;
 	win->MessageBox(FRectF(rc), message,title);
@@ -333,7 +327,7 @@ DLLEXPORT UIHandle D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWST
 	r.typ = TYP_NULL;
 	return r;
 }
-DLLEXPORT UIHandle D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& rc, LPVOID sender, MenuItem* items, int items_cnt)
+DLLEXPORT UIHandle WINAPI D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& rc, LPVOID sender, MenuItem* items, int items_cnt)
 {	
 	std::vector<MenuItem> ar;
 
@@ -348,11 +342,11 @@ DLLEXPORT UIHandle D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& rc, LPVO
 	r.typ = TYP_NULL;
 	return r;
 }
-DLLEXPORT UIHandle D2DCreateControls(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DControls();
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	cs1->CreateControl(win, ctrls, rc,stat, name,id);
 	ctrls->Add(std::shared_ptr<D2DControls>(cs1));
@@ -363,11 +357,11 @@ DLLEXPORT UIHandle D2DCreateControls(UIHandleWin hwin, UIHandle hctrls, const FR
 	r.typ = TYP_CONTROLS;
 	return r;
 }
-DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DWhiteControl(captureobj, func1, func2);
-	auto win = (D2DWindow*)hwin.p;
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 	cs1->CreateControl(win, ctrls, rc, stat, name, id);
 	ctrls->Add(std::shared_ptr<D2DWhiteControl>(cs1));
 
@@ -381,15 +375,17 @@ DLLEXPORT UIHandle D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc fu
 	r.p = cs1;
 	r.typ = TYP_CONTROLS;
 
-	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
+//	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
 
 	return r;
 }
-DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DClientControls(captureobj, func1, func2);
-	auto win = (D2DWindow*)hwin.p;
+	
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
 	cs1->CreateControl(win, ctrls, rc, stat, name, id);
 	ctrls->Add(std::shared_ptr<D2DClientControls>(cs1));
 
@@ -400,12 +396,12 @@ DLLEXPORT UIHandle D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc f
 	r.p = cs1;
 	r.typ = TYP_CONTROLS;
 
-	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
+//	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
 
 	return r;
 }
 
-DLLEXPORT void D2DSetFocus( UIHandle h )
+DLLEXPORT void WINAPI D2DSetFocus( UIHandle h )
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
@@ -420,7 +416,7 @@ DLLEXPORT void D2DSetFocus( UIHandle h )
 
 }
 
-DLLEXPORT void D2DSetCapture(UIHandle h)
+DLLEXPORT void WINAPI D2DSetCapture(UIHandle h)
 {
 	D2DControl* p = (D2DControl*)h.p;
 	
@@ -428,18 +424,18 @@ DLLEXPORT void D2DSetCapture(UIHandle h)
 	APP.SetCapture(p);
 
 }
-DLLEXPORT void D2DReleaseCapture()
+DLLEXPORT void WINAPI D2DReleaseCapture()
 {
 	APP.ReleaseCapture();
 }
-DLLEXPORT bool D2DIsCapture(UIHandle h)
+DLLEXPORT bool WINAPI D2DIsCapture(UIHandle h)
 {
 	auto p = APP.GetCapture();
 
 	return ( p == dynamic_cast<D2DCaptureObject*>( (D2DControl*)h.p));
 
 }
-DLLEXPORT bool D2DSetProcfunction(UIHandle h, DelegateProcFunc func2)
+DLLEXPORT bool WINAPI D2DSetProcfunction(UIHandle h, DelegateProcFunc func2)
 {
 	D2DControl* p = (D2DControl*)h.p;
 	auto sq = dynamic_cast<D2DSquarePaper*>(p);
@@ -453,7 +449,7 @@ DLLEXPORT bool D2DSetProcfunction(UIHandle h, DelegateProcFunc func2)
 }
 
 
-DLLEXPORT UIHandle D2DCast(void* target)
+DLLEXPORT UIHandle WINAPI D2DCast(void* target)
 {
 	D2DControl* p = (D2DControl*)target;
 
@@ -551,13 +547,13 @@ DLLEXPORT UIHandle D2DCast(void* target)
 
 }
 
-DLLEXPORT UIHandle D2DGetCapture()
+DLLEXPORT UIHandle WINAPI D2DGetCapture()
 {
 	auto p = APP.GetCapture();
 
 	return D2DCast(p);
 }
-DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
+DLLEXPORT void WINAPI D2DSetText( UIHandle h, LPCWSTR str )
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
@@ -572,7 +568,7 @@ DLLEXPORT void D2DSetText( UIHandle h, LPCWSTR str )
 		btn->SetText(str);
 	}
 }
-DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
+DLLEXPORT void WINAPI D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
@@ -582,7 +578,7 @@ DLLEXPORT void D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
 	}
 }
 
-DLLEXPORT void D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos)
+DLLEXPORT void WINAPI D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos)
 {
 	if (h.typ == TYP_TEXTBOX)
 	{
@@ -594,7 +590,7 @@ DLLEXPORT void D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos)
 		tx->SetText(str, len, start_pos);
 	}
 }
-DLLEXPORT BSTR D2DGetText(UIHandle h, bool bAll)
+DLLEXPORT BSTR WINAPI D2DGetText(UIHandle h, bool bAll)
 {
 	if (h.typ == TYP_TEXTBOX)
 	{
@@ -617,7 +613,7 @@ DLLEXPORT BSTR D2DGetText(UIHandle h, bool bAll)
 	return nullptr;
 }
 
-DLLEXPORT int D2DSetStat(UIHandle h, int stat)
+DLLEXPORT int WINAPI D2DSetStat(UIHandle h, int stat)
 {
 	int old = 0;
 	if (h.typ != TYP_MAIN_WINDOW)
@@ -629,7 +625,7 @@ DLLEXPORT int D2DSetStat(UIHandle h, int stat)
 	return old;
 }
 
-DLLEXPORT void D2DReadOnly(UIHandle h, bool readonly)
+DLLEXPORT void WINAPI D2DReadOnly(UIHandle h, bool readonly)
 {
 	if (h.typ == TYP_TEXTBOX)
 	{
@@ -643,7 +639,7 @@ DLLEXPORT void D2DReadOnly(UIHandle h, bool readonly)
 
 
 
-DLLEXPORT UIHandle D2DGetRootControls(UIHandleWin hMainWnd )
+DLLEXPORT UIHandle WINAPI D2DGetRootControls(UIHandleWin hMainWnd )
 {
 	UIHandle r;
 	r.p = ((D2DWindow*)hMainWnd.p)->top_control_.get();
@@ -671,7 +667,7 @@ UIHandle ConvertUIHandle(D2DControl* p)
 
 
 
-DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
+DLLEXPORT UIHandle WINAPI D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 {
 	UIHandle r;
 	D2DControls* x = ((D2DWindow*)hMainWnd.p)->top_control_.get();
@@ -689,7 +685,7 @@ DLLEXPORT UIHandle D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 
 	return r;
 }
-DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm)
+DLLEXPORT UIHandle WINAPI D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm)
 {
 	UIHandle r;
 	D2DControls* x = ((D2DWindow*)hMainWnd.p)->top_control_.get();
@@ -710,11 +706,12 @@ DLLEXPORT UIHandle D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm)
 
 
 
-DLLEXPORT UIHandle D2DCreateButton(UIHandleWin hwin, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateButton(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
 {
 	auto pgtx = new D2DButton();
-	auto win = (D2DWindow*)hwin.p;
+	
 	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DButton>(pgtx));	
@@ -740,7 +737,7 @@ DLLEXPORT UIHandle D2DCreateButton(UIHandleWin hwin, UIHandle hctrls, const FRec
 //
 //}
 
-DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r)
+DLLEXPORT XDropdownListBox* WINAPI D2DConvert(UIHandle r)
 {	
 	D2DDropdownListbox* pp = (D2DDropdownListbox* )r.p;
 
@@ -750,7 +747,7 @@ DLLEXPORT XDropdownListBox* D2DConvert(UIHandle r)
 
 
 
-DLLEXPORT void D2DSwapChain(UIHandleWin main, HWND hWnd  )
+DLLEXPORT void WINAPI D2DSwapChain(UIHandleWin main, HWND hWnd  )
 {
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );
 	auto& cxt = ((D2DWindow*)main.p)->GetContext();
@@ -758,7 +755,7 @@ DLLEXPORT void D2DSwapChain(UIHandleWin main, HWND hWnd  )
 	cxt.SwapChain();
 	cxt.DoRedraw( hWnd);
 }
-DLLEXPORT void D2DDraw(UIHandleWin main, void* hWnd  )
+DLLEXPORT void WINAPI D2DDraw(UIHandleWin main, void* hWnd  )
 {	
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );
 
@@ -783,7 +780,7 @@ DLLEXPORT void D2DDraw(UIHandleWin main, void* hWnd  )
 		cxt.DoRedraw((HWND)hWnd);
 }
 
-DLLEXPORT void D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF border )
+DLLEXPORT void WINAPI D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF border )
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
@@ -807,19 +804,19 @@ DLLEXPORT void D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF border )
 
 
 
-DLLEXPORT D2D1_RECT_F D2DGetRect(UIHandle h )
+DLLEXPORT D2D1_RECT_F WINAPI D2DGetRect(UIHandle h )
 {
 	D2DControl* p2 = D2DCastControl(h);
 	return p2->GetRect();
 }
-DLLEXPORT void D2DSetRect( UIHandle h, D2D1_RECT_F rc )
+DLLEXPORT void WINAPI D2DSetRect( UIHandle h, D2D1_RECT_F rc )
 {
 	D2DControl* p2 = D2DCastControl(h);
 	p2->SetRect(rc);
 	
 }
 
-DLLEXPORT LRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
+DLLEXPORT LRESULT WINAPI D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	_ASSERT( main.typ == TYP_MAIN_WINDOW );
 
@@ -827,13 +824,13 @@ DLLEXPORT LRESULT D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WP
 	return win->WndProc(app, message, wParam,lParam); // STAT_ENABLE‚Í—LŒø
 }
 
-DLLEXPORT void D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
+DLLEXPORT void WINAPI D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
 {	
 	_ASSERT(main.typ == TYP_MAIN_WINDOW);
 	auto win = (D2DWindow*)main.p;
 	win->ForceWndProc(app, message, wParam, lParam); // STAT_ENABLE‚Í–³Ž‹‚·‚é
 }
-DLLEXPORT  void D2DDestroyControl(UIHandle h)
+DLLEXPORT  void WINAPI D2DDestroyControl(UIHandle h)
 {
 	D2DControl* h2 = D2DCastControl(h);
 
@@ -841,7 +838,7 @@ DLLEXPORT  void D2DDestroyControl(UIHandle h)
 	h2->DestroyControl();
 
 }
-DLLEXPORT void D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler)
+DLLEXPORT void WINAPI D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler)
 {
 	auto p = dynamic_cast<D2DButton*>(D2DCastControl( h ));	
 	if ( p )
@@ -861,7 +858,7 @@ DLLEXPORT void D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler)
 }
 
 
-DLLEXPORT void D2DMDISetTopControl(UIHandle h)
+DLLEXPORT void WINAPI D2DMDISetTopControl(UIHandle h)
 {
 	D2DControl* h2 = D2DCastControl(h);
 
@@ -870,7 +867,7 @@ DLLEXPORT void D2DMDISetTopControl(UIHandle h)
 	x->SetFirstControl(h2);
 
 }
-DLLEXPORT int D2DSendMessage(UIHandle h, UINT msg, WPARAM wp, LPARAM lp)
+DLLEXPORT int WINAPI D2DSendMessage(UIHandle h, UINT msg, WPARAM wp, LPARAM lp)
 {
 	auto ctrl = D2DCastControl(h);
 
@@ -879,7 +876,7 @@ DLLEXPORT int D2DSendMessage(UIHandle h, UINT msg, WPARAM wp, LPARAM lp)
 	return (int)ctrl->WndProc(b,msg,wp,lp);
 }
 
-DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
+DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
 {
 	_ASSERT( 0 < p_size && p );
 	float xstep_left = (rcEnd.left - rcStart.left) / p_size;
@@ -908,7 +905,7 @@ DLLEXPORT D2D1_RECT_F* RectAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT
 }
 
 
-DLLEXPORT void SmoothRect(int typ, UIHandleWin win, FRectF* target, FRectF dstRect)
+DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, FRectF* target, FRectF dstRect)
 {
 	if ( typ == 0 )
 		*target = dstRect;
@@ -943,7 +940,7 @@ DLLEXPORT void SmoothRect(int typ, UIHandleWin win, FRectF* target, FRectF dstRe
 }
 
 
-DLLEXPORT bool D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
+DLLEXPORT bool WINAPI D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 {
 	ComPTR<IWICImagingFactory> d2dWICFactory;
 	ComPTR<IWICBitmapDecoder> d2dDecoder;

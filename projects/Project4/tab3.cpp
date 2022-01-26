@@ -119,19 +119,19 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 				UIHandle& ctrl = *(UIHandle*)lParam;
 				
 				FRectF rc(10, 300, FSizeF(200,30));
-				D2DCreateButton(win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b1", 211);
+				D2DCreateButton( ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b1", 211);
 
 				rc.Offset(0,35);
-				D2DCreateButton(win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b2", 212);
+				D2DCreateButton( ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b2", 212);
 
 				rc.Offset(0,35);
-				auto b3 = D2DCreateButton(win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b3", 213);
+				auto b3 = D2DCreateButton( ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21-b3", 213);
 
 				D2DSetText( b3, L"Šg’£‹@”\");
 
 
 
-				obj->wbboxhandle = D2DCreateWhiteControls(obj, obj->wbbox.drawFunc, obj->wbbox.procFunc, win, ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"xbox", 215);
+				obj->wbboxhandle = D2DCreateWhiteControls(obj, obj->wbbox.drawFunc, obj->wbbox.procFunc,  ctrl, rc, STAT_VISIBLE | STAT_ENABLE, L"xbox", 215);
 
 
 
@@ -195,7 +195,7 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
     FRectF rc(0, 50, FSizeF(200, 200));
 
     obj.rc = rc;
-    auto hcs2 = D2DCreateWhiteControls(&obj, obj.wboard.drawFunc, obj.wboard.procFunc, hwin, hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21", 210);
+    auto hcs2 = D2DCreateWhiteControls(&obj, obj.wboard.drawFunc, obj.wboard.procFunc,  hcs, rc, STAT_VISIBLE | STAT_ENABLE, L"whb21", 210);
 
 
 	//static CToolboxControls toolbox;
