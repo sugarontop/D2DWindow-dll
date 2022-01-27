@@ -13,28 +13,27 @@ namespace V6 {
 
 class D2DWindow;
 class D2DControls;
-class FRectF;
 
-DLLEXPORT bool WINAPI D2DResource(D2DWindow* win,  FRectF& rc );
+DLLEXPORT bool WINAPI D2DResource(D2DWindow* win,  D2D1_RECT_F& rc );
 DLLEXPORT void WINAPI D2DInitail(INT_PTR p );
 
-DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow( UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateSquarePaper(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle ctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id=-1, int ext=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateButton(UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1);
-DLLEXPORT UIHandle WINAPI D2DCreateDropdownListbox(UIHandle ctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1);
-DLLEXPORT UIHandle WINAPI D2DCreateControls(UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1);
+DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow( UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateSquarePaper(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle ctrls, const D2D1_RECT_F& rc, bool multiline, DWORD stat, LPCWSTR name, int id=-1, int ext=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateButton(UIHandle ctrls , const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1);
+DLLEXPORT UIHandle WINAPI D2DCreateDropdownListbox(UIHandle ctrls , const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1);
+DLLEXPORT UIHandle WINAPI D2DCreateControls(UIHandle ctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1);
 DLLEXPORT UIHandle WINAPI D2DMessageBox(UIHandleWin win,  const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message);
 DLLEXPORT UIHandle WINAPI D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& rc, LPVOID sender, MenuItem* items, int items_cnt);
-DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
-DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
+DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle ctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id);
+DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle ctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id);
 
-DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
 DLLEXPORT bool WINAPI D2DSetProcfunction(UIHandle, DelegateProcFunc func2);
 
@@ -89,12 +88,12 @@ DLLEXPORT void WINAPI D2DMDISetTopControl(UIHandle h);
 DLLEXPORT void WINAPI D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler);
 
 ////////
-//DLLEXPORT UIHandle D2DCreateDropdownListbox(D2DWindow* win, D2DControls* ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id);
+//DLLEXPORT UIHandle D2DCreateDropdownListbox(D2DWindow* win, D2DControls* ctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT XDropdownListBox* WINAPI D2DConvert(UIHandle r);
 
 
 DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style);
-DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, FRectF* target, FRectF dstRect);
+DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect);
 DLLEXPORT bool WINAPI D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
 

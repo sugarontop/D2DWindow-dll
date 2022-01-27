@@ -73,7 +73,7 @@ DLLEXPORT ID2D1DeviceContext* WINAPI D2DGetDeviceContext(UIHandleWin main  )
 	}
 	return nullptr;
 }
-DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
 
@@ -92,7 +92,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow(UIHandle hctrls, const FRectF& rc
 	return r;
 }
 
-DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	auto pgtx = new D2DImageControl();
 
@@ -108,7 +108,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const FRectF& rc, DWOR
 	return r;
 
 }
-DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
 
@@ -126,7 +126,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const 
 	return r;
 }
 
-DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
 
@@ -144,7 +144,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const FRectF& 
 	return r;
 }
 
-DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
 
@@ -162,7 +162,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const FRectF& rc
 	return r;
 }
 
-DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
 
@@ -182,7 +182,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const FRectF& rc, DW
 
 
 
-DLLEXPORT UIHandle WINAPI D2DCreateSquarePaper(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateSquarePaper(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
 
@@ -199,7 +199,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateSquarePaper(UIHandle hctrls, const FRectF& rc
 	r.typ = TYP_CONTROLS;
 	return r;
 }
-DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
 
@@ -218,7 +218,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const FRectF& rc, DWO
 	return r;
 }
 
-DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle hctrls, const FRectF& rc, bool multiline, DWORD stat, LPCWSTR name, int id, int ext )
+DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle hctrls, const D2D1_RECT_F& rc, bool multiline, DWORD stat, LPCWSTR name, int id, int ext )
 {
 	_ASSERT(hctrls.p);
 	
@@ -274,7 +274,7 @@ D2DControl* D2DCastControl(UIHandle h )
 
 
 
-DLLEXPORT UIHandle WINAPI D2DCreateDropdownListbox(UIHandle hctrls , const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateDropdownListbox(UIHandle hctrls , const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto pgtx = new D2DDropdownListbox();
 
@@ -320,7 +320,7 @@ DLLEXPORT UIHandle WINAPI D2DGetParent(UIHandle h)
 DLLEXPORT UIHandle WINAPI D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)
 {	
 	auto win = (D2DWindow*)hwin.p;
-	win->MessageBox(FRectF(rc), message,title);
+	win->MessageBox(rc, message,title);
 
 	UIHandle r;
 	r.p = 0;
@@ -335,14 +335,14 @@ DLLEXPORT UIHandle WINAPI D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& r
 		ar.push_back(items[i]);
 
 	auto win = (D2DWindow*)hwin.p;
-	win->FloatingMenu(sender, FRectF(rc), ar );
+	win->FloatingMenu(sender, D2D1_RECT_F(rc), ar );
 
 	UIHandle r;
 	r.p = 0;
 	r.typ = TYP_NULL;
 	return r;
 }
-DLLEXPORT UIHandle WINAPI D2DCreateControls(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DControls();
 	auto ctrls = (D2DControls*)hctrls.p;
@@ -357,7 +357,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateControls(UIHandle hctrls, const FRectF& rc, D
 	r.typ = TYP_CONTROLS;
 	return r;
 }
-DLLEXPORT UIHandle WINAPI D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DWhiteControl(captureobj, func1, func2);
 	auto ctrls = (D2DControls*)hctrls.p;
@@ -375,11 +375,11 @@ DLLEXPORT UIHandle WINAPI D2DCreateWhiteControls(LPVOID captureobj, DelegateDraw
 	r.p = cs1;
 	r.typ = TYP_CONTROLS;
 
-//	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
+	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)win ,(LPARAM)&r);
 
 	return r;
 }
-DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
+DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id)
 {
 	auto cs1 = new D2DClientControls(captureobj, func1, func2);
 	
@@ -396,7 +396,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDra
 	r.p = cs1;
 	r.typ = TYP_CONTROLS;
 
-//	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)&hwin ,(LPARAM)&r);
+	cs1->WndProc(ab, WM_D2D_CREATE,  (WPARAM)win ,(LPARAM)&r);
 
 	return r;
 }
@@ -557,8 +557,7 @@ DLLEXPORT void WINAPI D2DSetText( UIHandle h, LPCWSTR str )
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
-		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
-		//auto tx =  (D2DTextbox*)h.p;
+		auto tx = static_cast<D2DTextbox*>( D2DCastControl(h));
 		tx->Clear();
 		tx->SetText(str, wcslen(str) );
 	}
@@ -572,7 +571,7 @@ DLLEXPORT void WINAPI D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
-		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
+		auto tx = static_cast<D2DTextbox*>( D2DCastControl(h));
 		tx->SetFont(fontnm, height );
 
 	}
@@ -582,7 +581,7 @@ DLLEXPORT void WINAPI D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_
 {
 	if (h.typ == TYP_TEXTBOX)
 	{
-		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
+		auto tx = static_cast<D2DTextbox*>( D2DCastControl(h));
 
 		if (start_pos < 0)
 			start_pos = tx->CurrentPos();
@@ -595,7 +594,7 @@ DLLEXPORT BSTR WINAPI D2DGetText(UIHandle h, bool bAll)
 	if (h.typ == TYP_TEXTBOX)
 	{
 		std::wstringstream sm;
-		auto tx = dynamic_cast<D2DTextbox*>( D2DCastControl(h));
+		auto tx = static_cast<D2DTextbox*>( D2DCastControl(h));
 
 		if ( bAll )
 			tx->GetText( &sm, false );
@@ -678,7 +677,7 @@ DLLEXPORT UIHandle WINAPI D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 
 	if ( r.typ == TYP_TEXTBOX )
 	{
-		r.p = dynamic_cast<D2DTextbox*>(ctrl);
+		r.p = static_cast<D2DTextbox*>(ctrl);
 
 	}
 
@@ -696,7 +695,7 @@ DLLEXPORT UIHandle WINAPI D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm
 
 	if ( r.typ == TYP_TEXTBOX )
 	{
-		r.p = dynamic_cast<D2DTextbox*>(ctrl);
+		r.p = static_cast<D2DTextbox*>(ctrl);
 
 	}
 
@@ -706,7 +705,7 @@ DLLEXPORT UIHandle WINAPI D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm
 
 
 
-DLLEXPORT UIHandle WINAPI D2DCreateButton(UIHandle hctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id )
+DLLEXPORT UIHandle WINAPI D2DCreateButton(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	auto pgtx = new D2DButton();
 	
@@ -905,7 +904,7 @@ DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F& rcStart, const D2
 }
 
 
-DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, FRectF* target, FRectF dstRect)
+DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect)
 {
 	if ( typ == 0 )
 		*target = dstRect;
