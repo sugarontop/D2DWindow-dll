@@ -45,6 +45,7 @@ DLLEXPORT void WINAPI D2DSetFont(UIHandle h, LPCWSTR fontnm, float height);
 DLLEXPORT int WINAPI D2DSetStat(UIHandle h, int stat);
 DLLEXPORT void WINAPI D2DSetColor(UIHandle h, ColorF back, ColorF front, ColorF border );
 DLLEXPORT void WINAPI D2DReadOnly(UIHandle h, bool readonly);
+DLLEXPORT void WINAPI D2DEnable(UIHandle h, bool enable);
 
 DLLEXPORT int WINAPI D2DAddItem(UIHandle, int idx, LPCWSTR str);
 

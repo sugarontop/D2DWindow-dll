@@ -447,7 +447,11 @@ DLLEXPORT bool WINAPI D2DSetProcfunction(UIHandle h, DelegateProcFunc func2)
 	}
 	return false;
 }
-
+DLLEXPORT void WINAPI D2DEnable(UIHandle h, bool enable)
+{
+	D2DControl* p = (D2DControl*)h.p;
+	p->Enable(enable);
+}
 
 DLLEXPORT UIHandle WINAPI D2DCast(void* target)
 {

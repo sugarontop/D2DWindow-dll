@@ -111,6 +111,10 @@ typedef DWORD (*D2DEventHandlerDelegate)(void* sender,LPCWSTR eventName, void* p
 #define WM_D2D_INET_COMPLETE					(WM_APP+24)
 #define WM_D2D_SELECTED_ITEM					(WM_APP+25)
 
+
+#define WM_D2D_USER_FIRST						(WM_APP+4000) // for your application
+
+
 #define WM_D2D_BROADCAST_MESSAGE_FIRST			(WM_APP+5000)
 #define WM_D2D_ON_TEXTBOX_RETURN				(WM_D2D_BROADCAST_MESSAGE_FIRST+1)
 #define WM_D2D_POST_PROCESS						(WM_D2D_BROADCAST_MESSAGE_FIRST+2)

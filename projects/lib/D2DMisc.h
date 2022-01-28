@@ -147,6 +147,10 @@ class FPointF : public D2D1_POINT_2F
 			x += offx;
 			y += offy;
 		}
+		FSizeF operator - (const FPointF& pt) const
+		{
+			return FSizeF( x-pt.x, y - pt.y );
+		}
 };
 class FRectF : public D2D1_RECT_F
 {

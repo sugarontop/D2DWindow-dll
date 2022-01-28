@@ -1,0 +1,586 @@
+﻿<doc>
+<func><funcnm>D2DResource</funcnm>
+<title>[D2DResource]</title>
+<ret>bool</ret>
+<prms>
+<prm>D2DWindow* win</prm>
+<prm>  D2D1_RECT_F&amp; rc </prm>
+</prms>
+<note></note>
+<jnr>1</jnr>
+</func>
+<func><funcnm>D2DInitail</funcnm>
+<title>[D2DInitail]</title>
+<ret>void</ret>
+<prms>
+<prm>INT_PTR p </prm>
+</prms>
+<note></note>
+<jnr>1</jnr>
+</func>
+<func><funcnm>D2DCreateWhiteWindow</funcnm>
+<title>[D2DCreateWhiteWindow]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm> UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateSquarePaper</funcnm>
+<title>[D2DCreateSquarePaper]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateTextbox</funcnm>
+<title>[D2DCreateTextbox]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle ctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> bool multiline</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1</prm>
+<prm> int ext=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateButton</funcnm>
+<title>[D2DCreateButton]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle ctrls </prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1</prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateDropdownListbox</funcnm>
+<title>[D2DCreateDropdownListbox]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle ctrls </prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1</prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateControls</funcnm>
+<title>[D2DCreateControls]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle ctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1</prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DMessageBox</funcnm>
+<title>[D2DMessageBox]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandleWin win</prm>
+<prm>  const D2D1_RECT_F&amp; rc</prm>
+<prm> LPCWSTR title</prm>
+<prm> LPCWSTR message</prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DFloatingMenu</funcnm>
+<title>[D2DFloatingMenu]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandleWin hwin</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> LPVOID sender</prm>
+<prm> MenuItem* items</prm>
+<prm> int items_cnt</prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateStatic</funcnm>
+<title>[D2DCreateStatic]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR text</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateEmptyControls</funcnm>
+<title>[D2DCreateEmptyControls]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateXXXControls</funcnm>
+<title>[D2DCreateXXXControls]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateControlsWithScrollbar</funcnm>
+<title>[D2DCreateControlsWithScrollbar]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateListbox</funcnm>
+<title>[D2DCreateListbox]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateWhiteControls</funcnm>
+<title>[D2DCreateWhiteControls]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>LPVOID captureobj</prm>
+<prm> DelegateDrawFunc func1</prm>
+<prm> DelegateProcFunc func2</prm>
+<prm> UIHandle ctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id</prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateClientControls</funcnm>
+<title>[D2DCreateClientControls]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>LPVOID captureobj</prm>
+<prm> DelegateDrawFunc func1</prm>
+<prm> DelegateProcFunc func2</prm>
+<prm> UIHandle ctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id</prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DCreateImage</funcnm>
+<title>[D2DCreateImage]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle hctrls</prm>
+<prm> const D2D1_RECT_F&amp; rc</prm>
+<prm> DWORD stat</prm>
+<prm> LPCWSTR name</prm>
+<prm> int id=-1 </prm>
+</prms>
+<note></note>
+<jnr>2</jnr>
+</func>
+<func><funcnm>D2DSetProcfunction</funcnm>
+<title>[D2DSetProcfunction]</title>
+<ret>bool</ret>
+<prms>
+<prm>UIHandle</prm>
+<prm> DelegateProcFunc func2</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DCast</funcnm>
+<title>[D2DCast]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>void* target</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSetFocus</funcnm>
+<title>[D2DSetFocus]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSetText</funcnm>
+<title>[D2DSetText]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> LPCWSTR str</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSetFont</funcnm>
+<title>[D2DSetFont]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> LPCWSTR fontnm</prm>
+<prm> float height</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSetStat</funcnm>
+<title>[D2DSetStat]</title>
+<ret>int</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> int stat</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSetColor</funcnm>
+<title>[D2DSetColor]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> ColorF back</prm>
+<prm> ColorF front</prm>
+<prm> ColorF border </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DReadOnly</funcnm>
+<title>[D2DReadOnly]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> bool readonly</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DAddItem</funcnm>
+<title>[D2DAddItem]</title>
+<ret>int</ret>
+<prms>
+<prm>UIHandle</prm>
+<prm> int idx</prm>
+<prm> LPCWSTR str</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DInsertText</funcnm>
+<title>[D2DInsertText]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> LPCWSTR str</prm>
+<prm> int len</prm>
+<prm> int start_pos</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetText</funcnm>
+<title>[D2DGetText]</title>
+<ret>BSTR</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> bool bAll </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSendMessage</funcnm>
+<title>[D2DSendMessage]</title>
+<ret>int</ret>
+<prms>
+<prm>UIHandle h</prm>
+<prm> UINT msg</prm>
+<prm> WPARAM</prm>
+<prm> LPARAM</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DCreateMainHWnd</funcnm>
+<title>[D2DCreateMainHWnd]</title>
+<ret>UIHandleWin</ret>
+<prms>
+<prm> HWND hWnd</prm>
+<prm> float font_height</prm>
+<prm> int typ=0 </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetRootControls</funcnm>
+<title>[D2DGetRootControls]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandleWin hMainWnd </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetControlFromID</funcnm>
+<title>[D2DGetControlFromID]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandleWin hMainWnd</prm>
+<prm> UINT id</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetControlFromName</funcnm>
+<title>[D2DGetControlFromName]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandleWin hMainWnd</prm>
+<prm> LPCWSTR nm</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetParent</funcnm>
+<title>[D2DGetParent]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm>UIHandle h</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetDeviceContext</funcnm>
+<title>[D2DGetDeviceContext]</title>
+<ret>ID2D1DeviceContext*</ret>
+<prms>
+<prm>UIHandleWin main</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSetCapture</funcnm>
+<title>[D2DSetCapture]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetCapture</funcnm>
+<title>[D2DGetCapture]</title>
+<ret>UIHandle</ret>
+<prms>
+<prm></prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DIsCapture</funcnm>
+<title>[D2DIsCapture]</title>
+<ret>bool</ret>
+<prms>
+<prm>UIHandle h</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DReleaseCapture</funcnm>
+<title>[D2DReleaseCapture]</title>
+<ret>void</ret>
+<prms>
+<prm></prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSwapChain</funcnm>
+<title>[D2DSwapChain]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandleWin main</prm>
+<prm> HWND hWnd  </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DDraw</funcnm>
+<title>[D2DDraw]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandleWin main</prm>
+<prm> void* option  </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DDefWndProc</funcnm>
+<title>[D2DDefWndProc]</title>
+<ret>LRESULT</ret>
+<prms>
+<prm>UIHandleWin main </prm>
+<prm>AppBase&amp; app</prm>
+<prm> UINT message</prm>
+<prm> WPARAM wParam</prm>
+<prm> LPARAM lParam</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DForceWndProc</funcnm>
+<title>[D2DForceWndProc]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandleWin main</prm>
+<prm> AppBase&amp; app</prm>
+<prm> UINT message</prm>
+<prm> WPARAM wParam</prm>
+<prm> LPARAM lParam</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DGetRect</funcnm>
+<title>[D2DGetRect]</title>
+<ret>D2D1_RECT_F</ret>
+<prms>
+<prm>UIHandle h </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DSetRect</funcnm>
+<title>[D2DSetRect]</title>
+<ret>void</ret>
+<prms>
+<prm> UIHandle h</prm>
+<prm> D2D1_RECT_F rc </prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DMDISetTopControl</funcnm>
+<title>[D2DMDISetTopControl]</title>
+<ret>void</ret>
+<prms>
+<prm>UIHandle h</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DEventHandler</funcnm>
+<title>[D2DEventHandler]</title>
+<ret>void</ret>
+<prms>
+<prm> UIHandle h</prm>
+<prm> D2DEventHandlerDelegate handler</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DConvert</funcnm>
+<title>[D2DConvert]</title>
+<ret>XDropdownListBox*</ret>
+<prms>
+<prm>UIHandle r</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>RectAnimation</funcnm>
+<title>[RectAnimation]</title>
+<ret>D2D1_RECT_F*</ret>
+<prms>
+<prm>const D2D1_RECT_F&amp;  rcS</prm>
+<prm> const D2D1_RECT_F&amp; rcE</prm>
+<prm> D2D1_RECT_F* p</prm>
+<prm> int p_size</prm>
+<prm> int style</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>SmoothRect</funcnm>
+<title>[SmoothRect]</title>
+<ret>void</ret>
+<prms>
+<prm>int typ</prm>
+<prm> UIHandleWin win</prm>
+<prm> D2D1_RECT_F* target</prm>
+<prm> D2D1_RECT_F dstRect</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+<func><funcnm>D2DStream2Bitmap</funcnm>
+<title>[D2DStream2Bitmap]</title>
+<ret>bool</ret>
+<prms>
+<prm> IStream* bmpstream</prm>
+<prm> ID2D1RenderTarget* target</prm>
+<prm> ID2D1Bitmap** bmp</prm>
+</prms>
+<note></note>
+<jnr>0</jnr>
+</func>
+</doc>

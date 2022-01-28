@@ -47,6 +47,7 @@ LRESULT D2DWhiteControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 		if (ProcFunc_ != nullptr)
 		{
 			auto old = b.card;
+			b.card = this;
 			r = ProcFunc_(captureobj_, b, message, wParam, lParam);
 			b.card = old;
 		}
@@ -60,14 +61,15 @@ LRESULT D2DWhiteControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 	return r;
 }
 void D2DWhiteControl::Draw(D2DContext& cxt)
-{
-	_ASSERT(DrawFunc_);
-
-	if (stat_ & STAT_VISIBLE)
+{	
+	if ((stat_&STAT_VISIBLE) == STAT_VISIBLE)
 	{
-		auto old = cxt.temp_;
-		DrawFunc_(captureobj_, cxt);
-		cxt.temp_ = old;
+		if (DrawFunc_)
+		{
+			auto old = cxt.temp_;
+			DrawFunc_(captureobj_, cxt);
+			cxt.temp_ = old;
+		}
 	
 
 
@@ -77,8 +79,7 @@ void D2DWhiteControl::Draw(D2DContext& cxt)
 		D2DControls::Draw(cxt);
 
 		mat.PopTransform();
-	}
-	
+	}		
 }
 std::wstring D2DWhiteControl::GetTreeTyp(USHORT* typ)
 { 

@@ -65,3 +65,38 @@ bool SaveDocument(int idx, DocFunc doc)
 
 	return true;
 }
+
+
+bool Load_DLL_Document(LPCWSTR fnm, std::vector<DocFuncItem>& ar)
+{
+	gDcoFileName = fnm;
+	
+	IXMLDOMDocument2Ptr pXMLDoc = LoadFile(fnm);
+
+	auto root = pXMLDoc->GetdocumentElement();
+	auto ls = root->selectNodes(BS(L"func"));
+
+	
+	for(long i=0; i < ls->Getlength(); i++)
+	{
+		auto nd = ls->Getitem(i);
+
+		DocFuncItem d;
+
+		d.func = nd->selectSingleNode(BS(L"funcnm"))->Gettext();
+		d.title = nd->selectSingleNode(BS(L"title"))->Gettext();
+		d.ret = nd->selectSingleNode(BS(L"ret"))->Gettext();
+		d.note = nd->selectSingleNode(BS(L"note"))->Gettext();
+		d.jnr = _wtoi(nd->selectSingleNode(BS(L"jnr"))->Gettext());
+		auto lsprm = nd->selectSingleNode(BS(L"prms"));
+		auto nd1 = lsprm->firstChild; 
+		while ( nd1 != nullptr)
+		{						
+			d.prm.push_back(nd1->Gettext());
+			nd1 = nd1->nextSibling;
+		}
+		ar.push_back(d);
+	}
+
+	return true;
+}
