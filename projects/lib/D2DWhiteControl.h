@@ -8,7 +8,7 @@ class D2DWhiteControl : public D2DControls
 {
 public:	
 
-	typedef std::function<void(LPVOID, D2DContext& cxt)> DrawFunc;
+	typedef std::function<bool(LPVOID, D2DContext& cxt)> DrawFunc;
 	typedef std::function<LRESULT(LPVOID,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)> ProcFunc;
 
 	D2DWhiteControl(LPVOID captureobj,  DelegateDrawFunc func1, DelegateProcFunc func2);
@@ -21,11 +21,11 @@ public:
 	virtual int GetTypeid() const override{ return TYP_WHITE_CONTROL; }
 	virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
+	
+
 protected :
 	DrawFunc DrawFunc_;
 	ProcFunc ProcFunc_;
-	FRectF rc_;
-
 	LPVOID captureobj_;
 
 	virtual void Draw(D2DContext& cxt) override;

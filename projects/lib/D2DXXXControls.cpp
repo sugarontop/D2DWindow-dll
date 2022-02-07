@@ -78,7 +78,7 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			UIHandleWin hwin={};
 			hwin.p = GetParent();
 		
-			SmoothRect(1,hwin, &rc_, FRectF(500,500,FSizeF(250,30)));
+			D2DSmoothRect(1,0,hwin, &rc_, FRectF(500,500,FSizeF(250,30)));
 			
 			//rc_.SetRect(500,500,FSizeF(250,30));
 			mode_ = 1;
@@ -92,7 +92,7 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				UIHandleWin hwin={};
 				hwin.p = GetParent();
 
-				SmoothRect(1,hwin, &rc_, FRectF(500,100,FSizeF(50,30)));
+				D2DSmoothRect(1,0,hwin, &rc_, FRectF(500,100,FSizeF(50,30)));
 
 				r = 1;
 			}

@@ -19,6 +19,7 @@ namespace V6
 		public:
 			// D2DControl
 			virtual FRectF GetRect() const override { return rc_; }
+			virtual FRectF& GetRectSmooth() override { return rc_; }
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
 			virtual std::wstring GetTreeTyp(USHORT* typ) override;
@@ -49,6 +50,7 @@ namespace V6
 		InnerMessageBox(){}
 
 		virtual FRectF GetRect() const { return rc_; }
+		virtual FRectF& GetRectSmooth() override { return rc_; }
 		virtual void SetRect(const FRectF& rc) {rc_ = rc; }
 
 		void ModalShow(LPCWSTR text, LPCWSTR title);
@@ -70,6 +72,7 @@ namespace V6
 		InnerFloatingMenu(){}
 
 		virtual FRectF GetRect() const { return rc_; }
+		virtual FRectF& GetRectSmooth() override { return rc_; }
 		virtual void SetRect(const FRectF& rc) {rc_ = rc; }
 
 		void ModalShow(LPVOID sender, std::vector<MenuItem>& ar);

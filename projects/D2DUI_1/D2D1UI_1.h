@@ -59,6 +59,7 @@ DLLEXPORT UIHandle WINAPI D2DGetRootControls(UIHandleWin hMainWnd );
 DLLEXPORT UIHandle WINAPI D2DGetControlFromID(UIHandleWin hMainWnd, UINT id);
 DLLEXPORT UIHandle WINAPI D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm);
 
+DLLEXPORT UIHandleWin WINAPI D2DGetWindow(UIHandle h);
 DLLEXPORT UIHandle WINAPI D2DGetParent(UIHandle h);
 
 DLLEXPORT ID2D1DeviceContext* WINAPI D2DGetDeviceContext(UIHandleWin main);
@@ -81,8 +82,11 @@ DLLEXPORT void WINAPI D2DForceWndProc(UIHandleWin main, AppBase& app, UINT messa
 
 
 DLLEXPORT D2D1_RECT_F WINAPI D2DGetRect(UIHandle h );
+DLLEXPORT D2D1_RECT_F* WINAPI D2DGetRect2(UIHandle h);
+
+DLLEXPORT int  WINAPI D2DGetId(UIHandle h );
 DLLEXPORT void WINAPI D2DSetRect( UIHandle h, D2D1_RECT_F rc );
-DLLEXPORT void WINAPI D2DMDISetTopControl(UIHandle h);
+DLLEXPORT void WINAPI D2DSetTopControl(UIHandle h);
 
 
 //DLLEXPORT void D2DEventHandlerOnClick( UIHandle h, D2DEventHandler handler);
@@ -94,7 +98,7 @@ DLLEXPORT XDropdownListBox* WINAPI D2DConvert(UIHandle r);
 
 
 DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_RECT_F& rcE, D2D1_RECT_F* p, int p_size, int style);
-DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect);
+DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect);
 DLLEXPORT bool WINAPI D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
 

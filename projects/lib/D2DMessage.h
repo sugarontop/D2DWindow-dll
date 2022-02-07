@@ -110,6 +110,7 @@ typedef DWORD (*D2DEventHandlerDelegate)(void* sender,LPCWSTR eventName, void* p
 #define WM_D2D_MINIMUM_SIZE						(WM_APP+23)
 #define WM_D2D_INET_COMPLETE					(WM_APP+24)
 #define WM_D2D_SELECTED_ITEM					(WM_APP+25)
+#define WM_D2D_SMOOTH_COMPLETE					(WM_APP+26)
 
 
 #define WM_D2D_USER_FIRST						(WM_APP+4000) // for your application

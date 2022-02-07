@@ -64,6 +64,15 @@ FSizeF D2DScrollbar::GetSize() const
 	return sz;
 
 }
+
+FRectF& D2DScrollbar::GetRectSmooth()
+{
+	static FRectF rc(0,0,sz_);
+	return rc;
+
+}
+
+
 void D2DScrollbar::Draw(D2DContext& cxt)
 {
 	// through

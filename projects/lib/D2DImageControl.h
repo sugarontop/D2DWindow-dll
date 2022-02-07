@@ -19,6 +19,7 @@ namespace V6
 		public:
 			// D2DControl
 			virtual FRectF GetRect() const override { return rc_; }
+			virtual FRectF& GetRectSmooth() override { return rc_; }
 			virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt)  override;
 			virtual void ResourceUpdate(bool bCreate, D2DContext& cxt) override;

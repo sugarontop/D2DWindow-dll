@@ -89,14 +89,15 @@ LRESULT CenterFunc(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, L
 
 void CreateControl(HWND hWnd)
 {
+
 	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
     auto root = D2DGetRootControls(hwin);
 
-	auto hctrls = D2DCreateEmptyControls( root, FRectF(), STAT_DEFAULT, NONAME,-1);
+	auto hctrlsA = D2DCreateEmptyControls( root, FRectF(), STAT_DEFAULT, NONAME,-1);
 
-	auto hctrlsA = D2DCreateSquarePaper( hctrls,  FRectF(0,0,9000,9000), STAT_VISIBLE, L"sqare",-1);
+	//auto hctrlsA = D2DCreateSquarePaper( hctrls,  FRectF(0,0,9000,9000), STAT_VISIBLE, L"sqare",-1);
 
-	D2DSetColor(hctrlsA, ColorF::Black, ColorF::White,ColorF::Black);
+	//D2DSetColor(hctrlsA, ColorF::Black, ColorF::White,ColorF::Black);
 
 	CreateLoginControl(hctrlsA);
 
@@ -132,7 +133,8 @@ void CreateLoginControl(UIHandle h)
 
 			h = D2DGetControlFromName(hwin, L"document");
 
-			D2DSetStat(h, STAT_DEFAULT);
+			if ( h.p )
+				D2DSetStat(h, STAT_DEFAULT);
 
 
 			return 0;
@@ -149,6 +151,227 @@ void CreateLoginControl(UIHandle h)
 
 }
 
+class ColorF2
+{
+	public :
+		ColorF2():clr(ColorF::Black){}
+
+		ColorF2& operator = (const ColorF& c)
+		{
+			clr = c;
+			return *this;
+		}
+
+		
+
+		ColorF clr;
+
+};
+
+
+
+struct BobInstance
+{
+	BobInstance()
+	{
+		clr[0] = ColorF::AliceBlue;
+		clr[1] = ColorF::AliceBlue;
+		clr[2] = ColorF::AliceBlue;
+	
+	};
+
+	FRectF* prc;
+	FRectF orgrc;
+	ColorF2 clr[3];
+	D2DMat mat;
+	UIHandle hme;
+
+	UIHandle hactive;
+
+};
+
+
+bool df1(LPVOID captureobj, D2DContext& cxt)
+{
+	BobInstance* m = (BobInstance*)captureobj;
+
+	
+	D2DMatrix mat(*cxt);
+
+	m->mat = mat.PushTransform();
+
+
+	auto rc = *(m->prc);
+	
+	mat.Offset(rc);
+	
+	cxt.DFillRect(rc.ZeroRect(), m->clr[0].clr);
+
+
+	D2DControls* c = (D2DControls*)m->hme.p;
+	c->InnerDraw(cxt);
+
+
+	mat.PopTransform();
+
+	return false;
+
+
+}
+LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	BobInstance* m = (BobInstance*)captureobj;
+	auto me = (D2DControl*)b.card;
+
+
+	LRESULT r = 0;
+
+	switch(message)
+	{
+		case WM_D2D_CREATE:
+		{
+			m->hme = *(UIHandle*)lParam;			
+			
+			m->orgrc = D2DGetRect(m->hme);
+			m->prc = (FRectF*)D2DGetRect2(m->hme);
+			
+
+
+			if ( 12 == D2DGetId(m->hme))
+			{
+				auto tx = D2DCreateTextbox(m->hme, FRectF(10,10,200,200), true, STAT_DEFAULT, L"TX1",-1,-1);
+
+				D2DSetText( tx, L"4 split screens.\n ダブルクリックで全体画面へ。");
+
+
+
+
+			}
+
+
+
+
+
+			r = 1;
+		}
+		break;
+		case WM_D2D_DESTROY:
+		{
+			delete m;
+			r = 1;
+		}
+		break;
+		case WM_D2D_SET_COLOR:
+		{
+			ColorF clr = *(ColorF*)lParam;
+
+			if ( wParam == 0 )
+				m->clr[0] = clr;
+			else if ( wParam == 1 )
+				m->clr[1] = clr;
+			else if ( wParam == 2 )
+				m->clr[2] = clr;
+
+			r = 1;
+		}
+		break;
+		case WM_LBUTTONDBLCLK:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+
+			auto pt = m->mat.DPtoLP(pm.pt);
+
+			auto rc = *(m->prc);
+
+			if ( rc.PtInRect(pt) )
+			{
+				r = 1;
+
+				if ( m->hactive.p != m->hme.p )
+				{
+					m->hactive = m->hme;
+
+					FRectF rcDst(0,0,rc.Width()*2,  rc.Height()*2);
+
+					D2DSetTopControl(m->hme);
+
+					D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
+
+					
+
+				}
+				else
+				{
+					auto w = D2DGetWindow(m->hme);
+					D2DSetStat(D2DGetControlFromName( w, L"s1"), STAT_DEFAULT);
+					D2DSetStat(D2DGetControlFromName( w, L"s2"), STAT_DEFAULT);
+					D2DSetStat(D2DGetControlFromName( w, L"s3"), STAT_DEFAULT);
+					D2DSetStat(D2DGetControlFromName( w, L"s4"), STAT_DEFAULT);
+
+
+					FRectF rcDst = m->orgrc;
+
+					D2DSmoothRect(1,98,  hwin, m->prc, rcDst);
+					m->hactive.p = nullptr;
+
+
+					
+				}
+
+			}
+		}
+		break;
+		case WM_D2D_SMOOTH_COMPLETE:
+		{
+			if ( wParam == 99 )
+			{
+				if ( m->hactive.p == m->hme.p )
+				{
+					auto w = D2DGetWindow(m->hme);
+
+					D2DSetStat(D2DGetControlFromName( w, L"s1"), 0);
+					D2DSetStat(D2DGetControlFromName( w, L"s2"), 0);
+					D2DSetStat(D2DGetControlFromName( w, L"s3"), 0);
+					D2DSetStat(D2DGetControlFromName( w, L"s4"), 0);
+
+
+					D2DSetStat(m->hme, STAT_DEFAULT);
+					r = 1;
+				}
+
+			}
+		}
+		break;
+	}
+
+	return r;
+}
+void CreateDocumentControl(UIHandle h)
+{
+	auto cw = GetSystemMetrics(SM_CXSCREEN);
+	auto ch = GetSystemMetrics(SM_CYSCREEN);	
+
+	FSizeF sz(cw/2,ch/2);
+
+
+	auto hdoc1 = D2DCreateXXXControls( h, FRectF(), 0, L"document",-1); // 0:loginするまで表示しない。
+	
+	UIHandle ha[4];
+	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(0,0, sz), STAT_DEFAULT, L"s1",10);
+	ha[1] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(sz.width,sz.height,sz), STAT_DEFAULT, L"s2",11);
+	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(0,sz.height,sz), STAT_DEFAULT, L"s3",12);
+	ha[3] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(sz.width,0,sz), STAT_DEFAULT, L"s4",13);
+
+	D2DSetColor(ha[0], ColorF::Green, ColorF::White,ColorF::Black);		
+	D2DSetColor(ha[1], ColorF::AliceBlue, ColorF::Black,ColorF::White);		
+	D2DSetColor(ha[2], ColorF::BlueViolet, ColorF::White,ColorF::Black);		
+	D2DSetColor(ha[3], ColorF::DarkGoldenrod, ColorF::White,ColorF::Black);		
+
+
+}
+
+
+#ifdef _XXX
 void PartsDraw(LPVOID captureobj, D2DContext& cxt);
 LRESULT PartsFunc(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -165,8 +388,6 @@ struct Memo
 	Base* base;
 	D2DMat mat;
 };
-
-
 
 void CreateDocumentControl(UIHandle h)
 {
@@ -456,3 +677,5 @@ LRESULT CenterFunc(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, L
 	return r;
 
 }
+
+#endif

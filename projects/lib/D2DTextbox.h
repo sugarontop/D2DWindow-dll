@@ -79,6 +79,7 @@ namespace V6
 		void CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP typ, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 		virtual void Draw(D2DContext& cxt) override;
 		virtual FRectF GetRect() const override { return rctext_; }
+		virtual FRectF& GetRectSmooth() override { return rctext_; }
 		virtual void SetRect(const FRectF& rc)  override { rctext_ = rc; }
 		virtual std::wstring GetTreeTyp(USHORT* typ) override;
 	public :

@@ -317,6 +317,20 @@ DLLEXPORT UIHandle WINAPI D2DGetParent(UIHandle h)
 	return ConvertUIHandle(pc->GetParentControls());
 }
 
+DLLEXPORT UIHandleWin WINAPI D2DGetWindow(UIHandle h)
+{
+	D2DControl* pc = (D2DControl*)h.p;
+	UIHandleWin r = {};
+	r.p = pc->GetParent();
+	r.typ = TYP_MAIN_WINDOW;
+	return r;
+}
+DLLEXPORT int WINAPI D2DGetId(UIHandle h )
+{
+	D2DControl* pc = (D2DControl*)h.p;
+	return pc->GetID();
+}
+
 DLLEXPORT UIHandle WINAPI D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)
 {	
 	auto win = (D2DWindow*)hwin.p;
@@ -644,7 +658,7 @@ DLLEXPORT void WINAPI D2DReadOnly(UIHandle h, bool readonly)
 
 DLLEXPORT UIHandle WINAPI D2DGetRootControls(UIHandleWin hMainWnd )
 {
-	UIHandle r;
+	UIHandle r={};
 	r.p = ((D2DWindow*)hMainWnd.p)->top_control_.get();
 	r.typ = TYP_CONTROLS;
 	return r;
@@ -653,7 +667,8 @@ DLLEXPORT UIHandle WINAPI D2DGetRootControls(UIHandleWin hMainWnd )
 
 UIHandle ConvertUIHandle(D2DControl* p)
 {
-	UIHandle r;
+	_ASSERT(p);
+	UIHandle r={};
 	auto ctrl =  p;
 	r.p = ctrl;
 	r.typ = p->GetTypeid();
@@ -672,37 +687,43 @@ UIHandle ConvertUIHandle(D2DControl* p)
 
 DLLEXPORT UIHandle WINAPI D2DGetControlFromID(UIHandleWin hMainWnd, UINT id)
 {
-	UIHandle r;
+	UIHandle r={};
 	D2DControls* x = ((D2DWindow*)hMainWnd.p)->top_control_.get();
 
 	auto ctrl =  x->GetControlFromID(id);
-	r.p = ctrl;
-	r.typ = x->GetTypeid();
 
-	if ( r.typ == TYP_TEXTBOX )
+	if ( ctrl )
 	{
-		r.p = static_cast<D2DTextbox*>(ctrl);
+		r.p = ctrl;
+		r.typ = x->GetTypeid();
 
+		if ( r.typ == TYP_TEXTBOX )
+		{
+			r.p = static_cast<D2DTextbox*>(ctrl);
+
+		}
 	}
-
 
 	return r;
 }
 DLLEXPORT UIHandle WINAPI D2DGetControlFromName(UIHandleWin hMainWnd, LPCWSTR nm)
 {
-	UIHandle r;
+	UIHandle r ={};
 	D2DControls* x = ((D2DWindow*)hMainWnd.p)->top_control_.get();
 
 	auto ctrl = x->GetControl( nm );
-	r.p = ctrl;
-	r.typ = ctrl->GetTypeid();
 
-	if ( r.typ == TYP_TEXTBOX )
+	if ( ctrl )
 	{
-		r.p = static_cast<D2DTextbox*>(ctrl);
+		r.p = ctrl;
+		r.typ = ctrl->GetTypeid();
 
+		if ( r.typ == TYP_TEXTBOX )
+		{
+			r.p = static_cast<D2DTextbox*>(ctrl);
+
+		}
 	}
-
 	return r;
 
 }
@@ -812,6 +833,15 @@ DLLEXPORT D2D1_RECT_F WINAPI D2DGetRect(UIHandle h )
 	D2DControl* p2 = D2DCastControl(h);
 	return p2->GetRect();
 }
+
+DLLEXPORT D2D1_RECT_F* WINAPI D2DGetRect2(UIHandle h )
+{
+	D2DControl* p2 = D2DCastControl(h);
+	FRectF* rc = &(p2->GetRectSmooth());
+	return rc;
+}
+
+
 DLLEXPORT void WINAPI D2DSetRect( UIHandle h, D2D1_RECT_F rc )
 {
 	D2DControl* p2 = D2DCastControl(h);
@@ -861,7 +891,7 @@ DLLEXPORT void WINAPI D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handl
 }
 
 
-DLLEXPORT void WINAPI D2DMDISetTopControl(UIHandle h)
+DLLEXPORT void WINAPI D2DSetTopControl(UIHandle h)
 {
 	D2DControl* h2 = D2DCastControl(h);
 
@@ -908,7 +938,7 @@ DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F& rcStart, const D2
 }
 
 
-DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect)
+DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect)
 {
 	if ( typ == 0 )
 		*target = dstRect;
@@ -922,7 +952,7 @@ DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, D2D1_RECT_F* target, 
 		RectAnimation(srect, dstRect, prc, cnt, atyp);
 
 		D2DWindow* pwin = (D2DWindow*)win.p;
-		pwin->Smooth_ = [prc, cnt,target](D2DWindow* win, int no)->int
+		pwin->Smooth_ = [prc, cnt,target,pwin,id](D2DWindow* win, int no)->int
 		{						
 			if ( no < cnt )
 			{
@@ -935,6 +965,9 @@ DLLEXPORT void WINAPI SmoothRect(int typ, UIHandleWin win, D2D1_RECT_F* target, 
 				win->GetContext().bRedraw_ = true;
 				delete [] prc;
 				win->Smooth_ = nullptr;
+
+				pwin->SendMessage(WM_D2D_SMOOTH_COMPLETE,id,0);
+
 			}
 
 			return (no+1);

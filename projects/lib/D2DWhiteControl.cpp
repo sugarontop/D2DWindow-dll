@@ -64,21 +64,25 @@ void D2DWhiteControl::Draw(D2DContext& cxt)
 {	
 	if ((stat_&STAT_VISIBLE) == STAT_VISIBLE)
 	{
+		bool bl = true;
+		
 		if (DrawFunc_)
 		{
 			auto old = cxt.temp_;
-			DrawFunc_(captureobj_, cxt);
+			bl = DrawFunc_(captureobj_, cxt);
 			cxt.temp_ = old;
 		}
 	
+		if (bl)
+		{
+			D2DMatrix mat(*cxt);
+			mat.PushTransform();
+			mat.Offset(rc_);
+			//D2DControls::Draw(cxt);
+			InnerDraw(cxt);
 
-
-		D2DMatrix mat(*cxt);
-		mat.PushTransform();
-		mat.Offset(rc_);
-		D2DControls::Draw(cxt);
-
-		mat.PopTransform();
+			mat.PopTransform();
+		}
 	}		
 }
 std::wstring D2DWhiteControl::GetTreeTyp(USHORT* typ)

@@ -27,6 +27,7 @@ public:
 	virtual FRectF GetRect() const  = 0;
 	virtual void SetRect(const FRectF& rc) = 0;
 	virtual void Draw(D2DContext& cxt) = 0;
+	virtual FRectF& GetRectSmooth() =0;
 	virtual std::wstring GetTreeTyp(USHORT* typ){ *typ=1; return L"D2DControl";}
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col);
 	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt){}
@@ -97,24 +98,19 @@ public:
 	D2DControl* GetControl( std::wstring name );
 	D2DControl* GetControlFromID( int id ) const;
 	virtual FRectF GetRect() const override { return rc_; }
+	virtual FRectF& GetRectSmooth() override { return rc_; }
 	virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 
 	std::shared_ptr<D2DControl> GetItem(UINT idx){ return controls_[idx]; }
 	UINT ChildCount() const { return controls_.size(); }
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col) override;
 	LRESULT InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
+
+	void InnerDraw(D2DContext& cxt);
 protected :
 	virtual LRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
-
-	
-	
-	void InnerDraw(D2DContext& cxt);
-
 	
 	std::shared_ptr<D2DControl> Detach(D2DControl* target);
-
-
-	
 
 protected :	
 	std::vector<std::shared_ptr<D2DControl>> controls_;

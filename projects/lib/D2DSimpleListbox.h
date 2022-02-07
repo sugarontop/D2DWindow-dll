@@ -66,6 +66,7 @@ namespace V6
 			D2DSimpleListbox();
 
 			virtual FRectF GetRect() const { return rc_; }
+			virtual FRectF& GetRectSmooth() override { return rc_; }
 			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt);
 

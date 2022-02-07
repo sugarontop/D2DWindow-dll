@@ -49,7 +49,7 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 	obj.bmp1 = nullptr;
 	
     
-    obj.wboard.drawFunc = [](LPVOID captureobj, D2DContext& cxt) {
+    obj.wboard.drawFunc = [](LPVOID captureobj, D2DContext& cxt)->bool {
 
         CaptureObj1* obj = (CaptureObj1*)captureobj;
         WhiteBoard& wb = obj->wboard;
@@ -109,6 +109,8 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 		}
 
         mat.PopTransform();
+
+		return true;
     };
     obj.wboard.procFunc = [](LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 
@@ -197,7 +199,7 @@ void CreateControl2(UIHandleWin hwin, UIHandle hcs )
 void Initialwbbox( WhiteBoard& wb )
 {
 	
-	wb.drawFunc = [](LPVOID captureobj, D2DContext& cxt) {
+	wb.drawFunc = [](LPVOID captureobj, D2DContext& cxt)->bool {
 		
 		CaptureObj1* obj = (CaptureObj1*)captureobj;
 
@@ -207,7 +209,7 @@ void Initialwbbox( WhiteBoard& wb )
 		FRectF rc1 = obj->rcwbbox;
 
 		(*cxt)->DrawText( s.c_str(), s.length(), cxt.textformat_, rc1, cxt.white_ );
-			
+		return true;
 	};
 
 

@@ -220,7 +220,7 @@ void CreateControl(HWND hWnd)
     static CaptureObj1 obj;
     obj.active_idx = 0;
     obj.wboard.typ = 0;
-    obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt) {
+    obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt)->bool {
      
         CaptureObj1* obj = (CaptureObj1*)captureobj;
         WhiteBoard& wb = obj->wboard;
@@ -243,6 +243,8 @@ void CreateControl(HWND hWnd)
 
             }
             mat.PopTransform();
+
+		return true;
     };
     obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
 

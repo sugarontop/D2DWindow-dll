@@ -86,6 +86,9 @@ void Trace(LPCWSTR fm, ...);
 typedef _bstr_t BS;
 #define HEART_BEET_ID 1000
 
+#pragma warning( disable : 26812 )
+
+
 
 //
 //inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
