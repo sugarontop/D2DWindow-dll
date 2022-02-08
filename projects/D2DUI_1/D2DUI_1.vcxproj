@@ -181,6 +181,7 @@
   <ItemGroup>
     <ClInclude Include="..\lib\AppBase.h" />
     <ClInclude Include="..\lib\D2DButton.h" />
+    <ClInclude Include="..\lib\D2DColor.h" />
     <ClInclude Include="..\lib\D2DDropdownListbox.h" />
     <ClInclude Include="..\lib\D2DImageControl.h" />
     <ClInclude Include="..\lib\D2DInterface.h" />

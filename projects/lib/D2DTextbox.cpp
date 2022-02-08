@@ -503,7 +503,7 @@ bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight)
 {
 	ComPTR<IDWriteTextFormat> textformat;
 	auto hr = parent_window_->GetContext().tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-		fontheight, L"ja-jp", & textformat);
+		fontheight, LOCALE, & textformat);
 
 	// not yet IMPLEMENT
 	

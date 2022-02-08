@@ -18,7 +18,7 @@ void D2DContext::CreateDeviceIndependentResources( float fontheight)
 	{
 		wfactory_ = dwriteFactory;
 		if (SOK(dwriteFactory->CreateTextFormat(L"MS–¾’©", NULL, DWRITE_FONT_WEIGHT_REGULAR,
-			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,fontheight, L"ja-jp", & textformat_)))
+			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,fontheight, LOCALE, & textformat_)))
 			{
 				tsf_text_format_ = textformat_;
 				tsf_wfactory_ = dwriteFactory;

@@ -88,7 +88,7 @@ typedef _bstr_t BS;
 
 #pragma warning( disable : 26812 )
 
-
+#define LOCALE	L"ja-jp"
 
 //
 //inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )

@@ -210,7 +210,13 @@ DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const D2D1_RECT_F& rc
 
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add( std::shared_ptr<D2DStatic>(pgtx));	
-	pgtx->SetText(text);
+
+	if ( id == -2 )
+	{
+		pgtx->Extend(text);
+	}
+	else
+		pgtx->SetText(text);
 
 	UIHandle r;
 	r.p = pgtx;

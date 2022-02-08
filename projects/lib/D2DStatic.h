@@ -22,13 +22,17 @@ class D2DStatic : public D2DControl
 		virtual FRectF& GetRectSmooth() override { return rc_; }
 		virtual void SetRect(const FRectF& rc)  override { rc_ = rc; }
 		virtual std::wstring GetTreeTyp(USHORT* typ) override;
+
+		void Extend(LPCWSTR str);
 	private :
 		ComPTR<IDWriteTextLayout> text_;		
 		std::wstring str_;
 		FRectF rc_;
 		bool editable_;
 		D2DTextbox* editor_;
-
+		ColorF text_color_;
+		bool extend_;
+		FPointF offpt_;
 };
 
 };
