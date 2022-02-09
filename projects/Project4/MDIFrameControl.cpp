@@ -73,7 +73,7 @@ void CreateControlTest(UIHandleWin hwin, UIHandle hcs );
 
 #include "D2DWhiteWindowControl.h"
 #include "D2DGrid.h"
-#include "D2DTabControls.h"
+//#include "D2DTabControls.h"
 #include "yahoo.h"
 
 void CreateMDISplitControl(HWND hWnd)
@@ -171,57 +171,22 @@ void CreateMDISplitControl(HWND hWnd)
 	D2DSetProcfunction(hcsLEFT, f);
 
 
+	UIHandle h1={};
+	h1.p = right_side_controls;
 	
+	auto tabs = D2DCreateTabControls( h1, FRectF(0,0,0,0),  STAT_DEFAULT, L"RIGHT_TAB", 191);
+
+	//auto tabs = std::make_shared<D2DTabControls>();
+	//tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"RIGHT_TAB", 191);
+	//right_side_controls->Add(tabs);
+
+	//auto p1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
+
+	auto hcs5 = D2DGetControlFromIdx(tabs, 0);
 
 
-
-#ifdef SAMPLE1
-	UIHandle hcs4;
-	hcs4.p = right_side_controls;
-	hcs4.typ = 0;
-	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"DEBUG1", 191);
-	auto ha2 = D2DCreateWhiteWindow(hwin,ha, FRectF(0,0, FSizeF(900,900)),  STAT_DEFAULT, L"AAAAA", 192);
-#endif
-
-#ifdef SAMPLE2
-		UIHandle hcs4;
-	hcs4.p = right_side_controls;
-	hcs4.typ = 0;
-	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"DEBUG1", 191);
-	auto ha1 = D2DCreateSquarePaper(hwin,ha, FRectF(145,145, FSizeF(300,300)),  STAT_DEFAULT, L"DEBUG10", 192);
-#endif
-
-#ifdef SAMPLE3
-	UIHandle hcs4;
-	hcs4.p = right_side_controls;
-	hcs4.typ = 0;
-	auto ha = D2DCreateSquarePaper(hwin,hcs4, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"DEBUG1", 191);
-	for(int i=0; i < 10; i++)
-	{
-
-		auto win = std::make_shared<D2DWhiteWindowControls>();
-		D2DControls* ctrl = (D2DControls*)ha.p;
-		win->CreateControl((D2DWindow*)hwin.p, ctrl, FRectF(150+i*10,150+i*10, FSizeF(600,300)), STAT_DEFAULT, L"DEBUG10", 192);
-		ctrl->Add(win);
-
-	
-	
-		auto grid = std::make_shared<D2DGrid>();
-		grid->CreateControl((D2DWindow*)hwin.p, win.get(), FRectF(0,0, FSizeF(600,300)), STAT_DEFAULT, L"DEBUG10", 192);
-		win->Add(grid);
-
-	}
-#endif
-	
-	auto tabs = std::make_shared<D2DTabControls>();
-	tabs->CreateControl((D2DWindow*)hwin.p,right_side_controls, FRectF(0,0,0,0),  STAT_DEFAULT, L"RIGHT_TAB", 191);
-	right_side_controls->Add(tabs);
-
-	auto p1 = dynamic_cast<D2DControls*>(tabs->GetControlFromIdx(0));
-
-
-	UIHandle hcs5={};
-	hcs5.p = p1;
+	//UIHandle hcs5={};
+	//hcs5.p = p1;
 	auto v1 = D2DCreateEmptyControls(hcs5, FRectF(0,0,2001,2001), STAT_DEFAULT,L"Control map parent", 201);
 
 	auto maps = std::make_shared<D2DClassMap>();
@@ -229,8 +194,8 @@ void CreateMDISplitControl(HWND hWnd)
 	((D2DControls*)v1.p)->Add(maps);
 
 
-	UIHandle hcs_right={};
-	hcs_right.p = p1;
+	UIHandle hcs_right=hcs5;
+	//hcs_right.p = p1;
 
 	//D2DCreateSquarePaper(hwin,hcs_right, FRectF(0,0,2000,3000),  STAT_DEFAULT, L"DEBUG", 190);
 
@@ -264,7 +229,10 @@ void CreateMDISplitControl(HWND hWnd)
 		wsprintf(nm,L"aNAME_%d", i);
 
 		UIHandle hcs_right={};
-		hcs_right.p = p1 = tabs->AddNewTab(nm);
+		//hcs_right.p = p1 = tabs->AddNewTab(nm);
+
+
+		hcs_right = D2DAddNewTab(tabs, nm );
 
 		//auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
 		//page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );

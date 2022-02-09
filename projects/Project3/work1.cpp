@@ -4,7 +4,7 @@
 #include "D2DMisc.h"
 #include <fstream>
 #include "D2D1UI_1.h"
-#include "D2DControls_with_Scrollbar.h"
+//#include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
 #include "D2DAccordionbar.h"
 #include "D2DFileManage.h"
@@ -13,6 +13,7 @@
 #include "D2DColor.h"
 
 #include "D2DLogin.h"
+#include "yahoo.h"
 
 using namespace V6;
 
@@ -158,6 +159,8 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 
 
 	auto rc = *(m->prc);
+
+	D2DRectFilter fil(cxt, rc);
 	
 	mat.Offset(rc);
 	
@@ -221,6 +224,19 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				D2DCreateStatic(m->hme, FRectF(10,50,FSizeF(1200,260)), STAT_DEFAULT, prm2.c_str(), NONAME, -2 );
 				
 			}
+			else if ( 10 == id )
+			{
+				for(int ij=0; ij < 1; ij++)
+				{
+					auto yf = std::make_shared<yahoo_finance>();
+
+					auto w = D2DGetWindow(m->hme);
+
+					yf->CreateControl((D2DWindow*)w.p, (D2DControls*)m->hme.p, FRectF(50+ij*100,100+ij*100,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
+					((D2DControls*)m->hme.p)->Add(yf);
+			
+				}
+			}
 
 			r = 1;
 		}
@@ -247,48 +263,55 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		break;
 		case WM_LBUTTONDBLCLK:
 		{
-			MouseParam& pm = *(MouseParam*)lParam;
-
-			auto pt = m->mat.DPtoLP(pm.pt);
-
-			auto rc = *(m->prc);
-
-			if ( rc.PtInRect(pt) )
+			r = D2DDefControlProc(m->hme,b,message,wParam,lParam);
+			
+			if ( r == 0)
 			{
-				r = 1;
+			
+				MouseParam& pm = *(MouseParam*)lParam;
 
-				if ( m->hactive.p != m->hme.p )
+				auto pt = m->mat.DPtoLP(pm.pt);
+
+				auto rc = *(m->prc);
+
+				if ( rc.PtInRect(pt) )
 				{
-					m->hactive = m->hme;
+					r = 1;
 
-					FRectF rcDst(0,0,rc.Width()*2,  rc.Height()*2);
+					if ( m->hactive.p != m->hme.p )
+					{
+						m->hactive = m->hme;
 
-					D2DSetTopControl(m->hme);
+						FRectF rcDst(0,0,rc.Width()*2,  rc.Height()*2);
 
-					D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
+						D2DSetTopControl(m->hme);
+
+						D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
 
 					
 
-				}
-				else
-				{
-					auto w = D2DGetWindow(m->hme);
-					D2DSetStat(D2DGetControlFromName( w, L"s1"), STAT_DEFAULT);
-					D2DSetStat(D2DGetControlFromName( w, L"s2"), STAT_DEFAULT);
-					D2DSetStat(D2DGetControlFromName( w, L"s3"), STAT_DEFAULT);
-					D2DSetStat(D2DGetControlFromName( w, L"s4"), STAT_DEFAULT);
+					}
+					else
+					{
+						auto w = D2DGetWindow(m->hme);
+						D2DSetStat(D2DGetControlFromName( w, L"s1"), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, L"s2"), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, L"s3"), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, L"s4"), STAT_DEFAULT);
 
 
-					FRectF rcDst = m->orgrc;
+						FRectF rcDst = m->orgrc;
 
-					D2DSmoothRect(1,98,  hwin, m->prc, rcDst);
-					m->hactive.p = nullptr;
+						D2DSmoothRect(1,98,  hwin, m->prc, rcDst);
+						m->hactive.p = nullptr;
 
 
 					
-				}
+					}
 
+				}
 			}
+			return r;
 		}
 		break;
 		case WM_D2D_SMOOTH_COMPLETE:
@@ -312,7 +335,16 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 		}
 		break;
+		case WM_LBUTTONDOWN:
+		{	
+			int a = 0;
+		}
+		break;
 	}
+
+	if ( r == 0 )
+		r = D2DDefControlProc(m->hme,b,message,wParam,lParam);
+
 
 	return r;
 }

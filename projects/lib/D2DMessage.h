@@ -64,6 +64,7 @@ typedef DWORD (*D2DEventHandlerDelegate)(void* sender,LPCWSTR eventName, void* p
 #define TYP_WHITE_WINDOW 14
 #define TYP_IMAGE 15
 #define TYP_SCROLLBAR 16
+#define TYP_TAB_CONTROLS 17
 
 #define theWhite D2RGB(255,255,255)
 #define theBlack D2RGB(0,0,0)

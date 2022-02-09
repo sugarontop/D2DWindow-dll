@@ -24,9 +24,6 @@
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\lib\D2DScrollbar.h">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClInclude>
     <ClInclude Include="..\lib\D2DAccordionbar.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
@@ -65,16 +62,7 @@
     <ClCompile Include="..\lib\D2DMDISplitControls.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
-    <ClCompile Include="..\lib\D2DScrollbar.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
     <ClCompile Include="..\lib\D2DGrid.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\D2DTabControls.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\D2DWindow2.cpp">

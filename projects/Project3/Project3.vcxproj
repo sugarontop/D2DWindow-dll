@@ -167,6 +167,7 @@
     <ClCompile Include="WindowsProjectD2D.cpp" />
     <ClCompile Include="work1.cpp" />
     <ClCompile Include="xml.cpp" />
+    <ClCompile Include="yahoo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WindowsProjectD2D.rc" />

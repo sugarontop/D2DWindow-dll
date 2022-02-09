@@ -28,10 +28,21 @@ DLLEXPORT UIHandle WINAPI D2DFloatingMenu(UIHandleWin hwin, const D2D1_RECT_F& r
 DLLEXPORT UIHandle WINAPI D2DCreateStatic(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR text, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
-DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+
 DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle WINAPI D2DCreateWhiteControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle ctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDrawFunc func1, DelegateProcFunc func2, UIHandle ctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id);
+DLLEXPORT UIHandle WINAPI D2DCreateScrollbar(UIHandle ctrls, bool bVertical, DWORD stat, LPCWSTR name, int id);
+DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateControlsWithMove(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+
+DLLEXPORT UIHandle WINAPI D2DCreateTabControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DAddNewTab(UIHandle hctrls, LPCWSTR nm);
+DLLEXPORT UIHandle WINAPI D2DGetControlFromIdx(UIHandle hctrls, USHORT idx);
+
+
+
+
 
 DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
@@ -79,6 +90,7 @@ DLLEXPORT  void WINAPI D2DDestroyWindow(UIHandleWin main  );
 
 DLLEXPORT LRESULT WINAPI D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam);
 DLLEXPORT void WINAPI D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPARAM wParam, LPARAM lParam);
+DLLEXPORT LRESULT WINAPI D2DDefControlProc(UIHandle ctrls ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam);
 
 
 DLLEXPORT D2D1_RECT_F WINAPI D2DGetRect(UIHandle h );
@@ -87,6 +99,9 @@ DLLEXPORT D2D1_RECT_F* WINAPI D2DGetRect2(UIHandle h);
 DLLEXPORT int  WINAPI D2DGetId(UIHandle h );
 DLLEXPORT void WINAPI D2DSetRect( UIHandle h, D2D1_RECT_F rc );
 DLLEXPORT void WINAPI D2DSetTopControl(UIHandle h);
+
+
+DLLEXPORT void WINAPI D2DScrollbarSetMaxSize(UIHandle h, float height);
 
 
 //DLLEXPORT void D2DEventHandlerOnClick( UIHandle h, D2DEventHandler handler);

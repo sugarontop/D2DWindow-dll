@@ -353,7 +353,7 @@ void CreateControl(HWND hWnd)
 
 }
 #include "D2DChildWindow.h"
-#include "D2DControls_with_Scrollbar.h"
+//#include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
 
 void CreateControl0(HWND hWnd)
@@ -369,14 +369,11 @@ void CreateControl0(HWND hWnd)
 	((D2DControls*)root.p)->Add(ch);
 
 
+	UIHandle ch1 = {};
+	ch1.p = ch.get();
 
-	auto sc = std::make_shared<D2DControls_with_Scrollbar>();
-	sc->CreateControl((D2DWindow*)hwin.p, ch.get(), FRectF(0,0,0,0), STAT_DEFAULT, L"abc");
-	ch->Add(sc);
+	auto hc = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT, L"abc");
 
-
-	UIHandle hc={};
-	hc.p = sc.get();
 
 
 	D2DCreateSquarePaper(hc, FRectF(0,0,1000,1000), STAT_DEFAULT, L"abc1", -1);
@@ -403,13 +400,15 @@ void CreateControl1(HWND hWnd)
 		ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50+r,250+r,FSizeF(400,600)), STAT_DEFAULT, L"childwin" );
 		((D2DControls*)root.p)->Add(ch);
 	
-		auto sccontrols = std::make_shared<D2DControls_with_Scrollbar>();
-		sccontrols->CreateControl((D2DWindow*)hwin.p, (D2DControls*)ch.get(), FRectF(0,0,FSizeF(0,0)), STAT_DEFAULT, L"filemng_sc");
-		((D2DControls*)ch.get())->Add(sccontrols);
+		UIHandle ch1 = {};
+		ch1.p = ch.get();
 
+		auto sccontrols = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT, L"filemng_sc");
+		
+		auto x = (D2DControls*)sccontrols.p;
 		auto fmg = std::make_shared<D2DFileManage>();
-		fmg->CreateControl((D2DWindow*)hwin.p, sccontrols.get(), FRectF(0,0,FSizeF(400,600)), STAT_DEFAULT, L"filemng");
-		sccontrols->Add(fmg);
+		fmg->CreateControl((D2DWindow*)hwin.p, x, FRectF(0,0,FSizeF(400,600)), STAT_DEFAULT, L"filemng");
+		x->Add(fmg);
 
         if ( i==0)
             fmg->ChangeTyp(D2DFileManage::TYP::TREE);

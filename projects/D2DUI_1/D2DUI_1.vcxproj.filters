@@ -143,5 +143,14 @@
     <ClCompile Include="..\lib\D2DXXXControls.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\D2DScrollbar.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DTabControls.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

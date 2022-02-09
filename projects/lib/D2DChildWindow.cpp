@@ -8,6 +8,16 @@ using namespace V6;
 
 #define TITLEBAR_HEIGHT 26.0f
 
+D2DChildWidow::D2DChildWidow()
+{
+	mode_ = 0;
+	title_bar_mode_ = 0;
+	window_mode_ = 0;
+	title_ = L"no title";
+
+	colors_[0] = D2RGB(170,170,170);
+	colors_[1] = D2RGB(200,200,200);
+}
 void D2DChildWidow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	D2DControls::CreateControl(parent, pacontrol,rc, stat, name, local_id);
@@ -130,13 +140,7 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 	if ( h==0 && bl )
 	{
-	//	h = D2DControls::WndProc(b,message,wParam,lParam);
-		//h = D2DControls::DefWndProc(b,message,wParam,lParam);
-
 		h = InnerWndProc(b,message,wParam,lParam);
-
-
-
 	}
 
 

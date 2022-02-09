@@ -3,6 +3,7 @@
 #include "D2DCapture.h"
 #include "D2DWindowControl.h"
 #include "D2DScrollbar.h"
+#include "D2DColor.h"
 namespace V6 {
 
 	class D2DControls_with_Scrollbar : public D2DControls
@@ -21,6 +22,7 @@ namespace V6 {
 		protected :
 			float vscroll_x_,hscroll_x_;
 			std::shared_ptr<D2DScrollbar> scv_, sch_;
+			D2DColor backcolor_;
 
 	}; 
 

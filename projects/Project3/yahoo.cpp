@@ -8,7 +8,7 @@
 #include "D2DMessage.h"
 #include "yahoo.h"
 #include "D2DChildWindow.h"
-
+#include "D2DColor.h"
 using namespace V6;
 
 #define ID_BUTTON 1911
@@ -76,6 +76,11 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 		htab1.p = tab1;
 
 		auto child1 = D2DCreateControlsWithScrollbar(htab1,FRectF(0,0,rc_.Size().width,rc_.Size().height ),  STAT_DEFAULT|STAT_SIMPLE, L"c_with_scrollbar", 1912);
+
+
+		D2DColor c1(0xEBEBEB);
+		D2DSetColor(child1, c1,ColorF::Black,ColorF::Black);
+
 
 		auto x = (D2DControls*)child1.p;
 

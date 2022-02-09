@@ -14,6 +14,8 @@
 #include "D2DAccordionbar.h"
 #include "D2DImageControl.h"
 #include "D2DXXXControls.h"
+#include "D2DScrollbar.h"
+#include "D2DTabControls.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
@@ -91,6 +93,29 @@ DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow(UIHandle hctrls, const D2D1_RECT_
 	r.typ = TYP_CONTROLS;
 	return r;
 }
+DLLEXPORT UIHandle WINAPI D2DCreateScrollbar(UIHandle hctrls, bool bVertical, DWORD stat, LPCWSTR name, int id)
+{
+	FRectF rc1 = (bVertical ? FRectF(0,0,BARW,100) : FRectF(0,0,100,BARW));
+
+	auto sc = std::make_shared<D2DScrollbar>();
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	sc->CreateControl(win, ctrls, rc1,STAT_ENABLE, NONAME );
+	ctrls->Add(sc);
+
+	UIHandle r;
+	r.p = sc.get();
+	r.typ = TYP_SCROLLBAR;
+	return r;
+}
+
+DLLEXPORT void WINAPI D2DScrollbarSetMaxSize(UIHandle h, float height)
+{
+	_ASSERT(h.typ == TYP_SCROLLBAR);	
+	D2DScrollbar* sc = (D2DScrollbar*)h.p;
+	sc->SetMaxSize(height);
+}
 
 DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
@@ -125,6 +150,70 @@ DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const 
 	r.typ = TYP_CONTROLS;
 	return r;
 }
+DLLEXPORT UIHandle WINAPI D2DCreateControlsWithMove(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
+
+	auto pgtx = new D2DControls_with_Move(); 
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( std::shared_ptr<D2DControls_with_Move>(pgtx));	
+
+	UIHandle r;
+	r.p = pgtx;
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+
+DLLEXPORT UIHandle WINAPI D2DCreateTabControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
+
+	auto pgtx = new D2DTabControls(); 
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( std::shared_ptr<D2DTabControls>(pgtx));	
+
+	UIHandle r;
+	r.p = pgtx;
+	r.typ = TYP_TAB_CONTROLS;
+	return r;
+}
+
+
+
+
+DLLEXPORT UIHandle WINAPI D2DAddNewTab(UIHandle hctrls, LPCWSTR nm)
+{	
+	_ASSERT(hctrls.p && hctrls.typ == TYP_TAB_CONTROLS);
+
+	auto ctrls = (D2DTabControls*)hctrls.p;
+
+	UIHandle r;
+	r.p = ctrls->AddNewTab(nm);
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+DLLEXPORT UIHandle WINAPI D2DGetControlFromIdx(UIHandle hctrls, USHORT idx)
+{
+	_ASSERT(hctrls.p && hctrls.typ == TYP_TAB_CONTROLS);
+
+	auto ctrls = (D2DTabControls*)hctrls.p;
+
+	UIHandle r;
+	r.p = ctrls->GetControlFromIdx(idx);
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
 
 DLLEXPORT UIHandle WINAPI D2DCreateEmptyControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
@@ -861,6 +950,18 @@ DLLEXPORT LRESULT WINAPI D2DDefWndProc(UIHandleWin main ,AppBase& app, UINT mess
 
 	auto win = (D2DWindow*)main.p;
 	return win->WndProc(app, message, wParam,lParam); // STAT_ENABLE‚Í—LŒø
+}
+
+DLLEXPORT LRESULT WINAPI D2DDefControlProc(UIHandle ctrls ,AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// 
+	LRESULT r = 0;
+	D2DControl* p2 = D2DCastControl(ctrls);
+	auto p3 = dynamic_cast<D2DControls*>(p2);
+	if ( p3 )
+		r = p3->InnerWndProc(app,message,wParam,lParam);
+
+	return r;
 }
 
 DLLEXPORT void WINAPI D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)

@@ -1,4 +1,3 @@
-
 #include "pch.h"
 #include "D2DControls_with_Scrollbar.h"
 
@@ -10,6 +9,7 @@ D2DControls_with_Scrollbar::D2DControls_with_Scrollbar()
 {
 	vscroll_x_ = 0;
 	hscroll_x_ = 0;
+	backcolor_ = ColorF::AliceBlue;
 }
 
 void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
@@ -22,7 +22,7 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 
 	mat.Offset(rc_);
 
-	cxt.DFillRect(rc_.ZeroRect(), ColorF::AliceBlue);
+	cxt.DFillRect(rc_.ZeroRect(), backcolor_);
 
 	{
 		mat.PushTransform();	
@@ -203,6 +203,18 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
 		}
 		break;
+		case WM_D2D_SET_COLOR:
+		{
+			if ( wParam == 0 )
+				backcolor_ = *(ColorF*)lParam;
+			//else if ( wParam == 1 )
+			//	forecolor_ = *(ColorF*)lParam;
+
+			r = 1;
+			
+
+		}
+		break;
 		
 
 	}
@@ -210,32 +222,31 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
 	if ( r == 0 && bl )
 	{
-		//r = D2DControls::WndProc(b,message,wParam,lParam);
 		r = InnerWndProc(b,message,wParam,lParam);
 	}
 
-	if (r==0)
-	{
-		// 内部で処理済みとすることで、外へイベントを渡さない。
-		switch(message)
-		{
-			case WM_MOUSEMOVE:
-			case WM_LBUTTONDOWN:			
-			case WM_LBUTTONUP:
-			case WM_RBUTTONDOWN:
-			case WM_RBUTTONUP:
-			case WM_LBUTTONDBLCLK:
-			case WM_MOUSEHWHEEL:
-			{				
-				MouseParam& pm = *(MouseParam*)lParam;
-				auto pt = mat_.DPtoLP(pm.pt);
+	//if (r==0)
+	//{
+	//	// 内部で処理済みとすることで、外へイベントを渡さない。
+	//	switch(message)
+	//	{
+	//		case WM_MOUSEMOVE:
+	//		case WM_LBUTTONDOWN:			
+	//		case WM_LBUTTONUP:
+	//		case WM_RBUTTONDOWN:
+	//		case WM_RBUTTONUP:
+	//		case WM_LBUTTONDBLCLK:
+	//		case WM_MOUSEHWHEEL:
+	//		{				
+	//			MouseParam& pm = *(MouseParam*)lParam;
+	//			auto pt = mat_.DPtoLP(pm.pt);
 
-				if ( rc_.PtInRect(pt))
-					r = 1;
-			}
-			break;
-		}
-	}
+	//			if ( rc_.PtInRect(pt))
+	//				r = 1;
+	//		}
+	//		break;
+	//	}
+	//}
 
 
 	return r;

@@ -3,6 +3,7 @@
 #include "D2DApp.h"
 #include "D2DCapture.h"
 #include "D2DWindowControl.h"
+#include "D2DColor.h"
 namespace V6 {
 
 class D2DChildWidow;
@@ -20,32 +21,20 @@ class MinimumWindow
 		D2DMat mat_;
 };
 
-class XColorF
-{
-	public :
-		XColorF():clr(ColorF::White){}
-
-		XColorF& operator=(ColorF c){ clr=c; return *this; }
-		operator ColorF() { return clr;}
-
-	private:
-		ColorF clr;
-};
 
 
 class D2DChildWidow : public D2DControls
 {
 	friend class MinimumWindow;
 public :
-	D2DChildWidow(){};	
+	D2DChildWidow();	
 
 	enum CLR { TITLEBAR=0, BACKCOLOR=1 };
 
 	virtual void Draw(D2DContext& cxt) override;
 	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
-	
-	//void OpenCloseBar(bool bOpen);
+
 	virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
 	D2DMat GetMat() const { return this->mat_; }
@@ -58,7 +47,7 @@ protected :
 	USHORT title_bar_mode_, window_mode_;
 	std::shared_ptr<MinimumWindow> mini_window_;
 	std::wstring title_;
-	XColorF colors_[2];
+	D2DColor colors_[2];
 	
 };
 
