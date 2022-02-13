@@ -13,7 +13,8 @@
 #include "D2DColor.h"
 
 #include "D2DLogin.h"
-#include "yahoo.h"
+//#include "yahoo.h"
+#include "chart_top.h"
 
 using namespace V6;
 
@@ -226,16 +227,19 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 10 == id )
 			{
-				for(int ij=0; ij < 1; ij++)
-				{
-					auto yf = std::make_shared<yahoo_finance>();
+				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650) );
 
-					auto w = D2DGetWindow(m->hme);
 
-					yf->CreateControl((D2DWindow*)w.p, (D2DControls*)m->hme.p, FRectF(50+ij*100,100+ij*100,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
-					((D2DControls*)m->hme.p)->Add(yf);
-			
-				}
+				//for(int ij=0; ij < 1; ij++)
+				//{
+				//	/*auto yf = std::make_shared<yahoo_finance>();
+
+				//	auto w = D2DGetWindow(m->hme);
+
+				//	yf->CreateControl((D2DWindow*)w.p, (D2DControls*)m->hme.p, FRectF(50+ij*100,100+ij*100,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
+				//	((D2DControls*)m->hme.p)->Add(yf);*/
+	
+				//}
 			}
 
 			r = 1;

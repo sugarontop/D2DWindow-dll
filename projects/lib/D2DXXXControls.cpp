@@ -99,6 +99,12 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			
 		}
 		break;
+		case WM_SIZE:
+		{
+			int a = 0;
+			wParam=1;
+		}
+		break;
 
 	}
 

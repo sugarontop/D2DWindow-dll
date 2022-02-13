@@ -87,6 +87,7 @@ typedef _bstr_t BS;
 #define HEART_BEET_ID 1000
 
 #pragma warning( disable : 26812 )
+#pragma warning( disable : 26495 )
 
 #define LOCALE	L"ja-jp"
 

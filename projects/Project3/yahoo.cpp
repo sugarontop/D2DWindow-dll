@@ -34,29 +34,14 @@ void yahoo_finance::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	rc_ = rc;
 	parent_window_ = parent;
 	parent_control_ = pacontrol;
-	
-
 	/////////////////////////////////////////////////////////////////////////
 
-	auto ctrlsEx = std::make_shared<D2DChildWidow>();
-	ctrlsEx->CreateControl(parent_window_,pacontrol,FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_childwin", 193);
-	pacontrol->Add(ctrlsEx);
-	ctrlsEx->SendMesage(WM_D2D_SET_TEXT, 0, (LPARAM)(LPCWSTR)L"chart");
-
-	auto pk1 = ctrlsEx.get();
-
-	auto ctrls=ctrlsEx;
-
 	UIHandle hctrls={};
-	hctrls.p = ctrls.get();
+	hctrls.p = pacontrol;
 
-	auto tabs = D2DCreateTabControls(hctrls,  FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol", 191);
-
-	//auto tabs = std::make_shared<D2DTabControls>();
-	//tabs->CreateControl(parent_window_, ctrls.get(), FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol", 191);
-//tabs->SizeFix();
-	//ctrls->Add(tabs);
-
+	auto dumy = D2DCreateXXXControls(hctrls,  FRectF(0,0,rc_.Size()),  STAT_DEFAULT, L"yahoo_tabcontrol_rap", 190);
+	
+	auto tabs = D2DCreateTabControls(dumy,  FRectF(0,0,rc_.Size()),  STAT_DEFAULT|STAT_SIMPLE, L"yahoo_tabcontrol", 191);
 	
 	// TAB : chart
 	{
@@ -704,7 +689,8 @@ LRESULT yahoo_chart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 	}
 
 	if ( hr == 0 )
-		hr = InnerWndProc(b,message,wParam,lParam);
+		//hr = InnerWndProc(b,message,wParam,lParam);
+		hr = D2DControls::DefWndProc(b, message,wParam,lParam);
 
 
 	return hr;
