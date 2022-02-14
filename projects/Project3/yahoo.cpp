@@ -954,3 +954,208 @@ void yahoo_sample::CreateControl(D2DWindow* parent, D2DControls* pacontrol, cons
 	
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void inetStockDataDownload(std::wstring cd, std::function<void(InternetInfo*)> compfunc)
+{
+	
+	InternetInfo* info_ = CreateInternetInfo();
+
+	info_->bGet = true;
+
+#ifdef YAHOO
+	WCHAR cb[256];
+		
+	auto dds = yahoo_chart::Period(2021,3,1);
+	auto now = yahoo_chart::Period(0,0,0);
+
+
+	_snwprintf_s(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",cd.c_str(),dds, now);
+	info_->url = ::SysAllocString(cb);
+
+#else
+
+	info_->url = ::SysAllocString(L"https://192.168.10.65/zaimu/XLE.csv");
+#endif
+					
+	//info_->complete = std::bind(&yahoo_finance::InetComplete, this, _1);
+	info_->complete = compfunc;					
+
+	DWORD dw;
+	::CreateThread(0,0,InetAsync, info_, 0, &dw);
+						
+}
+
+
+void yahooDraw(D2DContext& cxt, InternetInfo* info, float height, std::vector<Rousoku>& adj_values)
+{
+	auto GetMaxMin = [](std::vector<Rousoku>& ar, float* pfmax, float* pfmin)
+	{
+		float fmax=0, fmin = 9999999;
+
+		for(auto& y : ar )
+		{
+			fmax = max(y.ymax,fmax);
+			fmin = min(y.ymin,fmin);
+		}
+		*pfmax = fmax;
+		*pfmin = fmin;
+
+	};
+
+
+	if ( info )
+	{
+		if ( info->result == 200 )
+		{
+			auto& ar = adj_values;
+			
+
+			float h =  height; //rcparent.Height();
+			float fmin,fmax;
+			GetMaxMin(ar,&fmax,&fmin);
+
+			float fd = fmax-fmin;
+			float step = 0.8f*h / fd;
+
+			FRectF rc;
+			float x = 0;
+
+			ComPTR<ID2D1SolidColorBrush> bred,bblue;
+			(*cxt)->CreateSolidColorBrush(D2RGB(255,56,47),&bred);
+			(*cxt)->CreateSolidColorBrush(D2RGB(76,201,145),&bblue);
+
+			for(auto y : ar )
+			{				
+				if ( y.ystart < y.yend )
+				{				
+					float y1max = h- (y.yend-fmin)*step;
+					float y1min = h- (y.ystart-fmin)*step;
+					rc = FRectF(x, y1min, x+3, y1max);
+
+					auto br = bblue; 
+					auto br1 = cxt.white_;
+
+					y1max = h- (y.ymax-fmin)*step;
+					y1min = h- (y.ymin-fmin)*step;
+
+					(*cxt)->DrawRectangle(rc, br);
+					//(*cxt)->FillRectangle(rc, br1);
+
+					auto rc2 = FRectF(x+1, y1min, x+2, y1max);
+
+					(*cxt)->FillRectangle(rc2, bblue);
+					(*cxt)->FillRectangle(rc, br1);
+				}
+				else
+				{				
+					float y1max = h- (y.ystart-fmin)*step;
+					float y1min = h- (y.yend-fmin)*step;
+					rc = FRectF(x, y1min, x+3, y1max);
+
+					auto br = bred; 
+					auto br1 = bred;
+
+					y1max = h- (y.ymax-fmin)*step;
+					y1min = h- (y.ymin-fmin)*step;
+
+					(*cxt)->DrawRectangle(rc, br);
+					(*cxt)->FillRectangle(rc, br1);
+
+					rc = FRectF(x+1, y1min, x+2, y1max);
+
+					(*cxt)->FillRectangle(rc, br1);
+				}
+
+				x += 4;
+			}
+
+			float fstart,fend;
+			float plotstep = CalcPlotSetpLine(fmax, fmin, &fstart, &fend);
+
+
+			
+
+			/*(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+
+
+			float futosa = 1.0f/mat._11;
+
+			for(float yyy=fstart; yyy < fend; yyy+=plotstep )
+			{			
+				float ploty = h - (yyy-fmin)*step;
+
+
+				FPointF pt1(0,ploty);
+				FPointF pt2(rc_.right-rc_.left,ploty);
+
+				(*cxt)->DrawLine(pt1,pt2,cxt.black_, futosa, dotline_);
+			}
+
+			(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);*/
+
+		}
+		else
+		{
+			WCHAR cb[256];
+
+			std::wstring str = L"internet err:" + wstr(info->result);
+			cxt.DText(FPointF(0,0), str );
+
+		}
+	}
+}
+
+bool ConvCsv(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates )
+{
+
+	ULONG len;
+	LRESULT hr=0;
+	char cb[64];
+
+	std::stringstream sm;
+
+	do
+	{
+		hr = ism->Read(cb, 64, &len);
+
+		if ( len > 0 )
+			sm.write(cb,len);
+	}
+	while( hr ==0 && len > 0 );
+
+	std::string src = sm.str();
+	
+	
+	auto rows = Split( src.c_str(), "\n");
+
+	//std::vector<Rousoku> adj_values;
+	//std::vector<std::string> dates;
+
+	int i = 0;
+	for(auto& r : rows )
+	{
+		auto cols = SplitEx(r.c_str(), ",");
+
+		if (i++ > 0)
+		{
+			auto kstr = r.c_str();
+
+			Rousoku r;
+			r.ystart = myatof(kstr, cols[1]);
+			r.yend = myatof(kstr, cols[4]);
+			r.ymin = myatof(kstr, cols[3]);
+			r.ymax = myatof(kstr, cols[2]);
+
+			adj_values.push_back(r);
+			dates.push_back(mysubstr(kstr, cols[0]));
+		}
+	}
+	
+	//dates_ = dates;
+	//y1_ = adj_values;
+
+	return true;
+
+
+}

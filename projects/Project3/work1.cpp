@@ -229,17 +229,6 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			{
 				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650) );
 
-
-				//for(int ij=0; ij < 1; ij++)
-				//{
-				//	/*auto yf = std::make_shared<yahoo_finance>();
-
-				//	auto w = D2DGetWindow(m->hme);
-
-				//	yf->CreateControl((D2DWindow*)w.p, (D2DControls*)m->hme.p, FRectF(50+ij*100,100+ij*100,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
-				//	((D2DControls*)m->hme.p)->Add(yf);*/
-	
-				//}
 			}
 
 			r = 1;

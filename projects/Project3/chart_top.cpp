@@ -28,30 +28,24 @@ LRESULT TDBase::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_SIZE:
 		{
-			
+			auto td = parent_window_->name_map_[L"td_left_bar"];
+			auto leftw = td->GetRect().Size().width;
+
+			td = parent_window_->name_map_[L"td_list"];
+			auto leftw2 = td->GetRect().Size().width;
+
+			td = parent_window_->name_map_[L"td_right_bar"];
+			auto rightw3 = td->GetRect().Size().width;
 
 			float w = rc_.Width();
-			w -= (55+3 + 267+5+45);
+			w -= (leftw+3 + leftw2+5+rightw3);
 
 			auto ch = parent_window_->name_map_[L"td_chart"];
 			auto rc = ch->GetRect();
 			rc.SetWidth(w);
 			ch->SetRect(rc);
 
-		/*	rc.right -= (55+1+45+1);
-			auto chart = parent_window_->name_map_[L"td_chart"];
-			auto rcc = chart->GetRect();
-			rcc.SetWidth(rc.Width());
-			chart->SetRect(rcc);
-
-
-			rc = rc_;
-			auto td_right_bar = parent_window_->name_map_[L"td_right_bar"];
-			rcc = td_right_bar->GetRect();
-
-			rcc.right = rc.right;
-			rcc.left = rcc.right-45;
-			td_right_bar->SetRect(rcc);*/
+		
 
 
 		}
@@ -113,13 +107,21 @@ void TDBase::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-
-TDChart::TDChart()
+// //////////////////////////////////////////////////////////////////////////////////////////////////////
+TDChart::TDChart():info_(nullptr)
 {
 
 }
 TDChart::~TDChart()
 {
+	Clear();
+}
+
+void TDChart::Clear()
+{
+	if ( info_ )
+		DeleteInternetInfo(info_);
+	info_ = nullptr;
 }
  void TDChart::CreateControl( D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
  {
@@ -135,6 +137,9 @@ LRESULT TDChart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 
 	return r;
 }
+
+void yahooDraw(D2DContext& cxt, InternetInfo* info, float height, std::vector<Rousoku>& adj_values);
+
 void TDChart::Draw(D2DContext& cxt) 
 {
 	D2DMatrix mat(*cxt);
@@ -144,13 +149,55 @@ void TDChart::Draw(D2DContext& cxt)
 
 	cxt.DFillRect(rc, ColorF::White);
 
+	
+	cxt.DText( rc.LeftTop(), memo_.c_str());
+	
 	rc.left = rc.right-55.0f;
 
 	cxt.DText( rc.LeftTop(), L"480.00");
 
+
+	yahooDraw(cxt,info_,rc.Height(), rousoku_ar_);
+
+
 	mat.PopTransform();
 }
+
+void TDChart::SetInfo(InternetInfo* info)
+{
+	Clear();
+	info_ = info;
+
+	rousoku_ar_.clear();
+
+}
+bool ConvCsv(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
+
+
+
+void TDChart::GenerateGraph()
+{
+	WCHAR cb[256];
+	_snwprintf_s(cb,256, L"%d: %s", info_->result, (LPCWSTR)info_->url );
+
+	
+	std::vector<std::string> dates;
+	
+	ConvCsv(info_->pstream,rousoku_ar_,dates);
+
+
+	
+	memo_ = cb;
+}
+
+
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void inetStockDataDownload(std::wstring cd, std::function<void(InternetInfo*)> compfunc);
+#define WM_MYAPP_INET_COMPLETE	(WM_D2D_USER_FIRST)
+
+
 TDChartButtons::TDChartButtons()
 {
 
@@ -179,7 +226,12 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 					int k = 0;
 					for(auto& rc :  btnar_)
 					{						
-						if ( rc.PtInRect(pt ))
+						if ( k ==0)
+						{
+							// textbox‚È‚Ì‚Å‚±‚±‚Å‚Íˆ—‚µ‚È‚¢
+							
+						}						
+						else if ( rc.PtInRect(pt ))
 						{
 							APP.SetCapture(this);
 							r = 1;
@@ -200,9 +252,25 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			{
 				APP.ReleaseCapture();
 
-				if ( btn_mode_ > -1 )
+				if ( s_btn_mode > -1 )
 					OnClick(s_btn_mode);
 
+				r = 1;
+			}
+		}
+		break;
+		case WM_MYAPP_INET_COMPLETE:
+		{
+			if ((UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				InternetInfo* info = (InternetInfo*)lParam;
+
+				auto ch = (TDChart*)parent_window_->name_map_[L"td_chart"];
+
+				ch->SetInfo(info);
+				ch->GenerateGraph();
+
+				b.bRedraw = true;				
 				r = 1;
 			}
 		}
@@ -226,15 +294,47 @@ void TDChartButtons::Draw(D2DContext& cxt)
 	}
 
 	if ( name_ == L"td_top_bar")
-		cxt.DText(btnar_[1].LeftTop(), L"Z");
+		cxt.DText(btnar_[1].LeftTop(), L"seek\nbtn");
 
 
 	mat.PopTransform();
 }
 
+
+
 void TDChartButtons::OnClick(int mode)
 {
+	if ( mode == 1 )
+	{
+		// seek
 
+		auto complete = [this](InternetInfo* info)
+		{
+			
+			parent_window_->PostMessage(WM_MYAPP_INET_COMPLETE, (WPARAM)this, (LPARAM)info);
+
+
+
+
+		};
+
+		
+		//auto cd = (TDChart*)parent_window_->name_map_[L"td_stock_cd"];
+
+		UIHandleWin hw={};
+		hw.p = parent_window_;
+
+		auto tx = D2DGetControlFromName(hw, L"td_stock_cd");
+		
+
+		BSTR cd = D2DGetText(tx, true );
+
+		inetStockDataDownload( cd, complete );
+
+
+		::SysFreeString(cd);
+
+	}
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +380,7 @@ void V6::CreateStockChart(D2DControls* ctrl,  FSizeF size )
 
 	ctrl = base.get();
 	auto left_bar = std::make_shared<TDChartButtons>();
-	left_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(55, variable)), STAT_DEFAULT, L"td_left_bar",-1, ColorF::LightBlue );
+	left_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(55, variable)), STAT_DEFAULT, L"td_left_bar",-1, ColorF::White );
 	ctrl->Add(left_bar);
 
 	auto top_bar = std::make_shared<TDChartButtons>();
@@ -306,7 +406,7 @@ void V6::CreateStockChart(D2DControls* ctrl,  FSizeF size )
 
 
 	auto right_bar = std::make_shared<TDChartButtons>();
-	right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, L"td_right_bar", -1, D2RGB(240,243,250) );
+	right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, L"td_right_bar", -1, ColorF::White );
 	ctrl->Add(right_bar);
 
 
@@ -314,5 +414,5 @@ void V6::CreateStockChart(D2DControls* ctrl,  FSizeF size )
 	hctrls.p = ctrl;
 	auto txt = D2DCreateTextbox(hctrls, FRectF(5,5,FSizeF(93,30)), false,STAT_DEFAULT, L"td_stock_cd");
 	D2DSetColor(txt, ColorF::White,ColorF::Black,D2RGBA(0,0,0,0));
-
+	D2DSetText(txt, L"spy" ); // spy: SP500
 }

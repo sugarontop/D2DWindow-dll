@@ -181,13 +181,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			D2DApp::SetD2DAppForDLL(k);
 			D2DInitail((INT_PTR)k );
 
-
+			::SetTimer(hWnd,HEART_BEET_ID,1000,0);
 
             CreateControl(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
         }
         break;
-    
+		case WM_TIMER:
+		{
+			D2DDefWndProc(hwin, app, message, wParam,lParam);
+			r=1;
+		}
+		break;
         case WM_SIZE:
         {
 			FRectF rc(0,0,(float)LOWORD(lParam), (float)HIWORD(lParam));          
@@ -312,7 +317,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	r = ::DefWindowProc(hWnd, message, wParam, lParam);
 
     if ( app.bRedraw )
+	{
         InvalidateRect(hWnd, NULL, FALSE);
+	}
     
     return r; 
 }

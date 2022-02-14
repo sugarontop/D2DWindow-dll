@@ -142,10 +142,9 @@ LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	if ( message == WM_MOUSEMOVE )
 	{
 		mp.ptprv = mp.pt;
-
-		
 	}
-	
+
+
 
 	return hr;
 }
