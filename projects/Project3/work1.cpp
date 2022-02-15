@@ -70,10 +70,6 @@ void CreateControl(HWND hWnd)
 
 	auto hctrlsA = D2DCreateEmptyControls( root, FRectF(), STAT_DEFAULT, NONAME,-1);
 
-	//auto hctrlsA = D2DCreateSquarePaper( hctrls,  FRectF(0,0,9000,9000), STAT_VISIBLE, L"sqare",-1);
-
-	//D2DSetColor(hctrlsA, ColorF::Black, ColorF::White,ColorF::Black);
-
 	CreateLoginControl(hctrlsA);
 
 	CreateDocumentControl(hctrlsA);
@@ -84,8 +80,13 @@ void CreateLoginControl(UIHandle h)
 	auto login = std::make_shared<D2DLogin>();
 
 	auto kc = (D2DControls*)h.p;
-	login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(100,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
+	login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(400,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
 	kc->Add( login );
+
+	D2DColor clr(0x9e9e8a),clr2(D2RGBA(0,0,0,0));
+	AppBase dumy;
+	login->WndProc(dumy, WM_D2D_SET_COLOR,0,(LPARAM)&clr);
+	login->WndProc(dumy, WM_D2D_SET_COLOR,2,(LPARAM)&clr2);
 
 
 	login->on_try_login_ = [](void* sender, void* p)->DWORD
@@ -134,7 +135,11 @@ struct BobInstance
 		clr[0] = ColorF::AliceBlue;
 		clr[1] = ColorF::AliceBlue;
 		clr[2] = ColorF::AliceBlue;
-	
+		
+		hme={};
+		hprv={};
+		hactive={};
+		prc = nullptr;
 	};
 
 	FRectF* prc;
@@ -142,12 +147,13 @@ struct BobInstance
 	D2DColor clr[3];
 	D2DMat mat;
 	UIHandle hme;
+	UIHandle hprv;
 
 	UIHandle hactive;
 
 };
 
-
+void CreateCardControls(UIHandle h);
 
 bool df1(LPVOID captureobj, D2DContext& cxt)
 {
@@ -230,6 +236,14 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650) );
 
 			}
+			else if ( 13 == id )
+			{
+				CreateCardControls(m->hme);
+
+
+
+			}
+
 
 			r = 1;
 		}
@@ -277,7 +291,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 						FRectF rcDst(0,0,rc.Width()*2,  rc.Height()*2);
 
-						D2DSetTopControl(m->hme);
+						m->hprv = D2DSetTopControl(m->hme);
 
 						D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
 
@@ -325,6 +339,12 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					r = 1;
 				}
 
+			}
+			else if ( wParam == 98 )
+			{
+				D2DSetTopControl(m->hprv);
+				m->hprv.p = nullptr;
+				r = 1;
 			}
 		}
 		break;
@@ -383,3 +403,178 @@ void CreateDocumentControl(UIHandle h)
 }
 
 
+
+
+
+
+
+LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	BobInstance* m = (BobInstance*)captureobj;
+	auto me = (D2DControl*)b.card;
+
+
+	LRESULT r = 0;
+
+	switch(message)
+	{
+		case WM_D2D_CREATE:
+		{
+			m->hme = *(UIHandle*)lParam;			
+			
+			m->orgrc = D2DGetRect(m->hme);
+			m->prc = (FRectF*)D2DGetRect2(m->hme);
+			
+			auto id = D2DGetId(m->hme);
+
+			if ( 12 == id )
+			{
+				
+
+			}
+
+			r = 1;
+		}
+		break;
+		case WM_D2D_DESTROY:
+		{
+			delete m;
+			r = 1;
+		}
+		break;
+		case WM_D2D_SET_COLOR:
+		{
+			ColorF clr = *(ColorF*)lParam;
+
+			if ( wParam == 0 )
+				m->clr[0] = clr;
+			else if ( wParam == 1 )
+				m->clr[1] = clr;
+			else if ( wParam == 2 )
+				m->clr[2] = clr;
+
+			r = 1;
+		}
+		break;
+		case WM_LBUTTONDBLCLK:
+		{
+			r = D2DDefControlProc(m->hme,b,message,wParam,lParam);
+			
+			if ( r == 0)
+			{
+			
+				MouseParam& pm = *(MouseParam*)lParam;
+
+				auto pt = m->mat.DPtoLP(pm.pt);
+
+				auto rc = *(m->prc);
+
+				if ( rc.PtInRect(pt) )
+				{
+					r = 1;
+
+					if ( m->hactive.p != m->hme.p )
+					{
+						m->hactive = m->hme;
+
+						auto hpa = D2DGetParent(m->hme);
+						rc = D2DGetRect(hpa);
+
+						FRectF rcDst(0,0,rc.Width(), rc.Height());
+
+						m->hprv = D2DSetTopControl(m->hme);
+
+						D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
+
+					
+
+					}
+					else
+					{
+						auto w = D2DGetWindow(m->hme);
+						D2DSetStat(D2DGetControlFromName( w, L"k1"), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, L"k2"), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, L"k3"), STAT_DEFAULT);
+
+
+						FRectF rcDst = m->orgrc;
+
+						D2DSmoothRect(1,98,  hwin, m->prc, rcDst);
+
+						
+
+						m->hactive.p = nullptr;
+
+
+					
+					}
+
+				}
+			}
+			return r;
+		}
+		break;
+		case WM_D2D_SMOOTH_COMPLETE:
+		{
+			if ( wParam == 99 )
+			{
+				if ( m->hactive.p == m->hme.p )
+				{
+					auto w = D2DGetWindow(m->hme);
+
+					D2DSetStat(D2DGetControlFromName( w, L"k1"), 0);
+					D2DSetStat(D2DGetControlFromName( w, L"k2"), 0);
+					D2DSetStat(D2DGetControlFromName( w, L"k3"), 0);
+
+
+					D2DSetStat(m->hme, STAT_DEFAULT);
+					r = 1;
+				}
+
+			}
+			else if ( wParam == 98 )
+			{
+				D2DSetTopControl(m->hprv);
+				m->hprv.p = nullptr;
+				r = 1;
+			}
+
+		}
+		break;
+		case WM_LBUTTONDOWN:
+		{	
+			int a = 0;
+		}
+		break;
+	}
+
+	if ( r == 0 )
+		r = D2DDefControlProc(m->hme,b,message,wParam,lParam);
+
+
+	return r;
+}
+
+
+void CreateCardControls(UIHandle h)
+{
+	UIHandle ha[3];
+
+	FRectF rc = D2DGetRect(h);
+
+	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(0,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k1",10);
+	ha[1] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(20,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k2",11);
+	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(40,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k3",11);
+
+
+
+	D2DColor c1(0x998a9e);
+	D2DColor c2(0x8a8d9e);
+	D2DColor c3(0x8a9e94);
+	D2DColor c4(0x9e9e8a);
+
+	D2DSetColor(ha[0], c1, ColorF::White,ColorF::Black);		
+	D2DSetColor(ha[1], c2, ColorF::White,ColorF::Black);		
+	D2DSetColor(ha[2], c3, ColorF::White,ColorF::Black);		
+
+}

@@ -188,9 +188,11 @@ void D2DControls::Add(std::shared_ptr<D2DControl> p)
 
 }
 
-void D2DControls::SetFirstControl(D2DControl* p)
+D2DControl* D2DControls::SetFirstControl(D2DControl* p)
 {
 	auto target = controls_.end();
+
+	auto prev = controls_.begin()->get();
 
 	for(auto it = controls_.begin(); it != controls_.end(); it++ )
 	{
@@ -210,7 +212,7 @@ void D2DControls::SetFirstControl(D2DControl* p)
 		controls_.insert(controls_.begin(), copy_target);
 	}
 
-
+	return prev;
 }
 
 

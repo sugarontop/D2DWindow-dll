@@ -2,7 +2,7 @@
 #include "D2DApp.h"
 #include "D2DCapture.h"
 #include "D2DWindowControl.h"
-
+#include "D2DColor.h"
 namespace V6 {
 class D2DLogin : public D2DControls
 {
@@ -22,6 +22,7 @@ class D2DLogin : public D2DControls
 		
 		UIHandle usercd_,message_;
 		UIHandle password_;
+		D2DColor clr_[3];
 };
 
 

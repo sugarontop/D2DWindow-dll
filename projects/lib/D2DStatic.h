@@ -2,6 +2,7 @@
 
 #include "D2DApp.h"
 #include "D2DWindowControl.h"
+#include "D2DColor.h"
 
 namespace V6
 {
@@ -30,9 +31,10 @@ class D2DStatic : public D2DControl
 		FRectF rc_;
 		bool editable_;
 		D2DTextbox* editor_;
-		ColorF text_color_;
+		//ColorF text_color_;
 		bool extend_;
 		FPointF offpt_;
+		D2DColor txt_clr_;
 };
 
 };

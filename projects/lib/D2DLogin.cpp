@@ -16,7 +16,7 @@ void D2DLogin::Draw(D2DContext& cxt)
 
 	mat_ = mat.PushTransform();
 
-	cxt.DFillRect(rc_, D2RGB(255,255,255));
+	cxt.DFillRect(rc_, clr_[0]);
 
 
 	mat.Offset(rc_);
@@ -95,6 +95,20 @@ LRESULT D2DLogin::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam
 			}
 		}
 		break;
+		case WM_D2D_SET_COLOR:
+		{
+			ColorF clr = *(ColorF*)lParam;
+			int idx = wParam;
+			if ( idx == 0 )
+				clr_[idx] = clr; //back_ = clr;
+			else if ( idx == 1 )
+				clr_[idx] = clr; //fore_ = clr;
+			else if ( idx == 2 )
+				clr_[idx] = clr; //border_ = clr;
+				
+			r = 1;
+		}
+		break;
 
 	}
 
@@ -133,4 +147,12 @@ void D2DLogin::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FR
 
 
 	D2DSetText(message_, L"----");
+
+	clr_[0] = ColorF::White;
+	clr_[1] = ColorF::Black;
+	clr_[2] = ColorF::Black;
+
+
+	D2DSetColor(usercde_t, ColorF::White,ColorF::White,ColorF::White);
+	D2DSetColor(password_t, ColorF::White,ColorF::White,ColorF::White);
 }

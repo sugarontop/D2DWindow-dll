@@ -90,7 +90,7 @@ public:
 	virtual void Draw(D2DContext& cxt) override;
 	void ForceWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	virtual int GetTypeid() const override{ return TYP_CONTROLS; }
-	void SetFirstControl(D2DControl* p);
+	D2DControl* SetFirstControl(D2DControl* p);
 	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt);
 	virtual std::wstring GetTreeTyp(USHORT* typ){ *typ=10; return L"D2DControls";}
 

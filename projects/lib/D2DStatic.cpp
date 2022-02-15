@@ -7,9 +7,9 @@ using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
 
-D2DStatic::D2DStatic():editor_(nullptr),editable_(false),text_color_(ColorF::Black),extend_(false)
+D2DStatic::D2DStatic():editor_(nullptr),editable_(false),extend_(false)
 {
-
+	
 }
 void D2DStatic::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
@@ -19,6 +19,7 @@ void D2DStatic::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const F
 	editor_ = nullptr;
 
 	editable_  = false;
+	txt_clr_ = ColorF::Black;
 }
 
 void D2DStatic::Draw(D2DContext& cxt)
@@ -27,12 +28,14 @@ void D2DStatic::Draw(D2DContext& cxt)
 
 	if ( !extend_ )
 	{
-		(*cxt)->DrawTextLayout(rc_.LeftTop(), text_, cxt.black_ );
+		ComPTR<ID2D1SolidColorBrush> br;
+		cxt.CreateBrush(txt_clr_, &br);
+		(*cxt)->DrawTextLayout(rc_.LeftTop(), text_, br );
 	}
 	else
 	{
 		ComPTR<ID2D1SolidColorBrush> br;
-		cxt.CreateBrush(text_color_, &br);
+		cxt.CreateBrush(txt_clr_, &br);
 
 		auto pt = rc_.LeftTop();		
 		pt.x += offpt_.x;
@@ -91,6 +94,18 @@ LRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 
 
 		}
+		
+	}
+
+	if (message == WM_D2D_SET_COLOR )
+	{
+		ColorF clr = *(ColorF*)lParam;
+		int idx = wParam;
+
+		if ( idx == 1 )
+			txt_clr_ = clr; //fore_ = clr;
+				
+		r = 1;
 	}
 
 	return r;
@@ -288,7 +303,7 @@ void D2DStatic::Extend( LPCWSTR prm )
 		{
 			auto clr = D2RGB(ar[0],ar[1],ar[2]);
 
-			text_color_ = clr;
+			txt_clr_ = clr;
 
 			extend_ = true;
 		}

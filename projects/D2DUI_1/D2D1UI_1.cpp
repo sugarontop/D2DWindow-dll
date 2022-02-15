@@ -998,14 +998,20 @@ DLLEXPORT void WINAPI D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handl
 }
 
 
-DLLEXPORT void WINAPI D2DSetTopControl(UIHandle h)
+DLLEXPORT UIHandle WINAPI D2DSetTopControl(UIHandle h)
 {
 	D2DControl* h2 = D2DCastControl(h);
+	UIHandle ret={};
 
-	D2DControls* x = h2->GetParentControls();
+	if ( h2 != nullptr )
+	{
+		D2DControls* x = h2->GetParentControls();
 
-	x->SetFirstControl(h2);
+		auto prev = x->SetFirstControl(h2);
+		ret = D2DCast(prev);
+	}
 
+	return ret;
 }
 DLLEXPORT int WINAPI D2DSendMessage(UIHandle h, UINT msg, WPARAM wp, LPARAM lp)
 {
