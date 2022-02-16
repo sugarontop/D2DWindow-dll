@@ -233,7 +233,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 10 == id )
 			{
-				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650) );
+				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"A" );
 
 			}
 			else if ( 13 == id )
@@ -429,7 +429,7 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 			if ( 12 == id )
 			{
-				
+				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"B" );
 
 			}
 
@@ -564,7 +564,7 @@ void CreateCardControls(UIHandle h)
 
 	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(0,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k1",10);
 	ha[1] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(20,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k2",11);
-	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(40,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k3",11);
+	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(40,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k3",12);
 
 
 

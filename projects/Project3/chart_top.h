@@ -16,7 +16,12 @@ namespace V6
 			virtual void Draw(D2DContext& cxt) override;
 
 
-
+			D2DControl* td;
+			D2DControl* top;
+			D2DControl* txt;
+			D2DControl* tr;
+			D2DControl* ls;
+			D2DControl* chart;
 
 	};
 
@@ -53,7 +58,7 @@ namespace V6
 
 				D2DColor bkclr_;
 				std::vector<FRectF> btnar_;
-				
+				std::wstring key_;
 		};
 
 		class TDList : public D2DControls
@@ -71,7 +76,7 @@ namespace V6
 
 
 
-	void CreateStockChart(D2DControls* ctrl,  FSizeF size );
+	void CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR key );
 
 
 
