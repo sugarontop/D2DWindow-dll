@@ -140,6 +140,7 @@ struct BobInstance
 		hprv={};
 		hactive={};
 		prc = nullptr;
+		child = nullptr;
 	};
 
 	FRectF* prc;
@@ -150,6 +151,7 @@ struct BobInstance
 	UIHandle hprv;
 
 	UIHandle hactive;
+	D2DControls* child;
 
 };
 
@@ -233,12 +235,12 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 10 == id )
 			{
-				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"A" );
-
+				//CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"A" );
+				CreateCardControls(m->hme);
 			}
 			else if ( 13 == id )
 			{
-				CreateCardControls(m->hme);
+				
 
 
 
@@ -429,7 +431,7 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 			if ( 12 == id )
 			{
-				CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"B" );
+				m->child = CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"B" );
 
 			}
 
@@ -486,7 +488,9 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 						D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
 
-					
+						//
+						if ( m->child )
+							m->child->SetStat(STAT_DEFAULT);
 
 					}
 					else
@@ -535,6 +539,10 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			else if ( wParam == 98 )
 			{
 				D2DSetTopControl(m->hprv);
+
+				if ( m->child )
+					m->child->SetStat(0);
+
 				m->hprv.p = nullptr;
 				r = 1;
 			}

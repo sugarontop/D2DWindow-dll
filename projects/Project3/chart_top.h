@@ -38,10 +38,11 @@ namespace V6
 				void SetInfo(InternetInfo* info);
 				void GenerateGraph();
 				void Clear();
+				void Error(std::wstring err);
 
 			protected :
 				InternetInfo* info_;
-				std::wstring memo_;
+				std::wstring memo_, error_;
 
 				std::vector<Rousoku> rousoku_ar_;
 		};
@@ -59,6 +60,7 @@ namespace V6
 				D2DColor bkclr_;
 				std::vector<FRectF> btnar_;
 				std::wstring key_;
+				int running_mode_;
 		};
 
 		class TDList : public D2DControls
@@ -76,7 +78,7 @@ namespace V6
 
 
 
-	void CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR key );
+	D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR key );
 
 
 
