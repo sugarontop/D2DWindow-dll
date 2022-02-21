@@ -224,7 +224,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				str += L"set(k1,\"select&no=1\");\n";
 				str += L"var n = get(k1, \"select\");\n";
 				str += L"//\n";
-				str += L"//var n = k1.select();";
+				str += L"//var n = k1.select();"; 
 
 				D2DSetText( tx, str.c_str()); 
 
