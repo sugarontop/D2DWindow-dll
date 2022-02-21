@@ -22,7 +22,7 @@ LRESULT D2DWindow::SendMessage(UINT msg, WPARAM wp, LPARAM lp)
 	return WndProc(b, msg, wp, lp);
 }
 
-LRESULT D2DWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DWindow::CheckPostMessage(AppBase* pb)
 {
 	if ( !post_message_queue_.empty() )
 	{
@@ -37,9 +37,16 @@ LRESULT D2DWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 			for(auto& it : queue )
 				InnerWndProc(bb, it.msg, it.wp, it.lp);
 
-			b.bRedraw=bb.bRedraw;
+			if ( pb )
+				pb->bRedraw=bb.bRedraw;
 		}
 	}
+	return 0;
+}
+
+LRESULT D2DWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	CheckPostMessage(&b);
 
 	return InnerWndProc(b, message, wParam, lParam);
 }

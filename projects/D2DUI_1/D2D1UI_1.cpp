@@ -896,7 +896,14 @@ DLLEXPORT void WINAPI D2DDraw(UIHandleWin main, void* hWnd  )
 
 
 	if ( cxt.bRedraw_ )
+	{
+		// check "post message"
+
+
+		pwin->CheckPostMessage(nullptr);
+		
 		cxt.DoRedraw((HWND)hWnd);
+	}
 }
 
 DLLEXPORT void WINAPI D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF border )

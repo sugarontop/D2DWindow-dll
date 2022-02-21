@@ -4,7 +4,6 @@
 #include "D2DMisc.h"
 #include <fstream>
 #include "D2D1UI_1.h"
-//#include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
 #include "D2DAccordionbar.h"
 #include "D2DFileManage.h"
@@ -13,8 +12,10 @@
 #include "D2DColor.h"
 
 #include "D2DLogin.h"
-//#include "yahoo.h"
 #include "chart_top.h"
+
+
+
 
 using namespace V6;
 
@@ -59,7 +60,7 @@ std::vector<DocFunc> ar;
 
 void CenterDraw(LPVOID captureobj, D2DContext& cxt);
 LRESULT CenterFunc(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
-
+D2DControls* CreateSquare(UIHandle parent,  FSizeF size, LPCWSTR k );
 
 
 void CreateControl(HWND hWnd)
@@ -211,11 +212,25 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 			if ( 12 == id )
 			{
-				auto tx = D2DCreateTextbox(m->hme, FRectF(10,10,200,200), true, STAT_DEFAULT, L"TX1",-1,-1);
+				auto tx = D2DCreateTextbox(m->hme, FRectF(10,10,800,200), true, STAT_DEFAULT, L"TX1",-1,-1);
 
-				D2DSetText( tx, L"4 split screens.\n ダブルクリックで全体画面へ。");
+				//D2DSetText( tx, L"4 split screens.\n ダブルクリックで全体画面へ。");
+
+				std::wstring str;
+				str = L"var k1 = Ctrl(\"create&type=listbox&x=200&y=200&w=100&nm=mylsbox\");";
+				str += L"set(k1,\"additem&str=hoi1\");\n";
+				str += L"set(k1,\"additem&str=hoi2\");\n";
+				str += L"set(k1,\"additem&str=hoi3\");\n";
+				str += L"set(k1,\"select&no=1\");\n";
+				str += L"var n = get(k1, \"select\");\n";
+				str += L"//\n";
+				str += L"//var n = k1.select();";
+
+				D2DSetText( tx, str.c_str()); 
 
 
+				auto b1 = D2DCreateButton(m->hme, FRectF(10,220,FSizeF(100,30)), STAT_DEFAULT, NONAME);
+				D2DSetText(b1, L"Run");
 
 
 			}
@@ -405,11 +420,6 @@ void CreateDocumentControl(UIHandle h)
 }
 
 
-
-
-
-
-
 LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	BobInstance* m = (BobInstance*)captureobj;
@@ -432,6 +442,11 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			if ( 12 == id )
 			{
 				m->child = CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"B" );
+
+			}
+			else if ( 11 == id )
+			{
+				m->child = CreateSquare( m->hme,  FSizeF(5000,5000), L"C" );
 
 			}
 
@@ -584,5 +599,14 @@ void CreateCardControls(UIHandle h)
 	D2DSetColor(ha[0], c1, ColorF::White,ColorF::Black);		
 	D2DSetColor(ha[1], c2, ColorF::White,ColorF::Black);		
 	D2DSetColor(ha[2], c3, ColorF::White,ColorF::Black);		
+
+}
+
+
+D2DControls* CreateSquare(UIHandle parent,  FSizeF size, LPCWSTR k )
+{
+	auto ret = D2DCreateSquarePaper(parent, FRectF(20,0,size), STAT_DEFAULT, NONAME, -1 );
+
+	return (D2DControls*)ret.p;
 
 }

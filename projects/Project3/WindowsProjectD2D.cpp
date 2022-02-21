@@ -189,6 +189,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 		case WM_TIMER:
 		{
+			if ( message == WM_TIMER )
+			{
+				static int kkk = 0;
+				TRACE(L" message == WM_TIMER %d\n", kkk++);
+			}
+
+
 			D2DDefWndProc(hwin, app, message, wParam,lParam);
 			r=1;
 		}
