@@ -11,7 +11,7 @@
 #include "D2DMessage.h"
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
-
+#include "javasc.h"
 
 using namespace V6;
 
@@ -185,17 +185,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             CreateControl(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
+
+			JavascriptAppInit();
+
+
         }
         break;
 		case WM_TIMER:
 		{
-			if ( message == WM_TIMER )
-			{
-				static int kkk = 0;
-				TRACE(L" message == WM_TIMER %d\n", kkk++);
-			}
-
-
 			D2DDefWndProc(hwin, app, message, wParam,lParam);
 			r=1;
 		}
@@ -300,6 +297,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
         {        
             D2DDestroyWindow(hwin);
+
+
+			JavascriptAppExit();
+
             PostQuitMessage(0);
 			return 0;
         }

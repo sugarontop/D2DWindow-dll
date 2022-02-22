@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "D2DTextbox.h"
 #include "TextMemory.h"
+#include "D2DColor.h"
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
@@ -353,6 +354,42 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 			bl = false;
 			ret = 1;
 
+		}
+		break;
+		case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wp)
+			{
+				LPCWSTR cmd = (LPCWSTR)lp;
+
+				auto ar = SplitW(cmd,L"&");
+
+				for(auto& it : ar)
+				{
+					auto ar2 = SplitW(it.c_str(), L"=");
+
+					if ( ar2.size() == 2)
+					{
+						if (ar2[0] == L"text")
+						{
+							SetText(ar2[1].c_str(), (int)ar2[0].length());
+						}	
+						else if (ar2[0] == L"color")
+						{
+							DWORD dw = _wtoi(ar2[1].c_str());
+							D2DColor clr(dw);
+
+							fore_ = clr;
+
+
+						}
+					}
+				}
+
+
+
+				ret = 1;
+			}
 		}
 		break;
 		

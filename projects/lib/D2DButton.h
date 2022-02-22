@@ -26,6 +26,7 @@ namespace V6
 			virtual void ResourceUpdate(bool bCreate, D2DContext& cxt) override;
 
 		public :
+			std::wstring GetText() const { return text_; }
 			std::function<DWORD(void* sender,LPCWSTR funcnm, void* p )> click_;
 			static void CreateButtonBrush(D2DContext& cxt,float height, bool normal, ID2D1LinearGradientBrush** pbr);
 		protected :

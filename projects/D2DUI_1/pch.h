@@ -102,7 +102,7 @@ typedef _bstr_t BS;
 //		int a = 0;
 //	}
 //}
-//#define THR(hr) ThrowIfFailed(hr,nullptr, __LINE__, __FILE__)
+//#define THR(hr) ThrowIfFailed(hr,nullptr, __LINE__, __FILE__) 
 
 
 

@@ -722,6 +722,16 @@ DLLEXPORT BSTR WINAPI D2DGetText(UIHandle h, bool bAll)
 			return ret;
 		}
 	}
+	else if (h.typ == TYP_BUTTON)
+	{	
+		auto btn = static_cast<D2DButton*>( D2DCastControl(h));
+
+		BSTR ret = ::SysAllocString(btn->GetText().c_str());
+
+		return ret;
+
+	}
+
 	return nullptr;
 }
 

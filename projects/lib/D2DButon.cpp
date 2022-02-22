@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "D2DButton.h"
 #include "D2DMessage.h"
+
 using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
+std::vector<std::wstring> SplitW( LPCWSTR str, LPCWSTR split );
 
 void D2DButton::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
@@ -108,6 +110,33 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 			}
 
 			
+		}
+		break;
+		case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				LPCWSTR cmd = (LPCWSTR)lParam;
+
+				auto ar = SplitW(cmd,L"&");
+
+				for(auto& it : ar)
+				{
+					auto ar2 = SplitW(it.c_str(), L"=");
+
+					if ( ar2.size() == 2)
+					{
+						if (ar2[0] == L"text")
+						{
+							SetText(ar2[1].c_str());
+						}						
+					}
+				}
+
+
+
+				ret = 1;
+			}
 		}
 		break;
 	}
@@ -489,4 +518,28 @@ int D2DWindow::FloatingMenu(LPVOID sender, const FRectF& rc, std::vector<MenuIte
 	FloatingMenu->ModalShow(sender,items);
 
 	return 0;
+}
+
+
+std::vector<std::wstring> SplitW( LPCWSTR str, LPCWSTR split )
+{
+    std::vector<std::wstring> ar;
+    int splen = lstrlenW(split);
+    int len = lstrlenW(str);
+    _ASSERT( 0 < splen && splen <= 2  );
+
+    int si = 0;
+    for( int i = 0; i <= len; i++ )
+    {
+        if ( str[i] == split[0] || (i == len && 0 < len) )
+        {
+            if (splen == 1 || (splen == 2 && (i == len || str[i+1] == split[1] )) )
+            {
+                std::wstring s( &str[si], i-si );
+                ar.push_back( std::wstring(s.c_str()));
+                si = i + splen;
+            }
+        }       
+    }
+    return ar;
 }

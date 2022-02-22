@@ -13,11 +13,13 @@
 
 #include "D2DLogin.h"
 #include "chart_top.h"
-
+#include "javasc.h"
 
 
 
 using namespace V6;
+
+bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
 
 bool FileReadStream( LPCWSTR fnm, IStream** sm )
 {
@@ -214,22 +216,13 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			{
 				auto tx = D2DCreateTextbox(m->hme, FRectF(10,10,800,200), true, STAT_DEFAULT, L"TX1",-1,-1);
 
-				//D2DSetText( tx, L"4 split screens.\n ダブルクリックで全体画面へ。");
-
 				std::wstring str;
-				str = L"var k1 = Ctrl(\"create&type=listbox&x=200&y=200&w=100&nm=mylsbox\");";
-				str += L"set(k1,\"additem&str=hoi1\");\n";
-				str += L"set(k1,\"additem&str=hoi2\");\n";
-				str += L"set(k1,\"additem&str=hoi3\");\n";
-				str += L"set(k1,\"select&no=1\");\n";
-				str += L"var n = get(k1, \"select\");\n";
-				str += L"//\n";
-				str += L"//var n = k1.select();"; 
 
-				D2DSetText( tx, str.c_str()); 
+				if ( LoadTextFile(L"init.js", &str ) )
+					D2DSetText( tx, str.c_str()); 
 
 
-				auto b1 = D2DCreateButton(m->hme, FRectF(10,220,FSizeF(100,30)), STAT_DEFAULT, NONAME);
+				auto b1 = D2DCreateButton(m->hme, FRectF(10,220,FSizeF(100,30)), STAT_DEFAULT, L"JSRunButton", 2022);
 				D2DSetText(b1, L"Run");
 
 
@@ -265,6 +258,22 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			r = 1;
 		}
 		break;
+		case WM_NOTIFY:
+		{
+			if ( wParam == 2022 )
+			{
+				
+				auto tx = D2DGetControlFromName(hwin,L"TX1");
+				auto bs = D2DGetText( tx, true );
+
+				JsRun(bs);
+
+				r = 1;
+			}
+		}
+		break;
+
+
 		case WM_D2D_DESTROY:
 		{
 			delete m;

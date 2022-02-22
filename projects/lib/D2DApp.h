@@ -34,8 +34,7 @@ class D2DApp
 		
 };
 
-
-
-
-
 };
+
+std::vector<std::wstring> SplitW( LPCWSTR str, LPCWSTR split );
+

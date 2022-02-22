@@ -162,9 +162,11 @@
   <ItemGroup>
     <ClCompile Include="..\lib\inet.cpp" />
     <ClCompile Include="chart_top.cpp" />
+    <ClCompile Include="CJsValueRef.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="javasc.cpp" />
     <ClCompile Include="WindowsProjectD2D.cpp" />
     <ClCompile Include="work1.cpp" />
     <ClCompile Include="xml.cpp" />
@@ -178,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chart_top.h" />
+    <ClInclude Include="javasc.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="xml.h" />
   </ItemGroup>
