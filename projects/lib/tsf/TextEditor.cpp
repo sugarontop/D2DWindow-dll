@@ -481,7 +481,7 @@ int CTextEditor::CurrentCaretPos()
 //
 //
 //----------------------------------------------------------------
-void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, ID2D1SolidColorBrush* br)
+void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, ID2D1SolidColorBrush* br, IDWriteTextFormat* tf)
 {	
 	int zCaretPos = CurrentCaretPos();
 
@@ -489,22 +489,25 @@ void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, ID2D1SolidCol
 
     if ( layout_.bRecalc_ )
 	{       
+		if ( tf == nullptr )
+			tf = cxt.textformat_;
+
 		if ( bri_ && bri_->GetType() == IBridgeTSFInterface::PASSWORD)
 		{
 			int len = min(50, ct_->GetTextLength());
 			LPCWSTR s = L"**************************************************";
-			layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
+			layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, tf);
 		}
 		else if ( ct_->bSingleLine_ )
 		{
 			LPCWSTR s = ct_->GetTextBuffer();
 			UINT len = ct_->GetTextLength();
 			
-			layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
+			layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, tf);
 
 		}
 		else 
-			layout_.CreateLayout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, cxt.tsf_text_format_);
+			layout_.CreateLayout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_, zCaretPos, ct_->nStartCharPos_, tf);
 
 
 		layout_.bRecalc_ = false;
@@ -524,18 +527,21 @@ void CTextEditor::Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, ID2D1SolidCol
 //
 //
 //----------------------------------------------------------------
-void CTextEditor::CalcRender(D2DContext& cxt )
+void CTextEditor::CalcRender(D2DContext& cxt,IDWriteTextFormat* tf )
 {
 	int x = 0;
 	
+	if ( tf == nullptr )
+		tf = cxt.textformat_;
+
     if (bri_->GetType() == IBridgeTSFInterface::PASSWORD)
     {
         int len = min(50, ct_->GetTextLength());
         LPCWSTR s = L"**************************************************";
-        layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, 0, ct_->nStartCharPos_, cxt.tsf_text_format_);
+        layout_.CreateLayout(cxt, s, len, ct_->view_size_, ct_->bSingleLine_, 0, ct_->nStartCharPos_, tf);
     }
     else
-	    layout_.CreateLayout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_,0, x, cxt.tsf_text_format_);	
+	    layout_.CreateLayout(cxt, ct_->GetTextBuffer(), ct_->GetTextLength(), ct_->view_size_, ct_->bSingleLine_,0, x, tf);	
 
 	layout_.bRecalc_ = false;
 }

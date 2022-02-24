@@ -31,10 +31,7 @@ class CTextEditor
 		CTextEditor();
 		virtual ~CTextEditor(); 
     
-		void SetContainer( CTextContainer* ct )
-		{ 
-			ct_ = ct; 
-		}
+		void SetContainer( CTextContainer* ct ){ ct_ = ct; }
 		CTextContainer* GetContainer(){ return ct_; }
     
 		void MoveSelection(int nSelStart, int nSelEnd, bool bTrail=true);
@@ -49,8 +46,8 @@ class CTextEditor
 		BOOL MoveSelectionUpDown(BOOL bUp, bool bShiftKey);
 		BOOL MoveSelectionToLineFirstEnd(BOOL bFirst, bool bShiftKey);
 
-		void Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, ID2D1SolidColorBrush* br );
-		void CalcRender(D2DContext& hdc);
+		void Render(D2DContext& cxt, DWRITE_TEXT_METRICS*ptm, ID2D1SolidColorBrush* br, IDWriteTextFormat* tf );
+		void CalcRender(D2DContext& hdc, IDWriteTextFormat* tf );
 		int GetSelectionStart() const {return ct_->SelStart();}
 		int GetSelectionEnd() const {return ct_->SelEnd();}
 		

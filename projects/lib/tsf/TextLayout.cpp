@@ -118,7 +118,6 @@ BOOL CTextLayout::CreateLayout(D2DContext& cxt, const WCHAR *psz, int nCnt,const
 	if ( DWTextLayout_ )
 		DWTextLayout_->Release();
 
-
 	{		
 		CreateTextLayout ct(cxt.tsf_wfactory_, psz, nCnt, fmt, sz, bSingleLine_);
 

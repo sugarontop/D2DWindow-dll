@@ -368,9 +368,9 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
     }
 }
 #include <fstream>
-bool LoadTextFile( LPCWSTR fnm, std::wstring* str )
-{
-	std::wifstream fs;
+bool LoadTextFile( LPCWSTR fnm, std::wstring* str,bool butf8 )
+{	
+	std::ifstream fs;
 	std::wstring& s = *str;
 	fs.open(fnm, std::ios::in);
 	int i = 0;
@@ -378,12 +378,15 @@ bool LoadTextFile( LPCWSTR fnm, std::wstring* str )
 	{
 		while( !fs.eof())
 		{
-			std::wstring xx;
+			std::string xx;
 			std::getline( fs, xx );	
+
+			WCHAR cb[1024]={};
+			::MultiByteToWideChar(CP_ACP,0,xx.c_str(), xx.length(), cb, 1024);
 
 			if ( i++ != 0)
 				s += '\n';
-			s += xx;
+			s += cb;
 			
 		}
 		return true;

@@ -26,7 +26,7 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 	
 	if (IsMultiline())
 	{
-		vscrollbar_.Create(this, FRectF(rctext_.right, rctext_.top, rctext_.right + 20, rctext_.bottom));
+		vscrollbar_.Create(this, FRectF(rctext_.right, rctext_.top, rctext_.right + BARW, rctext_.bottom));
 		ct_.bSingleLine_ = false;
 	}
 
@@ -58,14 +58,12 @@ void D2DTextbox::SetReadonly(bool bReadOnly)
 }
 void D2DTextbox::Draw(D2DContext& cxt)
 { 
-	ComPTR<ID2D1SolidColorBrush> fore;
-	(*cxt)->CreateSolidColorBrush(fore_, &fore);
-
-	if ( stat_&STAT_VISIBLE )
+	if ( BITFLG(STAT_VISIBLE) )
 	{
 		ComPTR<ID2D1SolidColorBrush> border;
 		ComPTR<ID2D1SolidColorBrush> back;
-	
+		ComPTR<ID2D1SolidColorBrush> fore;
+		(*cxt)->CreateSolidColorBrush(fore_, &fore);	
 		(*cxt)->CreateSolidColorBrush(back_, &back);
 		(*cxt)->CreateSolidColorBrush(border_, &border);
 
@@ -90,7 +88,9 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		
 			if (ctrl()->ct_)
 			{
-				ctrl()->Render(cxt, &tm_, fore);
+				ctrl()->Render(cxt, &tm_, fore, fmt_);
+
+				
 			
 	#ifdef DRAW_CHAR_RECT
 				// char RECT‚Ì•\Ž¦
@@ -111,7 +111,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 					FRectF rc;
 					bool blf;
 					if(  ctrl()->GetLayout()->RectFromCharPosEx(xpos-1, &rc, &blf) )
-						if ((::GetTickCount() / 500)%2 == 0)							
+						if ((::GetTickCount64() / 500)%2 == 0)							
 							(*cxt)->FillRectangle( FRectF(rc.right, rc.top, FSizeF(CARET_W, rc.Height())), fore );
 					
 					cxt.Redraw();
@@ -123,11 +123,15 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		else if ( text_layout_ )
 		{			
 
+			ComPTR<IDWriteTextLayout> tl;
+			//ctrl()->GetLayout()->GetTextLayout( &tl); //text_layout_ );
+
 			mat.Offset(rctext_);
 			mat.Offset(0, -vscrollbar_.Scroll());
 			mat_sc_ = mat.Copy();
 
 			(*cxt)->DrawTextLayout(FPointF(), text_layout_, fore );			
+			//(*cxt)->DrawTextLayout(FPointF(), tl, fore );			
 		}
 
 		mat.PopTransform();
@@ -150,7 +154,6 @@ std::wstring D2DTextbox::ConvertInputText(LPCWSTR text, int typ)
 	if ( typ == 1 )		
 		return MoneyString(text); 
 
-
 	return text;
 }
 
@@ -165,7 +168,7 @@ void D2DTextbox::ActiveSw(bool bActive)
 	ctrl()->SetContainer( &ct_, this ); 
 	_ASSERT(ctrl()->ct_);
 
-	ctrl()->CalcRender( cxt );
+	ctrl()->CalcRender( cxt, fmt_ );
 	
 	text_layout_.Release();
 	ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
@@ -192,13 +195,6 @@ void D2DTextbox::StatActive(bool bActive)
 		_ASSERT(ctrl()->ct_==nullptr);
 		//TRACE(L"D2DTextbox::StatActive(FALSE)   %x\n", this);
 	}
-
-	/*if (ime_on_)
-	{
-		parent_control_->SendMesage(WM_D2D_IME_ONOFF,1,0);
-
-	}*/
-
 }
 
 bool D2DTextbox::OnChangeFocus(bool bActive, D2DCaptureObject*)
@@ -471,15 +467,8 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 }
 void D2DTextbox::ImeActive(bool bActive)
 {
-	if ( bActive )
-		parent_control_->SendMesage(WM_D2D_IME_ONOFF,1,0);
-	else
-		parent_control_->SendMesage(WM_D2D_IME_ONOFF,0,0);
-
-
+	parent_control_->SendMesage(WM_D2D_IME_ONOFF, (bActive? 1: 0),0);
 }
-
-
 
 void D2DTextbox::AutoScroll()
 {
@@ -539,12 +528,17 @@ int D2DTextbox::CurrentPos() const
 bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight)
 {
 	ComPTR<IDWriteTextFormat> textformat;
-	auto hr = parent_window_->GetContext().tsf_wfactory_->CreateTextFormat(fontnm, NULL, DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-		fontheight, LOCALE, & textformat);
-
-	// not yet IMPLEMENT
+	if ( S_OK == parent_window_->GetContext().tsf_wfactory_->CreateTextFormat(fontnm, NULL, 
+		DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		fontheight, LOCALE, & textformat))
+	{
 	
-	return false; // (hr==0);
+		fmt_ = nullptr;
+		fmt_ = textformat;
+		return true;
+	}	
+	
+	return false; ;
 }
 
 void D2DTextbox::SetText(LPCWSTR str, int str_len, int insert_pos)
@@ -563,7 +557,7 @@ void D2DTextbox::SetSinglelineText(LPCWSTR str, int str_len, int insert_pos )
 		auto ch = str[i];
 		if ( ch == 0x0A || ch == 0x0D )
 		{
-			sm << '\0';
+			sm << L'\0';
 			break;
 		}
 		sm << ch;
@@ -616,6 +610,7 @@ void D2DTextbox::SetMultilineText(LPCWSTR str, int str_len, int insert_pos )
 	{
 		ctrl()->MoveSelection( pos, pos, false );
 		ctrl()->GetLayout()->bRecalc_ = true;
+
 	}
 }
 
@@ -751,9 +746,6 @@ float D2DTextbox::sc_dataHeight(bool bHbar)
 	if ( bHbar )
 	{
 		float h = ctrl()->GetLineHeight();
-
-		//int cnt = ctrl()->GetLayout()->GetLineCount();
-
 		return tm_.height + 50.0f;
 	}
 	return 0;

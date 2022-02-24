@@ -19,7 +19,7 @@
 
 using namespace V6;
 
-bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
+bool LoadTextFile( LPCWSTR fnm, std::wstring* str, bool butf8 );
 
 bool FileReadStream( LPCWSTR fnm, IStream** sm )
 {
@@ -218,7 +218,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 				std::wstring str;
 
-				if ( LoadTextFile(L"init.js", &str ) )
+				if ( LoadTextFile(L"init.js", &str, false ) )
 					D2DSetText( tx, str.c_str()); 
 
 

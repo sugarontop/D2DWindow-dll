@@ -216,3 +216,30 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 
 	return ret;
 }
+std::wstring UrlDecode(const std::wstring& s)
+{
+	std::wstringstream sm;
+	LPCWSTR p = s.c_str();
+	while(*p != 0 )
+	{
+		if ( *p == '%' )
+		{
+			WCHAR cb[2]={*(p+1),0};
+			WCHAR bb[2]={*(p+2),0};
+
+			int ks=0;
+			if ('0' <= bb[0] && bb[0] <='9' )
+				ks = bb[0]-'0';
+			if ('A' <= bb[0] && bb[0] <='F' )
+				ks = 10+bb[0]-'A';
+			else if ('a' <= bb[0] && bb[0] <='f' )
+				ks = 10+bb[0]-'a';
+
+			sm << (WCHAR)(_wtoi(cb)*16+ks);
+			p+=3;
+		}
+		else
+			sm << *(p++);
+	}
+	return sm.str();
+}

@@ -9,6 +9,7 @@
 
 using namespace V6;
 
+//Šg’£‹@”\
 
 struct WhiteBoard
 {

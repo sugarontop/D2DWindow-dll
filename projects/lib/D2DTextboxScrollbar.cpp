@@ -98,7 +98,7 @@ void Scrollbar::OnDraw(D2DContext& cxt)
 	D2DMatrix mat(*cxt);
 	bool bHbar = bvscrollbar_;
 
-	cxt.DFillRect(rc_, D2RGB(240,240,240));
+	cxt.DFillRect(rc_, ColorF::Black);
 	mat.PushTransform();
 	{
 		(*cxt)->GetTransform(&mat_);
@@ -116,7 +116,7 @@ void Scrollbar::OnDraw(D2DContext& cxt)
 				scbai_ = (parent_->sc_dataHeight(bHbar) - parent_->sc_barTotalHeight(bHbar)) / (parent_->sc_barTotalHeight(bHbar)-scbarThumbHeight_ ); 
 			}
 
-			FRectF scbar( 2, 0, rc_.Width()-2,  scbarThumbHeight_);
+			FRectF scbar( 0, 0, rc_.Width(),  scbarThumbHeight_);
 			cxt.DFillRect(scbar, D2RGB(220,220,220));
 		}
 		mat.PopTransform();

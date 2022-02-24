@@ -393,3 +393,31 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
         ::CloseClipboard();
     }
 }
+#include <fstream>
+bool LoadTextFile( LPCWSTR fnm, std::wstring* str,bool butf8 )
+{	
+	std::ifstream fs;
+	std::wstring& s = *str;
+	fs.open(fnm, std::ios::in);
+	int i = 0;
+	if ( fs ) 
+	{
+		while( !fs.eof())
+		{
+			std::string xx;
+			std::getline( fs, xx );	
+
+			WCHAR cb[1024]={};
+			::MultiByteToWideChar(CP_ACP,0,xx.c_str(), xx.length(), cb, 1024);
+
+			if ( i++ != 0)
+				s += '\n';
+			s += cb;
+			
+		}
+		return true;
+	}
+	return false;
+}
+
+
