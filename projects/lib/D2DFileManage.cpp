@@ -233,6 +233,18 @@ LRESULT D2DFileManage::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 		}
 		break;
+		case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				if ( 1 == lParam)				
+					ChangeTyp(D2DFileManage::TYP::TREE);
+				else
+					ChangeTyp(D2DFileManage::TYP::SOLO);
+				r = 1;
+			}
+		}
+		break;
 	}
 
 	return r;

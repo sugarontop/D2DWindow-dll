@@ -16,6 +16,11 @@
 #include "D2DXXXControls.h"
 #include "D2DScrollbar.h"
 #include "D2DTabControls.h"
+#include "D2DMDIControls.h"
+#include "D2DMDISplitControls.h"
+#include "D2DChildWindow.h"
+#include "D2DFileManage.h"
+
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
@@ -93,6 +98,86 @@ DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow(UIHandle hctrls, const D2D1_RECT_
 	r.typ = TYP_CONTROLS;
 	return r;
 }
+
+
+
+DLLEXPORT void WINAPI D2DMDICreateChildView(UIHandle hctrls,int typ)
+{
+	_ASSERT(hctrls.typ == TYP_MDI_CONTROLS);
+
+	((D2DMDISplitFrame*)hctrls.p)->CreateChildView(typ);
+
+}
+DLLEXPORT UIHandle WINAPI D2DMDIGetControl(UIHandle hctrls, LPCWSTR nm)
+{
+	_ASSERT(hctrls.typ == TYP_MDI_CONTROLS);
+
+	UIHandle r;
+	r.p = (D2DControls*)((D2DMDISplitFrame*)hctrls.p)->GetControl(nm);
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+DLLEXPORT UIHandle WINAPI D2DCreateMDISplitFrame(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
+
+	auto pgtx = std::make_shared<D2DMDISplitFrame>();
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add(pgtx);	
+
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_MDI_CONTROLS;
+	return r;
+}
+
+DLLEXPORT UIHandle WINAPI D2DCreateChildWindow(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
+
+	auto pgtx = std::make_shared<D2DChildWindow>();
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add(pgtx);	
+
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+
+
+DLLEXPORT UIHandle WINAPI D2DCreateFileManage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
+
+	auto pgtx = std::make_shared<D2DFileManage>();
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add(pgtx);	
+
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
+
 DLLEXPORT UIHandle WINAPI D2DCreateScrollbar(UIHandle hctrls, bool bVertical, DWORD stat, LPCWSTR name, int id)
 {
 	FRectF rc1 = (bVertical ? FRectF(0,0,BARW,100) : FRectF(0,0,100,BARW));
@@ -109,6 +194,15 @@ DLLEXPORT UIHandle WINAPI D2DCreateScrollbar(UIHandle hctrls, bool bVertical, DW
 	r.typ = TYP_SCROLLBAR;
 	return r;
 }
+
+DLLEXPORT bool WINAPI D2DIsControls(UIHandle h)
+{
+	if ( dynamic_cast<D2DControls*>( (D2DControl*)h.p))
+		return true;
+
+	return false;
+}
+
 
 DLLEXPORT void WINAPI D2DScrollbarSetMaxSize(UIHandle h, float height)
 {

@@ -24,16 +24,7 @@
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\lib\D2DAccordionbar.h">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClInclude>
     <ClInclude Include="..\lib\D2DClassMap.h">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lib\D2DChildWindow.h">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lib\D2DFileManage.h">
       <Filter>ソース ファイル\D2D</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,19 +38,7 @@
     <ClCompile Include="..\lib\D2DContext.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
-    <ClCompile Include="..\lib\D2DWhiteControl.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\D2DWhiteWindowControl.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
     <ClCompile Include="..\lib\D2DWindowControl.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\D2DMDIControls.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\D2DMDISplitControls.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\D2DGrid.cpp">
@@ -68,20 +47,11 @@
     <ClCompile Include="..\lib\D2DWindow2.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
-    <ClCompile Include="..\lib\D2DAccordionbar.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
     <ClCompile Include="..\lib\D2DClassMap.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\D2DChildWindow.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\FilePackTool.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\D2DFileManage.cpp">
-      <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\D2DLogin.cpp">
       <Filter>ソース ファイル\D2D</Filter>

@@ -389,6 +389,7 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		break;
 		
+		
 		case WM_D2D_IME_ONOFF:
 		{
 			int d = (wp==0 ? 0 : 1);

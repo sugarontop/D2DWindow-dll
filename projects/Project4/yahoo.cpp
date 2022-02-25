@@ -7,7 +7,7 @@
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
 #include "yahoo.h"
-#include "D2DChildWindow.h"
+//#include "D2DChildWindow.h"
 
 using namespace V6;
 

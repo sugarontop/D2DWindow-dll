@@ -6,28 +6,28 @@
 #include "D2DColor.h"
 namespace V6 {
 
-class D2DChildWidow;
+class D2DChildWindow;
 
 class MinimumWindow
 {
 	public :
-		MinimumWindow( D2DChildWidow* parent, FRectF rc ):parent_(parent),rc_(rc){};
+		MinimumWindow( D2DChildWindow* parent, FRectF rc ):parent_(parent),rc_(rc){};
 		virtual void Draw(D2DContext& cxt);
 		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
 	protected :
-		D2DChildWidow* parent_;
+		D2DChildWindow* parent_;
 		FRectF rc_;
 		D2DMat mat_;
 };
 
 
 
-class D2DChildWidow : public D2DControls
+class D2DChildWindow : public D2DControls
 {
 	friend class MinimumWindow;
 public :
-	D2DChildWidow();	
+	D2DChildWindow();	
 
 	enum CLR { TITLEBAR=0, BACKCOLOR=1 };
 

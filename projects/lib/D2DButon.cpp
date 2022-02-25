@@ -31,7 +31,20 @@ std::wstring D2DButton::GetTreeTyp(USHORT* typ)
 LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if ( !BITFLG(STAT_ENABLE) )
+	{
+		switch( message )
+		{
+			case WM_LBUTTONDOWN:
+			case WM_LBUTTONUP:
+			case WM_LBUTTONDBLCLK:
+				MouseParam* mp = (MouseParam*)lParam;
+				auto pt = mat_.DPtoLP(mp->pt);
+				if ( rc_.ZeroPtInRect( pt ) )
+					return 1; // do nothing,
+			break;
+		}
 		return 0;
+	}
 
 	LRESULT ret = 0;
 	static int mouse_mode = 0;
@@ -112,6 +125,14 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 			
 		}
 		break;
+		case WM_LBUTTONDBLCLK:
+		{
+			MouseParam* mp = (MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(mp->pt);
+			if ( rc_.ZeroPtInRect( pt ) )
+				ret=1; // do nothing,
+		}
+		break;
 		case WM_D2D_COMMAND_SET:
 		{
 			if ( (UINT_PTR)this == (UINT_PTR)wParam)
@@ -129,11 +150,19 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 						if (ar2[0] == L"text")
 						{
 							SetText(ar2[1].c_str());
-						}						
+						}
+						else if ( ar2[0] == L"enable")
+						{
+							int a = _wtoi(ar2[1].c_str());
+
+							if (a ==0)
+								stat_ &= ~STAT_ENABLE;
+							else
+								stat_ |= STAT_ENABLE;
+
+						}
 					}
 				}
-
-
 
 				ret = 1;
 			}

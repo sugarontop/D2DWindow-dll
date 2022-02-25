@@ -218,13 +218,18 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 				std::wstring str;
 
+				D2DSetFont(tx, L"‚l‚r –¾’©", 14);
+				
 				if ( LoadTextFile(L"init.js", &str, false ) )
 					D2DSetText( tx, str.c_str()); 
-
+				D2DSetColor(tx, ColorF::Gray, ColorF::White, ColorF::Gray);
 
 				auto b1 = D2DCreateButton(m->hme, FRectF(10,220,FSizeF(100,30)), STAT_DEFAULT, L"JSRunButton", 2022);
 				D2DSetText(b1, L"Run");
 
+
+								
+				
 
 			}
 			else if ( 11 == id )

@@ -164,26 +164,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\lib\D2DAccordionbar.h" />
-    <ClInclude Include="..\lib\D2DChildWindow.h" />
     <ClInclude Include="..\lib\D2DClassMap.h" />
-    <ClInclude Include="..\lib\D2DFileManage.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\lib\D2DAccordionbar.cpp" />
     <ClCompile Include="..\lib\D2DApp.cpp" />
-    <ClCompile Include="..\lib\D2DChildWindow.cpp" />
     <ClCompile Include="..\lib\D2DClassMap.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
-    <ClCompile Include="..\lib\D2DFileManage.cpp" />
     <ClCompile Include="..\lib\D2DGrid.cpp" />
     <ClCompile Include="..\lib\D2DLogin.cpp" />
-    <ClCompile Include="..\lib\D2DMDIControls.cpp" />
-    <ClCompile Include="..\lib\D2DMDISplitControls.cpp" />
-    <ClCompile Include="..\lib\D2DWhiteControl.cpp" />
-    <ClCompile Include="..\lib\D2DWhiteWindowControl.cpp" />
     <ClCompile Include="..\lib\D2DWindow2.cpp" />
     <ClCompile Include="..\lib\D2DWindowControl.cpp" />
     <ClCompile Include="..\lib\FilePackTool.cpp" />

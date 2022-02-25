@@ -317,7 +317,7 @@ std::vector<std::wstring> CJsValueRef::ToMapKeys()
 			JsValueRef itemref;
 			JsConvertValueToString(IndexedProperty, &itemref);
 
-			WCHAR* cb; UINT len;
+			WCHAR* cb; size_t len;
 			JsStringToPointer(itemref, (const wchar_t**) &cb, &len);
 
 			keys.push_back(cb);

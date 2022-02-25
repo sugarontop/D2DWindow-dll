@@ -8,7 +8,7 @@ using namespace V6;
 
 #define TITLEBAR_HEIGHT 26.0f
 
-D2DChildWidow::D2DChildWidow()
+D2DChildWindow::D2DChildWindow()
 {
 	mode_ = 0;
 	title_bar_mode_ = 0;
@@ -18,7 +18,7 @@ D2DChildWidow::D2DChildWidow()
 	colors_[0] = D2RGB(170,170,170);
 	colors_[1] = D2RGB(200,200,200);
 }
-void D2DChildWidow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
+void D2DChildWindow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	D2DControls::CreateControl(parent, pacontrol,rc, stat, name, local_id);
 	mode_ = 0;
@@ -30,7 +30,7 @@ void D2DChildWidow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 	colors_[1] = D2RGB(200,200,200);
 }
 
-void D2DChildWidow::Draw(D2DContext& cxt)
+void D2DChildWindow::Draw(D2DContext& cxt)
 {
 	D2DMatrix mat(*cxt);
 
@@ -53,7 +53,7 @@ void D2DChildWidow::Draw(D2DContext& cxt)
 	}
 	mat.PopTransform();
 }
-LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT h = 0;
 	bool bl = true;
@@ -148,7 +148,7 @@ LRESULT D2DChildWidow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 	return h;
 }
 
-LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
+LRESULT D2DChildWindow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 {
 	LRESULT h = 0;
 	switch( message )
@@ -307,13 +307,13 @@ LRESULT D2DChildWidow::TitleBarProc(AppBase& b, UINT message, MouseParam& pm)
 
 }
 
-void D2DChildWidow::DrawTitlebar(D2DContext& cxt)
+void D2DChildWindow::DrawTitlebar(D2DContext& cxt)
 {
 	DrawTitlebar2(cxt, FRectF(0,0,rc_.Width(),TITLEBAR_HEIGHT),colors_[CLR::TITLEBAR], title_.c_str(), title_bar_mode_ );
 	
 
 }
-std::wstring D2DChildWidow::GetTreeTyp(USHORT* typ)
+std::wstring D2DChildWindow::GetTreeTyp(USHORT* typ)
 { 
 	*typ=3; 
 	return L"D2DChildWidow";

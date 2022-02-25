@@ -164,8 +164,6 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="tab1.cpp" />
-    <ClCompile Include="tab2.cpp" />
     <ClCompile Include="tab3.cpp" />
     <ClCompile Include="WindowsProjectD2D.cpp" />
     <ClCompile Include="work1.cpp" />

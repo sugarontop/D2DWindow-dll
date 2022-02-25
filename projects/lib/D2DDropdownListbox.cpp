@@ -155,7 +155,50 @@ LRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM 
 			}
 		}
 		break;
-        
+        case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wp)
+			{
+				LPCWSTR cmdstr = (LPCWSTR)lp;
+
+				auto ar = SplitW(cmdstr,L"&");
+				std::wstring cmd;
+				
+
+				for(auto& it : ar)
+				{
+					auto ar2 = SplitW(it.c_str(), L"=");
+
+					if ( ar2.size() == 1 )
+					{
+						cmd = ar2[0];
+
+					}
+					else if ( ar2.size() == 2)
+					{
+						if ( ar2[0] == L"str" && cmd==L"add")
+						{
+							AddItem(-1, ar2[1]);
+						}	
+						else if ( ar2[0] == L"no" && cmd==L"select")
+						{
+							int idx = _wtoi(ar2[1].c_str());
+							
+							OnClick();
+							OnCloseListbox(idx);
+
+
+						}
+					}
+
+				}
+
+
+
+				ret = 1;
+			}
+		}
+		break;
     }
 
     return ret;
@@ -179,18 +222,18 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
 {
 	// リストの中から選択されて上部に表示
 	
-	_ASSERT( ls_ );	
+	int old_item = selected_idx_;
+	_ASSERT(ls_);
+		
+	if (-1 < selected_idx  && selected_idx < (int)ls_->items_.size())
+	{
+		selected_item_ = ls_->items_[selected_idx];
+		selected_idx_ = selected_idx;
+	}
 
-    int old_item = selected_idx_;
-
-    if (-1 < selected_idx  && selected_idx < (int)ls_->items_.size())
-    {
-        selected_item_ = ls_->items_[selected_idx];
-        selected_idx_ = selected_idx;
-    }
-
-    ls_->DestroyControl();
-    ls_ = nullptr;
+	ls_->DestroyControl();
+	ls_ = nullptr;
+	
 
     if ( selected_idx_ != old_item ) 
     {
@@ -228,7 +271,9 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
 
 void D2DDropdownListbox::AddItem( int idx, std::wstring text)
 {
-    str_items_[idx] = text;
+    if ( idx < 0 ) 
+		idx = str_items_.size();
+	str_items_[idx] = text;
 }
 
 void D2DDropdownListbox::xAddItem(int idx, std::wstring text)

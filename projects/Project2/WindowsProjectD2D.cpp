@@ -177,8 +177,8 @@ void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, 
 }
 
 #define COMBOBOX_ID_1 10
-void CreateControl0(UIHandleWin hwin, UIHandle hcs);
-void CreateControl1(UIHandleWin hwin, UIHandle hcs);
+//void CreateControl0(UIHandleWin hwin, UIHandle hcs);
+//void CreateControl1(UIHandleWin hwin, UIHandle hcs);
 void CreateControl2(UIHandleWin hwin, UIHandle hcs);
 bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
 bool SaveTextFile( LPCWSTR fnm, LPCWSTR str );
@@ -344,15 +344,15 @@ void CreateControl(HWND hWnd)
     obj.page[1] = D2DCreateControls( whb2, FRectF(0, 0, 0, 0), 0, L"tab2", 113);
     obj.page[2] = D2DCreateControls( whb2, FRectF(0, 0, 0, 0), 0, L"tab3", 113);
 
-	CreateControl0( hwin, obj.page[0]);
+	//CreateControl0( hwin, obj.page[0]);
 
-	CreateControl1( hwin, obj.page[1]);
+	//CreateControl1( hwin, obj.page[1]);
 
     CreateControl2( hwin, obj.page[2]);
 
 
 }
-#include "D2DChildWindow.h"
+//#include "D2DChildWindow.h"
 //#include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
 
@@ -362,15 +362,17 @@ void CreateControl0(HWND hWnd)
     
     auto root = D2DGetRootControls(hwin);
 
-	auto ch = std::make_shared<D2DChildWidow>();
+	auto ch1 = D2DCreateChildWindow(root, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
 
-	ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
+	//auto ch = std::make_shared<D2DChildWidow>();
 
-	((D2DControls*)root.p)->Add(ch);
+	//ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
+
+	//((D2DControls*)root.p)->Add(ch);
 
 
-	UIHandle ch1 = {};
-	ch1.p = ch.get();
+	//UIHandle ch1 = {};
+	//ch1.p = ch.get();
 
 	auto hc = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT, L"abc");
 
@@ -384,36 +386,26 @@ void CreateControl0(HWND hWnd)
 }
 
 
-#include "D2DFileManage.h"
+//#include "D2DFileManage.h"
 void CreateControl1(HWND hWnd)
 {
 	hwin = D2DCreateMainHWnd(hWnd, 14);
     
     auto root = D2DGetRootControls(hwin);
 
-
-	for(int i = 0; i < 2; i++ ){
+	for(int i = 0; i < 2; i++ )
+	{
 
 		auto r = i*100;
 
-		auto ch = std::make_shared<D2DChildWidow>();
-		ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50+r,250+r,FSizeF(400,600)), STAT_DEFAULT, L"childwin" );
-		((D2DControls*)root.p)->Add(ch);
-	
-		UIHandle ch1 = {};
-		ch1.p = ch.get();
+		auto ch1 = D2DCreateChildWindow(root, FRectF(50+r,250+r,FSizeF(400,600)), STAT_DEFAULT, L"childwin" );
 
 		auto sccontrols = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT, L"filemng_sc");
-		
-		auto x = (D2DControls*)sccontrols.p;
-		auto fmg = std::make_shared<D2DFileManage>();
-		fmg->CreateControl((D2DWindow*)hwin.p, x, FRectF(0,0,FSizeF(400,600)), STAT_DEFAULT, L"filemng");
-		x->Add(fmg);
+
+		auto hfmg = D2DCreateFileManage(sccontrols, FRectF(0,0,FSizeF(400,600)), STAT_DEFAULT, L"filemng");
 
         if ( i==0)
-            fmg->ChangeTyp(D2DFileManage::TYP::TREE);
-
-	
+			D2DSendMessage(hfmg, WM_D2D_COMMAND_SET, (WPARAM)hfmg.p, (LPARAM)1);
 
 	}
 
@@ -421,11 +413,11 @@ void CreateControl1(HWND hWnd)
 	auto txt = D2DCreateTextbox(root, FRectF(5,5,FSizeF(800,20)), false, STAT_DEFAULT, NONAME );
 	D2DReadOnly(txt, true);
 
-	D2DFileManage::OnClick_ = [txt](std::wstring fnm)->int
-	{
-		D2DSetText(txt, fnm.c_str());
-		return 0;
-	};
+	//D2DFileManage::OnClick_ = [txt](std::wstring fnm)->int
+	//{
+	//	D2DSetText(txt, fnm.c_str());
+	//	return 0;
+	//};
 
 
 
@@ -451,8 +443,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			D2DApp::SetD2DAppForDLL(k);
 			D2DInitail((INT_PTR)k );
 
-            //CreateControl(hWnd);
-			//CreateControl0(hWnd);
+
 			CreateControl1(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
         }

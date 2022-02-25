@@ -100,14 +100,9 @@ LRESULT D2DControls::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARA
 	LRESULT hr = 0;
 	for(auto& it : controls_ )
 	{
-		if ( it->GetStat() & STAT_ENABLE )
-		{
-			hr = it->WndProc(b,message,wParam,lParam);
-			if ( hr != 0 )
-			{
+		hr = it->WndProc(b,message,wParam,lParam);
+		if ( hr != 0 )
 				break;
-			}
-		}
 	}
 	return hr;
 }

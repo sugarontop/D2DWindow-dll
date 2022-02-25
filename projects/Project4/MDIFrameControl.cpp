@@ -15,7 +15,7 @@
 #include "D2DMDISplitControls.h"
 #include "D2DWhiteWindowControl.h"
 #include "D2DGrid.h"
-#include "yahoo.h"
+//#include "yahoo.h"
 
 using namespace V6;
 
@@ -31,25 +31,31 @@ void CreateMDISplitControl(HWND hWnd)
 
 	auto root = D2DGetRootControls(hwin);
 
-	auto frame = std::make_shared<D2DMDISplitFrame>();
-
-	D2DControls* root_controls = (D2DControls*)root.p;
 
 	RECT rc1;
 	GetClientRect(hWnd, &rc1);
 
-	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0.0f,0.0f,(float)rc1.right,(float)rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
-	root_controls->Add(frame);
+	auto frame = D2DCreateMDISplitFrame(root, FRectF(0.0f,0.0f,(float)rc1.right,(float)rc1.bottom), STAT_DEFAULT, L"MDIFrame", 110);
+
+	//auto frame = std::make_shared<D2DMDISplitFrame>();
+
+	//D2DControls* root_controls = (D2DControls*)root.p;
+//	frame->CreateControl((D2DWindow*)hwin.p, root_controls, FRectF(0.0f,0.0f,(float)rc1.right,(float)rc1.bottom),  STAT_DEFAULT, L"MDIFrame", 110);
+	//root_controls->Add(frame);
 	
-	frame->CreateChildView(1);
+	//frame->CreateChildView(1);
+	D2DMDICreateChildView(frame, 1);
 
-	auto left_side_controls =(D2DControls*) frame->GetControl(L"LEFT");
-	auto right_side_controls =(D2DControls*) frame->GetControl(L"RIGHT");
+	//auto left_side_controls =(D2DControls*) frame->GetControl(L"LEFT");
+	//auto right_side_controls =(D2DControls*) frame->GetControl(L"RIGHT");
 
 
-	UIHandle hcs4;
-	hcs4.p = left_side_controls;
-	hcs4.typ = 0;
+
+
+
+	UIHandle hcs4 = D2DMDIGetControl(frame, L"LEFT");
+	//hcs4.p = left_side_controls;
+	//hcs4.typ = 0;
 
 	
 	auto hcs3 = D2DCreateEmptyControls(hcs4,FRectF(0,0,100,1000),  STAT_DEFAULT, L"LeftEmpty", 180);
@@ -117,8 +123,8 @@ void CreateMDISplitControl(HWND hWnd)
 	D2DSetProcfunction(hcsLEFT, f);
 
 
-	UIHandle h1={};
-	h1.p = right_side_controls;
+	UIHandle h1= D2DMDIGetControl(frame, L"RIGHT");
+	
 	
 	auto tabs = D2DCreateTabControls( h1, FRectF(0,0,0,0),  STAT_DEFAULT, L"RIGHT_TAB", 191);
 
@@ -157,13 +163,13 @@ void CreateMDISplitControl(HWND hWnd)
 
 			D2DWindow* parent = (D2DWindow*)hwin.p;
 
-			for(int ij = 0; ij <1; ij++ )
+			/*for(int ij = 0; ij <1; ij++ )
 			{
 				auto yf = std::make_shared<yahoo_finance>();
 				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*100,100+ij*100,FSizeF(1000,500)), STAT_DEFAULT, L"yahoo_finance" );
 				((D2DControls*)ha.p)->Add(yf);
 
-			}
+			}*/
 
 		}
 		else if ( i==0)

@@ -35,11 +35,14 @@ DLLEXPORT UIHandle WINAPI D2DCreateClientControls(LPVOID captureobj, DelegateDra
 DLLEXPORT UIHandle WINAPI D2DCreateScrollbar(UIHandle ctrls, bool bVertical, DWORD stat, LPCWSTR name, int id);
 DLLEXPORT UIHandle WINAPI D2DCreateControlsWithScrollbar(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle WINAPI D2DCreateControlsWithMove(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateMDISplitFrame(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateChildWindow(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateFileManage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
 DLLEXPORT UIHandle WINAPI D2DCreateTabControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle WINAPI D2DAddNewTab(UIHandle hctrls, LPCWSTR nm);
 DLLEXPORT UIHandle WINAPI D2DGetControlFromIdx(UIHandle hctrls, USHORT idx);
-
+DLLEXPORT bool WINAPI D2DIsControls(UIHandle h);
 
 
 
@@ -116,7 +119,8 @@ DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F&  rcS, const D2D1_
 DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect);
 DLLEXPORT bool WINAPI D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp);
 
-
+DLLEXPORT void WINAPI D2DMDICreateChildView(UIHandle hctrls,int typ);
+DLLEXPORT UIHandle WINAPI D2DMDIGetControl(UIHandle hctrls, LPCWSTR nm);
 
 
 };

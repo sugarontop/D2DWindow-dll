@@ -15,9 +15,9 @@ JsContextRef gcontext;
 #define IfFailError( func,msg)
 
 JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [], int argumentsStart, JsContextRef *context);
-JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 JsErrorCode DefineHostCallback(JsValueRef globalObject, const wchar_t *callbackName, JsNativeFunction callback, void *callbackState);
-
+JsValueRef CALLBACK createFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
+JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 bool JavascriptAppInit()
 {
 	JsContextRef context;
@@ -41,7 +41,7 @@ void JavascriptAppExit()
 {
 	if ( runtime )
 	{
-		JsSetCurrentContext(JS_INVALID_REFERENCE);
+		JsSetCurrentContext(gcontext);
 	
 
 		JsDisposeRuntime(runtime);
@@ -49,17 +49,24 @@ void JavascriptAppExit()
 	}
 }
 
-
-static unsigned currentSourceContext = 0;
-
 void JsRun(LPCWSTR script )
 {
+
+	static unsigned currentSourceContext = 0;
 
 	JsSetCurrentContext(gcontext); 
 
 	JsValueRef result;
-	JsErrorCode errorCode = JsRunScript(script, currentSourceContext++, L"", &result);
+	JsErrorCode er = JsRunScript(script, currentSourceContext++, L"", &result);
 
+	if ( JsNoError != er )
+	{
+		JsValueRef excp;
+		JsGetAndClearException(&excp);
+
+		//JsValueType ty;
+		//JsGetValueType(excp,&ty);
+	}
 }
 
 JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [], int argumentsStart, JsContextRef *context)
@@ -78,16 +85,17 @@ JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [
 
 	
 	JsPropertyIdRef hostPropertyId;
-	JsGetPropertyIdFromName(L"host", &hostPropertyId); // –¼‘O‚Ì“o˜^
+	JsGetPropertyIdFromName(L"dd", &hostPropertyId); // –¼‘O‚Ì“o˜^
 
 	JsSetProperty(globalObject, hostPropertyId, hostObject, true); // globalObject, hostPropertyId, hostObject ‚Ì‚R‚Â‚ð•R‚Ã‚¯
 
 
-//	IfFailRet(DefineHostCallback(hostObject, L"echo", echo, nullptr)); // hostObject.echo
+	IfFailRet(DefineHostCallback(hostObject, L"select", selectFunc, nullptr)); // <-- with hostObject
+	IfFailRet(DefineHostCallback(hostObject, L"create", createFunc, nullptr));
+
+//	IfFailRet(DefineHostCallback(hostObject, L"echo", echo, nullptr)); // global‚Å‚Ì
 //	IfFailRet(DefineHostCallback(hostObject, L"api", apiFunc, nullptr));
 
-
-	IfFailRet(DefineHostCallback(globalObject, L"select", selectFunc, nullptr));
 //	IfFailRet(DefineHostCallback(globalObject, L"set", setFunc, nullptr));
 
 
@@ -96,25 +104,13 @@ JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [
 
 	for (int index = argumentsStart; index < argc; index++)
 	{
-		//
-		// Create the argument value.
-		//
-
 		JsValueRef argument;
-		IfFailRet(JsPointerToString(argv[index], wcslen(argv[index]), &argument));
-
-		//
-		// Create the index.
-		//
-
+		IfFailRet(JsPointerToString(argv[index], wcslen(argv[index]), &argument));// Create the argument value.
+		
 		JsValueRef indexValue;
-		IfFailRet(JsIntToNumber(index - argumentsStart, &indexValue));
+		IfFailRet(JsIntToNumber(index - argumentsStart, &indexValue));// Create the index.
 
-		//
-		// Set the value.
-		//
-
-		IfFailRet(JsSetIndexedProperty(arguments, indexValue, argument));
+		IfFailRet(JsSetIndexedProperty(arguments, indexValue, argument));// Set the value.
 	}
 
 	JsPropertyIdRef argumentsPropertyId;
@@ -122,8 +118,7 @@ JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [
 
 	JsSetProperty(hostObject, argumentsPropertyId, arguments, true);
 
-
-	JsSetCurrentContext(JS_INVALID_REFERENCE);
+	JsSetCurrentContext(gcontext);
 
 	return JsNoError;
 }
@@ -156,8 +151,6 @@ struct UIHandleRap
 	{ 
 		delete (UIHandleRap*)p; 
 	}
-
-
 };
 
 struct ActiveObject
@@ -215,6 +208,67 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 
 
 	return ret;
+}
+
+
+std::vector<std::wstring> SplitW( LPCWSTR str, LPCWSTR split );
+
+//bool CreateD2DObject(std::wstring& cmdstr)
+//{
+//	auto ar = SplitW(cmdstr.c_str(),L"&");
+//
+//	std::wstring typ;
+//	bool bl = false;
+//
+//	for(auto& it : ar)
+//	{
+//		auto ar2 = SplitW(it.c_str(), L"=");
+//
+//		if (ar2[0]==L"type")
+//		{
+//			typ = ar2[1];
+//			bl = true;
+//			break;
+//		}
+//	}
+//
+//	// –Ê“|
+//	return false;
+//
+//}
+
+
+JsValueRef CALLBACK createFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
+{
+	std::wstring select_item;
+	
+	for (unsigned int index = 1; index < argumentCount; index++)
+	{
+		CJsValueRef v(arguments[index]);
+		select_item = v.ToString();
+		break;
+	}
+
+	if ( D2DIsControls(select_obj.h))
+	{
+		// CreateD2DObject(select_item);
+		auto uh = D2DCreateDropdownListbox(select_obj.h, FRectF(200,250,FSizeF(200,26)), STAT_DEFAULT,NONAME);
+
+		select_obj.h = uh;
+	
+		// objì¬
+		UIHandleRap* rap = new UIHandleRap(uh);
+
+		JsValueRef ret;
+		auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
+	
+		// obj‚Éset function‚ðŽÀ‘•
+		IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
+
+		return ret;
+	}
+
+	return 0;
 }
 std::wstring UrlDecode(const std::wstring& s)
 {

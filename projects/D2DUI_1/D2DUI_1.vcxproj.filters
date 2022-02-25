@@ -152,5 +152,23 @@
     <ClCompile Include="..\lib\D2DScrollbar.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\D2DWhiteWindowControl.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DMDIControls.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DMDISplitControls.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DAccordionbar.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DChildWindow.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\D2DFileManage.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
