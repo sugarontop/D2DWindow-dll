@@ -247,7 +247,7 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
 
 		nmh.sender_parent = parent_control_;
         nmh.sender = u;
-        nmh.code = 1001; // onchanged
+        nmh.code = EVENTID_SELECTCHANGED; // onchanged
         nmh.prm1 = selected_idx_;
 
         int a = GetID();

@@ -193,6 +193,9 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 
 
 }
+extern JsValueRef glsbox;
+#include <strsafe.h>
+
 LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	BobInstance* m = (BobInstance*)captureobj;
@@ -227,8 +230,8 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				auto b1 = D2DCreateButton(m->hme, FRectF(10,220,FSizeF(100,30)), STAT_DEFAULT, L"JSRunButton", 2022);
 				D2DSetText(b1, L"Run");
 
-
-								
+				auto b2 = D2DCreateButton(m->hme, FRectF(10,260,FSizeF(100,30)), STAT_DEFAULT, L"JSRunButton2", 2023);
+				D2DSetText(b2, L"AAAA");
 				
 
 			}
@@ -272,6 +275,62 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				auto bs = D2DGetText( tx, true );
 
 				JsRun(bs);
+
+				r = 1;
+			}
+			else	if ( wParam == 2023 )
+			{
+				//JsCall( L"f1", nullptr, 0 );
+
+				r = 1;
+			}
+			else if ( wParam == 10001)
+			{
+				D2DNMHDR& nmh = *(D2DNMHDR*)lParam;
+
+				if ( nmh.code == EVENTID_SELECTCHANGED)
+				{
+					auto *text = L"onchanged ";
+					int idx = (int)nmh.prm1;
+
+					WCHAR cb[64];
+					StringCbPrintf (cb,64,L"%s %d", text, idx);
+									
+
+					JsValueRef val;
+					JsPointerToString(cb, lstrlen(cb), &val);
+
+					JsValueRef globalObject;
+					JsGetGlobalObject(&globalObject); 
+
+					JsPropertyIdRef xid;
+					auto er = JsGetPropertyIdFromName(L"gk1", &xid); 
+
+					JsValueRef k1;
+					
+					er = JsGetProperty(globalObject, xid, &k1);
+					JsValueType ty1,ty;
+					auto ty01= JsGetValueType(k1, &ty);
+					_ASSERT(ty == JsObject);
+
+
+					//https://github.com/chakra-core/ChakraCore/wiki/JavaScript-Runtime-%28JSRT%29-Reference
+					
+					JsPropertyIdRef funcid;
+					er = JsGetPropertyIdFromName(L"OnChanged", &funcid); 
+					
+					JsValueRef func;
+					
+					er = JsGetProperty(k1, funcid, &func);					
+					er =  JsGetValueType(func, &ty1);
+					_ASSERT(ty1 == JsFunction);
+
+					JsValueRef arg[] = { k1,val};
+					JsValueRef result1;
+					 er = JsCallFunction(func,arg, 2, &result1);
+
+					r = 1;
+				}
 
 				r = 1;
 			}
