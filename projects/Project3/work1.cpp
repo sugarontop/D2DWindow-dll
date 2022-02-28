@@ -21,49 +21,18 @@ using namespace V6;
 
 bool LoadTextFile( LPCWSTR fnm, std::wstring* str, bool butf8 );
 
-bool FileReadStream( LPCWSTR fnm, IStream** sm )
-{
-	LRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, sm);
-
-	CREATEFILE2_EXTENDED_PARAMETERS cfprm = {};
-	cfprm.dwSize = sizeof(CREATEFILE2_EXTENDED_PARAMETERS);
-	
-	HANDLE h = ::CreateFile2(fnm,GENERIC_READ,FILE_SHARE_READ,OPEN_EXISTING, &cfprm);
-
-	if ( h != (HANDLE)-1)
-	{
-		byte cb[256];
-		DWORD dcb;
-		while( ReadFile(h,cb,256,&dcb,nullptr) && dcb != 0)
-		{			
-			ULONG dlen;
-			(*sm)->Write(cb, (ULONG)dcb, &dlen);
-		}
-
-		::CloseHandle(h);
-
-		ULARGE_INTEGER ui;
-		LARGE_INTEGER uii={};
-		(*sm)->Seek(uii,STREAM_SEEK_SET,&ui);
-		return true;
-	}
-
-	return false;
-}
-
-
 extern UIHandleWin hwin;
 
 
 #define  APP (D2DApp::GetInstance())
 void CreateDocumentControl(UIHandle h);
 void CreateLoginControl(UIHandle h);
-std::vector<DocFunc> ar;
 
 void CenterDraw(LPVOID captureobj, D2DContext& cxt);
 LRESULT CenterFunc(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 D2DControls* CreateSquare(UIHandle parent,  FSizeF size, LPCWSTR k );
 
+extern std::map<int, JsValueRef> objBank;
 
 void CreateControl(HWND hWnd)
 {
@@ -193,8 +162,40 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 
 
 }
-extern JsValueRef glsbox;
-#include <strsafe.h>
+
+void xD2DJsCallFunction( int id, LPCWSTR funcnm, JsValueRef* arg,  int argcnt)
+{
+	JsValueRef b1 = objBank[id];
+	JsValueType ty1,ty;
+	auto ty01= JsGetValueType(b1, &ty);
+	_ASSERT(ty == JsObject);
+
+	JsPropertyIdRef funcid;
+	auto er = JsGetPropertyIdFromName(funcnm, &funcid); 
+					
+	JsValueRef func;
+					
+	er = JsGetProperty(b1, funcid, &func);					
+	er = JsGetValueType(func, &ty1);
+	if (ty1 == JsFunction)
+	{
+		JsValueRef* _arg = new JsValueRef[argcnt+2]; 
+
+		_arg[0] = b1;
+		_arg[1] = b1;
+
+		for(int i=0; i < argcnt;i++)
+			_arg[2+i] = arg[i];
+
+		JsValueRef result1;
+		er = JsCallFunction(func,_arg, argcnt+2, &result1);
+
+		delete [] _arg;
+	}				
+
+}
+
+#define BTN_RUN_ID	2022
 
 LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -215,9 +216,13 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			
 			auto id = D2DGetId(m->hme);
 
-			if ( 12 == id )
+			if ( 10 == id )
 			{
-				auto tx = D2DCreateTextbox(m->hme, FRectF(10,10,800,200), true, STAT_DEFAULT, L"TX1",-1,-1);
+				CreateCardControls(m->hme);
+			}
+			else if ( 12 == id )
+			{
+				auto tx = D2DCreateTextbox(m->hme, FRectF(10,60,FSizeF(600,900)), true, STAT_DEFAULT, L"TX1",-1,-1);
 
 				std::wstring str;
 
@@ -227,12 +232,14 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					D2DSetText( tx, str.c_str()); 
 				D2DSetColor(tx, ColorF::Gray, ColorF::White, ColorF::Gray);
 
-				auto b1 = D2DCreateButton(m->hme, FRectF(10,220,FSizeF(100,30)), STAT_DEFAULT, L"JSRunButton", 2022);
+				auto b1 = D2DCreateButton(m->hme, FRectF(10,10,FSizeF(100,30)), STAT_DEFAULT, L"JSRunButton", BTN_RUN_ID);
 				D2DSetText(b1, L"Run");
-
-				auto b2 = D2DCreateButton(m->hme, FRectF(10,260,FSizeF(100,30)), STAT_DEFAULT, L"JSRunButton2", 2023);
-				D2DSetText(b2, L"AAAA");
+			}
+			else if ( 13 == id )
+			{
 				
+
+
 
 			}
 			else if ( 11 == id )
@@ -249,18 +256,6 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				D2DCreateStatic(m->hme, FRectF(10,50,FSizeF(1200,260)), STAT_DEFAULT, prm2.c_str(), NONAME, -2 );
 				
 			}
-			else if ( 10 == id )
-			{
-				//CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"A" );
-				CreateCardControls(m->hme);
-			}
-			else if ( 13 == id )
-			{
-				
-
-
-
-			}
 
 
 			r = 1;
@@ -268,72 +263,44 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		break;
 		case WM_NOTIFY:
 		{
-			if ( wParam == 2022 )
-			{
-				
+			if ( wParam == BTN_RUN_ID )
+			{				
 				auto tx = D2DGetControlFromName(hwin,L"TX1");
 				auto bs = D2DGetText( tx, true );
 
 				JsRun(bs);
 
 				r = 1;
-			}
-			else	if ( wParam == 2023 )
-			{
-				//JsCall( L"f1", nullptr, 0 );
-
-				r = 1;
-			}
-			else if ( wParam == 10001)
+			}			
+			else if ( wParam >= 10000 )
 			{
 				D2DNMHDR& nmh = *(D2DNMHDR*)lParam;
 
+				int id = D2DGetId(nmh.sender);
+
 				if ( nmh.code == EVENTID_SELECTCHANGED)
-				{
-					auto *text = L"onchanged ";
-					int idx = (int)nmh.prm1;
+				{					
+					auto *text = L"test  ";
+					int select_idx = (int)nmh.prm1;
 
 					WCHAR cb[64];
-					StringCbPrintf (cb,64,L"%s %d", text, idx);
-									
+					StringCbPrintf (cb,64,L"%s %d", text, select_idx);
 
 					JsValueRef val;
 					JsPointerToString(cb, lstrlen(cb), &val);
 
-					JsValueRef globalObject;
-					JsGetGlobalObject(&globalObject); 
+					JsValueRef arg[] = {val};
 
-					JsPropertyIdRef xid;
-					auto er = JsGetPropertyIdFromName(L"gk1", &xid); 
-
-					JsValueRef k1;
-					
-					er = JsGetProperty(globalObject, xid, &k1);
-					JsValueType ty1,ty;
-					auto ty01= JsGetValueType(k1, &ty);
-					_ASSERT(ty == JsObject);
-
-
-					//https://github.com/chakra-core/ChakraCore/wiki/JavaScript-Runtime-%28JSRT%29-Reference
-					
-					JsPropertyIdRef funcid;
-					er = JsGetPropertyIdFromName(L"OnChanged", &funcid); 
-					
-					JsValueRef func;
-					
-					er = JsGetProperty(k1, funcid, &func);					
-					er =  JsGetValueType(func, &ty1);
-					_ASSERT(ty1 == JsFunction);
-
-					JsValueRef arg[] = { k1,val};
-					JsValueRef result1;
-					 er = JsCallFunction(func,arg, 2, &result1);
-
-					r = 1;
+					xD2DJsCallFunction( id, L"OnChanged", arg, 1);
+				}
+				else if ( nmh.code == EVENTID_CLICK)
+				{
+					xD2DJsCallFunction( id, L"OnClick", nullptr, 0); // equal to "b1->OnClick(b1);"
 				}
 
 				r = 1;
 			}
+			
 		}
 		break;
 

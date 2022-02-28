@@ -19,7 +19,7 @@ easy sample project
 ## Project2
 出来損ないのファイルマネージャー 
 ## Project3
-テスト 
+javascript テスト 
 ## Project4
-MDIフレーム 
+ 
 

@@ -520,6 +520,12 @@ DLLEXPORT int WINAPI D2DGetId(UIHandle h )
 	return pc->GetID();
 }
 
+DLLEXPORT BSTR WINAPI D2DGetName(UIHandle h)
+{
+	D2DControl* pc = (D2DControl*)h.p;
+	return ::SysAllocString(pc->GetName().c_str());
+}
+
 DLLEXPORT UIHandle WINAPI D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)
 {	
 	auto win = (D2DWindow*)hwin.p;

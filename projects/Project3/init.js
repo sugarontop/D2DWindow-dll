@@ -1,43 +1,41 @@
 // javascript, chakra engine
 
-var gk1;
-function f2(a)
+
+function f2(obj,from_app_string)
 {
 
-	var k = dd.select("JSRunButton");
-	k.set("text=" + a );
+	var k = dd.select("mytextbox");
+	k.set("text=" + from_app_string );
 }
-function f1( t )
+
+function click(obj)
 {
-	var b = dd.select("JSRunButton");
-	var str = t; //"Running100";
-	b.set("text=" + str);
 
-
+	var k = dd.select("mytextbox");
+	k.set("text=success" );
 }
 
 function main1()
 {
-	var b = dd.select("JSRunButton");
-	//var str = "Running";
-	//b.set("text=" + str);
-	
-	var txt = dd.select("TX1");
-	//txt.set("color=13421772"); // light gray
+	var b = dd.select("JSRunButton"); //wor1.cpp, 231 line
 
 	dd.select("s3");
-	var k1 = dd.create("type=listbox&x=200&y=200&w=100&nm=mylsbox");
+	var k1 = dd.create("type=combobox&id=10001&x=650&y=10&w=100&nm=mylsbox");
 
 	k1.set("add&str=hoi1");
 	k1.set("add&str=hoi2");
 	k1.set("add&str=hoi3");
-	//k1.set("select&no=2");
 
-	//var n = k1.get("select");
 	k1.OnChanged = f2;
-	gk1 = k1;
-	//k1.OnChanged("test");
-	//b.set("enable=0");
+	b.set("enable=0");
+	
+	
+	var tx1 = dd.create("type=textbox&id=10002&x=650&y=50&w=200&nm=mytextbox");
+	var btn1 = dd.create("type=button&id=10003&x=650&y=80&w=200&nm=mybtn");
+	
+	btn1.OnClick = click;
+	
 }
+
 
 main1();

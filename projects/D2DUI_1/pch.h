@@ -34,6 +34,7 @@
 #include <memory>
 #include <type_traits>
 #include <algorithm>
+#include <strsafe.h>
 
 #include <msxml6.h>
 #import <msxml6.dll> 

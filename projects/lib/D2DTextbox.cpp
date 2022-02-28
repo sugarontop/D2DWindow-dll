@@ -368,7 +368,8 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 					{
 						if (ar2[0] == L"text")
 						{
-							SetText(ar2[1].c_str(), (int)ar2[0].length());
+							Clear();
+							SetText(ar2[1].c_str(), (int)ar2[1].length());
 						}	
 						else if (ar2[0] == L"color")
 						{

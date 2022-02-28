@@ -95,7 +95,7 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 				{				
 					{
 						D2DNMHDR d;
-						d.code = EVENT_PUSH;
+						d.code = EVENTID_CLICK;
 						d.sender.p = this;
 						d.sender.typ = TYP_BUTTON;
 						d.sender_parent = parent_control_;
@@ -510,7 +510,7 @@ LRESULT InnerFloatingMenu::WndProc(AppBase& b, UINT message, WPARAM wParam, LPAR
 				if ( floating_idx == floating_idx_ && floating_idx > -1)
 				{
 					D2DNMHDR d;
-					d.code = EVENT_PUSH;
+					d.code = EVENTID_CLICK;
 					d.sender.p = this;
 					d.sender.typ = TYP_BUTTON;
 					d.prm1 = items_[floating_idx_].id;

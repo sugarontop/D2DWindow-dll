@@ -167,7 +167,7 @@ void yahoo_finance::StartDownload(LPCWSTR cd1)
 		std::wstring cd= cd1;
 
 
-		_snwprintf_s(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",cd.c_str(),dds, now);
+		StringCbPrintf(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",cd.c_str(),dds, now);
 		info_->url = ::SysAllocString(cb);
 
 		parent_window_->SendMessage(WM_D2D_TABCONTROL_TAB_NAME, (WPARAM)this, (LPARAM)cd.c_str());
@@ -818,10 +818,10 @@ void yahoo_table::Draw(D2DContext& cxt)
 	{
 		auto st = ar[i];
 
-		cxt.DrawBlackLine(rc[0]); _snwprintf_s(cb,256,L"%f", st.ystart);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[0],cxt.black_);
-		cxt.DrawBlackLine(rc[1]); _snwprintf_s(cb,256,L"%f", st.ymax);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[1],cxt.black_);
-		cxt.DrawBlackLine(rc[2]); _snwprintf_s(cb,256,L"%f", st.ymin);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[2],cxt.black_);
-		cxt.DrawBlackLine(rc[3]); _snwprintf_s(cb,256,L"%f", st.yend);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[3],cxt.black_);
+		cxt.DrawBlackLine(rc[0]); StringCbPrintf(cb,256,L"%f", st.ystart);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[0],cxt.black_);
+		cxt.DrawBlackLine(rc[1]); StringCbPrintf(cb,256,L"%f", st.ymax);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[1],cxt.black_);
+		cxt.DrawBlackLine(rc[2]); StringCbPrintf(cb,256,L"%f", st.ymin);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[2],cxt.black_);
+		cxt.DrawBlackLine(rc[3]); StringCbPrintf(cb,256,L"%f", st.yend);(*cxt)->DrawText(cb, wcslen(cb),cxt.textformat_,rc[3],cxt.black_);
 
 
 		mat.Offset(0,h);

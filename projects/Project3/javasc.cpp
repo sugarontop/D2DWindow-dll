@@ -8,8 +8,36 @@
 
 using namespace V6;
 
+//https://github.com/chakra-core/ChakraCore/wiki/JavaScript-Runtime-%28JSRT%29-Reference
+
 JsRuntimeHandle runtime;
 JsContextRef gcontext;
+
+
+extern UIHandleWin hwin;
+
+struct UIHandleRap
+{
+	UIHandleRap(){}
+	UIHandleRap(UIHandle hh):h(hh){}
+
+	UIHandle h;
+
+	static void CALLBACK Del(LPVOID p)
+	{ 
+		delete (UIHandleRap*)p; 
+	}
+};
+
+struct ActiveObject
+{
+	UIHandle h;
+
+};
+
+static ActiveObject select_obj;
+std::map<int, JsValueRef> objBank;
+
 
 #define IfFailRet
 #define IfFailError( func,msg)
@@ -18,6 +46,10 @@ JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [
 JsErrorCode DefineHostCallback(JsValueRef globalObject, const wchar_t *callbackName, JsNativeFunction callback, void *callbackState);
 JsValueRef CALLBACK createFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
+JsValueRef CALLBACK setFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
+JsValueRef CALLBACK getFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
+
+
 bool JavascriptAppInit()
 {
 	JsContextRef context;
@@ -41,8 +73,11 @@ void JavascriptAppExit()
 {
 	if ( runtime )
 	{
+		
+		
 		JsSetCurrentContext(gcontext);
 	
+		JsCollectGarbage(runtime);
 
 		JsDisposeRuntime(runtime);
 		runtime = nullptr;
@@ -159,8 +194,8 @@ JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [
 }
 
 
-JsPropertyIdRef gfuncid;
-JsValueRef gfunc;
+
+
 JsErrorCode DefineHostCallback(JsValueRef myObject, const wchar_t *callbackName, JsNativeFunction callback, void *callbackState)
 {
 	JsPropertyIdRef propertyId;
@@ -172,7 +207,7 @@ JsErrorCode DefineHostCallback(JsValueRef myObject, const wchar_t *callbackName,
 	IfFailRet(JsSetProperty(myObject, propertyId, function, true));
 
 
-
+#ifdef _DEBUG
 
 	JsPropertyIdRef funcid;
 	auto er = JsGetPropertyIdFromName(callbackName, &funcid); 
@@ -180,39 +215,18 @@ JsErrorCode DefineHostCallback(JsValueRef myObject, const wchar_t *callbackName,
     er = JsGetProperty(myObject, funcid, &func);
 	JsValueType ty1;
 	er =  JsGetValueType(func, &ty1);
-
 	_ASSERT(ty1 == JsFunction);
 
-	gfuncid = funcid;
-	gfunc = func;
+#endif
 
 	return JsNoError;
 }
 
 
 
-extern UIHandleWin hwin;
 
-struct UIHandleRap
-{
-	UIHandleRap(){}
-	UIHandleRap(UIHandle hh):h(hh){}
 
-	UIHandle h;
 
-	static void CALLBACK Del(LPVOID p)
-	{ 
-		delete (UIHandleRap*)p; 
-	}
-};
-
-struct ActiveObject
-{
-	UIHandle h;
-
-};
-
-static ActiveObject select_obj;
 
 JsValueRef CALLBACK setFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
 {
@@ -226,10 +240,23 @@ JsValueRef CALLBACK setFunc(JsValueRef callee, bool isConstructCall, JsValueRef 
 		CJsValueRef v(arguments[1]);
 		auto arg = v.ToString();
 
-		
-
 		D2DSendMessage(k->h, WM_D2D_COMMAND_SET, (LPARAM)k->h.p, (LPARAM)arg.c_str());
+	}
+	return 0;
+}
+JsValueRef CALLBACK getFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
+{
+	if ( 2 <= argumentCount )
+	{
+		LPVOID p;
+		JsValueRef obj = arguments[0];
+		IfFailRet(JsGetExternalData( obj, &p));
+		UIHandleRap* k = (UIHandleRap*)p;
 
+		CJsValueRef v(arguments[1]);
+		auto arg = v.ToString();
+
+		D2DSendMessage(k->h, WM_D2D_COMMAND_GET, (LPARAM)k->h.p, (LPARAM)arg.c_str());
 	}
 	return 0;
 }
@@ -250,15 +277,16 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 
 	select_obj.h = uh;
 	
-	// objçÏê¨
+	//// objçÏê¨
 	UIHandleRap* rap = new UIHandleRap(uh);
 
 	JsValueRef ret;
 	auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
-	
+
 	// objÇ…set functionÇé¿ëï
 	IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
-
+	IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
+	
 
 	return ret;
 }
@@ -266,31 +294,74 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 
 std::vector<std::wstring> SplitW( LPCWSTR str, LPCWSTR split );
 
-//bool CreateD2DObject(std::wstring& cmdstr)
-//{
-//	auto ar = SplitW(cmdstr.c_str(),L"&");
-//
-//	std::wstring typ;
-//	bool bl = false;
-//
-//	for(auto& it : ar)
-//	{
-//		auto ar2 = SplitW(it.c_str(), L"=");
-//
-//		if (ar2[0]==L"type")
-//		{
-//			typ = ar2[1];
-//			bl = true;
-//			break;
-//		}
-//	}
-//
-//	// ñ ì|
-//	return false;
-//
-//}
+bool CreateD2DObject(std::wstring& cmdstr, UIHandle* ret)
+{
+	auto ar = SplitW(cmdstr.c_str(),L"&");
 
-JsValueRef glsbox;
+	std::wstring type;
+	bool bl = false;
+
+	for(auto& it : ar)
+	{
+		auto ar2 = SplitW(it.c_str(), L"=");
+		if (ar2[0]==L"type")
+		{
+			type = ar2[1];
+			bl = true;
+			break;
+		}
+	}
+
+	if ( !bl ) return false;
+
+
+	struct crprm
+	{
+		crprm():x(0),y(0),cx(200),cy(26),id(10000),nm(L"noname"){}
+		float x,y;
+		float cx,cy;
+		UINT id;
+		std::wstring nm;
+	};
+	
+	crprm prm;
+
+	for(auto& it : ar)
+	{
+		auto ar2 = SplitW(it.c_str(), L"=");
+		auto key = ar2[0];
+		auto val = ar2[1].c_str();
+		if ( key == L"x")
+			prm.x = (float)_wtof(val);
+		else if ( key == L"y")
+			prm.y = (float)_wtof(val);
+		else if ( key == L"cx")
+			prm.cx =(float)_wtof(val); 
+		else if ( key == L"cy")
+			prm.cy = (float)_wtof(val);
+		else if ( key == L"id")
+			prm.id = _wtoi(val);
+		else if ( key == L"nm")
+			prm.nm = ar2[1];
+	}
+
+	FRectF rc(prm.x,prm.y,FSizeF(prm.cx,prm.cy));
+
+	if (type == L"combobox")
+		*ret = D2DCreateDropdownListbox(select_obj.h, rc, STAT_DEFAULT,prm.nm.c_str(), prm.id);
+	else if (type == L"textbox")
+		*ret = D2DCreateTextbox(select_obj.h, rc, false, STAT_DEFAULT,prm.nm.c_str(), prm.id);
+	else if (type == L"button")
+		*ret = D2DCreateButton(select_obj.h, rc, STAT_DEFAULT,prm.nm.c_str(), prm.id);
+	else
+		bl = false;
+
+
+	return bl;
+
+}
+
+
 
 JsValueRef CALLBACK createFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
 {
@@ -305,26 +376,31 @@ JsValueRef CALLBACK createFunc(JsValueRef callee, bool isConstructCall, JsValueR
 
 	if ( D2DIsControls(select_obj.h))
 	{
-		// CreateD2DObject(select_item);
-		auto uh = D2DCreateDropdownListbox(select_obj.h, FRectF(200,250,FSizeF(200,26)), STAT_DEFAULT,NONAME, 10001);
-
-		select_obj.h = uh;
+		UIHandle uh;
+		if ( CreateD2DObject(select_item, &uh))
+		{
+			
+			//select_obj.h = uh;
 	
-		// objçÏê¨
-		UIHandleRap* rap = new UIHandleRap(uh);
+			// objçÏê¨
+			UIHandleRap* rap = new UIHandleRap(uh);
 
-		JsValueRef ret;
-		auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
+			JsValueRef ret;
+			auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
 
-		JsValueType ty;
-		auto ty1= JsGetValueType(ret, &ty);
-		_ASSERT(ty == JsObject);
-		glsbox = ret;
+			JsValueType ty;
+			auto ty1= JsGetValueType(ret, &ty);
+			_ASSERT(ty == JsObject);
+
+			auto id = D2DGetId(uh);
+			objBank[id] = ret;
 	
-		// objÇ…set functionÇé¿ëï
-		IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
+			// objÇ…set functionÇé¿ëï
+			IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
+			IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
 
-		return ret;
+			return ret;
+		}
 	}
 
 	return 0;
@@ -355,4 +431,27 @@ std::wstring UrlDecode(const std::wstring& s)
 			sm << *(p++);
 	}
 	return sm.str();
+}
+
+static std::vector<std::wstring> SplitW( LPCWSTR str, LPCWSTR split )
+{
+    std::vector<std::wstring> ar;
+    int splen = lstrlenW(split);
+    int len = lstrlenW(str);
+    _ASSERT( 0 < splen && splen <= 2  );
+
+    int si = 0;
+    for( int i = 0; i <= len; i++ )
+    {
+        if ( str[i] == split[0] || (i == len && 0 < len) )
+        {
+            if (splen == 1 || (splen == 2 && (i == len || str[i+1] == split[1] )) )
+            {
+                std::wstring s( &str[si], i-si );
+                ar.push_back( std::wstring(s.c_str()));
+                si = i + splen;
+            }
+        }       
+    }
+    return ar;
 }

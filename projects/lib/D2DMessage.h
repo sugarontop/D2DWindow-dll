@@ -77,8 +77,9 @@ typedef DWORD (*D2DEventHandlerDelegate)(void* sender,LPCWSTR eventName, void* p
 
 
 #define EVENTID_SELECTCHANGED	1001
+#define EVENTID_CLICK			1002
 
-#define EVENT_PUSH 1
+
 
 #define WM_D2D_CB_INSERTSTRING					(WM_APP+1)
 #define WM_D2D_RESOURCES_UPDATE					(WM_APP+2)

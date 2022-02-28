@@ -203,7 +203,7 @@ bool ConvCsv(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::str
 void TDChart::GenerateGraph()
 {
 	WCHAR cb[256];
-	_snwprintf_s(cb,256, L"%d: %s", info_->result, (LPCWSTR)info_->url );
+	StringCbPrintf(cb,256, L"%d: %s", info_->result, (LPCWSTR)info_->url );
 
 	
 	std::vector<std::string> dates;
@@ -305,7 +305,7 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				if ( info->throwerror!=0 )
 				{
 					WCHAR cb[256];
-					_snwprintf_s(cb,256,L"throwed %d", info->throwerror);
+					StringCbPrintf(cb,256,L"throwed %d", info->throwerror);
 
 					ch->Error(cb) ;
 
