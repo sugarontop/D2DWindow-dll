@@ -139,7 +139,7 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 	m->mat = mat.PushTransform();
 
 
-	auto rc = *(m->prc);
+	FRectF rc = *(m->prc);
 
 	D2DRectFilter fil(cxt, rc);
 	
@@ -179,7 +179,8 @@ void xD2DJsCallFunction( int id, LPCWSTR funcnm, JsValueRef* arg,  int argcnt)
 	er = JsGetValueType(func, &ty1);
 	if (ty1 == JsFunction)
 	{
-		JsValueRef* _arg = new JsValueRef[argcnt+2]; 
+		_ASSERT(argcnt+2 < 10);
+		JsValueRef _arg[10];
 
 		_arg[0] = b1;
 		_arg[1] = b1;
@@ -189,8 +190,6 @@ void xD2DJsCallFunction( int id, LPCWSTR funcnm, JsValueRef* arg,  int argcnt)
 
 		JsValueRef result1;
 		er = JsCallFunction(func,_arg, argcnt+2, &result1);
-
-		delete [] _arg;
 	}				
 
 }
@@ -203,7 +202,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 	auto me = (D2DControl*)b.card;
 
 
-	LRESULT r = 0;
+	LRESULT r = 0, r2 = 0;
 
 	switch(message)
 	{
@@ -222,7 +221,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 12 == id )
 			{
-				auto tx = D2DCreateTextbox(m->hme, FRectF(10,60,FSizeF(600,900)), true, STAT_DEFAULT, L"TX1",-1,-1);
+				auto tx = D2DCreateTextbox(m->hme, FRectF(10,60,FSizeF(1200,900)), true, STAT_DEFAULT, L"TX1",-1,-1);
 
 				std::wstring str;
 
@@ -245,16 +244,16 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			else if ( 11 == id )
 			{
 			
-				LPCWSTR prm = L"text=Quote n.28&color=[128,217,204]&align=center&fontheight=30";
+				LPCWSTR prm = L"text= name:s2, id:11&color=[128,217,204]&align=center&fontheight=30";
 
 				D2DCreateStatic(m->hme, FRectF(100,10,FSizeF(200,260)), STAT_DEFAULT, prm, NONAME, -2 );
 
-				std::wstring prm2 = L"color=[128,217,204]&align=left&fontname=Meiryo&fontheight=16&text=";
+				/*std::wstring prm2 = L"color=[128,217,204]&align=left&fontname=Meiryo&fontheight=16&text=";
 
 				prm2 += L"When I was a boy I was told that anybody could becaome Persident.Now I'm beginning to believe it.";
 
 				D2DCreateStatic(m->hme, FRectF(10,50,FSizeF(1200,260)), STAT_DEFAULT, prm2.c_str(), NONAME, -2 );
-				
+				*/
 			}
 
 
@@ -336,7 +335,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 				auto pt = m->mat.DPtoLP(pm.pt);
 
-				auto rc = *(m->prc);
+				FRectF rc = *(m->prc);
 
 				if ( rc.PtInRect(pt) )
 				{
@@ -405,9 +404,19 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 		}
 		break;
+
 		case WM_LBUTTONDOWN:
-		{	
-			int a = 0;
+		case WM_LBUTTONUP:
+		case WM_MOUSEMOVE:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = m->mat.DPtoLP(pm.pt);
+			FRectF rc = *(m->prc);
+			if ( rc.PtInRect(pt) )
+			{
+				r2=1;
+			}
+			
 		}
 		break;
 	}
@@ -416,7 +425,9 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		r = D2DDefControlProc(m->hme,b,message,wParam,lParam);
 
 
-	return r;
+
+
+	return r+r2;
 }
 void CreateDocumentControl(UIHandle h)
 {
@@ -428,7 +439,7 @@ void CreateDocumentControl(UIHandle h)
 
 	auto hdoc1 = D2DCreateXXXControls( h, FRectF(), 0, L"document",-1); // 0:login‚·‚é‚Ü‚Å•\Ž¦‚µ‚È‚¢B
 	
-	UIHandle ha[4];
+	UIHandle ha[4]={};
 	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(0,0, sz), STAT_DEFAULT, L"s1",10);
 	ha[1] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(sz.width,sz.height,sz), STAT_DEFAULT, L"s2",11);
 	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(0,sz.height,sz), STAT_DEFAULT, L"s3",12);
@@ -466,7 +477,7 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 	auto me = (D2DControl*)b.card;
 
 
-	LRESULT r = 0;
+	LRESULT r = 0, r2 = 0;
 
 	switch(message)
 	{
@@ -524,7 +535,7 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 				auto pt = m->mat.DPtoLP(pm.pt);
 
-				auto rc = *(m->prc);
+				FRectF rc = *(m->prc);
 
 				if ( rc.PtInRect(pt) )
 				{
@@ -605,8 +616,17 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		}
 		break;
 		case WM_LBUTTONDOWN:
-		{	
-			int a = 0;
+		case WM_LBUTTONUP:
+		case WM_MOUSEMOVE:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = m->mat.DPtoLP(pm.pt);
+			FRectF rc = *(m->prc);
+			if ( rc.PtInRect(pt) )
+			{
+				r2=1;
+			}
+			
 		}
 		break;
 	}
@@ -615,13 +635,13 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		r = D2DDefControlProc(m->hme,b,message,wParam,lParam);
 
 
-	return r;
+	return r+r2;
 }
 
 
 void CreateCardControls(UIHandle h)
 {
-	UIHandle ha[3];
+	UIHandle ha[3]={};
 
 	FRectF rc = D2DGetRect(h);
 

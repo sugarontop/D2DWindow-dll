@@ -76,6 +76,7 @@ class CTextEditor
 
 		BOOL IsImeOn() const;
 		void OnChangeIME(bool bOn);
+		BOOL SelectionTab(BOOL bIns);
 	public :
 		CTextLayout layout_;
 		CTextContainer* ct_;
@@ -155,7 +156,7 @@ class CTextEditorCtrl : public CTextEditor
 		void OnLButtonDown(float x, float y);
 		void OnLButtonUp(float x, float y);
 		void OnMouseMove(float x, float y, bool bLbutton);
-
+		void DblClickSelection();
 	private:
 		int SelDragStart_;
 

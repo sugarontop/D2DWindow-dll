@@ -377,29 +377,53 @@ void CTextEditor::InvalidateRect()
 BOOL CTextEditor::InsertAtSelection(LPCWSTR psz)
 {
     //layout_.bRecalc_ = true;
-    LONG lOldSelEnd = ct_->SelEnd();
-    if (!ct_->RemoveText(ct_->SelStart(), ct_->SelEnd() - ct_->SelStart()))
-        return FALSE;
+	LONG lOldSelEnd = ct_->SelEnd();
+	if (!ct_->RemoveText(ct_->SelStart(), ct_->SelEnd() - ct_->SelStart()))
+		return FALSE;
 
 	UINT nrCnt;
     if (!ct_->InsertText(ct_->SelStart(), psz, (UINT)wcslen(psz), nrCnt))
         return FALSE;
-
 	
     ct_->SetSelStart( ct_->SelStart()+ (int)wcslen(psz));
     ct_->SetSelEnd( ct_->SelStart());
-
-
-
     
 	LONG acs = ct_->SelStart();
 	LONG ecs = ct_->SelEnd();
+
 	pTextStore_->OnTextChange(acs, lOldSelEnd, ecs);
-
-
-
     pTextStore_->OnSelectionChange();
     return TRUE;
+}
+//----------------------------------------------------------------
+//
+// Selecttion行の先頭にTAB追加　先頭のTAB削除
+//
+//----------------------------------------------------------------
+BOOL CTextEditor::SelectionTab(BOOL bDel)
+{
+	LONG acs = ct_->SelStart();
+	LONG ecs = ct_->SelEnd();
+	LONG ecs2 = ecs;
+
+	int ns = ct_->LineNo(ct_->SelStart());
+	int ne = ct_->LineNo(ct_->SelEnd());
+
+	int cnt = ne-ns;
+
+	if ( cnt == 0 )
+		return FALSE;
+
+	for(int i = 0; i <= cnt; i++)
+		ecs2 = ct_->AddTab(i+ns, !bDel);
+	
+	ct_->SetSelStart(acs);
+	ct_->SetSelEnd(ecs2);
+
+	pTextStore_->OnTextChange(acs, ecs, ecs2);
+    pTextStore_->OnSelectionChange();
+
+	return TRUE;
 }
 
 //----------------------------------------------------------------
@@ -416,7 +440,6 @@ BOOL CTextEditor::DeleteAtSelection(BOOL fBack)
     {
         if (!ct_->RemoveText(ct_->SelEnd(), 1))
             return FALSE;
-
 		
 		LONG ecs = ct_->SelEnd();
 
@@ -430,9 +453,6 @@ BOOL CTextEditor::DeleteAtSelection(BOOL fBack)
 
         ct_->SetSelStart( ct_->SelStart() -1);
         ct_->SetSelEnd( ct_->SelStart());
-
-
-
 
 		LONG acs = ct_->SelStart();
         pTextStore_->OnTextChange(acs, acs + 1, acs );
@@ -823,13 +843,6 @@ LRESULT CTextEditorCtrl::WndProc(TSFApp* d, UINT message, WPARAM wParam, LPARAM 
     {
         switch (message)
         {
-            /*case WM_PAINT:
-                   OnPaint(d->cxt_);
-		    break;*/
-            /*case WM_SETFOCUS:
-                focusは別系統で
-			    this->OnSetFocus(wParam, lParam);
-		    break;*/
             case WM_KEYDOWN:
                 if ( this->OnKeyDown(wParam, lParam) )
 				    ret = 1;
@@ -867,16 +880,26 @@ LRESULT CTextEditorCtrl::WndProc(TSFApp* d, UINT message, WPARAM wParam, LPARAM 
             }
 		    break;
             case WM_CHAR:
+			{
                 // wParam is a character of the result string. 
-			    bool bControlKey = (GetKeyState(VK_CONTROL) & 0x80) != 0;			  
+			    bool bControlKey = ((GetKeyState(VK_CONTROL) & 0x80) != 0);			  
 			    if ( bControlKey )
 				    return 0;
+
+				bool bShiftKey = ((GetKeyState(VK_SHIFT) & 0x80) != 0);			  
 
                 WCHAR wch = (WCHAR)wParam;
 			    // ansi charcter input.
                 bool bMultiline = (bri_->GetType() == IBridgeTSFInterface::MULTILINE);
                 if ( bMultiline )
                 {
+					if ( ct_->SelStart() != ct_->SelEnd() && wch == L'\t' )
+					{
+						// bShiftKey:false 複数行にadd TAB, bShiftKey:true 複数行にdel TAB
+						if ( SelectionTab(bShiftKey) )
+							return 1;
+					}
+
                     if ( wch >= L' ' ||  (wch == L'\r'&& !ct_->bSingleLine_ ) || wch == L'\t' ) 
                     {				
                         if ( wch < 256 )
@@ -903,15 +926,71 @@ LRESULT CTextEditorCtrl::WndProc(TSFApp* d, UINT message, WPARAM wParam, LPARAM 
                     }
                 }
                 layout_.bRecalc_ = true;
+			}
 		    break;
+			case WM_LBUTTONDBLCLK:
+			{
+				this->DblClickSelection();
+
+
+			}
+			break;
 	    }
     }
     return ret;
 }
 
+//----------------------------------------------------------------
+// 
+//
+//
+//----------------------------------------------------------------
+void CTextEditorCtrl::DblClickSelection()
+{
+	auto nSelStart = GetSelectionStart();
+	auto nSelEnd = GetSelectionEnd();
 
 
+	// 後ろを検索
+	WCHAR cb[256];
+	ct_->GetText(nSelEnd, cb, 256);
 
+	WCHAR* p = cb;
+	while(*p)
+	{
+		bool bl = (( '0' <= *p && *p <= '9' )||( 'A' <= *p && *p <= 'Z' )||( 'a' <= *p && *p <= 'z' )|| *p == '_');
+
+		if ( !bl )
+			break;
+
+		nSelEnd++;
+		p++;
+	}
+
+	//　前を検索
+	memset(cb,0,sizeof(WCHAR)*256);
+	ct_->GetText(max(0,nSelStart-256), cb, 256);
+	p = cb;	
+
+	int pr= nSelStart;
+	p += min(nSelStart,256-1);
+	while(nSelStart>0)
+	{
+		bool bl = (( '0' <= *p && *p <= '9' )||( 'A' <= *p && *p <= 'Z' )||( 'a' <= *p && *p <= 'z' )|| *p == '_');
+		if ( !bl )
+			break;
+
+		nSelStart--;
+		p--;
+	}
+
+	if ( pr < 256 )
+		nSelStart++;
+
+	MoveSelection(nSelStart, nSelEnd,true);
+
+
+}
 //----------------------------------------------------------------
 // 
 //
@@ -989,16 +1068,16 @@ BOOL CTextEditorCtrl::OnKeyDown(WPARAM wParam, LPARAM lParam)
 		break;
 
         case VK_DELETE:
-             nSelStart = GetSelectionStart();
-             nSelEnd = GetSelectionEnd();
-             if (nSelStart == nSelEnd)
-             {
-                 DeleteAtSelection(FALSE);
-             }
-             else
-             {
-                 DeleteSelection();
-             }
+			nSelStart = GetSelectionStart();
+			nSelEnd = GetSelectionEnd();
+			if (nSelStart == nSelEnd)
+			{
+				DeleteAtSelection(FALSE);
+			}
+			else
+			{
+				DeleteSelection();
+			}
              
 		break;
 

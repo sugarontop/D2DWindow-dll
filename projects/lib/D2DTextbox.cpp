@@ -441,6 +441,9 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 			TRACE( L"WM_KILLFOCUS\n");
 		}
 		break;
+		case WM_LBUTTONDBLCLK:
+			bl = true;
+		break;
 
 	}
 		 

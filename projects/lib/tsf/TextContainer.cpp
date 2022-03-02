@@ -138,3 +138,43 @@ BOOL CTextContainer::EnsureBuffer(UINT nNewTextSize)
 	}
 	return TRUE;
 }
+
+LONG CTextContainer::AddTab(int row, bool bAdd )
+{
+	UINT nResultCnt;
+	int irow = 0, pos = 0;
+
+	auto ch = psz_[pos];
+	while(ch!=0)
+	{
+		if (row == irow)
+			break;
+		
+		ch = psz_[pos];
+		if (ch == L'\n')
+			irow++;
+		pos++;
+	}
+
+	if ( bAdd )
+		InsertText(pos, L"\t",1, nResultCnt);
+	else
+		RemoveText(pos, 1);
+
+	while( psz_[pos] != L'\n' && psz_[pos] != L'\0' )
+	{
+		pos++;
+	}
+
+	return pos;
+}
+int CTextContainer::LineNo(LONG nPos) const
+{
+	int ret = 0;
+	for(int i=0; i < nPos; i++)
+	{
+		if (psz_[i] == L'\n')
+			ret++;
+	}
+	return ret;
+}

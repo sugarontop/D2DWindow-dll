@@ -21,6 +21,10 @@ public:
 	void SetSelStart(int a){ nSelStart_ = a; }
 	void SetSelEnd(int a){ nSelEnd_ = a; }
 
+
+	LONG AddTab(int row, bool bAdd );
+	int  LineNo(LONG nPos) const;
+
 private :
 	int nSelStart_, nSelEnd_;
 public :
