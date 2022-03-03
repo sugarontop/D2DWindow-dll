@@ -11,3 +11,6 @@
 #include "..\D2DUI_1\pch.h"
 
 
+
+#define USE_EDGEMODE_JSRT
+#include <jsrt.h>

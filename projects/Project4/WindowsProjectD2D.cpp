@@ -9,7 +9,9 @@
 #include "D2DApp.h"
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
+#include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
+#include "javasc.h"
 
 using namespace V6;
 
@@ -44,7 +46,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    
+	auto thid = ::GetCurrentThreadId();
+
+	_tsetlocale(LC_ALL, L"Japanese_Japan.932");
+	 
    
 
     // グローバル文字列を初期化する3
@@ -93,7 +98,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 //
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEXW wcex;
+    WNDCLASSEXW wcex={};
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -127,7 +132,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // グローバル変数にインスタンス ハンドルを格納する
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      300, 50, 1400, 900, nullptr, nullptr, hInstance, nullptr);
+      300, 50, 1100, 1400, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -152,22 +157,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 
 
-#define COMBOBOX_ID_1 10
 
 void CreateControl(HWND hWnd);
-void CreateMDIControl(HWND hWnd);
 
 static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
-void CreateMDISplitControl(HWND hWnd);
-
-void CreateControl(HWND hWnd)
-{
-	hwin = D2DCreateMainHWnd(hWnd, 14);
-    
-    auto root = D2DGetRootControls(hwin);
-}
-
 
 
 
@@ -182,25 +176,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
         {
             static std::shared_ptr<D2DApp> _app;
-			_app = std::make_shared<D2DApp>(D2DApp());			
+			_app = std::make_shared<D2DApp>(D2DApp());
 			auto k = _app.get();
-			
-			try 
-			{
-			
-				D2DApp::SetD2DAppForDLL(k);
-				D2DInitail((INT_PTR)k );
-				::SetTimer(hWnd,HEART_BEET_ID,1000,0);
-				//CreateMDIControl(hWnd);
-				CreateMDISplitControl(hWnd);
+			D2DApp::SetD2DAppForDLL(k);
+			D2DInitail((INT_PTR)k );
 
-				D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
-			}
-			catch( ... )
-			{
+			::SetTimer(hWnd,HEART_BEET_ID,1000,0);
 
-				return -1;
-			}
+            CreateControl(hWnd);
+			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
+
+			JavascriptAppInit();
+
+
         }
         break;
 		case WM_TIMER:
@@ -210,19 +198,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
         case WM_SIZE:
-        {			
+        {
 			FRectF rc(0,0,(float)LOWORD(lParam), (float)HIWORD(lParam));          
 			D2DForceWndProc(hwin, app, message, 0, (LPARAM)&rc);
         }
         break;
         case WM_PAINT:
         {
+                auto cxt = D2DGetDeviceContext(hwin);
 
                 PAINTSTRUCT ps;
                 HDC hdc = BeginPaint(hWnd, &ps);
                 {
-					auto cxt = D2DGetDeviceContext(hwin);
-					cxt->BeginDraw();
+                   cxt->BeginDraw();
                     D2D1_MATRIX_3X2_F mat = {0};
 
                     mat._11 = scale;
@@ -275,12 +263,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 r = D2DDefWndProc(hwin, app, message, wParam,lParam);
         }
         break;
-		case WM_KILLFOCUS:
+        case WM_KILLFOCUS:
 		case WM_SETFOCUS:
         case WM_CHAR:
-        case WM_KEYUP:
+        {
+            r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
+			DefWindowProc(hWnd, message, wParam, lParam);
+        }
+        break;
+        
         case WM_LBUTTONDOWN:
-		case WM_LBUTTONUP:
+			r = D2DDefWndProc(hwin, app, message, wParam,lParam);
+		break;
+        case WM_LBUTTONUP:
+			r = D2DDefWndProc(hwin, app, message, wParam,lParam);
+		break;
+		case WM_KEYUP:
         case WM_RBUTTONDOWN:
         case WM_RBUTTONUP:
         case WM_MOUSEWHEEL:
@@ -289,6 +287,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             r = D2DDefWndProc(hwin, app, message, wParam,lParam);
         }
         break;
+
         case WM_MOUSEMOVE:
         {
             r =  D2DDefWndProc(hwin, app, message, wParam,lParam);
@@ -298,6 +297,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
         {        
             D2DDestroyWindow(hwin);
+
+
+			JavascriptAppExit();
+
             PostQuitMessage(0);
 			return 0;
         }
@@ -307,54 +310,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
          {
                 // child control events         
 
-                if ( wParam == COMBOBOX_ID_1 )
-                {   
-                    D2DNMHDR& n = *(D2DNMHDR*)lParam;
-
-                    int idx = n.prm1;
-
-                    scale = 1.0f;
-                    if ( idx == 1 ) scale = 1.2f;
-                    else if ( idx == 2 ) scale = 0.8f;
-
-                }
-
+               
 
          }
          break;
-		 case WM_COMMAND:
-		 {
-			 int wmId = LOWORD(wParam);
-			 // 選択されたメニューの解析:
-			 switch (wmId)
-			 {
-				 case IDM_WINDOW_LARGE:
-					D2DDefWndProc(hwin ,app, WM_D2D_MDI_SIZE_LARGEST, 0, 0);
-				 break;
-				 case IDM_WINDOW_SMALL:
-					D2DDefWndProc(hwin ,app, WM_D2D_MDI_SIZE_PRV, 0, 0);
-				 break;
-				 case IDM_WINDOW_ARRENGE:
-					 D2DDefWndProc(hwin ,app, WM_D2D_MDI_TILE_HORZ, 0, 0);
-				 break;
-				 case IDM_EXIT:
-					DestroyWindow(hWnd);
-				 break;
-			 }
-		 }
-		 break;
 		 case WM_D2D_ONIME_ONOFF:
 		 {
 			D2DDefWndProc(hwin ,app, message, wParam, lParam);
 
 		 }
-		 break;  
+		 break;
     }
 
 	r = ::DefWindowProc(hWnd, message, wParam, lParam);
 
     if ( app.bRedraw )
+	{
         InvalidateRect(hWnd, NULL, FALSE);
+	}
     
     return r; 
 }
@@ -368,7 +341,8 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
             HANDLE h = GetClipboardData(CF_UNICODETEXT);
             LPCWSTR s1a = (LPCWSTR)GlobalLock(h);
 
-            D2DInsertText(uh, s1a, wcslen(s1a), -1);
+			if ( s1a )
+				D2DInsertText(uh, s1a, (UINT)wcslen(s1a), -1);
            
             GlobalUnlock(h);
         }
@@ -419,5 +393,16 @@ bool LoadTextFile( LPCWSTR fnm, std::wstring* str,bool butf8 )
 	}
 	return false;
 }
+bool SaveTextFile( LPCWSTR fnm, LPCWSTR str )
+{
+	std::wofstream fs;
+	fs.open( fnm, std::ios::trunc);
 
-
+	if ( fs )
+	{
+		fs.write(str, wcslen(str));
+		fs.close();
+		return true;
+	}
+	return false;
+}

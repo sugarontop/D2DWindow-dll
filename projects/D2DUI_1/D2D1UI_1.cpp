@@ -446,8 +446,6 @@ D2DControl* D2DCastControl(UIHandle h )
 		auto p3 = dynamic_cast<D2DTextbox*>(p2);	
 
 		_ASSERT( h.typ == p3->GetTypeid());
-
-		int a = 0;
 	}
 	else if ( h.typ == TYP_BUTTON )
 	{
@@ -524,6 +522,16 @@ DLLEXPORT BSTR WINAPI D2DGetName(UIHandle h)
 {
 	D2DControl* pc = (D2DControl*)h.p;
 	return ::SysAllocString(pc->GetName().c_str());
+}
+DLLEXPORT void WINAPI D2DClear(UIHandle h)
+{
+	D2DControl* pc = D2DCastControl(h);
+	if ( h.typ == TYP_TEXTBOX )
+	{
+		D2DTextbox* tx = (D2DTextbox*)pc;
+		tx->Clear();
+	}
+
 }
 
 DLLEXPORT UIHandle WINAPI D2DMessageBox(UIHandleWin hwin, const D2D1_RECT_F& rc, LPCWSTR title, LPCWSTR message)

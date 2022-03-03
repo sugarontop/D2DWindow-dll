@@ -105,7 +105,7 @@ DLLEXPORT BSTR WINAPI D2DGetName(UIHandle h);
 
 DLLEXPORT void WINAPI D2DSetRect( UIHandle h, D2D1_RECT_F rc );
 DLLEXPORT UIHandle WINAPI D2DSetTopControl(UIHandle h);
-
+DLLEXPORT void WINAPI D2DClear(UIHandle h);
 
 DLLEXPORT void WINAPI D2DScrollbarSetMaxSize(UIHandle h, float height);
 
