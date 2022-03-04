@@ -61,7 +61,8 @@ class D2DWindow
 		
 		std::shared_ptr<D2DControls> top_control_;
 		std::map<std::wstring, D2DControl*> name_map_;
-		std::function<int(D2DWindow*, int)> Smooth_;
+		std::function<int(D2DWindow*, int)> Smooth_;  
+		
 
 
 	protected :

@@ -1190,7 +1190,7 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_
 		RectAnimation(srect, dstRect, prc, cnt, atyp);
 
 		D2DWindow* pwin = (D2DWindow*)win.p;
-		pwin->Smooth_ = [prc, cnt,target,pwin,id](D2DWindow* win, int no)->int
+		auto df = [prc, cnt,target,pwin,id](D2DWindow* win, int no)->int
 		{						
 			if ( no < cnt )
 			{
@@ -1210,6 +1210,8 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_
 
 			return (no+1);
 		};
+		pwin->Smooth_ = df;
+
 	}
 }
 

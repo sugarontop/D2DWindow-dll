@@ -3,6 +3,7 @@
 #include "javasc.h"
 #include "D2D1UI_1.h"
 #include "D2DMessage.h"
+#include "D2DWindowControl.h"
 #include "TestObject.h"
 
 #pragma comment (lib, "chakrart") // win10, win11 OS support version
@@ -49,7 +50,7 @@ JsValueRef CALLBACK createFunc(JsValueRef callee, bool isConstructCall, JsValueR
 JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 JsValueRef CALLBACK setFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 JsValueRef CALLBACK getFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
-
+JsValueRef CALLBACK moveFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 
 bool JavascriptAppInit()
 {
@@ -196,7 +197,6 @@ JsErrorCode CreateHostContext(JsRuntimeHandle runtime, int argc, wchar_t *argv [
 
 
 
-
 JsErrorCode DefineHostCallback(JsValueRef myObject, const wchar_t *callbackName, JsNativeFunction callback, void *callbackState)
 {
 	JsPropertyIdRef propertyId;
@@ -224,6 +224,14 @@ JsErrorCode DefineHostCallback(JsValueRef myObject, const wchar_t *callbackName,
 }
 
 
+JsErrorCode ImplementsObjectCallback(JsValueRef myObject)
+{
+	IfFailRet(DefineHostCallback(myObject, L"set", setFunc, nullptr));
+	IfFailRet(DefineHostCallback(myObject, L"get", getFunc, nullptr));
+	IfFailRet(DefineHostCallback(myObject, L"move", moveFunc, nullptr));
+
+	return JsNoError;
+}
 
 
 
@@ -263,6 +271,35 @@ JsValueRef CALLBACK getFunc(JsValueRef callee, bool isConstructCall, JsValueRef 
 }
 
 
+
+JsValueRef CALLBACK moveFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
+{
+	if ( 3 <= argumentCount )
+	{
+		LPVOID p;
+		JsValueRef obj = arguments[0];
+		IfFailRet(JsGetExternalData( obj, &p));
+		UIHandleRap* k = (UIHandleRap*)p;
+
+		CJsValueRef v(arguments[1]);
+		auto x = v.ToDouble();
+		CJsValueRef v1(arguments[2]);
+		auto y = v1.ToDouble();
+
+		D2DControl* tt = (D2DControl*)(k->h.p);
+
+		if ( tt )
+		{
+			FRectF& frc = tt->GetRectSmooth();
+			FRectF dst(frc);
+			dst.SetPoint(FPointF(x,y));
+
+			D2DSmoothRect(1,100,hwin, &frc, dst);
+		}		
+	}
+	return 0;
+}
+
 JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
 {
 	std::wstring select_item;
@@ -285,8 +322,11 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 	auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
 
 	// obj‚Éset function‚ðŽÀ‘•
-	IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
-	IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
+
+	ImplementsObjectCallback( ret);
+
+	//IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
+	//IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
 	
 
 	return ret;
@@ -354,6 +394,8 @@ bool CreateD2DObject(std::wstring& cmdstr, UIHandle* ret)
 		*ret = D2DCreateTextbox(select_obj.h, rc, false, STAT_DEFAULT,prm.nm.c_str(), prm.id);
 	else if (type == L"button")
 		*ret = D2DCreateButton(select_obj.h, rc, STAT_DEFAULT,prm.nm.c_str(), prm.id);
+	else if (type == L"listbox")
+		*ret = D2DCreateListbox(select_obj.h, rc, STAT_DEFAULT,prm.nm.c_str(), prm.id);
 	else if (type == L"testobj1")
 		*ret = CreateTestObj(select_obj.h, rc, prm.nm.c_str(), prm.id);
 	else
@@ -399,8 +441,11 @@ JsValueRef CALLBACK createFunc(JsValueRef callee, bool isConstructCall, JsValueR
 			objBank[id] = ret;
 	
 			// obj‚Éset function‚ðŽÀ‘•
-			IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
-			IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
+
+			ImplementsObjectCallback(ret);
+
+			//IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
+			//IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
 
 			return ret;
 		}

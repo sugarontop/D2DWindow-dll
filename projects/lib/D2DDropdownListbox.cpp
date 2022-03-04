@@ -192,9 +192,6 @@ LRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM 
 					}
 
 				}
-
-
-
 				ret = 1;
 			}
 		}

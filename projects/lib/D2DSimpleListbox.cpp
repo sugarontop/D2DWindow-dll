@@ -336,6 +336,49 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 			ret = 1;
 		}
 		break;
+		case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				LPCWSTR cmdstr = (LPCWSTR)lParam;
+
+				auto ar = SplitW(cmdstr,L"&");
+				std::wstring cmd;
+				
+
+				for(auto& it : ar)
+				{
+					auto ar2 = SplitW(it.c_str(), L"=");
+
+					if ( ar2.size() == 1 )
+					{
+						cmd = ar2[0];
+
+					}
+					else if ( ar2.size() == 2)
+					{
+						if ( ar2[0] == L"str" && cmd==L"add")
+						{
+							AddItem(-1, ar2[1].c_str());
+						}	
+						else if ( ar2[0] == L"no" && cmd==L"select")
+						{
+							int idx = _wtoi(ar2[1].c_str());
+							
+							selected_idx_ = idx;
+
+							//OnClick();
+							//OnCloseListbox(idx);
+
+
+						}
+					}
+
+				}
+				ret = 1;
+			}
+		}
+		break;
     }
 
     return ret;
@@ -541,7 +584,47 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 
 		}
 		break;
+		case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				LPCWSTR cmdstr = (LPCWSTR)lParam;
 
+				auto ar = SplitW(cmdstr,L"&");
+				std::wstring cmd;
+				
+
+				for(auto& it : ar)
+				{
+					auto ar2 = SplitW(it.c_str(), L"=");
+
+					if ( ar2.size() == 1 )
+					{
+						cmd = ar2[0];
+
+					}
+					else if ( ar2.size() == 2)
+					{
+						if ( ar2[0] == L"str" && cmd==L"add")
+						{
+							AddItem(-1, ar2[1].c_str());
+						}	
+						else if ( ar2[0] == L"no" && cmd==L"select")
+						{
+							int idx = _wtoi(ar2[1].c_str());
+							selected_idx_ = idx;
+							OnClick();
+							
+
+
+						}
+					}
+
+				}
+				ret = 1;
+			}
+		}
+		break;
     }
 
     return ret;
