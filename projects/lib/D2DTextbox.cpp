@@ -29,8 +29,6 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 		vscrollbar_.Create(this, FRectF(rctext_.right, rctext_.top, rctext_.right + BARW, rctext_.bottom));
 		ct_.bSingleLine_ = false;
 	}
-
-	
 }
 D2DTextbox::~D2DTextbox()
 {
@@ -40,7 +38,6 @@ D2DTextbox::~D2DTextbox()
 void D2DTextbox::SetTypPassword()
 {
 	typ_ = IBridgeTSFInterface::TYP::PASSWORD;
-
 }
 
 bool D2DTextbox::IsMultiline() const
@@ -63,9 +60,11 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		ComPTR<ID2D1SolidColorBrush> border;
 		ComPTR<ID2D1SolidColorBrush> back;
 		ComPTR<ID2D1SolidColorBrush> fore;
+		
 		(*cxt)->CreateSolidColorBrush(fore_, &fore);	
 		(*cxt)->CreateSolidColorBrush(back_, &back);
 		(*cxt)->CreateSolidColorBrush(border_, &border);
+		
 
 		D2DMatrix mat(*cxt);
 		mat_ = mat.PushTransform();
@@ -75,6 +74,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 
 
 		auto rc = rctext_;
+		auto bMultiline = IsMultiline();
 		rc.InflateRect(1,1);
 
 		D2DRectFilter fil(cxt, rc, vscrollbar_.Width());
@@ -111,33 +111,30 @@ void D2DTextbox::Draw(D2DContext& cxt)
 					FRectF rc;
 					bool blf;
 					if(  ctrl()->GetLayout()->RectFromCharPosEx(xpos-1, &rc, &blf) )
+					{
 						if ((::GetTickCount64() / 500)%2 == 0)							
 							(*cxt)->FillRectangle( FRectF(rc.right, rc.top, FSizeF(CARET_W, rc.Height())), fore );
 					
+						if (bMultiline)
+							(*cxt)->FillRectangle( FRectF(0, rc.bottom-0.5f, FSizeF( rctext_.right, 0.5f)), fore );
+					}
 					cxt.Redraw();
-					
 				}	
-
 			}
 		}
 		else if ( text_layout_ )
 		{			
-
-			ComPTR<IDWriteTextLayout> tl;
-			//ctrl()->GetLayout()->GetTextLayout( &tl); //text_layout_ );
+			ComPTR<IDWriteTextLayout> tl;			
 
 			mat.Offset(rctext_);
 			mat.Offset(0, -vscrollbar_.Scroll());
 			mat_sc_ = mat.Copy();
 
 			(*cxt)->DrawTextLayout(FPointF(), text_layout_, fore );			
-			//(*cxt)->DrawTextLayout(FPointF(), tl, fore );			
 		}
-
 		mat.PopTransform();
 
-
-		if (IsMultiline())
+		if (bMultiline)
 		{
 			float h = ctrl()->GetLineHeight();
 			int cnt = tm_.lineCount;
@@ -153,7 +150,6 @@ std::wstring D2DTextbox::ConvertInputText(LPCWSTR text, int typ)
 {
 	if ( typ == 1 )		
 		return MoneyString(text); 
-
 	return text;
 }
 
@@ -305,18 +301,12 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 				if ( msg == WM_KEYDOWN )
 				{
 					if ( wp == VK_RETURN && !IsMultiline() )
-					{
-						
+					{						
 						parent_window_->SendMessage(WM_D2D_ON_TEXTBOX_RETURN, (WPARAM)this,0);
-						
 						ret = 1;
-
-						
 					}
 					ret = 1;
 				}
-
-
 			}
 		}
 		break;
@@ -375,21 +365,14 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 						{
 							DWORD dw = _wtoi(ar2[1].c_str());
 							D2DColor clr(dw);
-
 							fore_ = clr;
-
-
 						}
 					}
 				}
-
-
-
 				ret = 1;
 			}
 		}
 		break;
-		
 		
 		case WM_D2D_IME_ONOFF:
 		{

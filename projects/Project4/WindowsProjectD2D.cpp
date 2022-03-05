@@ -242,12 +242,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             bool bShift   = ((GetKeyState(VK_SHIFT)& 0x80) != 0);       
             bool bCtrl = ((GetKeyState(VK_CONTROL) & 0x80) != 0);
+            bool bInsert = ((GetKeyState(VK_INSERT) & 0x80) != 0);
 
             auto c = D2DGetCapture();
 
             if ( c.typ == TYP_TEXTBOX)
             {                
-                if (wParam == 0x56 && bCtrl) // ctrl-V
+                if ((wParam == 0x56 && bCtrl)  || ( bInsert && bShift)) // ctrl-V, shift-ins
                 {
                     CopyPasteTEXT(hWnd, c, true );
                     r =  1;

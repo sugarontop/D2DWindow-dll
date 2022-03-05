@@ -216,11 +216,11 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			
 			auto id = D2DGetId(m->hme);
 
-			if ( 10 == id )
+			if ( 11 == id )
 			{
 				CreateCardControls(m->hme);
 			}
-			else if ( 11 == id )
+			else if ( 10 == id )
 			{
 				auto tx = D2DCreateTextbox(m->hme, FRectF(10,60,FSizeF(1200,900)), true, STAT_DEFAULT, L"TX1",-1,-1);
 
