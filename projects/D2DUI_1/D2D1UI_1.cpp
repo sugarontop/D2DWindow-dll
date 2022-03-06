@@ -1002,14 +1002,23 @@ DLLEXPORT void WINAPI D2DDraw(UIHandleWin main, void* hWnd  )
 	auto root = pwin->top_control_;
 	root->Draw(cxt);
 
-	
-	{
-		static int no=0;
+	// Smooth move 
+	{		
+		auto car = pwin->Smooth_;
+		while(car)
+		{
+			auto car2 = car->next;
+			car->no = car->ev(pwin, car);
+			if ( car->no == -1 )
+			{
+				if (car == pwin->Smooth_)
+					pwin->Smooth_ = nullptr;
+					
+				delete car;
+			}
 
-		if ( pwin->Smooth_ )
-			no = pwin->Smooth_(pwin, no);
-		else
-			no = 0;
+			car = car2;
+		}
 	}
 
 
@@ -1190,27 +1199,46 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_
 		RectAnimation(srect, dstRect, prc, cnt, atyp);
 
 		D2DWindow* pwin = (D2DWindow*)win.p;
-		auto df = [prc, cnt,target,pwin,id](D2DWindow* win, int no)->int
+		auto df = [prc, cnt,target,pwin,id](D2DWindow* win, SmoothCar* car)->int
 		{						
-			if ( no < cnt )
+			int no = car->no;
+			
+			if ( car->no < cnt )
 			{
-				*target = prc[no];
+				*target = prc[car->no];
 				win->GetContext().bRedraw_ = true;
 			}
-			else if ( no == cnt )
+			else if ( car->no == cnt )
 			{
-				*target = prc[no-1];
+				*target = prc[car->no-1];
 				win->GetContext().bRedraw_ = true;
 				delete [] prc;
-				win->Smooth_ = nullptr;
 
 				pwin->SendMessage(WM_D2D_SMOOTH_COMPLETE,id,0);
 
+				car->LinkDetach();
+
+				return -1;
 			}
 
 			return (no+1);
 		};
-		pwin->Smooth_ = df;
+		// ‚Ü‚¾‚P‚Â‚Ì‚Ý
+		SmoothCar* scar = new SmoothCar();
+		scar->ev = df;
+
+		if ( pwin->Smooth_ == nullptr)
+			pwin->Smooth_ = scar;
+		else
+		{
+			auto last = pwin->Smooth_;
+
+			while( last->next )
+			{
+				last = last->next;
+			}
+			scar->LinkAttach(last);
+		}
 
 	}
 }

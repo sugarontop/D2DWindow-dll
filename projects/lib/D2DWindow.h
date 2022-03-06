@@ -18,7 +18,7 @@ struct TSFIsland
 	ComPTR<ITfDisplayAttributeMgr> DisplayAttributeMgr;	
 	void* ctrl;
 };
-
+class D2DWindow;
 class D2DControl;
 
 struct ControlMapItem
@@ -27,6 +27,35 @@ struct ControlMapItem
 	int row;
 	int col;
 };
+
+struct SmoothCar
+{
+	public :
+		SmoothCar():no(0),prev(0),next(0){};
+
+		void LinkDetach()
+		{
+			if ( prev )
+				prev->next = this->next;
+			if ( next )
+				next->prev = this->prev;
+			prev = nullptr;
+			next = nullptr;
+		}
+		void LinkAttach(SmoothCar* p)
+		{
+			_ASSERT(p->next == nullptr);
+
+			p->next = this;
+			this->prev = p;
+		}
+
+	std::function<int(D2DWindow*, SmoothCar*)> ev;
+	int no;
+	SmoothCar* prev;
+	SmoothCar* next;
+};
+
 
 class D2DWindow
 {
@@ -61,7 +90,9 @@ class D2DWindow
 		
 		std::shared_ptr<D2DControls> top_control_;
 		std::map<std::wstring, D2DControl*> name_map_;
-		std::function<int(D2DWindow*, int)> Smooth_;  
+		
+		//std::function<int(D2DWindow*, int)> Smooth_;  
+		SmoothCar* Smooth_;
 		
 
 
