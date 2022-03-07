@@ -15,7 +15,7 @@ namespace V6
 			
 			virtual bool Draw(D2DContext& cxt, float width, float height) = 0;
 			virtual float RowHeight() = 0;
-
+			virtual float ItemWidth() =0;
 		protected :
 			int idx_;
 	};
@@ -29,7 +29,7 @@ namespace V6
 			virtual bool Draw(D2DContext& cxt, float width, float height) override;
 			virtual float RowHeight() override;
 			void Clear();
-			float ItemWidth() const { return width_; }
+			virtual float ItemWidth() { return width_; }
 		protected :			
 			float width_;
 			std::wstring title_;
@@ -44,7 +44,7 @@ namespace V6
 			D2DListboxItemImage(int idx,ComPTR<ID2D1Bitmap> item):D2DListboxItemBase(idx),img_(item){}
 			virtual bool Draw(D2DContext& cxt, float width, float height) override;
 			virtual float RowHeight() override;
-
+			virtual float ItemWidth(){ return 0; }
 		protected :			
 			ComPTR<ID2D1Bitmap> img_;
 	};
@@ -55,6 +55,7 @@ namespace V6
 			D2DListboxItemControl(int idx,std::shared_ptr<D2DControl> item):D2DListboxItemBase(idx),ctrl_(item){}
 			virtual bool Draw(D2DContext& cxt, float width, float height) override;
 			virtual float RowHeight() override;
+			virtual float ItemWidth(){ return 0; }
 			std::shared_ptr<D2DControl> Control(){ return ctrl_; }
 		protected :			
 			std::shared_ptr<D2DControl> ctrl_;
@@ -73,6 +74,7 @@ namespace V6
 			virtual FRectF& GetRectSmooth() override { return rc_; }
 			virtual void SetRect(const FRectF& rc) { rc_ = rc; }
 			virtual void Draw(D2DContext& cxt);
+			void Clear();
 
 			virtual void CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1) override;
 			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
@@ -97,11 +99,14 @@ namespace V6
 			float sc_barTotalHeight();
 			float sc_dataHeight();
 
+
+			bool wsc_MouseMove(FPointF& pt);
+
 		protected :
 			int selected_idx_;
 			FRectF rc_;
 			int mouse_stat_;
-			float offbar_y_;
+			float offbar_y_, offbar_x_;
 			int float_idx_;
 			int scstat_;
 			USHORT typ_;
@@ -109,6 +114,8 @@ namespace V6
 			float scbarThumbHeight_;
 			float scdata_;
 			float scbai_;
+
+			float hscWidth_;
 
 			std::vector< std::shared_ptr<D2DListboxItemBase> > items_;
 	};

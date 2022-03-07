@@ -37,20 +37,20 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
 
         mat_ = mat.Offset(rc_);
         
-        int i = 0;
+        int j = 0;
 
 		const float h = RowHeight();
         mat.PushTransform();
-        mat.Offset(0, -offbar_y_* scbai_);
+        mat.Offset(-offbar_x_, -offbar_y_* scbai_);
         for(auto& it : items_ )
         {
-            float w = rc_.Width();
+            float w = rc_.Width()+hscWidth_;
 
-            if (selected_idx_ == i )
+            if (selected_idx_ == j )
             {
                 cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 150));
             }
-            else if (float_idx_ == i)
+            else if (float_idx_ == j)
             {
                 cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 80));
             }
@@ -58,15 +58,16 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
             if (it->Draw(cxt, w, h))
 			{
 				// scrollbar
-				int a = 0;
-
+				hscWidth_ = max(hscWidth_, it->ItemWidth());
 			}
             mat.Offset(0, h);
-            i++;
+            j++;
         }
         mat.PopTransform();
 
-        mat.PushTransform();
+        // V Scrollbar
+		mat.PushTransform();
+		{
             mat.Offset(0.0f, offbar_y_);
             float overflow = max(0, sc_dataHeight() - sc_barTotalHeight());
             scbarThumbHeight_ = sc_barTotalHeight() - overflow;
@@ -75,12 +76,39 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
             if (scbarThumbHeight_ < min_thum_height)
             {
                 scbarThumbHeight_ = min_thum_height;
-                scbai_ = (sc_dataHeight() - sc_barTotalHeight()) / (sc_barTotalHeight() - scbarThumbHeight_); //());			
+                scbai_ = (sc_dataHeight() - sc_barTotalHeight()) / (sc_barTotalHeight() - scbarThumbHeight_); 
             }
 
             FRectF scbar(rc_.Size().width - BARW, 0, rc_.Size().width, scbarThumbHeight_);
             cxt.DFillRect(scbar, D2GRAY);
+		}
         mat.PopTransform();
+
+
+		// W Scrollbar
+		if ( hscWidth_ )
+		{
+			mat.PushTransform();		
+			mat.Offset(offbar_x_, rc_.Height());
+
+			{
+				float wsc_barTotalHeight = rc_.Size().width;
+				float overflow = max(0, (hscWidth_) - wsc_barTotalHeight);
+				float wscbarThumbHeight = wsc_barTotalHeight - overflow;
+				const float min_thum_height = _min_thum_height;
+				float wscbai = 1.0f;
+				if (wscbarThumbHeight < min_thum_height)
+				{
+					wscbarThumbHeight = min_thum_height;
+					wscbai = (hscWidth_ - wsc_barTotalHeight) / (wsc_barTotalHeight - wscbarThumbHeight); 	
+				}
+
+				FRectF scbar(0,-BARW, wscbarThumbHeight, 0); 
+				cxt.DFillRect(scbar, D2GRAY);
+			}
+		
+			mat.PopTransform();
+		}
 
         mat.PopTransform();
     }
@@ -95,10 +123,11 @@ void D2DSimpleListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
 
     selected_idx_ = -1;
     float_idx_ = -1;
-    offbar_y_ = 0;
+    offbar_y_ = offbar_x_ = 0;
     scbarThumbHeight_ = scdata_ = 0;
     scbai_=1.0f;
 	typ_ = 0;
+	hscWidth_ = 0;
 
     auto ls =  dynamic_cast<D2DDropdownListbox*>(pacontrol);
     if ( ls )
@@ -107,18 +136,44 @@ void D2DSimpleListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
     }
 }
 
+void D2DSimpleListbox::Clear()
+{
+	items_.clear();
+
+	selected_idx_ = -1;
+    float_idx_ = -1;
+    offbar_y_ = offbar_x_ = 0;
+    scbarThumbHeight_ = scdata_ = 0;
+    scbai_=1.0f;
+	typ_ = 0;
+	hscWidth_ = 0;
+
+}
+
 static FPointF ptold;
 bool D2DSimpleListbox::sc_MouseMove(FPointF& pt)
 {
     offbar_y_ = max(0, offbar_y_ + (pt.y - ptold.y));
 
-    offbar_y_ = min(sc_barTotalHeight() - sc_barThumbHeight(), offbar_y_);
+    offbar_y_ = min(sc_barTotalHeight()-sc_barThumbHeight()+BARW, offbar_y_);
 
     ptold = pt;
 
     return false;
 }
+bool D2DSimpleListbox::wsc_MouseMove(FPointF& pt)
+{
+    offbar_x_ = max(0, offbar_x_ + (pt.x - ptold.x));
+	float wsc_barTotalHeight = rc_.Size().width;
+	float overflow = max(0, hscWidth_ - wsc_barTotalHeight);
+	float wscbarThumbHeight = wsc_barTotalHeight - overflow;
 
+    offbar_x_ = min(wsc_barTotalHeight-wscbarThumbHeight+BARW, offbar_x_);
+
+    ptold = pt;
+
+    return false;
+}
 
 LRESULT D2DSimpleListbox::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -148,17 +203,18 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
         {
             MouseParam* mp = (MouseParam*)lParam;
             auto pt = mat_.DPtoLP(mp->pt);
-          
-            if (rc_.ZeroRect().PtInRect(pt))
+			FRectF rcz = rc_.ZeroRect();		
+			
+            if (rcz.PtInRect(pt))
             {
                 ptold = pt;
 
-                if ( rc_.ZeroRect().right - 30 < pt.x && pt.x < rc_.ZeroRect().right)
+                if ( rcz.right - BARW < pt.x && pt.x < rcz.right)
                 {
                     APP.SetCapture(this);
                     scstat_ = 3;
-
                 }
+				
                 else
                     mouse_stat_ = 1;
 
@@ -180,29 +236,21 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 
 					APP.SetCapture(a2.get());
 				}
-                return 1;
+                ret = 1;
             }
-            
-            
-           /* if (!rc_.ZeroRect().PtInRect(pt))
-            {
-                if ( OnEscape() )
-                    ret = 1;
-            }*/
+ 
         }
         break;
         case WM_LBUTTONUP:
-        {
-            
-            MouseParam* mp = (MouseParam*)lParam;
-            auto pt = mat_.DPtoLP(mp->pt);
-
-            //if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3)
-            //{            
-            //    OnClick();
-            //}
-
+        {            
             scstat_ = 0;
+
+			if ( APP.IsCapture(this))
+			{
+				APP.ReleaseCapture();
+				ret = 1;
+			}
+
             break;
         }
 		break;
@@ -210,7 +258,6 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
         {
             MouseParam* mp = (MouseParam*)lParam;
             auto pt = mat_.DPtoLP(mp->pt);
-
             auto md = (rc_.ZeroRect().PtInRect(pt) ? 1: 0 );
 
             if (mouse_stat_ != md )
@@ -222,10 +269,8 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 
             if ( md == 1 )
             {
-
                 auto y = pt.y + offbar_y_ * scbai_;
                 int idx = (int)(y / rowheight);
-
 
                 if (rc_.ZeroRect().PtInRect(pt))
                 {
@@ -236,13 +281,18 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
                     }
                 }
 
-            
-
-                if ( scstat_ == 3 && APP.IsCapture(this))
-                {
-                    float_idx_ = -1;
-                    sc_MouseMove(pt);
-                }
+				if ( APP.IsCapture(this))
+				{
+					if ( scstat_ == 3)
+					{
+						float_idx_ = -1;
+						sc_MouseMove(pt);
+					}
+					else if ( scstat_ == 4)
+					{						
+						wsc_MouseMove(pt);
+					}
+				}
 
                 ret = 1;
             }
@@ -384,16 +434,21 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
         {
             MouseParam* mp = (MouseParam*)lParam;
             auto pt = mat_.DPtoLP(mp->pt);
-          
-            if (rc_.ZeroRect().PtInRect(pt))
+			const auto rcz = rc_.ZeroRect();
+            if (rcz.PtInRect(pt))
             {
                 ptold = pt;
 
-                if ( rc_.ZeroRect().right - 30 < pt.x && pt.x < rc_.ZeroRect().right)
+                if ( rcz.right - BARW < pt.x && pt.x < rcz.right)
                 {
                     APP.SetCapture(this);
                     scstat_ = 3;
 
+                }
+				else if ( rcz.bottom - BARW < pt.y && pt.y < rcz.bottom)
+                {
+                    APP.SetCapture(this);
+                    scstat_ = 4;
                 }
                 else
                     mouse_stat_ = 1;
@@ -410,7 +465,7 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
             }
             
             
-            if (!rc_.ZeroRect().PtInRect(pt))
+            if (!rcz.PtInRect(pt))
             {
                 if ( OnEscape() )
                     ret = 1;
@@ -423,19 +478,15 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
             MouseParam* mp = (MouseParam*)lParam;
             auto pt = mat_.DPtoLP(mp->pt);
 
-            if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3)
+			if (APP.IsCapture(this))
+			{
+				APP.ReleaseCapture();
+				ret = 1;
+			}
+
+            if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3 && scstat_ != 4)
             {            
                 OnClick();
-
-				auto a = APP.GetCapture();
-
-				if ( dynamic_cast<D2DDropdownListbox*>(a))
-				{
-					APP.ReleaseCapture();
-					auto xa = APP.GetCapture();
-					_ASSERT(xa == nullptr);
-				}
-
 				ret = 1;
             }
 
@@ -453,7 +504,6 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
             {
                 mouse_stat_ = md;
                 b.bRedraw = true;
-
             }
 
             if ( md == 1 )
@@ -473,12 +523,18 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
                 }
 
             
-
-                if ( scstat_ == 3 && APP.IsCapture(this))
-                {
-                    float_idx_ = -1;
-                    sc_MouseMove(pt);
-                }
+				if ( APP.IsCapture(this))
+				{
+					if ( scstat_ == 3)
+					{
+						float_idx_ = -1;
+						sc_MouseMove(pt);
+					}
+					else if ( scstat_ == 4)
+					{
+						wsc_MouseMove(pt);
+					}
+				}
 
                 ret = 1;
             }
@@ -508,9 +564,6 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 
                 ret = 1;
             }
-
-
-
         }
         break;
         case WM_KEYDOWN:
@@ -521,7 +574,6 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
                 if ( OnEscape() )
                     ret = 1;
             }
-
         }
         break;
 		case WM_D2D_LISTBOX_ADD_ITEM:
@@ -613,10 +665,6 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 void D2DSimpleListbox::AddItem(int idx, const std::wstring& str)
 {
 	items_.push_back( std::make_shared<D2DListboxItemString>(idx, str)); 
-
-
-	
-
 }
 
 
