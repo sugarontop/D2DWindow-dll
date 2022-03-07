@@ -164,7 +164,10 @@ class FRectF : public D2D1_RECT_F
 		{
 			SetRect(rc);
 		}
-
+		FRectF ( float cx, float cy )
+		{
+			left=0;top=0;right=cx;bottom=cy;
+		}
 		FRectF ( const FPointF& pt, const FSizeF sz )
 		{			
 			left=pt.x; top=pt.y; right=pt.x + sz.width; bottom= pt.y + sz.height;
@@ -184,12 +187,7 @@ class FRectF : public D2D1_RECT_F
 		FRectF( const FRectF& rc )
 		{
 			SetRect(rc);
-		}
-		FRectF( float cx, float cy )
-		{
-			left=top=0;
-			right=cx; bottom=cy;
-		}
+		}		
 		FRectF(FRectF&& rc) noexcept
 		{
 			*this = std::move(rc);

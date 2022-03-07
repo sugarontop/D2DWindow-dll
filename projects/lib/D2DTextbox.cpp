@@ -114,6 +114,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 					{
 						if ((::GetTickCount64() / 500)%2 == 0)							
 							(*cxt)->FillRectangle( FRectF(rc.right, rc.top, FSizeF(CARET_W, rc.Height())), fore );
+							//(*cxt)->FillRectangle( FRectF(rc.right, rc.bottom-CARET_W, FSizeF(rc.Width(), CARET_W)), fore );
 					
 						if (bMultiline)
 							(*cxt)->FillRectangle( FRectF(0, rc.bottom-0.5f, FSizeF( rctext_.right, 0.5f)), fore );
@@ -124,8 +125,6 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		}
 		else if ( text_layout_ )
 		{			
-			ComPTR<IDWriteTextLayout> tl;			
-
 			mat.Offset(rctext_);
 			mat.Offset(0, -vscrollbar_.Scroll());
 			mat_sc_ = mat.Copy();
@@ -363,8 +362,7 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 						}	
 						else if (ar2[0] == L"color")
 						{
-							DWORD dw = _wtoi(ar2[1].c_str());
-							D2DColor clr(dw);
+							D2DColor clr(D2DColor(ar2[1].c_str()));
 							fore_ = clr;
 						}
 					}

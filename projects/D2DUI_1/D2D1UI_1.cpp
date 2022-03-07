@@ -1012,7 +1012,7 @@ DLLEXPORT void WINAPI D2DDraw(UIHandleWin main, void* hWnd  )
 			if ( car->no == -1 )
 			{
 				if (car == pwin->Smooth_)
-					pwin->Smooth_ = nullptr;
+					pwin->Smooth_ = car->LinkLast();
 					
 				delete car;
 			}

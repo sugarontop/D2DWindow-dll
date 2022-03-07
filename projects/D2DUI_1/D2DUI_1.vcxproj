@@ -199,6 +199,7 @@
     <ClCompile Include="..\lib\D2DButon.cpp" />
     <ClCompile Include="..\lib\D2DChildWindow.cpp" />
     <ClCompile Include="..\lib\D2DClientControl.cpp" />
+    <ClCompile Include="..\lib\D2DColor.cpp" />
     <ClCompile Include="..\lib\D2DControls_with_Scrollbar.cpp" />
     <ClCompile Include="..\lib\D2DDropdownListbox.cpp" />
     <ClCompile Include="..\lib\D2DFileManage.cpp" />

@@ -24,6 +24,17 @@ class D2DColor
 		{
 			clr_ = ColorF(((dwRGB&0xFF0000)>>16)/255.0f, ((dwRGB&0x00FF00)>>8)/255.0f, ((dwRGB&0xFF))/255.0f, 1.0f );
 		}
+		D2DColor(LPCWSTR sharp_str):clr_(ColorF::Black)
+		{
+			DWORD dwRGB;
+			if ( ColorFromString(sharp_str, &dwRGB))
+
+			if ( lstrlen(sharp_str) < 8 )
+				clr_ = ColorF(((dwRGB&0xFF0000)>>16)/255.0f, ((dwRGB&0x00FF00)>>8)/255.0f, ((dwRGB&0xFF))/255.0f, 1.0f );
+			else
+				clr_ = D2DRGBA(dwRGB);		
+
+		}
 		operator ColorF() const
 		{
 			return clr_;
@@ -48,6 +59,8 @@ class D2DColor
 
 			return ar;
 		}
+
+		static bool ColorFromString( LPCWSTR s, DWORD* ret);
 
 	private :
 		ColorF clr_;

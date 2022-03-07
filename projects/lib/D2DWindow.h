@@ -49,6 +49,13 @@ struct SmoothCar
 			p->next = this;
 			this->prev = p;
 		}
+		SmoothCar* LinkLast()
+		{
+			auto p = next;
+			while(p)
+				p = p->next;
+			return p;
+		}
 
 	std::function<int(D2DWindow*, SmoothCar*)> ev;
 	int no;

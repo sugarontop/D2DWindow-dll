@@ -13,7 +13,7 @@ namespace V6
 			D2DListboxItemBase() : idx_(-1){}
 			D2DListboxItemBase(int idx): idx_(idx){}
 			
-			virtual void Draw(D2DContext& cxt, float width, float height) = 0;
+			virtual bool Draw(D2DContext& cxt, float width, float height) = 0;
 			virtual float RowHeight() = 0;
 
 		protected :
@@ -23,13 +23,17 @@ namespace V6
 	class D2DListboxItemString : public D2DListboxItemBase
 	{
 		public :
-			D2DListboxItemString(){}
-			D2DListboxItemString(int idx, std::wstring title):D2DListboxItemBase(idx), title_(title){}
-			virtual void Draw(D2DContext& cxt, float width, float height) override;
+			D2DListboxItemString():width_(0){}
+			D2DListboxItemString(int idx, const std::wstring& title):D2DListboxItemBase(idx), title_(title),width_(0){}
+			~D2DListboxItemString(){ Clear(); }
+			virtual bool Draw(D2DContext& cxt, float width, float height) override;
 			virtual float RowHeight() override;
-
+			void Clear();
+			float ItemWidth() const { return width_; }
 		protected :			
+			float width_;
 			std::wstring title_;
+			ComPTR<IDWriteTextLayout> layout_;
 
 	};
 
@@ -38,7 +42,7 @@ namespace V6
 		public :
 			D2DListboxItemImage(){}
 			D2DListboxItemImage(int idx,ComPTR<ID2D1Bitmap> item):D2DListboxItemBase(idx),img_(item){}
-			virtual void Draw(D2DContext& cxt, float width, float height) override;
+			virtual bool Draw(D2DContext& cxt, float width, float height) override;
 			virtual float RowHeight() override;
 
 		protected :			
@@ -49,7 +53,7 @@ namespace V6
 		public :
 			D2DListboxItemControl(){}
 			D2DListboxItemControl(int idx,std::shared_ptr<D2DControl> item):D2DListboxItemBase(idx),ctrl_(item){}
-			virtual void Draw(D2DContext& cxt, float width, float height) override;
+			virtual bool Draw(D2DContext& cxt, float width, float height) override;
 			virtual float RowHeight() override;
 			std::shared_ptr<D2DControl> Control(){ return ctrl_; }
 		protected :			
@@ -78,7 +82,7 @@ namespace V6
 			virtual std::wstring GetTreeTyp(USHORT* typ) override;
 			
 			float RowHeight() const;
-			void AddItem(int idx, LPCWSTR str);
+			void AddItem(int idx, const std::wstring& str);
 		protected :
 			LRESULT WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
 			LRESULT WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;

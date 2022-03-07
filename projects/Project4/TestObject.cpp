@@ -105,6 +105,12 @@ LRESULT ef2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			r =1;
 		}
 		break;
+		case WM_D2D_DESTROY:
+		{
+			delete m;
+			r= 1;
+		}
+		break;
 		case WM_LBUTTONDOWN:
 		{
 			MouseParam& pm = *(MouseParam*)lParam;
@@ -144,6 +150,7 @@ LRESULT ef2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 		}
 		break;
+		
 
 
 

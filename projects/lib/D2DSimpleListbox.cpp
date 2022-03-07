@@ -35,12 +35,6 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
 
         cxt.DFillRect(rc_, D2RGB(240, 240, 240));
 
-
-        //if (mouse_stat_ == 1)
-        //    cxt.DFillRect(rc_, D2RGB(220,220,200));
-        //else 
-        //    //(*cxt)->FillRectangle(rc_, cxt.white_ ); // 
-
         mat_ = mat.Offset(rc_);
         
         int i = 0;
@@ -50,22 +44,23 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
         mat.Offset(0, -offbar_y_* scbai_);
         for(auto& it : items_ )
         {
-            float w;
-            w = rc_.Width();
-            
+            float w = rc_.Width();
 
-            
             if (selected_idx_ == i )
             {
-                cxt.DFillRect(FRectF(0, 0, w, h), D2RGBA(0, 200, 200, 150));
+                cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 150));
             }
             else if (float_idx_ == i)
             {
-                cxt.DFillRect(FRectF(0, 0, w, h), D2RGBA(0, 200, 200, 80));
+                cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 80));
             }
 
-            it->Draw(cxt, w, h );
+            if (it->Draw(cxt, w, h))
+			{
+				// scrollbar
+				int a = 0;
 
+			}
             mat.Offset(0, h);
             i++;
         }
@@ -105,25 +100,11 @@ void D2DSimpleListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
     scbai_=1.0f;
 	typ_ = 0;
 
-//#ifdef  _DEBUG
-//    items_.push_back( std::shared_ptr<D2DListboxItemString>( new D2DListboxItemString(1, L"item1")));
-//    items_.push_back( std::shared_ptr<D2DListboxItemString>( new D2DListboxItemString(2, L"item2")));
-//    items_.push_back(std::shared_ptr<D2DListboxItemString>(new D2DListboxItemString(3, L"item3")));
-//    items_.push_back(std::shared_ptr<D2DListboxItemString>(new D2DListboxItemString(4, L"item4")));
-//    items_.push_back(std::shared_ptr<D2DListboxItemString>(new D2DListboxItemString(5, L"item5")));
-//    items_.push_back(std::shared_ptr<D2DListboxItemString>(new D2DListboxItemString(6, L"item6")));
-//    items_.push_back(std::shared_ptr<D2DListboxItemString>(new D2DListboxItemString(7, L"item7")));
-//    items_.push_back(std::shared_ptr<D2DListboxItemString>(new D2DListboxItemString(8, L"item8")));
-//#endif //  _DEBUG
-
     auto ls =  dynamic_cast<D2DDropdownListbox*>(pacontrol);
     if ( ls )
     {
         APP.SetCapture(this);
-
     }
-
-
 }
 
 static FPointF ptold;
@@ -357,9 +338,9 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 					}
 					else if ( ar2.size() == 2)
 					{
-						if ( ar2[0] == L"str" && cmd==L"add")
+						if ( cmd==L"add" && (ar2[0] == L"str" || ar2[0] == L"text") )
 						{
-							AddItem(-1, ar2[1].c_str());
+							AddItem(-1, ar2[1]);
 						}	
 						else if ( ar2[0] == L"no" && cmd==L"select")
 						{
@@ -607,7 +588,7 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 					{
 						if ( ar2[0] == L"str" && cmd==L"add")
 						{
-							AddItem(-1, ar2[1].c_str());
+							AddItem(-1, ar2[1]);
 						}	
 						else if ( ar2[0] == L"no" && cmd==L"select")
 						{
@@ -629,9 +610,13 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 
     return ret;
 }
-void D2DSimpleListbox::AddItem(int idx, LPCWSTR str)
+void D2DSimpleListbox::AddItem(int idx, const std::wstring& str)
 {
 	items_.push_back( std::make_shared<D2DListboxItemString>(idx, str)); 
+
+
+	
+
 }
 
 
@@ -684,27 +669,48 @@ std::wstring D2DSimpleListbox::GetTreeTyp(USHORT* typ)
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////
-void D2DListboxItemString::Draw(D2DContext& cxt, float width, float height)
-{
-    (*cxt)->DrawText( title_.c_str(), title_.length(), cxt.textformat_, FRectF(0, 0, width, height) , cxt.black_ );
+bool D2DListboxItemString::Draw(D2DContext& cxt, float width, float height)
+{	
+	bool bl = false;
+	if ( layout_ == nullptr )
+	{
+		if (SOK(cxt.wfactory_->CreateTextLayout(title_.c_str(), title_.length(), cxt.textformat_, 1000,1000, &layout_ )))
+		{
+			DWRITE_TEXT_METRICS t;
+			layout_->GetMetrics(&t);
+
+			width_ = t.width;
+
+			bl = (width < width_);
+		}
+	}
+
+	(*cxt)->DrawTextLayout(FPointF(), layout_, cxt.black_, D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_CLIP);
+	return bl;
 }
 float D2DListboxItemString::RowHeight()
 {
 	return ROW_HEIGHT;
 }
+void D2DListboxItemString::Clear()
+{
+	layout_ = nullptr;
+}
 // /////////////////////////////////////////////////////////////////////////////////////
-void D2DListboxItemImage::Draw(D2DContext& cxt, float width, float height)
+bool D2DListboxItemImage::Draw(D2DContext& cxt, float width, float height)
 {
    (*cxt)->DrawImage(img_, FPointF());
+   return false;
 }
 float D2DListboxItemImage::RowHeight()
 {
 	return img_->GetSize().height;
 }
 // /////////////////////////////////////////////////////////////////////////////////////
-void D2DListboxItemControl::Draw(D2DContext& cxt, float width, float height)
+bool D2DListboxItemControl::Draw(D2DContext& cxt, float width, float height)
 {
-   ctrl_->Draw(cxt);
+	ctrl_->Draw(cxt);
+	return false;
 }
 float D2DListboxItemControl::RowHeight()
 {
