@@ -20,7 +20,7 @@
 #include "D2DMDISplitControls.h"
 #include "D2DChildWindow.h"
 #include "D2DFileManage.h"
-
+#include "D2DGridView.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
@@ -155,7 +155,23 @@ DLLEXPORT UIHandle WINAPI D2DCreateChildWindow(UIHandle hctrls, const D2D1_RECT_
 	r.typ = TYP_CONTROLS;
 	return r;
 }
+DLLEXPORT UIHandle WINAPI D2DCreateGridView(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
 
+	auto pgtx = std::make_shared<D2DGridView>();
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win, ctrls, rc, stat, name, id );
+	ctrls->Add(pgtx);	
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_GRIDVIEW;
+	return r;
+}
 
 
 DLLEXPORT UIHandle WINAPI D2DCreateFileManage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )

@@ -474,19 +474,12 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
         break;
         case WM_LBUTTONUP:
         {
-            
             MouseParam* mp = (MouseParam*)lParam;
             auto pt = mat_.DPtoLP(mp->pt);
 
-			if (APP.IsCapture(this))
-			{
-				APP.ReleaseCapture();
-				ret = 1;
-			}
-
             if (InnerRect(rc_).ZeroRect().PtInRect(pt) && scstat_ != 3 && scstat_ != 4)
             {            
-                OnClick();
+                OnClick(); // ‚±‚±‚ÅReleaseCapture‚·‚é
 				ret = 1;
             }
 

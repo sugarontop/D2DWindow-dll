@@ -396,6 +396,8 @@ bool CreateD2DObject(std::wstring& cmdstr, UIHandle* ret)
 		*ret = D2DCreateButton(select_obj.h, rc, STAT_DEFAULT,prm.nm.c_str(), prm.id);
 	else if (type == L"listbox")
 		*ret = D2DCreateListbox(select_obj.h, rc, STAT_DEFAULT,prm.nm.c_str(), prm.id);
+	else if (type == L"grid")
+		*ret = D2DCreateGridView(select_obj.h, rc, STAT_DEFAULT,prm.nm.c_str(), prm.id);
 	else if (type == L"testobj1")
 		*ret = CreateTestObj(select_obj.h, rc, prm.nm.c_str(), prm.id);
 	else

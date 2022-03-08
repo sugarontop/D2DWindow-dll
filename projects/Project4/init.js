@@ -16,7 +16,8 @@ function main()
 //	k1.set("add&str=ABCDEFG3");
 //	k1.set("add&str=ABCDEFG4");
 	
-	
+	var t1 = dd.select("TX1");
+	t1.set("color=#FFFFA0");
 	
 }
 function mv()
@@ -25,11 +26,19 @@ function mv()
 	dd.select("vwo").move(200,50);
 }
 
+function grid()
+{
+	dd.select("s1");
+	
+	var g1 = dd.create("type=grid&id=10201&x=700&y=90&cx=200&cy=450&nm=g1");
+	g1.set("add&title=date&val=2022/03/16");
+	g1.set("add&title=stock&val=crash!!");
+}
+
 main();
 mv();
 
 
 
-var t1 = dd.select("TX1");
-t1.set("color=#FFFFA0");
+
 	

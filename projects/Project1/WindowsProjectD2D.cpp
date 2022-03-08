@@ -189,7 +189,9 @@ static void CreateControl(HWND hWnd)
     UIHandle htextbox = D2DCreateTextbox(root, rctextbox, true, STAT_DEFAULT, L"textbox1");
     D2DSetText(htextbox, L"Hello world");
 
-	D2DSetFont(htextbox, L"ＭＳ ゴシック", 10.0f);
+
+
+
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
