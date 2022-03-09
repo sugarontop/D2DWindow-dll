@@ -4,6 +4,9 @@
 #include "D2DWindowControl.h"
 #include "D2DScrollbar.h"
 #include "D2DColor.h"
+
+#define DEFAULT_TAB_COLOR	D2RGB(110,110,110)
+
 namespace V6 {
 
 	class D2DControls_with_Scrollbar : public D2DControls

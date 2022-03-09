@@ -9,7 +9,7 @@ D2DControls_with_Scrollbar::D2DControls_with_Scrollbar()
 {
 	vscroll_x_ = 0;
 	hscroll_x_ = 0;
-	backcolor_ = ColorF::AliceBlue;
+	backcolor_ = DEFAULT_TAB_COLOR;
 }
 
 void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
@@ -224,30 +224,6 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 	{
 		r = InnerWndProc(b,message,wParam,lParam);
 	}
-
-	//if (r==0)
-	//{
-	//	// 内部で処理済みとすることで、外へイベントを渡さない。
-	//	switch(message)
-	//	{
-	//		case WM_MOUSEMOVE:
-	//		case WM_LBUTTONDOWN:			
-	//		case WM_LBUTTONUP:
-	//		case WM_RBUTTONDOWN:
-	//		case WM_RBUTTONUP:
-	//		case WM_LBUTTONDBLCLK:
-	//		case WM_MOUSEHWHEEL:
-	//		{				
-	//			MouseParam& pm = *(MouseParam*)lParam;
-	//			auto pt = mat_.DPtoLP(pm.pt);
-
-	//			if ( rc_.PtInRect(pt))
-	//				r = 1;
-	//		}
-	//		break;
-	//	}
-	//}
-
 
 	return r;
 

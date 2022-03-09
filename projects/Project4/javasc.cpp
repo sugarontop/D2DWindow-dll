@@ -51,7 +51,7 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 JsValueRef CALLBACK setFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 JsValueRef CALLBACK getFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 JsValueRef CALLBACK moveFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
-
+JsValueRef CALLBACK destroyFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState);
 bool JavascriptAppInit()
 {
 	JsContextRef context;
@@ -229,6 +229,7 @@ JsErrorCode ImplementsObjectCallback(JsValueRef myObject)
 	IfFailRet(DefineHostCallback(myObject, L"set", setFunc, nullptr));
 	IfFailRet(DefineHostCallback(myObject, L"get", getFunc, nullptr));
 	IfFailRet(DefineHostCallback(myObject, L"move", moveFunc, nullptr));
+	IfFailRet(DefineHostCallback(myObject, L"destroy", destroyFunc, nullptr));
 
 	return JsNoError;
 }
@@ -300,6 +301,23 @@ JsValueRef CALLBACK moveFunc(JsValueRef callee, bool isConstructCall, JsValueRef
 	return 0;
 }
 
+JsValueRef CALLBACK destroyFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
+{
+	LPVOID p;
+	JsValueRef obj = arguments[0];
+	IfFailRet(JsGetExternalData( obj, &p));
+	UIHandleRap* k = (UIHandleRap*)p;
+	D2DControl* tt = (D2DControl*)(k->h.p);
+	if ( tt )
+	{
+		tt->Destroy();
+		k->h.p = nullptr;
+		k->h.typ = TYP_NULL;
+	}
+
+	return 0;
+}
+
 JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueRef *arguments, unsigned short argumentCount, _In_opt_ void *callbackState)
 {
 	std::wstring select_item;
@@ -313,23 +331,28 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 
 	auto uh = D2DGetControlFromName(hwin, select_item.c_str());
 
-	select_obj.h = uh;
+	if ( uh.p )
+	{
+		select_obj.h = uh;
 	
-	//// objçÏê¨
-	UIHandleRap* rap = new UIHandleRap(uh);
+		//// objçÏê¨
+		UIHandleRap* rap = new UIHandleRap(uh);
 
-	JsValueRef ret;
-	auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
+		JsValueRef ret;
+		auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
 
-	// objÇ…set functionÇé¿ëï
+		// objÇ…set functionÇé¿ëï
 
-	ImplementsObjectCallback( ret);
+		ImplementsObjectCallback( ret);
 
-	//IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
-	//IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
+		//IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
+		//IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
+		return ret;
+	}	
+
+	return 0;
+
 	
-
-	return ret;
 }
 
 

@@ -117,7 +117,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 							//(*cxt)->FillRectangle( FRectF(rc.right, rc.bottom-CARET_W, FSizeF(rc.Width(), CARET_W)), fore );
 					
 						if (bMultiline)
-							(*cxt)->FillRectangle( FRectF(0, rc.bottom-0.5f, FSizeF( rctext_.right, 0.5f)), fore );
+							(*cxt)->FillRectangle( FRectF(0, rc.bottom-0.5f, FSizeF( rctext_.Width(), 0.5f)), fore );
 					}
 					cxt.Redraw();
 				}	
@@ -260,7 +260,7 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 					if ( !rctext_.PtInRect(pt) )
 					{
 						ImeActive(false);
-						APP.ReleaseCapture();						
+						//APP.ReleaseCapture();	Ç±Ç±Ç≈ÉäÉäÅ[ÉXÇµÇ»Ç¢				
 					}
 					ret = 1;
 					bl = true;
@@ -362,8 +362,13 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 						}	
 						else if (ar2[0] == L"color")
 						{
-							D2DColor clr(D2DColor(ar2[1].c_str()));
+							D2DColor clr(ar2[1].c_str());
 							fore_ = clr;
+						}
+						else if (ar2[0] == L"bkcolor")
+						{
+							D2DColor clr(ar2[1].c_str());
+							back_ = clr;
 						}
 					}
 				}

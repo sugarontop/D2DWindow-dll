@@ -179,5 +179,8 @@
     <ClCompile Include="..\lib\D2DGridView.cpp">
       <Filter>ソース ファイル\D2D</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\D2DLogin.cpp">
+      <Filter>ソース ファイル\D2D</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

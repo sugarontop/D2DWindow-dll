@@ -11,7 +11,7 @@
 #include "D2DWhiteWindowControl.h"
 #include "D2DColor.h"
 
-#include "D2DLogin.h"
+//#include "D2DLogin.h"
 #include "chart_top.h"
 #include "javasc.h"
 
@@ -42,62 +42,64 @@ void CreateControl(HWND hWnd)
 
 	auto hctrlsA = D2DCreateEmptyControls( root, FRectF(), STAT_DEFAULT, NONAME,-1);
 
-	CreateLoginControl(hctrlsA);
+	//CreateLoginControl(hctrlsA);
+
+
+
+	//auto h = D2DGetControlFromName(hwin, L"document");	
+	//D2DSetStat(h, STAT_DEFAULT);
+
 
 	CreateDocumentControl(hctrlsA);
 
 }
-void CreateLoginControl(UIHandle h)
-{
-	auto login = std::make_shared<D2DLogin>();
-
-	auto kc = (D2DControls*)h.p;
-	login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(400,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
-	kc->Add( login );
-
-	D2DColor clr(0x9e9e8a),clr2(D2RGBA(0,0,0,0));
-	AppBase dumy;
-	login->WndProc(dumy, WM_D2D_SET_COLOR,0,(LPARAM)&clr);
-	login->WndProc(dumy, WM_D2D_SET_COLOR,2,(LPARAM)&clr2);
-
-
-	login->on_try_login_ = [](void* sender, void* p)->DWORD
-	{
-		BSTR* p1 = (BSTR*)p;
-
-		std::wstring cd = p1[0];
-		std::wstring pwd = p1[1];
-
-		if ( cd == pwd )
-		{
-			
-			((D2DControls*)sender)->GetParentControls()->SetStat(STAT_DEFAULT);
-
-
-			UIHandle h = {};
-			h.p = ((D2DControls*)sender)->GetParentControls();
-
-			D2DSetColor(h, ColorF::Green, ColorF::White,ColorF::Black);		
-
-			h = D2DGetControlFromName(hwin, L"document");
-
-			if ( h.p )
-				D2DSetStat(h, STAT_DEFAULT);
-
-
-			return 0;
-
-		}
-		p1[2] = ::SysAllocString( L"login fail.");
-
-
-		return 1;
-	};
-
-	APP.SetCapture(login.get());
-
-
-}
+//void CreateLoginControl(UIHandle h)
+//{
+//	auto hlogin = D2DCreateLogin( h,FRectF(400,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
+//	
+//	D2DColor clr(0x9e9e8a),clr2(D2RGBA(0,0,0,0));
+//	AppBase dumy;
+//	login->WndProc(dumy, WM_D2D_SET_COLOR,0,(LPARAM)&clr);
+//	login->WndProc(dumy, WM_D2D_SET_COLOR,2,(LPARAM)&clr2);
+//
+//
+//	login->on_try_login_ = [](void* sender, void* p)->DWORD
+//	{
+//		BSTR* p1 = (BSTR*)p;
+//
+//		std::wstring cd = p1[0];
+//		std::wstring pwd = p1[1];
+//
+//		if ( cd == pwd )
+//		{
+//			
+//			((D2DControls*)sender)->GetParentControls()->SetStat(STAT_DEFAULT);
+//
+//
+//			UIHandle h = {};
+//			h.p = ((D2DControls*)sender)->GetParentControls();
+//
+//			D2DSetColor(h, ColorF::Green, ColorF::White,ColorF::Black);		
+//
+//			h = D2DGetControlFromName(hwin, L"document");
+//
+//			if ( h.p )
+//				D2DSetStat(h, STAT_DEFAULT);
+//
+//
+//			return 0;
+//
+//		}
+//		p1[2] = ::SysAllocString( L"login fail.");
+//
+//
+//		return 1;
+//	};
+//
+//	APP.SetCapture(login.get());
+//
+//
+//}
 
 
 struct BobInstance
@@ -124,6 +126,7 @@ struct BobInstance
 
 	UIHandle hactive;
 	D2DControls* child;
+	FSizeF voff;
 
 };
 
@@ -139,7 +142,7 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 	m->mat = mat.PushTransform();
 
 
-	FRectF rc = *(m->prc);
+	FRectF& rc = *(m->prc);
 
 	D2DRectFilter fil(cxt, rc);
 	
@@ -153,7 +156,12 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 	cxt.DDrawRect(rc1, m->clr[1], m->clr[0]);
 
 	D2DControls* c = (D2DControls*)m->hme.p;
+
+
+	mat.PushTransform();
+	mat.Offset(m->voff.width, m->voff.height);
 	c->InnerDraw(cxt);
+	mat.PopTransform();
 
 
 	mat.PopTransform();
@@ -213,6 +221,8 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			
 			m->orgrc = D2DGetRect(m->hme);
 			m->prc = (FRectF*)D2DGetRect2(m->hme);
+
+			
 			
 			auto id = D2DGetId(m->hme);
 
@@ -222,7 +232,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 10 == id )
 			{
-				auto tx = D2DCreateTextbox(m->hme, FRectF(10,60,FSizeF(600,900)), true, STAT_DEFAULT, L"TX1",-1,-1);
+				auto tx = D2DCreateTextbox(m->hme, FRectF(10,40,FSizeF(600,550)), true, STAT_DEFAULT, L"TX1",-1,-1);
 
 				std::wstring str;
 
@@ -247,17 +257,19 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 12 == id )
 			{
-			
-				//LPCWSTR prm = L"text= name:s2, id:11&color=[128,217,204]&align=center&fontheight=30";
+				m->voff = FSizeF(5,5);
+				
+				auto tab = D2DCreateTabControls(m->hme, FRectF(0,0,FSizeF(700,400)),  STAT_DEFAULT, L"TABC" );
 
-				//D2DCreateStatic(m->hme, FRectF(100,10,FSizeF(200,260)), STAT_DEFAULT, prm, NONAME, -2 );
+				D2DSetColor(tab,ColorF::LightGray,ColorF::White,ColorF::White);
 
-				/*std::wstring prm2 = L"color=[128,217,204]&align=left&fontname=Meiryo&fontheight=16&text=";
+				auto tab1 = D2DGetTab(tab, 0); 
+				D2DSendMessage(tab,WM_D2D_SET_TEXT,0,(LPARAM)L"JPN");
+				
+				auto tx = D2DCreateTextbox(tab1, FRectF(10,40,FSizeF(600,350)), true, STAT_DEFAULT, L"TX2",-1,-1);
 
-				prm2 += L"When I was a boy I was told that anybody could becaome Persident.Now I'm beginning to believe it.";
+				auto tab2 = D2DAddNewTab(tab, L"ROC");
 
-				D2DCreateStatic(m->hme, FRectF(10,50,FSizeF(1200,260)), STAT_DEFAULT, prm2.c_str(), NONAME, -2 );
-				*/
 			}
 
 
@@ -448,7 +460,7 @@ void CreateDocumentControl(UIHandle h)
 	FSizeF sz(cw/2.0f,ch/2.0f);
 
 
-	auto hdoc1 = D2DCreateXXXControls( h, FRectF(), 0, L"document",-1); // 0:loginするまで表示しない。
+	auto hdoc1 = D2DCreateXXXControls( h, FRectF(), STAT_DEFAULT, L"document",-1); // 0:loginするまで表示しない。
 	
 	UIHandle ha[4]={};
 	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(0,0, sz), STAT_DEFAULT, L"s1",10);

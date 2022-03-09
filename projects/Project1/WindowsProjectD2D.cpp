@@ -185,9 +185,9 @@ static void CreateControl(HWND hWnd)
     
     auto root = D2DGetRootControls(hwin);
 
-    FRectF rctextbox(10, 40, FSizeF(400, 700));
+    FRectF rctextbox(100, 40, FSizeF(400, 700));
     UIHandle htextbox = D2DCreateTextbox(root, rctextbox, true, STAT_DEFAULT, L"textbox1");
-    D2DSetText(htextbox, L"Hello world");
+    D2DSetText(htextbox, L"Hello world\nHello world\nHello world\n");
 
 
 

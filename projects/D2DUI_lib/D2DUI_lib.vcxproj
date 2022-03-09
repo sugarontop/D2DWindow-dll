@@ -164,16 +164,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\lib\D2DClassMap.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\D2DApp.cpp" />
-    <ClCompile Include="..\lib\D2DClassMap.cpp" />
     <ClCompile Include="..\lib\D2DContext.cpp" />
-    <ClCompile Include="..\lib\D2DGrid.cpp" />
-    <ClCompile Include="..\lib\D2DLogin.cpp" />
     <ClCompile Include="..\lib\D2DWindow2.cpp" />
     <ClCompile Include="..\lib\D2DWindowControl.cpp" />
     <ClCompile Include="..\lib\FilePackTool.cpp" />

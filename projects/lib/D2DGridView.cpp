@@ -8,6 +8,8 @@ void D2DGridView::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const
 {
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
+	fore_ = D2RGB(0,0,0);
+	back_ = D2RGB(255,255,255);
 	rc_ = rc;
 }
 D2DGridView::~D2DGridView()
@@ -29,36 +31,37 @@ void D2DGridView::Clear()
 
 void D2DGridView::Draw(D2DContext& cxt)
 {
-	if (stat_ & STAT_VISIBLE)
-    {
-        D2DMatrix mat(*cxt);
+	if (BITFLG(STAT_VISIBLE))
+    {		
+		ComPTR<ID2D1SolidColorBrush> back;
+		ComPTR<ID2D1SolidColorBrush> fore;
+		
+		(*cxt)->CreateSolidColorBrush(fore_, &fore);	
+		(*cxt)->CreateSolidColorBrush(back_, &back);
+
+		D2DMatrix mat(*cxt);
         mat.PushTransform();
-        (*cxt)->DrawRectangle(rc_, cxt.black_);
 
         D2DRectFilter fil(cxt, rc_ );
+		(*cxt)->FillRectangle(rc_,back);
 
-        cxt.DFillRect(rc_, D2RGB(240, 240, 240));
         mat_ = mat.PushTransform();
         mat.Offset(rc_);
-		auto br = cxt.black_;
+
 		FPointF pt(3,2), pt2(80.f, 2);		
 		
-		(*cxt)->DrawLine(FPointF(pt2.x-3,0), FPointF(pt2.x-3, rc_.Height()), br, 0.5f);
+		(*cxt)->DrawLine(FPointF(pt2.x-3,0), FPointF(pt2.x-3, rc_.Height()), fore, 1.0f);
 	
 		FRectF rc(0,25.8f,rc_.Width(),26.0f);
         for(auto& it : Items_ )
 		{
 			_ASSERT(it.colcnt >= 2);
-			(*cxt)->DrawTextLayout(pt,it.value[0],br, D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_CLIP);
-			(*cxt)->DrawTextLayout(pt2,it.value[1],br,D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_CLIP);
+			(*cxt)->DrawTextLayout(pt,it.value[0],fore, D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_CLIP);
+			(*cxt)->DrawTextLayout(pt2,it.value[1],fore,D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_CLIP);
 
-			(*cxt)->DrawRectangle(rc, br );
+			(*cxt)->DrawRectangle(rc, fore );
 			mat.Offset(0, 26.0f);
 		}
-
-
-		
-
 		mat.PopTransform();
 	}
 }
@@ -74,6 +77,10 @@ LRESULT D2DGridView::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 		case WM_D2D_COMMAND_SET:
 		{
+			//var k3 = dd.create("type=grid&id=10105&x=650&y=50&cx=150&cy=450&nm=gd1");
+			//k3.set("color=#FFFFA0&bkcolor=#111111");
+			//k3.set("add&title=ABCDEFG1&val=000000");
+
 			if ( (UINT_PTR)this == (UINT_PTR)wParam)
 			{
 				LPCWSTR cmdstr = (LPCWSTR)lParam;
@@ -114,6 +121,16 @@ LRESULT D2DGridView::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 								r.value[1] = playout2;
 
 							Items_.push_back(r);
+						}
+						else if (ar2[0] == L"color")
+						{
+							D2DColor clr(ar2[1].c_str());
+							fore_ = clr;
+						}
+						else if (ar2[0] == L"bkcolor")
+						{
+							D2DColor clr(ar2[1].c_str());
+							back_ = clr;
 						}
 					}
 

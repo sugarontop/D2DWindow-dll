@@ -3,6 +3,7 @@
 #include "D2DApp.h"
 #include "D2DCapture.h"
 #include "D2DWindowControl.h"
+#include "D2DColor.h"
 namespace V6 {
 class D2DTabControls : public D2DControls
 {
@@ -28,7 +29,7 @@ class D2DTabControls : public D2DControls
 		std::vector<FRectF> tabrects_;
 		USHORT tab_idx_;
 		bool size_fix_;
-		
+		D2DColor back_,fore_;
 
 
 };

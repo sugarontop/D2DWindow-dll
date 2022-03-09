@@ -19,7 +19,6 @@ void D2DTabControls::Draw(D2DContext& cxt)
 
 	auto tab_height = DrawTab(cxt,tab_idx_);
 
-
 	mat.Offset(0,tab_height);
 
 	controls_[tab_idx_]->Draw(cxt);
@@ -27,6 +26,17 @@ void D2DTabControls::Draw(D2DContext& cxt)
 	mat.PopTransform();
 
 }
+
+static std::wstring GetTabName(const std::wstring& nm)
+{
+	auto i = nm.find(L'@');
+
+	if ( 0 <= i && i < 256 )
+		return nm.substr(i+1, nm.length()-(i+1));
+
+	return nm;
+}
+
 float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 {
 	D2DMatrix mat(*cxt);
@@ -40,17 +50,17 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 	for(auto& it : tabrects_)
 	{
 		auto clr1 = D2RGB(220,220,220);
-		auto clr2 = D2RGB(0,0,0);
+		auto clr2 = ColorF::Black;
 
 		if ( k == tabidx )
 		{
-			clr1 = D2RGB(110,110,110);
-			clr2 = D2RGB(255,255,255);
+			clr1 = DEFAULT_TAB_COLOR;
+			clr2 = ColorF::White;
 
 		}
 
 		cxt.DFillRect(it, clr1);
-		auto tab_nm = this->controls_[k]->GetName();
+		auto tab_nm = GetTabName(this->controls_[k]->GetName());
 
 
 
@@ -167,12 +177,7 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		{
 			std::wstring s = (LPCWSTR)(LPARAM)lParam;
 
-
-
-
 			r = 0;
-
-
 		}
 		break;
 		case WM_D2D_SET_TEXT:
@@ -180,11 +185,29 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			UINT idx = (UINT)wParam;
 
 			if ( idx < controls_.size())
-				controls_[idx]->SetName((LPCWSTR)lParam);
+			{
+				auto nm = GetName();
+				nm += L"@";
+				nm += (LPCWSTR)lParam;
+
+				controls_[idx]->SetName(nm.c_str());
+				r = 1;
+			}
+		}
+		break;
+		case WM_D2D_SET_COLOR:
+		{
+			ColorF clr = *(ColorF*)lParam;
+
+			if ( wParam == 0 )
+				back_ = clr;
+			else if ( wParam == 1 )
+				fore_ = clr;
+			//else if ( wParam == 2 )
+			//	border_ = clr;
 
 			r = 1;
-
-		};
+		}
 		break;
 
 	}
@@ -234,64 +257,13 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	tab_idx_ = 0;
 	size_fix_ = false;
 
+	back_ = ColorF::White;
+	fore_ = ColorF::Black;
 
-//if (name == L"test" )
-//{
-//	for(int i = 0; i < 3; i++ )
-//	{
-//		WCHAR nm[64];
-//		wsprintf(nm,L"aNAME_%d", i);
-//
-//		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
-//		page1->CreateControl(parent,this, FRectF(0,0,0,0), STAT_DEFAULT, nm );
-//		Add(page1);
-//
-//
-//		if (i==1)
-//		{			
-//			UIHandleWin hwin={};
-//
-//			hwin.p=parent;
-//
-//			UIHandle hs={};
-//
-//			hs.p = page1.get();
-//
-//			auto ha = D2DCreateSquarePaper(hwin,hs, FRectF(0,0,6000,9000),  STAT_DEFAULT, L"MySquarePaper",-1);
-//
-//			auto krc = rc_;
-//			for(int ij = 0; ij < 1; ij++ )
-//			{
-//				yahoo_finance* yf = new yahoo_finance();
-//				yf->CreateControl(parent, (D2DControls*)ha.p, FRectF(50+ij*10,150+ij*10,FSizeF(800,500)), STAT_DEFAULT, NONAME );
-//				((D2DControls*)ha.p)->Add(std::shared_ptr<yahoo_finance>(yf));
-//
-//				yf->sc_control_ = page1.get();
-//
-//			}
-//		}
-//
-//	}
-//
-//
-//
-//	for(int i=0; i < 3; i++ )
-//	{
-//		FRectF rc(0,0,FSizeF(200,20));
-//		rc.Offset(i*180,0);
-//		tabrects_.push_back(rc);
-//
-//	}
-//}
-//else 
-
-{
-
-	
 	for(int i = 0; i < 1; i++ )
 	{
 		WCHAR nm[64];
-		wsprintf(nm,L"NAME_%d", i);
+		wsprintf(nm,L"%s@%d", name_.c_str(), i);
 
 		if (BITFLG(STAT_SIMPLE))
 		{			
@@ -313,25 +285,27 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		tabrects_.push_back(rc);
 
 	}
-
-}
-
 }
 
 D2DControls* D2DTabControls::AddNewTab(LPCWSTR tabnm)
 {
 	D2DControls* ret = nullptr;
+
+	std::wstring _tabnm = name_;
+	_tabnm += L"@";
+	_tabnm += tabnm;
+
 	if (BITFLG(STAT_SIMPLE))
 	{
 		auto page1 = std::make_shared<D2DControls>();
-		page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, tabnm );
+		page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, _tabnm.c_str() );
 		Add(page1);
 		ret = page1.get();
 	}
 	else
 	{
 		auto page1 = std::make_shared<D2DControls_with_Scrollbar>();
-		page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, tabnm );
+		page1->CreateControl(parent_window_,this, FRectF(0,0,rc_.Size()), STAT_DEFAULT, _tabnm.c_str() );
 		Add(page1);
 		ret = page1.get();
 

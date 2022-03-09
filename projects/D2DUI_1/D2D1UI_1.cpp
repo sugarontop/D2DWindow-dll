@@ -21,6 +21,7 @@
 #include "D2DChildWindow.h"
 #include "D2DFileManage.h"
 #include "D2DGridView.h"
+#include "D2DLogin.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
@@ -172,7 +173,25 @@ DLLEXPORT UIHandle WINAPI D2DCreateGridView(UIHandle hctrls, const D2D1_RECT_F& 
 	r.typ = TYP_GRIDVIEW;
 	return r;
 }
+DLLEXPORT UIHandle WINAPI D2DCreateLogin(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
 
+	auto pgtx = std::make_shared<D2DLogin>();
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win, ctrls, rc, stat, name, id );
+	ctrls->Add(pgtx);	
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_LOGIN;
+	return r;
+
+
+}
 
 DLLEXPORT UIHandle WINAPI D2DCreateFileManage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
@@ -297,7 +316,23 @@ DLLEXPORT UIHandle WINAPI D2DCreateTabControls(UIHandle hctrls, const D2D1_RECT_
 	return r;
 }
 
+DLLEXPORT UIHandle WINAPI D2DGetTab(UIHandle hctrls, USHORT idx)
+{
+	_ASSERT(hctrls.p && hctrls.typ == TYP_TAB_CONTROLS);
+	auto ctrls = (D2DTabControls*)hctrls.p;
 
+	UIHandle r = {};
+	
+	auto p = ctrls->GetControlFromIdx(idx);
+
+	if ( p )
+	{
+		r.p = p;
+		r.typ = TYP_CONTROLS;
+	}
+	return r;
+
+}
 
 
 DLLEXPORT UIHandle WINAPI D2DAddNewTab(UIHandle hctrls, LPCWSTR nm)
@@ -871,6 +906,20 @@ DLLEXPORT int WINAPI D2DSetStat(UIHandle h, int stat)
 	return old;
 }
 
+DLLEXPORT int WINAPI D2DGetStat(UIHandle h)
+{
+	int old = 0;
+	if (h.typ != TYP_MAIN_WINDOW)
+	{
+		auto p = (D2DControl*)h.p;
+		old = p->GetStat();
+	}
+	return old;
+}
+
+
+
+
 DLLEXPORT void WINAPI D2DReadOnly(UIHandle h, bool readonly)
 {
 	if (h.typ == TYP_TEXTBOX)
@@ -1067,6 +1116,7 @@ DLLEXPORT void WINAPI D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF b
 
 		tx->WndProc(b,WM_D2D_SET_COLOR, 0, (LPARAM)&back);
 		tx->WndProc(b,WM_D2D_SET_COLOR, 1, (LPARAM)&fore);
+		tx->WndProc(b,WM_D2D_SET_COLOR, 2, (LPARAM)&border);
 		
 	}
 }

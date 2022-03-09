@@ -6,18 +6,21 @@ using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
 #define BUTTON_WIDTH BARW
-
+#define DEFAULT_HEIGHT	21.0f
 
 void D2DDropdownListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
     D2DControl::CreateControl(parent, pacontrol, rc, stat, name, local_id);
 
-    SetRect(rc);
+    rc_ = rc;
 
-    button_rc_ = rc;
+	rc_.SetHeight(DEFAULT_HEIGHT);
+
+
+    button_rc_ = rc_;
     button_rc_.left = button_rc_.right - BUTTON_WIDTH;
     selected_idx_ = -1;
-    listbox_height_ = rc.Height()*3;
+    listbox_height_ = rc.Height();
 	mouse_mode_ = 0;
 }
 void D2DDropdownListbox::Draw(D2DContext& cxt)

@@ -205,6 +205,7 @@
     <ClCompile Include="..\lib\D2DDropdownListbox.cpp" />
     <ClCompile Include="..\lib\D2DFileManage.cpp" />
     <ClCompile Include="..\lib\D2DImageControl.cpp" />
+    <ClCompile Include="..\lib\D2DLogin.cpp" />
     <ClCompile Include="..\lib\D2DMDIControls.cpp" />
     <ClCompile Include="..\lib\D2DMDISplitControls.cpp" />
     <ClCompile Include="..\lib\D2DGridView.cpp" />

@@ -42,62 +42,62 @@ void CreateControl(HWND hWnd)
 
 	auto hctrlsA = D2DCreateEmptyControls( root, FRectF(), STAT_DEFAULT, NONAME,-1);
 
-	CreateLoginControl(hctrlsA);
+	//CreateLoginControl(hctrlsA);
 
 	CreateDocumentControl(hctrlsA);
 
 }
-void CreateLoginControl(UIHandle h)
-{
-	auto login = std::make_shared<D2DLogin>();
-
-	auto kc = (D2DControls*)h.p;
-	login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(400,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
-	kc->Add( login );
-
-	D2DColor clr(0x9e9e8a),clr2(D2RGBA(0,0,0,0));
-	AppBase dumy;
-	login->WndProc(dumy, WM_D2D_SET_COLOR,0,(LPARAM)&clr);
-	login->WndProc(dumy, WM_D2D_SET_COLOR,2,(LPARAM)&clr2);
-
-
-	login->on_try_login_ = [](void* sender, void* p)->DWORD
-	{
-		BSTR* p1 = (BSTR*)p;
-
-		std::wstring cd = p1[0];
-		std::wstring pwd = p1[1];
-
-		if ( cd == pwd )
-		{
-			
-			((D2DControls*)sender)->GetParentControls()->SetStat(STAT_DEFAULT);
-
-
-			UIHandle h = {};
-			h.p = ((D2DControls*)sender)->GetParentControls();
-
-			D2DSetColor(h, ColorF::Green, ColorF::White,ColorF::Black);		
-
-			h = D2DGetControlFromName(hwin, L"document");
-
-			if ( h.p )
-				D2DSetStat(h, STAT_DEFAULT);
-
-
-			return 0;
-
-		}
-		p1[2] = ::SysAllocString( L"login fail.");
-
-
-		return 1;
-	};
-
-	APP.SetCapture(login.get());
-
-
-}
+//void CreateLoginControl(UIHandle h)
+//{
+//	auto login = std::make_shared<D2DLogin>();
+//
+//	auto kc = (D2DControls*)h.p;
+//	login->CreateControl((D2DWindow*)hwin.p, kc, FRectF(400,100,FSizeF(350,350)), STAT_DEFAULT|STAT_MODAL, L"login" );
+//	kc->Add( login );
+//
+//	D2DColor clr(0x9e9e8a),clr2(D2RGBA(0,0,0,0));
+//	AppBase dumy;
+//	login->WndProc(dumy, WM_D2D_SET_COLOR,0,(LPARAM)&clr);
+//	login->WndProc(dumy, WM_D2D_SET_COLOR,2,(LPARAM)&clr2);
+//
+//
+//	login->on_try_login_ = [](void* sender, void* p)->DWORD
+//	{
+//		BSTR* p1 = (BSTR*)p;
+//
+//		std::wstring cd = p1[0];
+//		std::wstring pwd = p1[1];
+//
+//		if ( cd == pwd )
+//		{
+//			
+//			((D2DControls*)sender)->GetParentControls()->SetStat(STAT_DEFAULT);
+//
+//
+//			UIHandle h = {};
+//			h.p = ((D2DControls*)sender)->GetParentControls();
+//
+//			D2DSetColor(h, ColorF::Green, ColorF::White,ColorF::Black);		
+//
+//			h = D2DGetControlFromName(hwin, L"document");
+//
+//			if ( h.p )
+//				D2DSetStat(h, STAT_DEFAULT);
+//
+//
+//			return 0;
+//
+//		}
+//		p1[2] = ::SysAllocString( L"login fail.");
+//
+//
+//		return 1;
+//	};
+//
+//	APP.SetCapture(login.get());
+//
+//
+//}
 
 
 struct BobInstance
@@ -437,7 +437,7 @@ void CreateDocumentControl(UIHandle h)
 	FSizeF sz(cw/2.0f,ch/2.0f);
 
 
-	auto hdoc1 = D2DCreateXXXControls( h, FRectF(), 0, L"document",-1); // 0:loginÇ∑ÇÈÇ‹Ç≈ï\é¶ÇµÇ»Ç¢ÅB
+	auto hdoc1 = D2DCreateXXXControls( h, FRectF(), STAT_DEFAULT, L"document",-1);
 	
 	UIHandle ha[4]={};
 	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(0,0, sz), STAT_DEFAULT, L"s1",10);

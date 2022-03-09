@@ -40,9 +40,11 @@ DLLEXPORT UIHandle WINAPI D2DCreateChildWindow(UIHandle hctrls, const D2D1_RECT_
 DLLEXPORT UIHandle WINAPI D2DCreateFileManage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
 DLLEXPORT UIHandle WINAPI D2DCreateGridView(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
+DLLEXPORT UIHandle WINAPI D2DCreateLogin(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 
 DLLEXPORT UIHandle WINAPI D2DCreateTabControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle WINAPI D2DAddNewTab(UIHandle hctrls, LPCWSTR nm);
+DLLEXPORT UIHandle WINAPI D2DGetTab(UIHandle hctrls, USHORT idx);
 DLLEXPORT UIHandle WINAPI D2DGetControlFromIdx(UIHandle hctrls, USHORT idx);
 DLLEXPORT bool WINAPI D2DIsControls(UIHandle h);
 
@@ -64,6 +66,8 @@ DLLEXPORT void WINAPI D2DReadOnly(UIHandle h, bool readonly);
 DLLEXPORT void WINAPI D2DEnable(UIHandle h, bool enable);
 
 DLLEXPORT int WINAPI D2DAddItem(UIHandle, int idx, LPCWSTR str);
+
+DLLEXPORT int WINAPI D2DGetStat(UIHandle h);
 
 DLLEXPORT void WINAPI D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos);
 DLLEXPORT BSTR WINAPI D2DGetText(UIHandle h, bool bAll );

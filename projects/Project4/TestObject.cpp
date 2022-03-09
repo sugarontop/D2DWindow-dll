@@ -44,42 +44,46 @@ bool ef1(LPVOID captureobj, D2DContext& cxt)
 {
 	AliceInstance* m = (AliceInstance*)captureobj;
 
+	auto stat = D2DGetStat(m->hme);
+	if ( BITFLG2( stat, STAT_VISIBLE))
+	{
 	
-	D2DMatrix mat(*cxt);
+		D2DMatrix mat(*cxt);
 
-	m->mat = mat.PushTransform();
+		m->mat = mat.PushTransform();
 
 
-	FRectF rc = *(m->prc);
+		FRectF rc = *(m->prc);
 
-	D2DRectFilter fil(cxt, rc);
+		D2DRectFilter fil(cxt, rc);
 	
-	mat.Offset(rc);
+		mat.Offset(rc);
 	
-	if ( m->hactive.p == m->hme.p )
-		cxt.DFillRect(rc.ZeroRect(),ColorF::LightPink); // m->clr[0]);
-	else
-		cxt.DFillRect(rc.ZeroRect(),ColorF::DarkCyan); // m->clr[0]);
+		if ( m->hactive.p == m->hme.p )
+			cxt.DFillRect(rc.ZeroRect(),ColorF::LightPink); // m->clr[0]);
+		else
+			cxt.DFillRect(rc.ZeroRect(),ColorF::DarkCyan); // m->clr[0]);
 
 
-	FRectF rc1 = rc.ZeroRect();
-	rc1.InflateRect(-3,-3);
-	cxt.DDrawRect(rc1, m->clr[1], ColorF::DarkCyan); //m->clr[0]);
+		FRectF rc1 = rc.ZeroRect();
+		rc1.InflateRect(-3,-3);
+		cxt.DDrawRect(rc1, m->clr[1], ColorF::DarkCyan); //m->clr[0]);
 
 	
-	BSTR s = D2DGetName(m->hme);
+		BSTR s = D2DGetName(m->hme);
 
-	cxt.DText(rc1.LeftTop(), s, ColorF::White);
+		cxt.DText(rc1.LeftTop(), s, ColorF::White);
 
-	::SysFreeString(s);
-
-
-	//D2DControls* c = (D2DControls*)m->hme.p;
-	//c->InnerDraw(cxt);
+		::SysFreeString(s);
 
 
-	mat.PopTransform();
+		//D2DControls* c = (D2DControls*)m->hme.p;
+		//c->InnerDraw(cxt);
 
+
+		mat.PopTransform();
+
+	}
 	return false;
 
 

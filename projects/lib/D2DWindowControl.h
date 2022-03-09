@@ -32,17 +32,6 @@ public:
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col);
 	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt){}
 
-
-	//virtual void UpdateScrollbar(D2DScrollbar* bar) {};
-	//bool IsThroughMessage(UINT message);
-
-	//virtual void UpdateStatus(D2DControls* p) {}
-	//virtual D2DControl* UnPack() { return this; }
-	//virtual void StatActive(bool bActive);
-	//virtual bool IsAutoResize() { return auto_resize_; }
-	//virtual void DestroyControl();
-
-
 	void Enable(bool bEnable);
 	void Visible(bool bVisible);
 	bool IsEnable()  const { return ((stat_&STAT_ENABLE) > 0 ); }
@@ -73,7 +62,6 @@ protected:
 
 protected:
 	D2DMat mat_;
-	DWORD stat_;
 	wstring name_;
 	int id_;
 };

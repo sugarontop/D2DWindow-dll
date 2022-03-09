@@ -2,7 +2,7 @@
 
 #include "D2DApp.h"
 #include "D2DWindowControl.h"
-
+#include "D2DColor.h"
 namespace V6
 {
 	class D2DGridView : public D2DControl
@@ -30,6 +30,8 @@ namespace V6
 			};
 
 			std::vector<Row> Items_;
+
+			D2DColor fore_,back_;
 
 
 	};
