@@ -882,7 +882,7 @@ class FRectU : public D2D1_RECT_U
 				g_->SetTransform( *this );
 				return *this;
 			}
-			D2DMatrix& Scale( float scx, float scy )
+			D2DMat& Scale( float scx, float scy )
 			{
 				_11 = _11 * scx;
 				_22 = _22 * scy;

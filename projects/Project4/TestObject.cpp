@@ -23,6 +23,7 @@ struct AliceInstance
 		hactive={};
 		prc = nullptr;
 		child = nullptr;
+		opt = 0;
 	};
 
 	FRectF* prc;
@@ -34,7 +35,9 @@ struct AliceInstance
 
 	static UIHandle hactive;
 	D2DControls* child;
-	
+	int opt;
+
+	FRectF scale_rc;
 
 };
 
@@ -47,47 +50,42 @@ bool ef1(LPVOID captureobj, D2DContext& cxt)
 	auto stat = D2DGetStat(m->hme);
 	if ( BITFLG2( stat, STAT_VISIBLE))
 	{
-	
 		D2DMatrix mat(*cxt);
-
-		m->mat = mat.PushTransform();
-
+		mat.PushTransform();
 
 		FRectF rc = *(m->prc);
+		FPointF cpt = rc.CenterPt();
+
+		auto cptdev = mat.LPtoDP(cpt);
+
+		float rto = m->scale_rc.Width() / 50.0f;
+
+		mat.Scale(rto, rto);
+		
+		auto cp2 = mat.DPtoLP(cptdev);
+
+		m->mat = mat.Offset(cp2.x-cpt.x,cp2.y-cpt.y);
+
 
 		D2DRectFilter fil(cxt, rc);
-	
 		mat.Offset(rc);
 	
-		if ( m->hactive.p == m->hme.p )
-			cxt.DFillRect(rc.ZeroRect(),ColorF::LightPink); // m->clr[0]);
-		else
-			cxt.DFillRect(rc.ZeroRect(),ColorF::DarkCyan); // m->clr[0]);
-
-
 		FRectF rc1 = rc.ZeroRect();
-		rc1.InflateRect(-3,-3);
-		cxt.DDrawRect(rc1, m->clr[1], ColorF::DarkCyan); //m->clr[0]);
+		cxt.DDrawRect(rc1, m->clr[1], ColorF::DarkCyan);
+		
+		(*cxt)->DrawLine(FPointF(0,rc1.Height()/2), FPointF(rc1.right,rc1.Height()/2), cxt.black_);
+		(*cxt)->DrawLine(FPointF(rc1.Width()/2, 0), FPointF(rc1.Width()/2, rc1.bottom), cxt.black_);
 
 	
 		BSTR s = D2DGetName(m->hme);
-
 		cxt.DText(rc1.LeftTop(), s, ColorF::White);
-
 		::SysFreeString(s);
 
-
-		//D2DControls* c = (D2DControls*)m->hme.p;
-		//c->InnerDraw(cxt);
-
-
 		mat.PopTransform();
-
 	}
 	return false;
-
-
 }
+
 
 LRESULT ef2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -105,6 +103,7 @@ LRESULT ef2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			m->orgrc = D2DGetRect(m->hme);
 			m->prc = (FRectF*)D2DGetRect2(m->hme);
 			m->child = nullptr;
+			m->scale_rc = m->orgrc;
 
 			r =1;
 		}
@@ -154,10 +153,34 @@ LRESULT ef2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 		}
 		break;
-		
+		case WM_LBUTTONDBLCLK:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = m->mat.DPtoLP(pm.pt);
+			FRectF rc = *(m->prc);
 
+			auto hwin = D2DGetWindow(m->hme);
 
-
+			if ( rc.PtInRect(pt) )
+			{
+				if ( m->opt == 0 )
+				{
+					rc.SetHeight(400);
+					rc.SetWidth(400);
+					m->opt = 1;
+					D2DSmoothRect(1,101,hwin,&m->scale_rc, rc);
+				}
+				else
+				{
+					rc.SetHeight(50);
+					rc.SetWidth(50);
+					m->opt = 0;
+					D2DSmoothRect(1,100,hwin, &m->scale_rc, rc);
+				}
+				r = 1;
+			}
+		}
+		break;
 	}
 
 	if ( r == 0 )

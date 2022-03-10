@@ -109,6 +109,17 @@ LRESULT D2DLogin::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam
 			r = 1;
 		}
 		break;
+		case WM_D2D_SET_EVENTHANDLER:
+		{
+			typedef DWORD (*login)(void*,void*);
+
+			login func = (login)lParam;
+
+			on_try_login_ = func;
+
+			r = 1;
+		}
+		break;
 
 	}
 
