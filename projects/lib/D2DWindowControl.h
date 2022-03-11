@@ -50,6 +50,7 @@ public:
 	D2DControls* GetParentControls() const { return parent_control_; }
 	//virtual LRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	void SetNewParent(D2DControls* newparent);
+	std::wstring GetLocalName() const;
 protected:
 	D2DWindow* parent_window_;
 	D2DControls* parent_control_;

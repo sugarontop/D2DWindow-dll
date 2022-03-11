@@ -51,9 +51,9 @@ namespace V6
 	};
 
 	class D2DTextbox: 
+		public D2DControl,
 		public IBridgeTSFInterface, 
-		public ScrollbarParent,
-		public D2DControl
+		public ScrollbarParent		
 	{
 	public :
 		D2DTextbox();

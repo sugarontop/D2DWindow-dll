@@ -27,16 +27,6 @@ void D2DTabControls::Draw(D2DContext& cxt)
 
 }
 
-static std::wstring GetTabName(const std::wstring& nm)
-{
-	auto i = nm.find(L'@');
-
-	if ( 0 <= i && i < 256 )
-		return nm.substr(i+1, nm.length()-(i+1));
-
-	return nm;
-}
-
 float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 {
 	D2DMatrix mat(*cxt);
@@ -60,7 +50,7 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 		}
 
 		cxt.DFillRect(it, clr1);
-		auto tab_nm = GetTabName(this->controls_[k]->GetName());
+		auto tab_nm = this->controls_[k]->GetLocalName();
 
 
 

@@ -10,8 +10,6 @@
 #include "xml.h"
 #include "D2DWhiteWindowControl.h"
 #include "D2DColor.h"
-
-//#include "D2DLogin.h"
 #include "chart_top.h"
 #include "javasc.h"
 
@@ -76,7 +74,7 @@ void CreateLoginControl(UIHandle h)
 
 			D2DSetColor(h, ColorF::Green, ColorF::White,ColorF::Black);		
 
-			h = D2DGetControlFromName(hwin, L"document");
+			h = D2DGetControlFromName(hwin, L"@document");
 
 			if ( h.p )
 				D2DSetStat(h, STAT_DEFAULT);
@@ -130,7 +128,8 @@ struct BobInstance
 
 };
 
-void CreateCardControls(UIHandle h);
+
+void CreateCardControls(UIHandle h, int id);
 
 bool df1(LPVOID captureobj, D2DContext& cxt)
 {
@@ -202,6 +201,14 @@ void xD2DJsCallFunction( int id, LPCWSTR funcnm, JsValueRef* arg,  int argcnt)
 
 }
 
+
+LPCWSTR NameGen( BSTR nm, LPCWSTR xx)
+{
+	static WCHAR cb[512];
+	StringCbPrintf(cb,512,L"%s@%s", nm, xx );
+	return cb;
+}
+
 #define BTN_RUN_ID	2022
 #define BTN_CLEAR_ID	2023
 
@@ -228,12 +235,12 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 			if ( 11 == id )
 			{
-				CreateCardControls(m->hme);
+				CreateCardControls(m->hme, 10);
 			}
 			else if ( 10 == id )
 			{
 				auto tx = D2DCreateTextbox(m->hme, FRectF(10,40,FSizeF(600,550)), true, STAT_DEFAULT, L"TX1",-1,-1);
-
+				JsRegistUIHandle(L"TX1", tx );
 				std::wstring str;
 
 				D2DSetFont(tx, L"‚l‚r –¾’©", 14);
@@ -257,9 +264,9 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 12 == id )
 			{
-				m->voff = FSizeF(5,5);
-				
-				auto tab = D2DCreateTabControls(m->hme, FRectF(0,0,FSizeF(700,400)),  STAT_DEFAULT, L"TABC" );
+				//m->voff = FSizeF(5,5);	
+
+				auto tab = D2DCreateTabControls(m->hme, FRectF(0,0,FSizeF(700,800)),  STAT_DEFAULT, L"TABC" );
 
 				D2DSetColor(tab,ColorF::LightGray,ColorF::White,ColorF::White);
 
@@ -268,7 +275,26 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				
 				auto tx = D2DCreateTextbox(tab1, FRectF(10,40,FSizeF(600,350)), true, STAT_DEFAULT, L"TX2",-1,-1);
 
+				JsRegistUIHandle(L"TX2", tx );
+
 				auto tab2 = D2DAddNewTab(tab, L"ROC");
+
+				auto tab2btn = D2DCreateButton(tab2, FRectF(10,10,FSizeF(100,20)), STAT_DEFAULT, L"ChildWindow", 10);
+
+				D2DEventHandlerDelegate func =[](void* sender,LPCWSTR eventName, void* param)->DWORD {					
+					UIHandle h = {};
+					h.p = sender;
+					
+					auto hc = D2DGetParent(h);
+					auto hcw = D2DCreateChildWindow(hc, FRectF(10,50,FSizeF(600,800)),	STAT_DEFAULT, L"child", 11);
+
+
+					CreateCardControls(hcw, 10);
+
+					return 0;
+				};
+
+				D2DEventHandler(tab2btn, func);
 
 			}
 
@@ -280,7 +306,8 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		{
 			if ( wParam == BTN_RUN_ID )
 			{				
-				auto tx = D2DGetControlFromName(hwin,L"TX1");
+				//auto tx = D2DGetControlFromName(hwin,L"TX1");
+				auto tx = JsRegistGet(L"TX1");
 				auto bs = D2DGetText( tx, true );
 
 				JsRun(bs);
@@ -289,7 +316,8 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}		
 			else if ( wParam == BTN_CLEAR_ID )
 			{
-				auto tx = D2DGetControlFromName(hwin,L"TX1");
+				//auto tx = D2DGetControlFromName(hwin,L"TX1");
+				auto tx = JsRegistGet(L"TX1");
 				D2DClear( tx );
 
 				r = 1;
@@ -380,10 +408,11 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					else
 					{
 						auto w = D2DGetWindow(m->hme);
-						D2DSetStat(D2DGetControlFromName( w, L"s1"), STAT_DEFAULT);
-						D2DSetStat(D2DGetControlFromName( w, L"s2"), STAT_DEFAULT);
-						D2DSetStat(D2DGetControlFromName( w, L"s3"), STAT_DEFAULT);
-						D2DSetStat(D2DGetControlFromName( w, L"s4"), STAT_DEFAULT);
+						BSTR nm = D2DGetName( D2DGetParent(m->hme));
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s1")), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s2")), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s3")), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s4")), STAT_DEFAULT);
 
 
 						FRectF rcDst = m->orgrc;
@@ -407,11 +436,12 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				if ( m->hactive.p == m->hme.p )
 				{
 					auto w = D2DGetWindow(m->hme);
+					BSTR nm = D2DGetName( D2DGetParent(m->hme));
 
-					D2DSetStat(D2DGetControlFromName( w, L"s1"), 0);
-					D2DSetStat(D2DGetControlFromName( w, L"s2"), 0);
-					D2DSetStat(D2DGetControlFromName( w, L"s3"), 0);
-					D2DSetStat(D2DGetControlFromName( w, L"s4"), 0);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s1")), 0);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s2")), 0);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s3")), 0);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"s4")), 0);
 
 
 					D2DSetStat(m->hme, STAT_DEFAULT);
@@ -468,6 +498,12 @@ void CreateDocumentControl(UIHandle h)
 	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(0,sz.height,sz), STAT_DEFAULT, L"s3",12);
 	ha[3] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,df2,hdoc1, FRectF(sz.width,0,sz), STAT_DEFAULT, L"s4",13);
 
+
+	JsRegistUIHandle(L"s1", ha[0] );
+	JsRegistUIHandle(L"s2", ha[1] );
+	JsRegistUIHandle(L"s3", ha[2] );
+	JsRegistUIHandle(L"s4", ha[3] );
+
 	// https://coolors.co/9e9e8a
 
 	D2DColor c1(0x998a9e);
@@ -490,6 +526,7 @@ void CreateDocumentControl(UIHandle h)
 	D2DSetColor(ha[2], c3, ColorF::White,ColorF::Black);		
 	D2DSetColor(ha[3], c4, ColorF::White,ColorF::Black);		
 
+	auto nm = D2DGetName(hdoc1);
 
 }
 
@@ -585,9 +622,11 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					else
 					{
 						auto w = D2DGetWindow(m->hme);
-						D2DSetStat(D2DGetControlFromName( w, L"k1"), STAT_DEFAULT);
-						D2DSetStat(D2DGetControlFromName( w, L"k2"), STAT_DEFAULT);
-						D2DSetStat(D2DGetControlFromName( w, L"k3"), STAT_DEFAULT);
+						BSTR nm = D2DGetName( D2DGetParent(m->hme));
+
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k1")), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k2")), STAT_DEFAULT);
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), STAT_DEFAULT);
 
 
 						FRectF rcDst = m->orgrc;
@@ -614,10 +653,11 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				if ( m->hactive.p == m->hme.p )
 				{
 					auto w = D2DGetWindow(m->hme);
+					BSTR nm = D2DGetName( D2DGetParent(m->hme));
 
-					D2DSetStat(D2DGetControlFromName( w, L"k1"), 0);
-					D2DSetStat(D2DGetControlFromName( w, L"k2"), 0);
-					D2DSetStat(D2DGetControlFromName( w, L"k3"), 0);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k1")), 0);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k2")), 0);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), 0);
 
 
 					D2DSetStat(m->hme, STAT_DEFAULT);
@@ -662,17 +702,15 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 }
 
 
-void CreateCardControls(UIHandle h)
+void CreateCardControls(UIHandle h, int id)
 {
 	UIHandle ha[3]={};
 
 	FRectF rc = D2DGetRect(h);
-
-	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(0,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k1",10);
-	ha[1] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(20,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k2",11);
-	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(40,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k3",12);
-
-
+	
+	ha[0] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(0,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k1", id);
+	ha[1] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(20,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k2",id+1);
+	ha[2] = D2DCreateWhiteControls( (LPVOID)new BobInstance(), df1,kf2,h, FRectF(40,0, FSizeF(20,rc.Height())), STAT_DEFAULT, L"k3",id+2);
 
 	D2DColor c1(0x998a9e);
 	D2DColor c2(0x8a8d9e);

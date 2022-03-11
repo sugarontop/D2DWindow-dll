@@ -27,13 +27,26 @@ void D2DControl::InnerCreateWindow(D2DWindow* parent, D2DControls* pacontrol, in
 	parent_window_ = parent;
 	parent_control_ = pacontrol;
 	stat_ = stat;
-	name_ = name;
 	id_ = controlid;
 
 	target_ = nullptr;
 
-	if ( !wcscmp(name,NONAME) )
-		parent_window_->name_map_[name] = this;
+	if ( wcscmp(name,NONAME) != 0 )
+	{
+		if ( parent_control_ )
+		{
+			auto nm = parent_control_->GetName();
+			nm += L"@";
+			nm += name;
+			parent_window_->name_map_[nm] = this;
+			name_ = nm;
+		}
+		else			
+		{
+			parent_window_->name_map_[name] = this;
+			name_ = name;
+		}
+	}
 }
 void D2DControl::DestroyControl()
 {
@@ -60,7 +73,15 @@ void D2DControl::SetNewParent(D2DControls* newparent)
 
 	newparent->Add( me );
 }
+std::wstring D2DControl::GetLocalName() const
+{
+	int i=0;
+	for( i=name_.length()-1; 0 < i; i-- )
+		if ( name_[i] == L'@' )
+			break;
 
+	return name_.substr(i+1, name_.length()-(i+1));
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 D2DControls::D2DControls()

@@ -40,6 +40,7 @@ struct ActiveObject
 static ActiveObject select_obj;
 std::map<int, JsValueRef> objBank;
 
+std::map<std::wstring, UIHandle> UIHandleMap;
 
 #define IfFailRet
 #define IfFailError( func,msg)
@@ -84,6 +85,15 @@ void JavascriptAppExit()
 		JsDisposeRuntime(runtime);
 		runtime = nullptr;
 	}
+}
+
+void JsRegistUIHandle(std::wstring nm, UIHandle h)
+{
+	UIHandleMap[nm]=h;
+}
+UIHandle JsRegistGet(std::wstring nm)
+{
+	return UIHandleMap[nm];
 }
 
 void JsRun(LPCWSTR script )
@@ -329,7 +339,10 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 		break;
 	}
 
-	auto uh = D2DGetControlFromName(hwin, select_item.c_str());
+	//auto uh = D2DGetControlFromName(hwin, select_item.c_str());
+
+	auto uh = UIHandleMap[select_item];
+
 
 	if ( uh.p )
 	{
@@ -342,11 +355,7 @@ JsValueRef CALLBACK selectFunc(JsValueRef callee, bool isConstructCall, JsValueR
 		auto er = JsCreateExternalObject( rap, UIHandleRap::Del, &ret);
 
 		// obj‚Éset function‚ðŽÀ‘•
-
 		ImplementsObjectCallback( ret);
-
-		//IfFailRet(DefineHostCallback(ret, L"set", setFunc, nullptr));
-		//IfFailRet(DefineHostCallback(ret, L"get", getFunc, nullptr));
 		return ret;
 	}	
 
@@ -426,6 +435,10 @@ bool CreateD2DObject(std::wstring& cmdstr, UIHandle* ret)
 	else
 		bl = false;
 
+	if (bl)
+	{
+		JsRegistUIHandle(prm.nm, *ret);
+	}
 
 	return bl;
 

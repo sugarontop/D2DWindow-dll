@@ -472,6 +472,8 @@ DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle hctrls, const D2D1_RECT_F& r
 	ctrls->Add( std::shared_ptr<D2DTextbox>(pgtx));	
 
 
+	int xx = pgtx->GetStat();
+
 	if ( ext == 1 )
 		pgtx->SetTypPassword();
 	else if ( ext == 2 )
@@ -479,7 +481,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle hctrls, const D2D1_RECT_F& r
 
 
 	UIHandle r;
-	r.p = pgtx;
+	r.p = dynamic_cast<D2DControl*>(pgtx);
 	r.typ = TYP_TEXTBOX;
 	return r;
 }
@@ -490,8 +492,8 @@ D2DControl* D2DCastControl(UIHandle h )
 	D2DControl* p2 = (D2DControl*)h.p;
 	if ( h.typ == TYP_TEXTBOX )
 	{
-		D2DTextbox* p = (D2DTextbox*)h.p;
-		p2 = dynamic_cast<D2DControl*>(p);	// ëΩèdåpè≥ÇﬂÇÒÇ«Ç§
+		//D2DTextbox* p = (D2DTextbox*)h.p;
+		p2 = dynamic_cast<D2DControl*>(p2);	// ëΩèdåpè≥ÇﬂÇÒÇ«Ç§
 		_ASSERT( h.typ == p2->GetTypeid());
 
 		auto p3 = dynamic_cast<D2DTextbox*>(p2);	
@@ -894,9 +896,10 @@ DLLEXPORT BSTR WINAPI D2DGetText(UIHandle h, bool bAll)
 	return nullptr;
 }
 
-DLLEXPORT int WINAPI D2DSetStat(UIHandle h, int stat)
+DLLEXPORT DWORD WINAPI D2DSetStat(UIHandle h, DWORD stat)
 {
-	int old = 0;
+	_ASSERT(h.p);
+	DWORD old = 0;
 	if (h.typ != TYP_MAIN_WINDOW)
 	{
 		auto p = (D2DControl*)h.p;
@@ -906,9 +909,10 @@ DLLEXPORT int WINAPI D2DSetStat(UIHandle h, int stat)
 	return old;
 }
 
-DLLEXPORT int WINAPI D2DGetStat(UIHandle h)
+DLLEXPORT DWORD WINAPI D2DGetStat(UIHandle h)
 {
-	int old = 0;
+	_ASSERT(h.p);
+	DWORD old = 0;
 	if (h.typ != TYP_MAIN_WINDOW)
 	{
 		auto p = (D2DControl*)h.p;

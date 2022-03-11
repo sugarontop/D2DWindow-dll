@@ -230,7 +230,13 @@ LPCWSTR NR(LPCWSTR s, std::wstring k)
 	return str.c_str();
 
 }
-
+std::wstring GetGlobalName(UIHandle t, LPCWSTR localnm)
+{
+	std::wstring nm = D2DGetName(D2DGetParent(t));
+	nm += L"@";
+	nm += localnm;
+	return nm;
+}
 
 TDChartButtons::TDChartButtons()
 {
@@ -255,7 +261,7 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			auto pt = mat_.DPtoLP(mp.pt);
 			if ( rc_.PtInRect(pt))
 			{
-				if ( name_ == NR(L"td_top_bar",key_))
+				if ( GetLocalName() == NR(L"td_top_bar",key_))
 				{
 					s_btn_mode = -1;
 					int k = 0;
@@ -300,7 +306,11 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			{
 				InternetInfo* info = (InternetInfo*)lParam;
 
-				auto ch = (TDChart*)parent_window_->name_map_[NR(L"td_chart", key_)];
+				UIHandle tt;
+				tt.p = this;
+				std::wstring gnm = GetGlobalName(tt, NR(L"td_chart", key_));
+
+				auto ch = (TDChart*)parent_window_->name_map_[gnm]; //NR(L"td_chart", key_)];
 
 				if ( info->throwerror!=0 )
 				{
@@ -340,7 +350,7 @@ void TDChartButtons::Draw(D2DContext& cxt)
 		cxt.DFillRect(it, ColorF::White);
 	}
 
-	if ( name_ == NR(L"td_top_bar",key_))
+	if ( GetLocalName() == NR(L"td_top_bar",key_))
 		cxt.DText(btnar_[1].LeftTop(), NR(L"seek\nbtn", key_));
 
 	if ( running_mode_ == 1 )
@@ -363,6 +373,7 @@ void TDChartButtons::Draw(D2DContext& cxt)
 
 
 
+
 void TDChartButtons::OnClick(int mode)
 {
 	if ( mode == 1 )
@@ -371,21 +382,22 @@ void TDChartButtons::OnClick(int mode)
 
 		auto complete = [this](InternetInfo* info)
 		{
-			
 			parent_window_->PostMessage(WM_MYAPP_INET_COMPLETE, (WPARAM)this, (LPARAM)info);
-
-
-
-
 		};
-
-		
-		//auto cd = (TDChart*)parent_window_->name_map_[L"td_stock_cd"];
 
 		UIHandleWin hw={};
 		hw.p = parent_window_;
 
-		auto tx = D2DGetControlFromName(hw, NR(L"td_stock_cd", key_));
+		UIHandle t;
+		t.p = this;
+
+		//std::wstring nm = D2DGetName(D2DGetParent(t));
+		//nm += L"@";
+		//nm += NR(L"td_stock_cd",key_);
+
+		std::wstring nm = GetGlobalName(t,NR(L"td_stock_cd",key_));
+
+		auto tx = D2DGetControlFromName(hw, nm.c_str()); // NR(L"td_stock_cd", key_));
 		
 
 		BSTR cd = D2DGetText(tx, true );
@@ -443,7 +455,7 @@ D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
 	DWORD stat = 0; // STAT_DEFAULT
 
 	auto base = std::make_shared<TDBase>();
-	base->CreateControl( ctrl, FRectF(0,0, size), stat, NONAME );
+	base->CreateControl( ctrl, FRectF(0,0, size), stat, L"stock" );
 	ctrl->Add(base);
 
 	ctrl = base.get();
@@ -452,12 +464,13 @@ D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
 		left_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(55, variable)), STAT_DEFAULT, NR(L"td_left_bar",k),-1, ColorF::White );
 		ctrl->Add(left_bar);
 		left_bar->key_ = k;
+		base->td = left_bar.get();
 
 		auto top_bar = std::make_shared<TDChartButtons>();
 		top_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(variable,40)), STAT_DEFAULT, NR(L"td_top_bar",k),-1,	D2RGBA(0,0,0,0) );
 		ctrl->Add(top_bar);
 		top_bar->key_ = k;
-
+		base->top = top_bar.get();
 
 
 		float ws [] = {100,40,40,75,145,130,100,100};
@@ -472,15 +485,17 @@ D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
 		auto chart = std::make_shared<TDChart>();
 		chart->CreateControl( ctrl, FRectF(0,0, FSizeF(1000-45,500)), STAT_DEFAULT, NR(L"td_chart",k) );
 		ctrl->Add(chart);
+		base->chart = chart.get();
 
 		auto right_list = std::make_shared<TDList>();
 		right_list->CreateControl( ctrl, FRectF(0,0, FSizeF(267,variable)), STAT_DEFAULT, NR(L"td_list",k) );
 		ctrl->Add(right_list);
-
+		base->ls = right_list.get();
 
 		auto right_bar = std::make_shared<TDChartButtons>();
 		right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, NR(L"td_right_bar",k), -1, ColorF::White );
 		ctrl->Add(right_bar);
+		base->tr = right_bar.get();
 
 
 		UIHandle hctrls={};
@@ -488,15 +503,9 @@ D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
 		auto txt = D2DCreateTextbox(hctrls, FRectF(5,5,FSizeF(93,30)), false,STAT_DEFAULT, NR(L"td_stock_cd",k));
 		D2DSetColor(txt, ColorF::White,ColorF::Black,D2RGBA(0,0,0,0));
 		D2DSetText(txt, L"spy" ); // spy: SP500
+		
+		base->txt = (D2DControl*)txt.p;
 
-
-
-		base->td = ctrl->GetParent()->name_map_[NR(L"td_left_bar",k)];
-		base->top = ctrl->GetParent()->name_map_[NR(L"td_top_bar",k)];
-		base->txt = ctrl->GetParent()->name_map_[NR(L"td_stock_cd",k)];
-		base->tr = ctrl->GetParent()->name_map_[NR(L"td_right_bar",k)];
-		base->ls = ctrl->GetParent()->name_map_[NR(L"td_list",k)];
-		base->chart = ctrl->GetParent()->name_map_[NR(L"td_chart",k)];
 	}
 	
 	return base.get();
