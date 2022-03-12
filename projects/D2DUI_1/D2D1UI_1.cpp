@@ -479,37 +479,33 @@ DLLEXPORT UIHandle WINAPI D2DCreateTextbox(UIHandle hctrls, const D2D1_RECT_F& r
 	else if ( ext == 2 )
 		pgtx->SetReadonly(true);
 
-
 	UIHandle r;
-	r.p = dynamic_cast<D2DControl*>(pgtx);
+	r.p = static_cast<D2DControl*>(pgtx);
 	r.typ = TYP_TEXTBOX;
 	return r;
 }
 
 D2DControl* D2DCastControl(UIHandle h )
 {
-	UIHandle r = h;
 	D2DControl* p2 = (D2DControl*)h.p;
+	D2DControl* ret = p2;
 	if ( h.typ == TYP_TEXTBOX )
-	{
-		//D2DTextbox* p = (D2DTextbox*)h.p;
-		p2 = dynamic_cast<D2DControl*>(p2);	// ëΩèdåpè≥ÇﬂÇÒÇ«Ç§
+	{		
+		ret = static_cast<D2DControl*>(p2);	
 		_ASSERT( h.typ == p2->GetTypeid());
-
-		auto p3 = dynamic_cast<D2DTextbox*>(p2);	
-
-		_ASSERT( h.typ == p3->GetTypeid());
 	}
 	else if ( h.typ == TYP_BUTTON )
 	{
-		p2 = static_cast<D2DControl*>(p2);		
+		ret = static_cast<D2DControl*>(p2);		
 	}
 	else if ( h.typ == TYP_DROPDOWNLISTBOX)
 	{
-		p2 = static_cast<D2DControl*>(p2);		
+		ret = static_cast<D2DControl*>(p2);		
 	}
 
-	return p2;
+	_ASSERT(ret == h.p);
+
+	return ret;
 }
 
 
@@ -723,7 +719,7 @@ DLLEXPORT void WINAPI D2DEnable(UIHandle h, bool enable)
 	p->Enable(enable);
 }
 
-DLLEXPORT UIHandle WINAPI D2DCast(void* target)
+DLLEXPORT UIHandle WINAPI D2DCast(void* target) // D2DControl* pc = D2DCastControl(h);
 {
 	D2DControl* p = (D2DControl*)target;
 
@@ -1029,20 +1025,6 @@ DLLEXPORT UIHandle WINAPI D2DCreateButton(UIHandle hctrls, const D2D1_RECT_F& rc
 	return r;
 }
 
-//DLLEXPORT UIHandle D2DCreateDropdownListbox(D2DWindow* win, D2DControls* ctrls, const FRectF& rc, DWORD stat, LPCWSTR name, int id)
-//{
-//	auto pgtx = new D2DDropdownListbox();
-//	pgtx->CreateControl(win, ctrls, rc, stat, name, id);
-//	ctrls->Add(std::shared_ptr<D2DDropdownListbox>(pgtx));
-//
-//
-//	UIHandle r;
-//	r.p = pgtx;
-//	r.typ = TYP_DROPDOWNLISTBOX;
-//	return r;
-//
-//}
-
 DLLEXPORT XDropdownListBox* WINAPI D2DConvert(UIHandle r)
 {	
 	D2DDropdownListbox* pp = (D2DDropdownListbox* )r.p;
@@ -1106,7 +1088,7 @@ DLLEXPORT void WINAPI D2DSetColor(UIHandle h, ColorF back, ColorF fore, ColorF b
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
-		auto tx = static_cast<D2DTextbox*>(h.p);
+		auto tx = dynamic_cast<D2DTextbox*>((D2DControl*) h.p);
 
 		tx->SetBackColor(back);
 		tx->SetForeColor(fore);
