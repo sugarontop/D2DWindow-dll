@@ -299,13 +299,16 @@ JsValueRef CALLBACK moveFunc(JsValueRef callee, bool isConstructCall, JsValueRef
 
 		D2DControl* tt = (D2DControl*)(k->h.p);
 
+		UIHandle h={};
+		h.p = tt;
+
 		if ( tt )
 		{
 			FRectF& frc = tt->GetRectSmooth();
 			FRectF dst(frc);
 			dst.SetPoint(FPointF(x,y));
 
-			D2DSmoothRect(1,100,hwin, &frc, dst);
+			D2DSmoothRect(1,100,h, &frc, dst);
 		}		
 	}
 	return 0;

@@ -149,7 +149,7 @@ LRESULT D2DControls::DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	{
 		for(auto& it : controls_ )
 		{
-			if ( it->GetStat() & STAT_ENABLE )
+			if ( BITFLG2(it->GetStat(), STAT_ENABLE) )
 			{
 				hr = it->WndProc(b,message,wParam,lParam);
 				if ( hr != 0 )
@@ -204,7 +204,7 @@ void D2DControls::Add(std::shared_ptr<D2DControl> p)
 
 }
 
-D2DControl* D2DControls::SetFirstControl(D2DControl* p)
+D2DControl* D2DControls::SetFirstControl(D2DControl* p, bool blast)
 {
 	auto target = controls_.end();
 
@@ -225,7 +225,10 @@ D2DControl* D2DControls::SetFirstControl(D2DControl* p)
 		
 		controls_.erase(target);
 
-		controls_.insert(controls_.begin(), copy_target);
+		if ( blast )
+			controls_.insert(controls_.end(), copy_target);
+		else
+			controls_.insert(controls_.begin(), copy_target);
 	}
 
 	return prev;

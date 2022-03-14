@@ -17,9 +17,9 @@ lib project (すべてをDLL側に置きたいが、開発のしやすさを配�
 ## Project1
 easy sample project 
 ## Project2
-出来損ないのファイルマネージャー 
+作りかけファイルマネージャー 
 ## Project3
-javascript テスト 
+空
 ## Project4
- 
+javascript テスト  
 

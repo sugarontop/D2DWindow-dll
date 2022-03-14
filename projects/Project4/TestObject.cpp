@@ -77,7 +77,7 @@ bool ef1(LPVOID captureobj, D2DContext& cxt)
 		(*cxt)->DrawLine(FPointF(rc1.Width()/2, 0), FPointF(rc1.Width()/2, rc1.bottom), cxt.black_);
 
 	
-		BSTR s = D2DGetName(m->hme);
+		BSTR s = D2DGetLocalName(m->hme);
 		cxt.DText(rc1.LeftTop(), s, ColorF::White);
 		::SysFreeString(s);
 
@@ -168,14 +168,17 @@ LRESULT ef2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					rc.SetHeight(400);
 					rc.SetWidth(400);
 					m->opt = 1;
-					D2DSmoothRect(1,101,hwin,&m->scale_rc, rc);
+					D2DSmoothRect(1,101,m->hme,&m->scale_rc, rc);
+
+					D2DSetTopControl(m->hme);
+
 				}
 				else
 				{
 					rc.SetHeight(50);
 					rc.SetWidth(50);
 					m->opt = 0;
-					D2DSmoothRect(1,100,hwin, &m->scale_rc, rc);
+					D2DSmoothRect(1,100,m->hme, &m->scale_rc, rc);
 				}
 				r = 1;
 			}

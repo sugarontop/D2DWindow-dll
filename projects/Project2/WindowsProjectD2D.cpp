@@ -153,240 +153,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
-void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, int activeidx )
-{
-    FRectF rc(0,0,tabbtn);
-
-    for(int i = 0; i < btncnt; i++ )
-    {        
-        LPCWSTR s = pps[i];
-
-        if ( i == activeidx )
-        {
-            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(50, 50, 255));                
-            (*cxt)->DrawText(s, (UINT)wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.white_ );
-        }
-        else 
-        {
-            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(255, 255, 255));                
-            (*cxt)->DrawText(s, (UINT)wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.black_ );
-        }
-
-        rc.Offset(tabbtn.width, 0 );
-    }
-}
-
-#define COMBOBOX_ID_1 10
-//void CreateControl0(UIHandleWin hwin, UIHandle hcs);
-//void CreateControl1(UIHandleWin hwin, UIHandle hcs);
-void CreateControl2(UIHandleWin hwin, UIHandle hcs);
-bool LoadTextFile( LPCWSTR fnm, std::wstring* str );
-bool SaveTextFile( LPCWSTR fnm, LPCWSTR str );
-
-void CreateControl(HWND hWnd)
-{
-    hwin = D2DCreateMainHWnd(hWnd, 14);
-    
-    auto root = D2DGetRootControls(hwin);
-
-    FRectF rctextbox(10, 40, FSizeF(400, 700));
-    UIHandle htextbox = D2DCreateTextbox(root, rctextbox, true, STAT_VISIBLE | STAT_ENABLE, L"textbox1");
-    D2DSetText(htextbox, L"Hello world");
-
-//    FRectF rccmb(500, 800, FSizeF(100, 26));
-//    UIHandle cb1 = D2DCreateDropdownListbox(hwin, root, rccmb,  STAT_VISIBLE | STAT_ENABLE, L"comb1", COMBOBOX_ID_1);
-//    D2DAddItem(cb1, 0, L"scale1.0");
-//    D2DAddItem(cb1, 1, L"scale1.2");
-//    D2DAddItem(cb1, 2,L"scale0.8");
-
-
-
-    struct WhiteBoard
-    {     
-        DelegateDrawFunc f1;
-        DelegateProcFunc f2;
-        int typ;
-        D2DMat mat;
-    };
-    struct CaptureObj1
-    {
-        FRectF rc;
-        UIHandle page[3];
-        int active_idx;
-        D2DMat mat;
-        WhiteBoard wboard;
-    };
-
-    static CaptureObj1 obj;
-    obj.active_idx = 0;
-    obj.wboard.typ = 0;
-    obj.wboard.f1 = [](LPVOID captureobj, D2DContext& cxt)->bool {
-     
-        CaptureObj1* obj = (CaptureObj1*)captureobj;
-        WhiteBoard& wb = obj->wboard;
-
-            D2DMatrix mat(*cxt);
-            mat.PushTransform();
-
-            auto rc = obj->rc;
-            wb.mat = mat.Offset(rc);
-            obj->mat = wb.mat;
-            {
-                cxt.DDrawRect(rc.ZeroRect(), D2RGB(0,0,0), D2RGB(255, 255, 255));
-
-                // draw top buttons
-
-                FSizeF tabbtn(100,26 );
-                LPCWSTR str[] = { L"tab1", L"tab2", L"tag3" };
-
-                DrawTabButton( cxt, tabbtn, str, 3, obj->active_idx );
-
-            }
-            mat.PopTransform();
-
-		return true;
-    };
-    obj.wboard.f2 = [](LPVOID captureobj,AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
-
-        CaptureObj1* obj = (CaptureObj1*)captureobj;
-        LRESULT r = 0;
-        switch( message )
-        {
-            case WM_LBUTTONDOWN:
-            {
-                MouseParam* mp = (MouseParam*)lParam;
-                auto pt = obj->mat.DPtoLP(mp->pt);
-
-                FRectF rcs[] = { FRectF(0,0,100,26), FRectF(100,0,200,26),FRectF(200,0,300,26) };
-                if ( rcs[0].PtInRect( pt ) )
-                {
-                    obj->active_idx = 0;                   
-                    D2DSetStat(obj->page[0], STAT_VISIBLE | STAT_ENABLE);
-                    D2DSetStat(obj->page[1], 0);
-                    D2DSetStat(obj->page[2], 0);
-
-                    r = 1;
-                }
-                else if ( rcs[1].PtInRect( pt ) )
-                {
-                    obj->active_idx = 1;
-                    D2DSetStat(obj->page[0], 0);
-                    D2DSetStat(obj->page[1], STAT_VISIBLE | STAT_ENABLE);
-                    D2DSetStat(obj->page[2], 0);
-                    r = 1;
-                }
-                else if (rcs[2].PtInRect(pt))
-                {
-                    obj->active_idx = 2;
-                    D2DSetStat(obj->page[0], 0);
-                    D2DSetStat(obj->page[1], 0);
-                    D2DSetStat(obj->page[2], STAT_VISIBLE | STAT_ENABLE);
-                    r = 1;
-                }
-            }
-            break;
-			case WM_NOTIFY:
-			{
-				if ( wParam == 400 )
-				{
-					// load
-					std::wstring str;
-					if ( LoadTextFile( L"script.txt" , &str ) )
-					{						
-						//auto h = obj->page[1];
-
-						//auto h = gx2;
-						auto h2 = D2DGetControlFromName(hwin, L"textbox200");
-
-						D2DSetText(h2, str.c_str());
-					}
-					r = 1;
-				}
-				else if ( wParam == 401 )
-				{
-					// save
-					auto h2 = D2DGetControlFromName(hwin, L"textbox200");
-
-					BSTR bs = D2DGetText(h2, true);
-
-					SaveTextFile(L"script.txt", bs );
-
-
-				}
-				else if ( wParam == 1100 )
-				{
-					D2DNMHDR d = *(D2DNMHDR*)lParam;
-					
-					scale = 1.0f;
-
-					if ( d.prm1 == 0 )
-						scale = 1.0f;
-					else if ( d.prm1 == 1 )
-						scale = 1.2f;
-					else if ( d.prm1 == 2 )
-						scale = 0.8f;
-
-					r = 1;
-				}
-			}
-			break;
-        }        
-        return r;
-    };
-
-    FRectF rc(500, 40, FSizeF(500, 700));
-    auto whb2 = D2DCreateWhiteControls(&obj, obj.wboard.f1, obj.wboard.f2, root, rc, STAT_VISIBLE | STAT_ENABLE, L"whb2", 110);
-
-    
-    obj.rc = rc;
-
-    obj.page[0] =  D2DCreateControls( whb2, FRectF(0, 0, 0, 0), STAT_VISIBLE | STAT_ENABLE, L"tab1", 112);
-    obj.page[1] = D2DCreateControls( whb2, FRectF(0, 0, 0, 0), 0, L"tab2", 113);
-    obj.page[2] = D2DCreateControls( whb2, FRectF(0, 0, 0, 0), 0, L"tab3", 113);
-
-	//CreateControl0( hwin, obj.page[0]);
-
-	//CreateControl1( hwin, obj.page[1]);
-
-    CreateControl2( hwin, obj.page[2]);
-
-
-}
-//#include "D2DChildWindow.h"
-//#include "D2DControls_with_Scrollbar.h"
-#include "D2DSquarePaper.h"
-
-void CreateControl0(HWND hWnd)
-{
-	hwin = D2DCreateMainHWnd(hWnd, 14);
-    
-    auto root = D2DGetRootControls(hwin);
-
-	auto ch1 = D2DCreateChildWindow(root, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
-
-	//auto ch = std::make_shared<D2DChildWidow>();
-
-	//ch->CreateControl((D2DWindow*)hwin.p, (D2DControls*)root.p, FRectF(50,250,FSizeF(800,600)), STAT_DEFAULT, L"childwin" );
-
-	//((D2DControls*)root.p)->Add(ch);
-
-
-	//UIHandle ch1 = {};
-	//ch1.p = ch.get();
-
-	auto hc = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT, L"abc");
-
-
-
-	D2DCreateSquarePaper(hc, FRectF(0,0,1000,1000), STAT_DEFAULT, L"abc1", -1);
-
-
-
-
-}
-
-
-//#include "D2DFileManage.h"
 void CreateControl1(HWND hWnd)
 {
 	hwin = D2DCreateMainHWnd(hWnd, 14);
@@ -402,6 +168,9 @@ void CreateControl1(HWND hWnd)
 
 		auto sccontrols = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT, L"filemng_sc");
 
+		D2DSetColor(sccontrols, ColorF::White, ColorF::Black, ColorF::Black);
+
+
 		auto hfmg = D2DCreateFileManage(sccontrols, FRectF(0,0,FSizeF(400,600)), STAT_DEFAULT, L"filemng");
 
         if ( i==0)
@@ -412,15 +181,6 @@ void CreateControl1(HWND hWnd)
 
 	auto txt = D2DCreateTextbox(root, FRectF(5,5,FSizeF(800,20)), false, STAT_DEFAULT, NONAME );
 	D2DReadOnly(txt, true);
-
-	//D2DFileManage::OnClick_ = [txt](std::wstring fnm)->int
-	//{
-	//	D2DSetText(txt, fnm.c_str());
-	//	return 0;
-	//};
-
-
-
 }
 
 
@@ -547,18 +307,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
          {
                 // child control events         
 
-                if ( wParam == COMBOBOX_ID_1 )
-                {   
-                    D2DNMHDR& n = *(D2DNMHDR*)lParam;
-
-                    int idx = n.prm1;
-
-                    scale = 1.0f;
-                    if ( idx == 1 ) scale = 1.2f;
-                    else if ( idx == 2 ) scale = 0.8f;
-
-                }
-
          }
          break;
 		 case WM_D2D_ONIME_ONOFF:
@@ -610,40 +358,4 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
         }
         ::CloseClipboard();
     }
-}
-#include <fstream>
-bool LoadTextFile( LPCWSTR fnm, std::wstring* str )
-{
-	std::wifstream fs;
-	std::wstring& s = *str;
-	fs.open(fnm, std::ios::in);
-	int i = 0;
-	if ( fs ) 
-	{
-		while( !fs.eof())
-		{
-			std::wstring xx;
-			std::getline( fs, xx );	
-
-			if ( i++ != 0)
-				s += '\n';
-			s += xx;
-			
-		}
-		return true;
-	}
-	return false;
-}
-bool SaveTextFile( LPCWSTR fnm, LPCWSTR str )
-{
-	std::wofstream fs;
-	fs.open( fnm, std::ios::trunc);
-
-	if ( fs )
-	{
-		fs.write(str, wcslen(str));
-		fs.close();
-		return true;
-	}
-	return false;
 }

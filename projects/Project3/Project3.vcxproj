@@ -160,29 +160,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\lib\inet.cpp" />
-    <ClCompile Include="chart_top.cpp" />
-    <ClCompile Include="CJsValueRef.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="javasc.cpp" />
     <ClCompile Include="WindowsProjectD2D.cpp" />
-    <ClCompile Include="work1.cpp" />
-    <ClCompile Include="xml.cpp" />
-    <ClCompile Include="yahoo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WindowsProjectD2D.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="readme.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="chart_top.h" />
-    <ClInclude Include="javasc.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="xml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico" />
@@ -198,9 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="doc.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

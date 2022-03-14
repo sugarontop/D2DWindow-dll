@@ -157,6 +157,17 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 	D2DControls* c = (D2DControls*)m->hme.p;
 
 
+	if ( !wcscmp((LPCWSTR)D2DGetLocalName(m->hme), L"k2"))
+	{
+		auto bs = D2DGetName(m->hme);
+		auto stat = D2DGetStat(m->hme);
+	}
+	else if ( !wcscmp((LPCWSTR)D2DGetLocalName(m->hme), L"k1"))
+	{
+		auto bs = D2DGetName(m->hme);
+		auto stat = D2DGetStat(m->hme);
+	}
+
 	mat.PushTransform();
 	mat.Offset(m->voff.width, m->voff.height);
 	c->InnerDraw(cxt);
@@ -400,7 +411,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 						m->hprv = D2DSetTopControl(m->hme);
 
-						D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
+						D2DSmoothRect(1,99,  m->hme, m->prc, rcDst);
 
 					
 
@@ -417,7 +428,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 						FRectF rcDst = m->orgrc;
 
-						D2DSmoothRect(1,98,  hwin, m->prc, rcDst);
+						D2DSmoothRect(1,98,  m->hme, m->prc, rcDst);
 						m->hactive.p = nullptr;
 
 
@@ -431,7 +442,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		break;
 		case WM_D2D_SMOOTH_COMPLETE:
 		{
-			if ( wParam == 99 )
+			if ( lParam == 99 )
 			{
 				if ( m->hactive.p == m->hme.p )
 				{
@@ -449,7 +460,7 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				}
 
 			}
-			else if ( wParam == 98 )
+			else if ( lParam == 98 )
 			{
 				D2DSetTopControl(m->hprv);
 				m->hprv.p = nullptr;
@@ -544,7 +555,6 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		case WM_D2D_CREATE:
 		{
 			m->hme = *(UIHandle*)lParam;			
-			
 			m->orgrc = D2DGetRect(m->hme);
 			m->prc = (FRectF*)D2DGetRect2(m->hme);
 			
@@ -608,11 +618,20 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 						auto hpa = D2DGetParent(m->hme);
 						rc = D2DGetRect(hpa);
 
+						auto w = D2DGetWindow(m->hme);
 						FRectF rcDst(0,0,rc.Width(), rc.Height());
 
-						m->hprv = D2DSetTopControl(m->hme);
+						/*BSTR nm = D2DGetName( D2DGetParent(m->hme));
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k1")), 0);
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k2")), 0);
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), 0);*/
 
-						D2DSmoothRect(1,99,  hwin, m->prc, rcDst);
+						D2DSetStat(m->hme,STAT_DEFAULT);
+
+
+						m->hprv = D2DSetLastControl(m->hme );
+
+						D2DSmoothRect(1,199,  m->hme, m->prc, rcDst);
 
 						//
 						if ( m->child )
@@ -631,9 +650,9 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 						FRectF rcDst = m->orgrc;
 
-						D2DSmoothRect(1,98,  hwin, m->prc, rcDst);
+						D2DSmoothRect(1,198,  m->hme, m->prc, rcDst);
 
-						
+						//m->hactive.p = m->hme.p;
 
 						m->hactive.p = nullptr;
 
@@ -648,9 +667,9 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 		break;
 		case WM_D2D_SMOOTH_COMPLETE:
 		{
-			if ( wParam == 99 )
+			if ( lParam == 199 )
 			{
-				if ( m->hactive.p == m->hme.p )
+				if ( (INT_PTR)m->hme.p == (INT_PTR)wParam)
 				{
 					auto w = D2DGetWindow(m->hme);
 					BSTR nm = D2DGetName( D2DGetParent(m->hme));
@@ -665,15 +684,25 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 				}
 
 			}
-			else if ( wParam == 98 )
+			else if ( lParam == 198 )
 			{
-				D2DSetTopControl(m->hprv);
+				if ( (INT_PTR)m->hme.p == (INT_PTR)wParam)
+				{
+					D2DSetLastControl(m->hprv);
 
-				if ( m->child )
-					m->child->SetStat(0);
+					auto w = D2DGetWindow(m->hme);
+					BSTR nm = D2DGetName( D2DGetParent(m->hme));
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k1")), STAT_DEFAULT);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k2")), STAT_DEFAULT);
+					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), STAT_DEFAULT);
 
-				m->hprv.p = nullptr;
-				r = 1;
+					if ( m->child )
+						m->child->SetStat(0);
+
+					m->hprv.p = nullptr;
+					1;
+				}
+	
 			}
 
 		}

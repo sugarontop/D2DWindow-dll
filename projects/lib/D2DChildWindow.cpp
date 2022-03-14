@@ -40,7 +40,7 @@ void D2DChildWindow::Draw(D2DContext& cxt)
 		mini_window_->Draw(cxt);
 	else
 	{
-		cxt.DFillRect(rc_, colors_[CLR::BACKCOLOR]);
+		(*cxt)->DrawRectangle(rc_, cxt.black_);// colors_[CLR::BACKCOLOR]);
 
 		mat.Offset(rc_.LeftTop());
 	

@@ -11,7 +11,7 @@
 #include "D2DMessage.h"
 #include "D2DControls_with_Scrollbar.h"
 #include "D2DSquarePaper.h"
-#include "javasc.h"
+
 
 using namespace V6;
 
@@ -164,6 +164,17 @@ static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 
 
+void CreateControl(HWND hWnd)
+{
+
+	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
+    auto root = D2DGetRootControls(hwin);
+
+	auto h = D2DCreateStatic(root, FRectF(0,0,100,20), STAT_DEFAULT, L"Hello world", NONAME);
+
+	D2DSetColor(h,ColorF::Blue, ColorF::Blue, ColorF::Black);
+
+}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -186,7 +197,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CreateControl(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
 
-			JavascriptAppInit();
+			//JavascriptAppInit();
 
 
         }
@@ -299,7 +310,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             D2DDestroyWindow(hwin);
 
 
-			JavascriptAppExit();
+			//JavascriptAppExit();
 
             PostQuitMessage(0);
 			return 0;

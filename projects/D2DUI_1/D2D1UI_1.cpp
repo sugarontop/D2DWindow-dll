@@ -572,6 +572,13 @@ DLLEXPORT BSTR WINAPI D2DGetName(UIHandle h)
 	D2DControl* pc = (D2DControl*)h.p;
 	return ::SysAllocString(pc->GetName().c_str());
 }
+DLLEXPORT BSTR WINAPI D2DGetLocalName(UIHandle h)
+{
+	D2DControl* pc = (D2DControl*)h.p;
+	return ::SysAllocString(pc->GetLocalName().c_str());
+}
+
+
 DLLEXPORT void WINAPI D2DClear(UIHandle h)
 {
 	D2DControl* pc = D2DCastControl(h);
@@ -806,6 +813,13 @@ DLLEXPORT UIHandle WINAPI D2DCast(void* target) // D2DControl* pc = D2DCastContr
 		auto tx = dynamic_cast<D2DButton*>(p);
 		r.p = tx;
 		r.typ = TYP_BUTTON;
+
+	}
+	else if  (dynamic_cast<D2DStatic*>(p))
+	{
+		auto tx = dynamic_cast<D2DStatic*>(p);
+		r.p = tx;
+		r.typ = TYP_STATIC;
 
 	}
 	else if ( p != nullptr )
@@ -1182,7 +1196,21 @@ DLLEXPORT void WINAPI D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handl
 
 
 }
+DLLEXPORT UIHandle WINAPI D2DSetLastControl(UIHandle h)
+{
+	D2DControl* h2 = D2DCastControl(h);
+	UIHandle ret={};
 
+	if ( h2 != nullptr )
+	{
+		D2DControls* x = h2->GetParentControls();
+
+		auto prev = x->SetFirstControl(h2,true);
+		ret = D2DCast(prev);
+	}
+
+	return ret;
+}
 
 DLLEXPORT UIHandle WINAPI D2DSetTopControl(UIHandle h)
 {
@@ -1237,7 +1265,7 @@ DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F& rcStart, const D2
 }
 
 
-DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_F* target, D2D1_RECT_F dstRect)
+DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandle h, D2D1_RECT_F* target, D2D1_RECT_F dstRect)
 {
 	if ( typ == 0 )
 		*target = dstRect;
@@ -1250,8 +1278,8 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_
 	
 		RectAnimation(srect, dstRect, prc, cnt, atyp);
 
-		D2DWindow* pwin = (D2DWindow*)win.p;
-		auto df = [prc, cnt,target,pwin,id](D2DWindow* win, SmoothCar* car)->int
+		D2DWindow* pwin = (D2DWindow*)V6::D2DGetWindow(h).p;
+		auto df = [prc, cnt,target,pwin,id,h](D2DWindow* win, SmoothCar* car)->int
 		{						
 			int no = car->no;
 			
@@ -1266,7 +1294,7 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_
 				win->GetContext().bRedraw_ = true;
 				delete [] prc;
 
-				pwin->SendMessage(WM_D2D_SMOOTH_COMPLETE,id,0);
+				pwin->SendMessage(WM_D2D_SMOOTH_COMPLETE,(WPARAM)h.p,id);
 
 				car->LinkDetach();
 
@@ -1275,7 +1303,9 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandleWin win, D2D1_RECT_
 
 			return (no+1);
 		};
-		// ‚Ü‚¾‚P‚Â‚Ì‚Ý
+		
+
+		/// ////////
 		SmoothCar* scar = new SmoothCar();
 		scar->ev = df;
 

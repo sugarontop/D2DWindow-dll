@@ -62,6 +62,8 @@ LRESULT D2DWhiteControl::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 }
 void D2DWhiteControl::Draw(D2DContext& cxt)
 {	
+	auto k = stat_;
+	
 	if (BITFLG(STAT_VISIBLE))
 	{
 		bool bl = true;
