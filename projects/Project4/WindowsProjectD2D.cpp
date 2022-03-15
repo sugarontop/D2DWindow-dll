@@ -369,31 +369,112 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
     }
 }
 #include <fstream>
-bool LoadTextFile( LPCWSTR fnm, std::wstring* str,bool butf8 )
-{	
-	std::ifstream fs;
-	std::wstring& s = *str;
-	fs.open(fnm, std::ios::in);
-	int i = 0;
-	if ( fs ) 
+//bool LoadTextFile( LPCWSTR fnm, std::wstring* str,bool butf8 )
+//{	
+//	std::ifstream fs;
+//	std::wstring& s = *str;
+//	fs.open(fnm, std::ios::in);
+//	int i = 0;
+//	if ( fs ) 
+//	{
+//		while( !fs.eof())
+//		{
+//			std::string xx;
+//			std::getline( fs, xx );	
+//
+//			WCHAR cb[1024]={};
+//			::MultiByteToWideChar(CP_ACP,0,xx.c_str(), xx.length(), cb, 1024);
+//
+//			if ( i++ != 0)
+//				s += '\n';
+//			s += cb;
+//			
+//		}
+//		return true;
+//	}
+//	return false;
+//}
+bool LoadTextFile(LPCWSTR fnm, bool bUtf8, std::wstringstream* out)
+{
+	char cb[1024];
+    auto h = ::CreateFile(fnm, GENERIC_READ,0,nullptr,OPEN_EXISTING,0,nullptr);
+
+	std::wstringstream& wsm = *out;
+
+	auto cp = (bUtf8 ? CP_UTF8 : CP_ACP);
+
+	if ( h !=INVALID_HANDLE_VALUE )
 	{
-		while( !fs.eof())
-		{
-			std::string xx;
-			std::getline( fs, xx );	
+		DWORD pos = 0;
 
-			WCHAR cb[1024]={};
-			::MultiByteToWideChar(CP_ACP,0,xx.c_str(), xx.length(), cb, 1024);
+		while(1)
+		{						
+			ZeroMemory(cb,sizeof(char)*1024);
 
-			if ( i++ != 0)
-				s += '\n';
-			s += cb;
+			std::stringstream sm;
+			int i=0;
+
+			char* p = nullptr;
+
+			while (::ReadFile(h,cb,1024,nullptr,nullptr))
+			{
+				p = cb;
+				
+				while(*p!='\r' && *p!='\n' && *p!='\0' && i++ < 1024)
+					p++;
+
+				DWORD len = p - cb;
+
+				if ( i == 1025 )
+				{
+					sm.write(cb, 1024);
+					i = 0;
+					ZeroMemory(cb,sizeof(char)*1024);
+				}
+				else
+				{
+					sm.write(cb, len);
+					break;
+				}
+			}
+		
+			size_t cbslen = 0;
+			if ( i > 0 )
+			{
+				auto cbs = sm.str();
+				const char* ccb = cbs.c_str();
+				cbslen = cbs.length();
+
+				int wlen = ::MultiByteToWideChar(cp,0,ccb,cbslen,nullptr,0);
+				WCHAR* wcb = new WCHAR[wlen+1];
+				::MultiByteToWideChar(cp,0,ccb,cbslen, wcb, wlen);			
+				wsm.write(wcb,wlen);
+				
+				delete [] wcb;
+			}								
+
+			DWORD off = 1;
+			if (*p == '\n')
+				wsm << L'\n';
+			else if (*p == '\r')
+			{
+				off++;
+				wsm << L'\n';
+			}
+			else if (*p == '\0')
+				break;
+
+			pos = ::SetFilePointer(h, pos+cbslen+off,nullptr,FILE_BEGIN);
 			
-		}
+		}		
+		::CloseHandle(h);
+
 		return true;
 	}
 	return false;
 }
+
+
 bool SaveTextFile( LPCWSTR fnm, LPCWSTR str )
 {
 	std::wofstream fs;

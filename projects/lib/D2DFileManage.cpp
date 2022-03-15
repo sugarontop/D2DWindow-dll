@@ -263,7 +263,7 @@ void D2DFileManage::CreateControl(D2DWindow* parent, D2DControls* pacontrol, con
 
 
 	ComPTR<IStream> sm;
-	if ( 1 == parent_window_->SendMessage(WM_D2D_GET_RESOURCE_BINARY, 0, (LPARAM)&sm))
+	if ( 1 == parent_window_->SendMessage(WM_D2D_GET_RESOURCE_BINARY, 0, (LPARAM)&sm) && sm!=nullptr)
 	{
 		std::vector<Item> ar;
 		ListContents(sm, ar);

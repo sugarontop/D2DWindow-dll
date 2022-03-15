@@ -17,7 +17,8 @@
 
 using namespace V6;
 
-bool LoadTextFile( LPCWSTR fnm, std::wstring* str, bool butf8 );
+//bool LoadTextFile( LPCWSTR fnm, std::wstring* str, bool butf8 );
+bool LoadTextFile(LPCWSTR fnm, bool bUtf8, std::wstringstream* out);
 
 extern UIHandleWin hwin;
 
@@ -252,12 +253,13 @@ LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			{
 				auto tx = D2DCreateTextbox(m->hme, FRectF(10,40,FSizeF(600,550)), true, STAT_DEFAULT, L"TX1",-1,-1);
 				JsRegistUIHandle(L"TX1", tx );
-				std::wstring str;
-
 				D2DSetFont(tx, L"‚l‚r –¾’©", 14);
 				
-				if ( LoadTextFile(L"init.js", &str, false ) )
-					D2DSetText( tx, str.c_str()); 
+				std::wstringstream sm;
+
+				if ( LoadTextFile(L"init.js",false, &sm ) )
+					D2DSetText( tx, sm.str().c_str()); 
+
 				D2DSetColor(tx, ColorF::Gray, ColorF::White, ColorF::Gray);
 
 				auto b1 = D2DCreateButton(m->hme, FRectF(10,10,FSizeF(100,25)), STAT_DEFAULT, L"JSRunButton", BTN_RUN_ID);
