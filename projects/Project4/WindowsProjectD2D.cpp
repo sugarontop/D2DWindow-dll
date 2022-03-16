@@ -369,35 +369,26 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
     }
 }
 #include <fstream>
-//bool LoadTextFile( LPCWSTR fnm, std::wstring* str,bool butf8 )
-//{	
-//	std::ifstream fs;
-//	std::wstring& s = *str;
-//	fs.open(fnm, std::ios::in);
-//	int i = 0;
-//	if ( fs ) 
-//	{
-//		while( !fs.eof())
-//		{
-//			std::string xx;
-//			std::getline( fs, xx );	
-//
-//			WCHAR cb[1024]={};
-//			::MultiByteToWideChar(CP_ACP,0,xx.c_str(), xx.length(), cb, 1024);
-//
-//			if ( i++ != 0)
-//				s += '\n';
-//			s += cb;
-//			
-//		}
-//		return true;
-//	}
-//	return false;
-//}
+
 bool LoadTextFile(LPCWSTR fnm, bool bUtf8, std::wstringstream* out)
 {
 	char cb[1024];
     auto h = ::CreateFile(fnm, GENERIC_READ,0,nullptr,OPEN_EXISTING,0,nullptr);
+
+	auto checkBOM = [](HANDLE h)->bool{
+		DWORD d;
+		if (::ReadFile(h,&d,sizeof(DWORD),nullptr,nullptr))
+		{			
+			::SetFilePointer(h, 0,nullptr,FILE_BEGIN);
+			if ((0xFFFFFF&d) == 12565487) // 0xEF, 0xBB, 0xBF
+				return true;
+		}
+		return false;
+	};
+
+	if ( bUtf8 == false && checkBOM(h) )
+		bUtf8 = true;
+
 
 	std::wstringstream& wsm = *out;
 

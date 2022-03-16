@@ -200,15 +200,25 @@ bool ConvCsv(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::str
 
 
 
+
+void WriteData( LPCWSTR fnm, IStream* psm);
+
+
 void TDChart::GenerateGraph()
 {
 	WCHAR cb[256];
-	StringCbPrintf(cb,256, L"%d: %s", info_->result, (LPCWSTR)info_->url );
+
+	if ( info_->url == nullptr )
+		StringCbPrintf(cb,256, L"%s", L"sample, \"stock.bin\"");
+	else
+		StringCbPrintf(cb,256, L"%d: %s", info_->result, (LPCWSTR)info_->url );
 
 	
 	std::vector<std::string> dates;
 	
 	ConvCsv(info_->pstream,rousoku_ar_,dates);
+
+	WriteData(L"stock.bin", info_->pstream );
 
 
 	
@@ -510,4 +520,48 @@ D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
 	
 	return base.get();
 
+}
+
+void WriteData( LPCWSTR fnm, IStream* psm)
+{
+	_ASSERT(psm);
+    auto h = ::CreateFile(fnm, GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,0,nullptr);
+
+	if ( h != INVALID_HANDLE_VALUE )
+	{
+		char cb[256];
+		psm->Seek({0},STREAM_SEEK_SET, nullptr);
+
+		ULONG len;
+		while ( S_OK == psm->Read(cb,256,&len) && len > 0)
+		{
+			DWORD d;
+		    ::WriteFile(h, cb, len, &d, 0 );
+		}
+		::CloseHandle(h);
+	}
+}
+
+
+
+bool ReadData( LPCWSTR fnm, IStream** psm)
+{
+	ComPTR<IStream> sm;
+	HRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, &sm);
+	auto h = ::CreateFile(fnm, GENERIC_READ,0,nullptr,OPEN_EXISTING,0,nullptr);
+	if ( h != INVALID_HANDLE_VALUE )
+	{
+		char cb[256];
+		DWORD len;
+		while( ::ReadFile(h,cb,256, &len,nullptr) && len > 0 )
+		{
+			sm->Write(cb, len, nullptr);
+		}
+		::CloseHandle(h);
+
+		sm.AddRef();
+		*psm = sm;
+		return true;
+	}
+	return false;
 }
