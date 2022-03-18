@@ -64,7 +64,7 @@ LRESULT TDBase::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 	bool b1 = BITFLG(STAT_ENABLE);
 
 	if ( r == 0 )
-		r = D2DControls::WndProc(b,message,wParam,lParam);
+		r = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 	return r;
 }

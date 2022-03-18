@@ -76,7 +76,7 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		{
 			FSizeF sz( rc_.Width(), rc_.Height()-TITLEBAR_HEIGHT);
 
-			D2DControls::WndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
+			D2DControls::DefWndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
 
 			bl = false;
 

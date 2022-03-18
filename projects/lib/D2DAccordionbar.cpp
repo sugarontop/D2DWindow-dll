@@ -154,7 +154,7 @@ LRESULT D2DAccordionbar::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM
 		}
 
 					
-		hr = D2DControls::WndProc(b,message,wParam,lParam);
+		hr = D2DControls::DefWndProc(b,message,wParam,lParam);
 		
 
 		if ( hr == 0 )

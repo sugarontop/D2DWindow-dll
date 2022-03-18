@@ -139,7 +139,7 @@ LRESULT D2DWhiteWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 
 	if ( r == 0 )
-		r = D2DControls::WndProc(b,message,wParam,lParam);
+		r = D2DControls::DefWndProc(b,message,wParam,lParam);
 	
 
 

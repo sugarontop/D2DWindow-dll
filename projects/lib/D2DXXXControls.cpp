@@ -111,7 +111,7 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	}
 
 	if (r == 0 && BITFLG(STAT_ENABLE) && mode_ == 0)
-		r = D2DControls::WndProc(b,message,wParam,lParam);
+		r = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 	return r;
 

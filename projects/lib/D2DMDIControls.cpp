@@ -265,11 +265,11 @@ LRESULT D2DMDIFrame::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 	}
 
 	if ( hr == 0 && (message == WM_LBUTTONDOWN || message == WM_D2D_ONCLOSE) )
-		hr = D2DControls::WndProc(b,message,wParam,lParam);
+		hr = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 
 	if ( WM_SIZE == message )
-		hr = D2DControls::WndProc(b,message,wParam,lParam);
+		hr = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 	return hr;	
 }
@@ -390,7 +390,7 @@ LRESULT D2DMDIChild::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPa
 	}
 
 	if ( r == 0 )
-		r = D2DControls::WndProc(b,message,wParam,lParam);
+		r = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 
 	// å„ÇÎÇÃD2DMDIChildÇ…ìßÇØÇ»Ç¢ÇΩÇﬂÇÃèàóù

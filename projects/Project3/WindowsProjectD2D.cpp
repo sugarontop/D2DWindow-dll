@@ -158,23 +158,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 
 
-void CreateControl(HWND hWnd);
+UIHandleWin CreateControl(HWND hWnd);
 
-static float scale = 1.0f;
+//static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 
 
-void CreateControl(HWND hWnd)
-{
 
-	hwin = D2DCreateMainHWnd(hWnd, 14,0);    
-    auto root = D2DGetRootControls(hwin);
-
-	auto h = D2DCreateStatic(root, FRectF(0,0,100,20), STAT_DEFAULT, L"Hello world", NONAME);
-
-	D2DSetColor(h,ColorF::Blue, ColorF::Blue, ColorF::Black);
-
-}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -194,7 +184,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			::SetTimer(hWnd,HEART_BEET_ID,1000,0);
 
-            CreateControl(hWnd);
+            hwin = CreateControl(hWnd);
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
 
 			//JavascriptAppInit();
@@ -224,8 +214,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                    cxt->BeginDraw();
                     D2D1_MATRIX_3X2_F mat = {0};
 
-                    mat._11 = scale;
-                    mat._22 = scale;
+                    mat._11 = 1.0f;
+                    mat._22 = 1.0f;
 
                     cxt->SetTransform(mat);
                     cxt->Clear(D2RGB(255,255,255));

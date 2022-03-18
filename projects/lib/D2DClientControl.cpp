@@ -59,7 +59,7 @@ LRESULT D2DClientControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPAR
 
 		if ( r == 0 )
 		{
-			r = D2DControls::WndProc(b,message,wParam,lParam);
+			r = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 		}
 	}

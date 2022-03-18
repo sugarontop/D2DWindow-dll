@@ -81,6 +81,19 @@ DLLEXPORT ID2D1DeviceContext* WINAPI D2DGetDeviceContext(UIHandleWin main  )
 	}
 	return nullptr;
 }
+
+DLLEXPORT void WINAPI D2DInnerDraw(UIHandle h, LPVOID cxt)
+{
+	D2DControl* p = (D2DControl*)h.p;
+	D2DControls* p1 = dynamic_cast<D2DControls*>(p);
+	_ASSERT(p1);
+
+	D2DContext& cxt1 = *(D2DContext*)cxt;
+
+	p1->InnerDraw(cxt1);
+
+
+}
 DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
