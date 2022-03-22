@@ -95,13 +95,25 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			FRectF rc = *(m->prc);
 			rc.SetWidth(300);
 
-			auto hP1 = D2DCreateControlsWithScrollbar(m->hme, rc, STAT_DEFAULT, L"P1" );
-			D2DSetColor(hP1,ColorF::Blue, ColorF::Blue, ColorF::Black);
+			auto hP1 = D2DCreateControlsWithScrollbar(m->hme, rc, STAT_DEFAULT|STAT_IGNORE_HSIZE, L"P1" );
 			m->hp1 = hP1;
 
-			FSizeF sz(-1,2000);
-			D2DSendMessage(hP1, WM_D2D_SET_SCROLL_SIZE, 0, (LPARAM)&sz )
+			// スクロール範囲もこの値
+			auto hP1c = D2DCreateSquarePaper(hP1,FRectF(0,0,3000,3000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P1C");
 
+			
+			
+			rc.left = 300;
+			rc.top = 70;
+			rc.SetWidth(1000);
+			auto hP2 = D2DCreateControlsWithScrollbar(m->hme, rc, STAT_DEFAULT, L"P2" );
+			auto hP2c = D2DCreateSquarePaper(hP2,FRectF(0,0,3000,3000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P2C");
+
+
+
+
+			auto hP3 = D2DCreateXXXControls(m->hme,FRectF(300,0,FSizeF(0,70)),STAT_DEFAULT|STAT_IGNORE_VSIZE,L"P3");
+			D2DSendMessage(hP3, WM_D2D_COMMAND_SET, (WPARAM)hP3.p, (LPARAM)L"mode=2");
 
 			r = 1;
 		}
@@ -114,10 +126,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 		{						
 			// 全体画面へ
 			FRectF rc = *(FRectF*)lParam;
-			*(m->prc) = rc;
-
-			rc.SetWidth(300);
-			D2DSetRect(m->hp1, rc);
+			*(m->prc) = rc;			
 		}
 		break;
 

@@ -19,10 +19,15 @@ void D2DXXXControls::Draw(D2DContext& cxt)
 	else if ( mode_ == 1 )
 	{
 		mat.Offset(rc_);
+		cxt.DFillRect(rc_.ZeroRect(), ColorF::Blue);
+	}
+	else if ( mode_ == 2 )
+	{
+		mat.Offset(rc_);
+		cxt.DFillRect(rc_.ZeroRect(), ColorF::LightPink);
 
-		cxt.DFillRect(rc_.ZeroRect(), ColorF::LightCoral);
-
-
+		auto s = L"*** place holder controls ***";
+		(*cxt)->DrawText(s,wcslen(s),cxt.textformat_,FRectF(10,10,FSizeF(400,20)), cxt.black_);
 	}
 
 
@@ -35,7 +40,7 @@ void D2DXXXControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	rc_ = rc;
 	mode_ = 0;
-
+	
 }
 
 
@@ -103,8 +108,54 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		break;
 		case WM_SIZE:
 		{
-			int a = 0;
+			const FRectF& rc = *(FRectF*)(lParam);
+			if (BITFLG(STAT_IGNORE_HSIZE) == false )
+			{
+				rc_.SetWidth(rc.Width() - rc_.left);
+			}
+			if (BITFLG(STAT_IGNORE_VSIZE) == false )
+			{
+				rc_.SetHeight(rc.Height() - rc_.top);
+			}
+
+
+
 			wParam=1;
+		}
+		break;
+		case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				LPCWSTR cmd = (LPCWSTR)lParam;
+
+				auto ar = SplitW(cmd,L"&");
+
+				for(auto& it : ar)
+				{
+					auto ar2 = SplitW(it.c_str(), L"=");
+
+					if ( ar2.size() == 2)
+					{
+						if (ar2[0] == L"mode")
+						{
+							mode_ = _wtoi(ar2[1].c_str());
+						}
+						else if ( ar2[0] == L"enable")
+						{
+							int a = _wtoi(ar2[1].c_str());
+
+							if (a ==0)
+								stat_ &= ~STAT_ENABLE;
+							else
+								stat_ |= STAT_ENABLE;
+
+						}
+					}
+				}
+
+				r = 1;
+			}
 		}
 		break;
 

@@ -168,6 +168,17 @@ LRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 		}
 		break;
+		case WM_SIZE:
+		{
+			FRectF rc = *(FRectF*)lParam;
+
+			if ( !BITFLG(STAT_IGNORE_HSIZE))
+				rc_.SetWidth(rc.Width());
+			if ( !BITFLG(STAT_IGNORE_VSIZE))
+				rc_.SetHeight(rc.Height());
+
+		}
+		break;
 	}
 
 	
@@ -176,7 +187,6 @@ LRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		
 	if (r == 0)
 	{
-		//r = D2DControls::WndProc(b,message,wParam,lParam);
 		r = InnerWndProc(b,message,wParam,lParam);
 	}
 
