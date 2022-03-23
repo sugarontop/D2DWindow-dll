@@ -58,6 +58,8 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	LRESULT h = 0;
 	bool bl = true;
 
+	bool finished = false;
+
 	if ( mini_window_ )
 	{
 		h = mini_window_->WndProc(b,message,wParam,lParam);
@@ -83,8 +85,21 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		}
 		break;
 
+
+		case WM_LBUTTONDBLCLK:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
+			if ( !rc_.PtInRect(pt))
+			{
+				bl = false;
+				
+			}
+
+		}
+		break;
+
 		case WM_LBUTTONDOWN:
-		//case WM_MOUSEMOVE:
 		case WM_LBUTTONUP:
 		{
 			MouseParam& pm = *(MouseParam*)lParam;
@@ -143,8 +158,26 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		h = InnerWndProc(b,message,wParam,lParam);
 	}
 
+	if (h == 0)
+	{
+		// window“à‚È‚ç‘¼‚Émessage‚ð‰ñ‚³‚È‚¢
+		switch(message)
+		{
+			case WM_LBUTTONDOWN:
+			case WM_LBUTTONUP:
+			case WM_MOUSEMOVE:
+			case WM_LBUTTONDBLCLK:
+			case WM_MOUSEHWHEEL:
+			//case WM_MOUSEWHEEL:
 
-
+				MouseParam& pm = *(MouseParam*)lParam;
+				auto pt = mat_.DPtoLP(pm.pt);
+				if ( rc_.PtInRect(pt))
+					h = 1;
+			break;
+		}
+	}
+	
 	return h;
 }
 
