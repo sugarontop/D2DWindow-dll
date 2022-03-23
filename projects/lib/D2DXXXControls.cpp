@@ -28,6 +28,13 @@ void D2DXXXControls::Draw(D2DContext& cxt)
 
 		auto s = L"*** place holder controls ***";
 		(*cxt)->DrawText(s,wcslen(s),cxt.textformat_,FRectF(10,10,FSizeF(400,20)), cxt.black_);
+
+
+		WCHAR cb[256];
+		StringCbPrintf(cb,256,L"L=%g,T=%g, R=%g, B=%g", rc_.left, rc_.top, rc_.right,rc_.bottom);
+		(*cxt)->DrawText(cb,wcslen(cb),cxt.textformat_,FRectF(10,30,FSizeF(400,20)), cxt.black_);
+
+
 	}
 
 
