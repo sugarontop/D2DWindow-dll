@@ -134,6 +134,18 @@ LRESULT D2DWindow::InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			hr = 1;
 		}
 		break;
+		case WM_D2D_TOOLTIP:
+		{
+			if ( lParam )
+				tooltip_ = *(ToolTipInfo*)lParam;
+			else
+				tooltip_.bShow = false;
+
+			b.bRedraw = true;
+			hr = 1;
+		}
+		break;
+
 		case WM_TIMER:
 		{
 			// HEART_BEETはpostをpushするためのタイミング
@@ -168,4 +180,27 @@ void D2DWindow::ListUp(std::vector<ControlMapItem>& ar)
 	int col=0;
 	
 	top_control_->ListUp(ar, &row,&col);
+}
+void D2DWindow::DrawToolTip(D2DContext& cxt)
+{
+	if ( !tooltip_.bShow ) return;
+	
+	cxt.DFillRect(tooltip_.rc, ColorF::Yellow);
+	cxt.DText(tooltip_.rc.LeftTop(5,2), tooltip_.str ); 
+
+
+	auto wow = [](LPVOID p)->DWORD {
+
+		D2DWindow* win = (D2DWindow*)p;
+		Sleep(800);
+
+		win->tooltip_.bShow = false;
+		InvalidateRect(win->GetHwnd(),NULL,FALSE);
+		return 0;
+	};
+
+	DWORD dw;	
+	::CreateThread(nullptr,0, wow, this,0,&dw);
+
+
 }

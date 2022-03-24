@@ -64,6 +64,16 @@ struct SmoothCar
 };
 
 
+struct ToolTipInfo
+{
+	ToolTipInfo():bShow(false){};
+
+	bool bShow;
+	std::wstring str;
+	FRectF rc;
+};
+
+
 class D2DWindow
 {
 	friend class D2DControl;
@@ -92,6 +102,7 @@ class D2DWindow
 
 		HWND GetHwnd() const { return hWnd_; }
 		D2DContextEx& GetContext(){ return cxt_; }
+		void DrawToolTip(D2DContext& cxt);
 		
 		TSFIsland tsf_;
 		
@@ -100,7 +111,7 @@ class D2DWindow
 		
 		//std::function<int(D2DWindow*, int)> Smooth_;  
 		SmoothCar* Smooth_;
-		
+		ToolTipInfo tooltip_;
 
 
 	protected :
@@ -111,6 +122,7 @@ class D2DWindow
 	protected :
 		HWND hWnd_;
 		D2DContextEx cxt_;
+		
 		
 		std::stack<D2DControl*> capture_obj_;
 		std::vector< std::shared_ptr<D2DControl>> death_objects_;

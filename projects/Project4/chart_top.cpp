@@ -86,39 +86,31 @@ void TDBase::Draw(D2DContext& cxt)
 		mat.Offset(rc_);
 		cxt.DFillRect(rc_.ZeroRect(), ColorF::LightGray);
 
-	
-	
-		//auto td = parent_window_->name_map_[L"td_left_bar"];
+
 		td->Draw(cxt);
 		mat.Offset(td->GetRect().Size().width, 0);
 
 		mat.Offset(3, 0);
-		//auto top = parent_window_->name_map_[L"td_top_bar"];
 		top->Draw(cxt);
 
-		//auto txt = parent_window_->name_map_[L"td_stock_cd"];
 		txt->Draw(cxt);
 
 		mat.Offset(0, top->GetRect().bottom);
 
 		mat.PushTransform();
 		{
-			//auto tr = parent_window_->name_map_[L"td_right_bar"];
-			mat._31 = rc_.Size().width-tr->GetRect().Size().width;
-			mat._32 = 0; 
+			mat.Offset(rc_.Size().width - tr->GetRect().Size().width, 0);
 
 			(*cxt)->SetTransform(mat);
 
 			tr->Draw(cxt);
 
-			//auto ls = parent_window_->name_map_[L"td_list"];
 			mat.Offset(-ls->GetRect().Size().width, 0);
 			ls->Draw(cxt);
 		}
 		mat.PopTransform();
 
 		mat.Offset(0, 1);
-		//auto chart = parent_window_->name_map_[L"td_chart"];
 		chart->Draw(cxt);
 
 		mat.PopTransform();
@@ -178,8 +170,9 @@ void TDChart::Draw(D2DContext& cxt)
 	if ( error_.length() > 0)
 		cxt.DText( rc_.ZeroRect().LeftTop(), error_);	
 	else
+	{
 		yahooDraw(cxt,info_,rc.Height(), rousoku_ar_);
-
+	}
 
 	mat.PopTransform();
 }
@@ -469,6 +462,7 @@ D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
 	ctrl->Add(base);
 
 	ctrl = base.get();
+
 	{
 		auto left_bar = std::make_shared<TDChartButtons>();
 		left_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(55, variable)), STAT_DEFAULT, NR(L"td_left_bar",k),-1, ColorF::White );

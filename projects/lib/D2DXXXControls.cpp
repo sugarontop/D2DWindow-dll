@@ -68,7 +68,7 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			MouseParam& pm = *(MouseParam*)lParam;
 			auto pt = mat_.DPtoLP(pm.pt);
 
-			if ( rc_.PtInRect(pt))
+			if ( rc_.PtInRect(pt) && mode_ == 1 )
 			{
 				mode_ = 0;
 				rc_.SetRect(0,0,FSizeF(500,700));

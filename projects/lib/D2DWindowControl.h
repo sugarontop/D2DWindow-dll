@@ -96,6 +96,7 @@ public:
 	LRESULT InnerWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 
 	void InnerDraw(D2DContext& cxt);
+	
 protected :
 	virtual LRESULT DefWndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 	

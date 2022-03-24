@@ -338,6 +338,10 @@ class FRectF : public D2D1_RECT_F
 		{
 			return FPointF( left,top );
 		}
+		FPointF LeftTop(float offx, float offy) const
+		{
+			return FPointF( left+offx,top+offy );
+		}
 		FPointF LeftBottom() const
 		{
 			return FPointF( left,bottom );

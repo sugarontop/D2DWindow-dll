@@ -350,6 +350,8 @@ void D2DControl::ListUp(std::vector<ControlMapItem>& ar, int* row, int* col)
 
 }
 
+
+
 void D2DControls::Draw(D2DContext& cxt)
 {
 

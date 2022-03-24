@@ -158,16 +158,6 @@ bool df1(LPVOID captureobj, D2DContext& cxt)
 	D2DControls* c = (D2DControls*)m->hme.p;
 
 
-	if ( !wcscmp((LPCWSTR)D2DGetLocalName(m->hme), L"k2"))
-	{
-		auto bs = D2DGetName(m->hme);
-		auto stat = D2DGetStat(m->hme);
-	}
-	else if ( !wcscmp((LPCWSTR)D2DGetLocalName(m->hme), L"k1"))
-	{
-		auto bs = D2DGetName(m->hme);
-		auto stat = D2DGetStat(m->hme);
-	}
 
 	mat.PushTransform();
 	mat.Offset(m->voff.width, m->voff.height);

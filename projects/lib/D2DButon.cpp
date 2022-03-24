@@ -58,9 +58,30 @@ LRESULT  D2DButton::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPar
 
 			auto old = stat_;
 			if ( rc_.ZeroPtInRect( pt ) )
+			{
 				stat_ |= STAT_FLOATING;
+
+
+				ToolTipInfo tooltip;
+
+				tooltip.str = text_;
+				tooltip.bShow = true;
+
+				FRectF rc(5+pt.x,5+rc_.Height(), FSizeF(100,20));
+
+				tooltip.rc = mat_.LPtoDP(rc);
+
+				GetParent()->SendMessage(WM_D2D_TOOLTIP, 0, (LPARAM)&tooltip);
+
+			}
 			else
-				stat_ &= ~STAT_FLOATING;
+			{
+				if ( BITFLG(STAT_FLOATING))
+				{
+					GetParent()->SendMessage(WM_D2D_TOOLTIP, 0, 0);	
+					stat_ &= ~STAT_FLOATING;
+				}				
+			}
 
 			if ( old != stat_ )
 				b.bRedraw = true;

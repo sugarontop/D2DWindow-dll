@@ -1083,19 +1083,25 @@ DLLEXPORT void WINAPI D2DDraw(UIHandleWin main, void* hWnd  )
 	// Smooth move 
 	{		
 		auto car = pwin->Smooth_;
-		while(car)
-		{
-			auto car2 = car->next;
-			car->no = car->ev(pwin, car);
-			if ( car->no == -1 )
-			{
-				if (car == pwin->Smooth_)
-					pwin->Smooth_ = car->LinkLast();
-					
-				delete car;
-			}
 
-			car = car2;
+		if ( car == nullptr)
+			pwin->DrawToolTip(cxt);
+		else
+		{
+			while(car)
+			{
+				auto car2 = car->next;
+				car->no = car->ev(pwin, car);
+				if ( car->no == -1 )
+				{
+					if (car == pwin->Smooth_)
+						pwin->Smooth_ = car->LinkLast();
+					
+					delete car;
+				}
+
+				car = car2;
+			}
 		}
 	}
 
@@ -1103,8 +1109,6 @@ DLLEXPORT void WINAPI D2DDraw(UIHandleWin main, void* hWnd  )
 	if ( cxt.bRedraw_ )
 	{
 		// check "post message"
-
-
 		pwin->CheckPostMessage(nullptr);
 		
 		cxt.DoRedraw((HWND)hWnd);
