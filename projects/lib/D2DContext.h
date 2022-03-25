@@ -37,6 +37,7 @@ class D2DContext
 		void DCircle(const D2D1_RECT_F& rc, ColorF clr);
 		void DText(const D2D_POINT_2F& pt, LPCWSTR str, ColorF clr);
 		void DText(const D2D_POINT_2F& pt, const std::wstring& str);
+		void DText(const D2D_POINT_2F& pt, const std::wstring& str,ID2D1SolidColorBrush* br );
 
 		bool CreateTextLayout(LPCWSTR str, D2D1_SIZE_F sz, IDWriteTextLayout** ret );
 		bool CreateBrush(ColorF clr,  ID2D1SolidColorBrush** pbr);

@@ -17,8 +17,9 @@
 
 using namespace V6;
 
-//bool LoadTextFile( LPCWSTR fnm, std::wstring* str, bool butf8 );
 bool LoadTextFile(LPCWSTR fnm, bool bUtf8, std::wstringstream* out);
+
+D2DControls* CreateObjectList(D2DControls* ctrl,  FSizeF size, LPCWSTR k );
 
 extern UIHandleWin hwin;
 
@@ -560,6 +561,12 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			else if ( 11 == id )
 			{
 				m->child = CreateSquare( m->hme,  FSizeF(5000,5000), L"C" );
+
+			}
+			else if ( 10 == id )
+			{
+				m->child = CreateObjectList((D2DControls*)m->hme.p,  FSizeF(1000,600), L"D" );
+
 
 			}
 

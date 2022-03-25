@@ -462,6 +462,13 @@ class FRectF : public D2D1_RECT_F
 			bottom=0;
 			top=0;
 		}
+
+		LPCWSTR ToStr()
+		{
+			static WCHAR cb[256];
+			StringCbPrintf(cb,256,L"L=%g, T=%g, R=%g, B=%g", left,top,right,bottom );
+			return cb;
+		}
 };
 
 

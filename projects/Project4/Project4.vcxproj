@@ -163,6 +163,7 @@
     <ClCompile Include="..\lib\inet.cpp" />
     <ClCompile Include="chart_top.cpp" />
     <ClCompile Include="CJsValueRef.cpp" />
+    <ClCompile Include="object_list.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>

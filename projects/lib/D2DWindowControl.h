@@ -28,6 +28,9 @@ public:
 	virtual void SetRect(const FRectF& rc) = 0;
 	virtual void Draw(D2DContext& cxt) = 0;
 	virtual FRectF& GetRectSmooth() =0;
+	virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) = 0;
+
+
 	virtual std::wstring GetTreeTyp(USHORT* typ){ *typ=1; return L"D2DControl";}
 	virtual void ListUp(std::vector<ControlMapItem>& ar, int* row, int* col);
 	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt){}
