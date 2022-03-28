@@ -565,7 +565,7 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			}
 			else if ( 10 == id )
 			{
-				m->child = CreateObjectList((D2DControls*)m->hme.p,  FSizeF(1000,600), L"D" );
+				m->child = CreateObjectList((D2DControls*)m->hme.p,  FSizeF(1000,600), L"list" );
 
 
 			}
@@ -620,10 +620,10 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 						auto w = D2DGetWindow(m->hme);
 						FRectF rcDst(0,0,rc.Width(), rc.Height());
 
-						/*BSTR nm = D2DGetName( D2DGetParent(m->hme));
+						BSTR nm = D2DGetName( D2DGetParent(m->hme));
 						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k1")), 0);
 						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k2")), 0);
-						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), 0);*/
+						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), 0);
 
 						D2DSetStat(m->hme,STAT_DEFAULT);
 
@@ -640,18 +640,13 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 					else
 					{
 						auto w = D2DGetWindow(m->hme);
-						BSTR nm = D2DGetName( D2DGetParent(m->hme));
-
-						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k1")), STAT_DEFAULT);
-						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k2")), STAT_DEFAULT);
-						D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), STAT_DEFAULT);
-
+						//BSTR nm = D2DGetName( D2DGetParent(m->hme));
 
 						FRectF rcDst = m->orgrc;
 
 						D2DSmoothRect(1,198,  m->hme, m->prc, rcDst);
 
-						//m->hactive.p = m->hme.p;
+						
 
 						m->hactive.p = nullptr;
 
@@ -670,13 +665,8 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 			{
 				if ( (INT_PTR)m->hme.p == (INT_PTR)wParam)
 				{
-					auto w = D2DGetWindow(m->hme);
-					BSTR nm = D2DGetName( D2DGetParent(m->hme));
-
-					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k1")), 0);
-					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k2")), 0);
-					D2DSetStat(D2DGetControlFromName( w, NameGen(nm,L"k3")), 0);
-
+					//auto w = D2DGetWindow(m->hme);
+					//BSTR nm = D2DGetName( D2DGetParent(m->hme));
 
 					D2DSetStat(m->hme, STAT_DEFAULT);
 					r = 1;

@@ -133,5 +133,7 @@ DLLEXPORT bool WINAPI D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* t
 DLLEXPORT void WINAPI D2DMDICreateChildView(UIHandle hctrls,int typ);
 DLLEXPORT UIHandle WINAPI D2DMDIGetControl(UIHandle hctrls, LPCWSTR nm);
 
+DLLEXPORT bool WINAPI D2DSetOnClick(UIHandle h, DelegateClick func);
+
 
 };

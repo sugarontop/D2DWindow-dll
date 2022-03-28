@@ -721,18 +721,37 @@ DLLEXPORT bool WINAPI D2DIsCapture(UIHandle h)
 	return ( p == dynamic_cast<D2DCaptureObject*>( (D2DControl*)h.p));
 
 }
-DLLEXPORT bool WINAPI D2DSetProcfunction(UIHandle h, DelegateProcFunc func2)
+DLLEXPORT bool WINAPI D2DSetProcfunction(UIHandle h, DelegateProcFunc func)
 {
 	D2DControl* p = (D2DControl*)h.p;
 	auto sq = dynamic_cast<D2DSquarePaper*>(p);
 	
 	if ( sq )
 	{
-		sq->import_function_ = func2;
+		sq->import_function_ = func;
 		return true;
 	}
 	return false;
 }
+
+DLLEXPORT bool WINAPI D2DSetOnClick(UIHandle h, DelegateClick func)
+{
+	D2DControl* p = (D2DControl*)h.p;
+	auto btn = dynamic_cast<D2DButton*>(p);
+	
+	if ( btn )
+	{
+		std::function<DWORD(void* sender,LPCWSTR funcnm, void* p )> fn = func;
+
+		btn->click_ = fn;		
+		return true;
+	}
+	return false;
+}
+
+
+
+
 DLLEXPORT void WINAPI D2DEnable(UIHandle h, bool enable)
 {
 	D2DControl* p = (D2DControl*)h.p;

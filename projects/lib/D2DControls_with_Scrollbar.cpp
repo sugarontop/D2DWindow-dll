@@ -107,6 +107,12 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 					crc = rc_.ZeroRect();
 					this->controls_[2]->WndProc(b,message,1,(LPARAM)&crc);
 				}	
+				else if ( wParam == 3 )
+				{
+					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
+
+					SetViewMaxSize(crc.Size());
+				}
 			}
 
 			return 0;

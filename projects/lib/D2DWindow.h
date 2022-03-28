@@ -106,6 +106,10 @@ class D2DWindow
 		
 		TSFIsland tsf_;
 		
+
+		int GetControlFromName(LPCWSTR nm, std::vector<D2DControl*>& ret ) const;
+
+
 		std::shared_ptr<D2DControls> top_control_;
 		std::map<std::wstring, D2DControl*> name_map_;
 		

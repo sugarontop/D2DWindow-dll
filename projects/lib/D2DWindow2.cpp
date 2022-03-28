@@ -204,3 +204,22 @@ void D2DWindow::DrawToolTip(D2DContext& cxt)
 
 
 }
+
+int D2DWindow::GetControlFromName(LPCWSTR nm, std::vector<D2DControl*>& ret ) const
+{
+	auto& map = name_map_;
+	auto it = map.begin();
+	while( it != map.end())
+	{
+		auto pos = it->first.find(nm);
+
+		if ( pos != -1 )
+		{
+			ret.push_back(it->second);			
+		}
+		it++;
+	}
+
+	return (int)ret.size();
+
+}
