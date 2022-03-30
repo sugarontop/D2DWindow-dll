@@ -1,7 +1,7 @@
 #pragma once
 #include "D2DApp.h"
 #include "D2DWindowControl.h"
-
+#include "D2DColor.h"
 namespace V6
 {
 	class D2DXXXControls: public D2DControls
@@ -18,5 +18,6 @@ namespace V6
 		protected :
 			FRectF rc_;
 			int mode_;
+			D2DColor back_color_;
 	};
 };

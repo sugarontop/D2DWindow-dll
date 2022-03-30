@@ -128,6 +128,7 @@ namespace V6
 		ColorF back_;
 		ColorF fore_;
 		ColorF border_;
+		DWRITE_FONT_WEIGHT font_weight_;
 		bool isImeOn_;
 	};
 };

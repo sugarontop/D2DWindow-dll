@@ -163,8 +163,6 @@ void CreateControl(HWND hWnd);
 static float scale = 1.0f;
 void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
 
-
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     AppBase app;
@@ -179,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_app = std::make_shared<D2DApp>(D2DApp());
 			auto k = _app.get();
 			D2DApp::SetD2DAppForDLL(k);
-			D2DInitail((INT_PTR)k );
+			D2DInstanceInitail((INT_PTR)k );
 
 			::SetTimer(hWnd,HEART_BEET_ID,1000,0);
 
@@ -298,7 +296,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
         {        
             D2DDestroyWindow(hwin);
-
 
 			JavascriptAppExit();
 

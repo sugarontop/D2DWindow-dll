@@ -180,7 +180,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_app = std::make_shared<D2DApp>(D2DApp());
 			auto k = _app.get();
 			D2DApp::SetD2DAppForDLL(k);
-			D2DInitail((INT_PTR)k );
+			D2DInstanceInitail((INT_PTR)k );
 
 			::SetTimer(hWnd,HEART_BEET_ID,1000,0);
 

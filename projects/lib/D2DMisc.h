@@ -741,7 +741,6 @@ class FRectU : public D2D1_RECT_U
 			
 				return FRectF( p1.x, p1.y, p2.x, p2.y );
 			}
-		
 			void Offset( float cx, float cy )
 			{
 				FSizeF sz = LPtoDP( FSizeF(cx,cy));

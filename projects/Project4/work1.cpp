@@ -555,7 +555,7 @@ LRESULT kf2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 			if ( 12 == id )
 			{
-				m->child = CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"B" );
+				m->child = CreateStockChart( (D2DControls*)m->hme.p,  FSizeF(1600,650), L"yahoo" );
 
 			}
 			else if ( 11 == id )

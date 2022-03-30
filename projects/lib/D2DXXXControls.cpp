@@ -19,7 +19,9 @@ void D2DXXXControls::Draw(D2DContext& cxt)
 	else if ( mode_ == 1 )
 	{
 		mat.Offset(rc_);
-		cxt.DFillRect(rc_.ZeroRect(), ColorF::Blue);
+		cxt.DFillRect(rc_.ZeroRect(), back_color_);
+
+		InnerDraw(cxt);
 	}
 	else if ( mode_ == 2 )
 	{
@@ -47,6 +49,7 @@ void D2DXXXControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 	rc_ = rc;
 	mode_ = 0;
+	back_color_ = ColorF::Blue;
 	
 }
 
@@ -158,6 +161,18 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 								stat_ |= STAT_ENABLE;
 
 						}
+						else if ( ar2[0] == L"bkcolor")
+						{
+							DWORD clr = _wtoi(ar2[1].c_str());
+
+							D2DColor k;
+							k.FromInt(clr);
+
+							back_color_ = k;
+
+
+
+						}
 					}
 				}
 
@@ -168,7 +183,7 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 	}
 
-	if (r == 0 && BITFLG(STAT_ENABLE) && mode_ == 0)
+	if (r == 0 && BITFLG(STAT_ENABLE) && (mode_ == 0 || mode_ == 1))
 		r = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 	return r;

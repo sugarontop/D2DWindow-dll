@@ -213,9 +213,12 @@ void TDChart::GenerateGraph()
 
 	WriteData(L"stock.bin", info_->pstream );
 
-
+	rc_.SetWidth( (rousoku_ar_.size()+5) * 4);
 	
 	memo_ = cb;
+
+	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
+
 }
 
 
@@ -311,7 +314,7 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 				UIHandle tt;
 				tt.p = this;
-				std::wstring gnm = GetGlobalName(tt, NR(L"td_chart", key_));
+				std::wstring gnm = GetGlobalName(tt, NR(L"td_chart_scyahoo@td_chart", key_));
 
 				auto ch = (TDChart*)parent_window_->name_map_[gnm]; //NR(L"td_chart", key_)];
 
@@ -354,7 +357,7 @@ void TDChartButtons::Draw(D2DContext& cxt)
 	}
 
 	if ( GetLocalName() == NR(L"td_top_bar",key_))
-		cxt.DText(btnar_[1].LeftTop(), NR(L"seek\nbtn", key_));
+		cxt.DText(btnar_[1].LeftTop(0,5), L"*Seek*");
 
 	if ( running_mode_ == 1 )
 	{
@@ -451,29 +454,29 @@ void TDList::Draw(D2DContext& cxt)
 
 
 
-D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
+D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 {
 	float variable = size.width;
 
 	DWORD stat = 0; // STAT_DEFAULT
 
 	auto base = std::make_shared<TDBase>();
-	base->CreateControl( ctrl, FRectF(0,0, size), stat, L"stock" );
+	base->CreateControl( ctrl, FRectF(0,0, size), stat, nm );
 	ctrl->Add(base);
 
 	ctrl = base.get();
 
 	{
 		auto left_bar = std::make_shared<TDChartButtons>();
-		left_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(55, variable)), STAT_DEFAULT, NR(L"td_left_bar",k),-1, ColorF::White );
+		left_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(55, variable)), STAT_DEFAULT, NR(L"td_left_bar",nm),-1, ColorF::White );
 		ctrl->Add(left_bar);
-		left_bar->key_ = k;
+		left_bar->key_ = nm;
 		base->td = left_bar.get();
 
 		auto top_bar = std::make_shared<TDChartButtons>();
-		top_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(variable,40)), STAT_DEFAULT, NR(L"td_top_bar",k),-1,	D2RGBA(0,0,0,0) );
+		top_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(variable,40)), STAT_DEFAULT, NR(L"td_top_bar",nm),-1,	D2RGBA(0,0,0,0) );
 		ctrl->Add(top_bar);
-		top_bar->key_ = k;
+		top_bar->key_ = nm;
 		base->top = top_bar.get();
 
 
@@ -486,27 +489,39 @@ D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR k )
 			rc.Offset(ws[i]+1, 0);
 		}
 
-		auto chart = std::make_shared<TDChart>();
-		chart->CreateControl( ctrl, FRectF(0,0, FSizeF(1000-45,500)), STAT_DEFAULT, NR(L"td_chart",k) );
-		ctrl->Add(chart);
-		base->chart = chart.get();
+		{
+			UIHandle h={};
+			h.p = ctrl;
+			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart_sc",nm));
+			D2DControls* ctrl2 = (D2DControls*)hchart.p;
+
+			auto chart = std::make_shared<TDChart>();
+			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart",nm) );
+			ctrl2->Add(chart);
+			
+			base->chart = ctrl2;
+		}
+
+
+
 
 		auto right_list = std::make_shared<TDList>();
-		right_list->CreateControl( ctrl, FRectF(0,0, FSizeF(267,variable)), STAT_DEFAULT, NR(L"td_list",k) );
+		right_list->CreateControl( ctrl, FRectF(0,0, FSizeF(267,variable)), STAT_DEFAULT, NR(L"td_list",nm) );
 		ctrl->Add(right_list);
 		base->ls = right_list.get();
 
 		auto right_bar = std::make_shared<TDChartButtons>();
-		right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, NR(L"td_right_bar",k), -1, ColorF::White );
+		right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, NR(L"td_right_bar",nm), -1, ColorF::White );
 		ctrl->Add(right_bar);
 		base->tr = right_bar.get();
 
 
 		UIHandle hctrls={};
 		hctrls.p = ctrl;
-		auto txt = D2DCreateTextbox(hctrls, FRectF(5,5,FSizeF(93,30)), false,STAT_DEFAULT, NR(L"td_stock_cd",k));
+		auto txt = D2DCreateTextbox(hctrls, FRectF(5,5,FSizeF(93,30)), false,STAT_DEFAULT, NR(L"td_stock_cd",nm));
 		D2DSetColor(txt, ColorF::White,ColorF::Black,D2RGBA(0,0,0,0));
 		D2DSetText(txt, L"spy" ); // spy: SP500
+		D2DSendMessage(txt, WM_D2D_COMMAND_SET, (WPARAM)txt.p,(LPARAM)L"weight=600");
 		
 		base->txt = (D2DControl*)txt.p;
 

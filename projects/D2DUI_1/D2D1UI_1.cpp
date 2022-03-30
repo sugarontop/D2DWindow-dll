@@ -22,16 +22,37 @@
 #include "D2DFileManage.h"
 #include "D2DGridView.h"
 #include "D2DLogin.h"
+#include "D2DInstance.h"
+
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
 UIHandle ConvertUIHandle(D2DControl* p);
 
-DLLEXPORT void WINAPI D2DInitail(INT_PTR p )
+
+#define MAGICNUMBER	0x1
+
+static HANDLE global_d2d_handle = nullptr;
+
+
+DLLEXPORT HANDLE WINAPI D2DInstanceInitail(INT_PTR p )
 {
 	D2DApp::SetD2DAppForDLL((D2DApp*)p);
 
+	auto ret = new D2DInstaceExport();
+	ret->magicnumber = MAGICNUMBER;
+	ret->instance = D2DInstance();
 
+	global_d2d_handle = ret;
+
+	return ret;
+}
+
+void D2DInstanceExit()
+{
+	delete global_d2d_handle;
+
+	global_d2d_handle = nullptr;
 }
 
 DLLEXPORT UIHandleWin WINAPI D2DCreateMainHWnd( HWND hWnd,  float fontheight, int typ )
@@ -1203,6 +1224,20 @@ DLLEXPORT LRESULT WINAPI D2DDefControlProc(UIHandle ctrls ,AppBase& app, UINT me
 DLLEXPORT void WINAPI D2DForceWndProc(UIHandleWin main, AppBase& app, UINT message, WPARAM wParam, LPARAM lParam)
 {	
 	_ASSERT(main.typ == TYP_MAIN_WINDOW);
+
+	if (message == WM_D2D_RESOURCES_UPDATE)
+	{
+		if ( wParam == 0 )
+		{
+
+		}
+		else if ( wParam == 2 )
+		{
+
+		}
+	}
+
+
 	auto win = (D2DWindow*)main.p;
 	win->ForceWndProc(app, message, wParam, lParam); // STAT_ENABLE‚Í–³Ž‹‚·‚é
 }
@@ -1301,10 +1336,40 @@ DLLEXPORT D2D1_RECT_F* WINAPI RectAnimation(const D2D1_RECT_F& rcStart, const D2
 }
 
 
+DLLEXPORT D2D1_RECT_F* WINAPI RectJumpAnimation(const D2D1_RECT_F& rcStart, const D2D1_RECT_F& rcEnd, D2D1_RECT_F* p, int p_size, int style)
+{
+	_ASSERT( 0 < p_size && p );
+	
+	float jumpHeight = (rcStart.bottom-rcStart.top ) / 3.0f;
+
+	p[0] = rcStart;
+
+	//if ( style == 0 )
+	{
+		for(int i = 1; i < p_size-1; i++ )
+		{
+			FRectF rc(rcStart);
+			
+			float hrto = -sin(3.14159f/p_size*i);
+
+			rc.top = jumpHeight*hrto + rc.top;
+			rc.bottom = jumpHeight*hrto + rc.bottom;
+
+			p[i] = rc;
+		}
+	}
+	p[p_size-1] = rcEnd;
+	return p;
+}
+
+
 DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandle h, D2D1_RECT_F* target, D2D1_RECT_F dstRect)
 {
 	if ( typ == 0 )
+	{
 		*target = dstRect;
+		return;
+	}
 	else if ( typ == 1 )
 	{
 		int cnt = 25;
@@ -1340,6 +1405,59 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandle h, D2D1_RECT_F* ta
 			return (no+1);
 		};
 		
+		/// ////////
+		SmoothCar* scar = new SmoothCar();
+		scar->ev = df;
+
+		if ( pwin->Smooth_ == nullptr)
+			pwin->Smooth_ = scar;
+		else
+		{
+			auto last = pwin->Smooth_;
+
+			while( last->next )
+			{
+				last = last->next;
+			}
+			scar->LinkAttach(last);
+		}
+		
+
+	}
+	else if ( typ == 100 )
+	{
+		int cnt = 25;
+		FRectF* prc = new FRectF[cnt];
+		FRectF srect = target[0];
+		int atyp = typ - 1;
+	
+		RectJumpAnimation(srect, dstRect, prc, cnt, atyp);
+
+		D2DWindow* pwin = (D2DWindow*)V6::D2DGetWindow(h).p;
+		auto df = [prc, cnt,target,pwin,id,h](D2DWindow* win, SmoothCar* car)->int
+		{						
+			int no = car->no;
+			
+			if ( car->no < cnt )
+			{
+				*target = prc[car->no];
+				win->GetContext().bRedraw_ = true;
+			}
+			else if ( car->no == cnt )
+			{
+				*target = prc[car->no-1];
+				win->GetContext().bRedraw_ = true;
+				delete [] prc;
+
+				pwin->SendMessage(WM_D2D_SMOOTH_COMPLETE,(WPARAM)h.p,id);
+
+				car->LinkDetach();
+
+				return -1;
+			}
+
+			return (no+1);
+		};
 
 		/// ////////
 		SmoothCar* scar = new SmoothCar();
@@ -1357,8 +1475,12 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandle h, D2D1_RECT_F* ta
 			}
 			scar->LinkAttach(last);
 		}
-
 	}
+
+
+	
+
+
 }
 
 

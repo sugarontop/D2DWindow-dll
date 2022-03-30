@@ -15,7 +15,7 @@ class D2DWindow;
 class D2DControls;
 
 DLLEXPORT bool WINAPI D2DResource(D2DWindow* win,  D2D1_RECT_F& rc );
-DLLEXPORT void WINAPI D2DInitail(INT_PTR p );
+DLLEXPORT HANDLE WINAPI D2DInstanceInitail(INT_PTR p );
 
 DLLEXPORT UIHandle WINAPI D2DCreateWhiteWindow( UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );
 DLLEXPORT UIHandle WINAPI D2DCreateSquarePaper(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );

@@ -94,7 +94,7 @@ void D2DScrollbar::Draw2(D2DContext& cxt)
 
 			FRectF thum(0,offset_, BARW, offset_+Thumheight());
 
-			cxt.DFillRect(thum, theGray3 );
+			cxt.DFillRect(thum, ColorF::SkyBlue); // theGray3 );
 		}
 		else
 		{
@@ -103,7 +103,7 @@ void D2DScrollbar::Draw2(D2DContext& cxt)
 
 			FRectF thum(offset_,0, offset_+Thumheight(), BARW);
 
-			cxt.DFillRect(thum, theGray3 );
+			cxt.DFillRect(thum, ColorF::SkyBlue );
 
 
 		}

@@ -23,6 +23,7 @@ void D2DTextbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, TYP ty
 	tm_ = {0};	
 	ct_.bSingleLine_ = true;
 	isImeOn_ = false;
+	font_weight_ = DWRITE_FONT_WEIGHT_NORMAL;
 	
 	if (IsMultiline())
 	{
@@ -129,7 +130,15 @@ void D2DTextbox::Draw(D2DContext& cxt)
 			mat.Offset(0, -vscrollbar_.Scroll());
 			mat_sc_ = mat.Copy();
 
-			(*cxt)->DrawTextLayout(FPointF(), text_layout_, fore );			
+			
+			if ( font_weight_ != DWRITE_FONT_WEIGHT_NORMAL )
+			{
+				DWRITE_TEXT_RANGE rng = {0, 99999};
+				text_layout_->SetFontWeight(font_weight_, rng);
+			}
+
+			(*cxt)->DrawTextLayout(FPointF(), text_layout_, fore );		
+
 		}
 		mat.PopTransform();
 
@@ -369,6 +378,10 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 						{
 							D2DColor clr(ar2[1].c_str());
 							back_ = clr;
+						}
+						else if (ar2[0] == L"weight")
+						{
+							font_weight_ = DWRITE_FONT_WEIGHT_BOLD; 
 						}
 					}
 				}

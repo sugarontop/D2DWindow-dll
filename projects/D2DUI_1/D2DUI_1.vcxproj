@@ -184,6 +184,7 @@
     <ClInclude Include="..\lib\D2DColor.h" />
     <ClInclude Include="..\lib\D2DDropdownListbox.h" />
     <ClInclude Include="..\lib\D2DImageControl.h" />
+    <ClInclude Include="..\lib\D2DInstance.h" />
     <ClInclude Include="..\lib\D2DInterface.h" />
     <ClInclude Include="..\lib\D2DMessage.h" />
     <ClInclude Include="..\lib\D2DGridView.h" />
