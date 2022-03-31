@@ -92,17 +92,14 @@ LPCWSTR _strformat( LPCWSTR expression, ... )
 
 struct CustomBtn
 {
-	CustomBtn()
-	{
-
-	}
-
 	FRectF* prc;
 	FRectF orgrc;
 	D2DMat mat;
 	UIHandle hme;
 	std::wstring nm;
 	D2DColor clr;
+
+	std::function<void(std::wstring)> click_;
 
 
 	static bool df1(LPVOID captureobj, D2DContext& cxt);
@@ -160,7 +157,8 @@ LRESULT CustomBtn::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPara
 			if ( m->orgrc.PtInRect(pt) )
 			{
 				
-				
+				if ( m->click_ )
+					m->click_(m->nm);
 
 
 				D2DSmoothRect(100,100,m->hme,m->prc, m->orgrc);
@@ -195,7 +193,7 @@ LRESULT CustomBtn::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPara
 	return ret;
 }
 
-
+D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm );
 
 LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -248,6 +246,25 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 					CustomBtn* btn = new CustomBtn();
 					D2DCreateWhiteControls((LPVOID)btn,CustomBtn::df1,CustomBtn::df2, hP2c, rcs,STAT_DEFAULT, nm[i], 100+i);
 
+					LPCWSTR titlenm = nm[i];
+
+					btn->click_ = [hP1c, titlenm](std::wstring){
+					
+						auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,700)), STAT_DEFAULT, L"test" );
+
+						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(1200,680)),STAT_DEFAULT,NONAME);
+
+
+						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );
+
+						D2DColor clr(D2RGB(250,250,250));
+						LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
+						D2DSendMessage(h2, WM_D2D_COMMAND_SET, (WPARAM)h2.p,(LPARAM)cb);
+
+						D2DSendMessage(h2, WM_D2D_SET_SIZE, 3,0);
+
+						D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
+					};
 
 					rcs.Offset( 200, 0);
 

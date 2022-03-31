@@ -169,10 +169,18 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 							k.FromInt(clr);
 
 							back_color_ = k;
+						}
+						else if ( ar2[0] == L"title")
+						{
+							LPCWSTR nm = ar2[1].c_str();
+							
+							auto parent = GetParentControls();
+							parent->SendMesage(WM_D2D_SET_TEXT,(WPARAM)parent, (LPARAM)nm);
 
 
 
 						}
+
 					}
 				}
 

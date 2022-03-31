@@ -72,13 +72,12 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			h = 1;
 		break;
 
-
 		case WM_SIZE:
 		case WM_D2D_SET_SIZE:
 		{
 			FSizeF sz( rc_.Width(), rc_.Height()-TITLEBAR_HEIGHT);
 
-			D2DControls::DefWndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
+			DefWndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
 
 			bl = false;
 
@@ -419,6 +418,9 @@ LRESULT MinimumWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM l
 
 				parent_->window_mode_ = 0;
 				parent_->mini_window_ = nullptr;
+
+				
+
 				r = 1;
 			}
 		}

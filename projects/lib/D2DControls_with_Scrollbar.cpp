@@ -184,18 +184,20 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 
             if ( md == 1 )
             {
-                float a = 0;
-                if (mp->zDelta > 0)
-                    a = -10.0f;
-                if (mp->zDelta < 0)
-                     a= 10.0f;
+				r = InnerWndProc(b,message,wParam,lParam);
 
-				scv_->Offset(a);
+				if( r == 0)
+				{
+					float a = 0;
+					if (mp->zDelta > 0)
+						a = -10.0f;
+					if (mp->zDelta < 0)
+						 a= 10.0f;
 
-                r = 1;
+					scv_->Offset(a);
+				}
+				r = 1;
             }
-
-
 		}
 		break;
 		case WM_D2D_SET_COLOR:
@@ -208,6 +210,61 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 			r = 1;
 			
 
+		}
+		break;
+		case WM_D2D_COMMAND_SET:
+		{
+			if ( (UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				LPCWSTR cmd = (LPCWSTR)lParam;
+
+				auto ar = SplitW(cmd,L"&");
+
+				for(auto& it : ar)
+				{
+					auto ar2 = SplitW(it.c_str(), L"=");
+
+					if ( ar2.size() == 2)
+					{
+						if (ar2[0] == L"mode")
+						{
+							//mode_ = _wtoi(ar2[1].c_str());
+						}
+						else if ( ar2[0] == L"enable")
+						{
+							int a = _wtoi(ar2[1].c_str());
+
+							if (a ==0)
+								stat_ &= ~STAT_ENABLE;
+							else
+								stat_ |= STAT_ENABLE;
+
+						}
+						else if ( ar2[0] == L"bkcolor")
+						{
+							DWORD clr = _wtoi(ar2[1].c_str());
+
+							D2DColor k;
+							k.FromInt(clr);
+
+							//back_color_ = k;
+						}
+						else if ( ar2[0] == L"title")
+						{
+							LPCWSTR nm = ar2[1].c_str();
+							
+							auto parent = GetParentControls();
+							parent->SendMesage(WM_D2D_SET_TEXT,(WPARAM)parent, (LPARAM)nm);
+
+
+
+						}
+
+					}
+				}
+
+				r = 1;
+			}
 		}
 		break;
 		

@@ -181,7 +181,6 @@
     <Text Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chart_top.h" />
     <ClInclude Include="javasc.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TestObject.h" />

@@ -184,6 +184,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateChildWindow(UIHandle hctrls, const D2D1_RECT_
 	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
 	ctrls->Add(pgtx);	
 
+	ctrls->SetFirstControl(pgtx.get());
 
 	UIHandle r;
 	r.p = pgtx.get();

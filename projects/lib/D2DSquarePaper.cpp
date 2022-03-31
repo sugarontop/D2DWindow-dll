@@ -68,7 +68,8 @@ void D2DSquarePaper::Draw(D2DContext& cxt)
 
 	mat.PopTransform();
 
-	D2DControls::Draw(cxt);
+	//D2DControls::Draw(cxt);
+	InnerDraw(cxt);
 
 	mat.PopTransform();
 
