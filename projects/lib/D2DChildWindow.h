@@ -37,6 +37,8 @@ public :
 
 	virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
+	virtual void Add(std::shared_ptr<D2DControl> p) override;
+
 	D2DMat GetMat() const { return this->mat_; }
 protected :
 	void DrawTitlebar(D2DContext& cxt);

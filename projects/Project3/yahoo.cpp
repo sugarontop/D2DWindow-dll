@@ -10,7 +10,7 @@
 
 using namespace V6;
 
-//#define YAHOO
+#define YAHOO
 
 
 struct PosLenStruct

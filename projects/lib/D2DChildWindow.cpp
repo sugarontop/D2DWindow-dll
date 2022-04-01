@@ -30,6 +30,13 @@ void D2DChildWindow::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 	colors_[1] = D2RGB(200,200,200);
 }
 
+void D2DChildWindow::Add(std::shared_ptr<D2DControl> p)
+{
+	D2DControls::Add(p);
+
+	
+}
+
 void D2DChildWindow::Draw(D2DContext& cxt)
 {
 	D2DMatrix mat(*cxt);
@@ -75,7 +82,8 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		case WM_SIZE:
 		case WM_D2D_SET_SIZE:
 		{
-			FSizeF sz( rc_.Width(), rc_.Height()-TITLEBAR_HEIGHT);
+			auto sz = rc_.Size();
+			sz.height -= TITLEBAR_HEIGHT;  // TITLEBAR_HEIGHT:26
 
 			DefWndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
 

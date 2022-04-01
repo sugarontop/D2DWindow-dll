@@ -107,6 +107,53 @@ struct CustomBtn
 
 };
 
+
+
+static void DrawRect1(D2DContext& cxt, FRectF rc, ColorF back, ColorF line)
+{
+	cxt.DFillRect(rc, back);
+	rc.InflateRect(-3,-3);
+	cxt.DDrawRect(rc, line, back);
+}
+
+static ID2D1SolidColorBrush* CreateBrush(D2DContext& cxt, ColorF clr)
+{
+	if ( clr.r==0 && clr.g==0 && clr.b==0 )
+		return cxt.black_ ;
+	else if ( clr.r==1 && clr.g==1 && clr.b==1 )
+		return cxt.white_;
+	else 
+	{
+		static ComPTR<ID2D1SolidColorBrush> br;
+		
+		br = nullptr;
+
+		(*cxt)->CreateSolidColorBrush(clr, &br);
+		
+		return br;
+	}
+}
+
+void DrawCenterText(D2DContext& cxt, FRectF rc, LPCWSTR text, ColorF font)
+{
+	ComPTR<IDWriteTextLayout> layout;
+	
+	if (SOK(cxt.wfactory_->CreateTextLayout(text, wcslen(text), cxt.textformat_, rc.Width(), rc.Height(), &layout )))
+	{
+		DWRITE_TEXT_METRICS t;
+		layout->GetMetrics(&t);
+
+		FPointF pt( (rc.Width()-t.width)/2.0f, (rc.Height()-t.height)/2.0f );
+
+		auto br = CreateBrush(cxt, font);
+
+		(*cxt)->DrawTextLayout(pt, layout, br );
+	}
+}
+
+
+
+
 bool CustomBtn::df1(LPVOID captureobj, D2DContext& cxt)
 {
 	CustomBtn* m = (CustomBtn*)captureobj;
@@ -116,11 +163,11 @@ bool CustomBtn::df1(LPVOID captureobj, D2DContext& cxt)
 	FRectF& rc = *(m->prc);
 	D2DRectFilter fil(cxt, rc);	
 	mat.Offset(rc);	
-	cxt.DFillRect(rc.ZeroRect(), m->clr);
 
-	cxt.DText(FPointF(20,50), m->nm, cxt.white_ );
-	
+	FRectF rca(0,0,rc.Width(),40);
 
+	DrawRect1(cxt, rca, m->clr, D2RGB(255,255,255));
+	DrawCenterText(cxt, rca, m->nm.c_str(), D2RGB(255,255,255));
 
 	mat.PopTransform();
 
@@ -141,7 +188,9 @@ LRESULT CustomBtn::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPara
 			m->orgrc = D2DGetRect(m->hme);
 			m->prc = (FRectF*)D2DGetRect2(m->hme);
 			m->nm = D2DGetLocalName(m->hme);
-			m->clr = ColorF::Blue;
+			D2DColor c1(0x998a9e);
+
+			m->clr = c1;
 		}
 		break;		
 		case WM_D2D_DESTROY:
@@ -250,9 +299,8 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 					btn->click_ = [hP1c, titlenm](std::wstring){
 					
-						auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,700)), STAT_DEFAULT, L"test" );
-
-						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(1200,680)),STAT_DEFAULT,NONAME);
+						auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"test" );
+						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
 
 
 						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );
@@ -260,10 +308,14 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 						D2DColor clr(D2RGB(250,250,250));
 						LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
 						D2DSendMessage(h2, WM_D2D_COMMAND_SET, (WPARAM)h2.p,(LPARAM)cb);
-
-						D2DSendMessage(h2, WM_D2D_SET_SIZE, 3,0);
-
+						D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
 						D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
+
+
+						/*auto h2 = D2DCreateControlsWithScrollbar(hP1c,FRectF(200,100,FSizeF(1300,680)),STAT_DEFAULT,NONAME);
+						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1300,680), titlenm );
+						D2DSendMessage(h2, WM_D2D_SET_SIZE, 3,0);*/
+
 					};
 
 					rcs.Offset( 200, 0);

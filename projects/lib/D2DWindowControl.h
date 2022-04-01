@@ -86,7 +86,7 @@ public:
 	virtual void ResourceUpdate(bool bCreate, D2DContext& cxt);
 	virtual std::wstring GetTreeTyp(USHORT* typ){ *typ=10; return L"D2DControls";}
 
-	void Add(std::shared_ptr<D2DControl> p);
+	virtual void Add(std::shared_ptr<D2DControl> p);
 	D2DControl* GetControl( std::wstring name );
 	D2DControl* GetControlFromID( int id ) const;
 	virtual FRectF GetRect() const override { return rc_; }

@@ -48,16 +48,27 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 }
 void D2DControls_with_Scrollbar::SetViewMaxSize(FSizeF sz)
 {				
+	_ASSERT((0 < sz.width) && (0 < sz.height));
+
 	vscroll_x_ = rc_.Width()-BARW;
 	hscroll_x_ = 0;
 
 	scv_->SetStat(STAT_DEFAULT);
 	sch_->SetStat(STAT_DEFAULT);
 
-	scv_->SetMaxSize( sz.height ); // crc.Height());
-	sch_->SetMaxSize( sz.width ); //crc.Width());				
+	scv_->SetMaxSize( sz.height );
+	sch_->SetMaxSize( sz.width );
 	sch_->SetSize(rc_.Size());
 	scv_->SetSize(rc_.Size());
+
+	if (sz.width <= rc_.Size().width)
+		sch_->SetStat(0);
+	if (sz.height <= rc_.Size().height)
+		scv_->SetStat(0);
+	else
+	{
+		int a =0;
+	}
 }
 
 
@@ -110,6 +121,15 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 				else if ( wParam == 3 )
 				{
 					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
+
+					
+
+					SetViewMaxSize(crc.Size());
+				}
+				else if ( wParam == 4 )
+				{
+					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
+					rc_.SetSize(crc.Size());
 
 					SetViewMaxSize(crc.Size());
 				}
