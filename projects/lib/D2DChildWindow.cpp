@@ -41,6 +41,8 @@ void D2DChildWindow::Draw(D2DContext& cxt)
 {
 	D2DMatrix mat(*cxt);
 
+	auto& nm = this->name_;
+
 	mat_ = mat.PushTransform();
 
 	if ( window_mode_ == 1 )

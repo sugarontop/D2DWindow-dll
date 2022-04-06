@@ -9,10 +9,13 @@
 #include "D2DColor.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
-TDBase::TDBase()
-{
 
-}
+
+
+void yahooDraw(D2DContext& cxt, InternetInfo* info, float height, std::vector<Rousoku>& adj_values);
+bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
+void WriteData( LPCWSTR fnm, IStream* psm);
+
 
  void TDBase::CreateControl( D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
  {
@@ -20,8 +23,6 @@ TDBase::TDBase()
 	rc_ = rc;
 	
  }
-
-
 
 
 LRESULT TDBase::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
@@ -48,18 +49,9 @@ LRESULT TDBase::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 			auto rc = chart->GetRect();
 			rc.SetWidth(w);
 			chart->SetRect(rc);
-
-		
-
-
 		}
 		break;
-
-
-
-
 	}
-
 
 	bool b1 = BITFLG(STAT_ENABLE);
 
@@ -68,10 +60,6 @@ LRESULT TDBase::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 
 	return r;
 }
-
-
-
-
 
 void TDBase::Draw(D2DContext& cxt) 
 {
@@ -148,7 +136,7 @@ LRESULT TDChart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 	return r;
 }
 
-void yahooDraw(D2DContext& cxt, InternetInfo* info, float height, std::vector<Rousoku>& adj_values);
+
 
 void TDChart::Draw(D2DContext& cxt) 
 {
@@ -189,13 +177,6 @@ void TDChart::SetInfo(InternetInfo* info)
 	rousoku_ar_.clear();
 
 }
-bool ConvCsv(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
-
-
-
-
-void WriteData( LPCWSTR fnm, IStream* psm);
-
 
 void TDChart::GenerateGraph()
 {
@@ -209,19 +190,17 @@ void TDChart::GenerateGraph()
 	
 	std::vector<std::string> dates;
 	
-	ConvCsv(info_->pstream,rousoku_ar_,dates);
+	CreateRousokuFromtStream(info_->pstream,rousoku_ar_,dates);
 
 	WriteData(L"stock.bin", info_->pstream );
 
-	rc_.SetWidth( (rousoku_ar_.size()+5) * 4);
+	rc_.SetWidth( (rousoku_ar_.size()+5) * 4.0f);
 	
 	memo_ = cb;
 
 	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
 
 }
-
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -377,9 +356,6 @@ void TDChartButtons::Draw(D2DContext& cxt)
 	mat.PopTransform();
 }
 
-
-
-
 void TDChartButtons::OnClick(int mode)
 {
 	if ( mode == 1 )
@@ -450,9 +426,6 @@ void TDList::Draw(D2DContext& cxt)
 
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
 D2DControls* V6::CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 {

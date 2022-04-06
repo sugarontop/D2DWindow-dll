@@ -10,7 +10,7 @@ namespace V6
 	class TDBase : public D2DControls
 	{
 		public :
-			TDBase();
+			TDBase(){};
 			virtual void CreateControl(D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 			virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
 			virtual void Draw(D2DContext& cxt) override;

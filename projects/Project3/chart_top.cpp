@@ -9,10 +9,13 @@
 #include "D2DColor.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
-TDBase::TDBase()
-{
 
-}
+
+
+void yahooDraw(D2DContext& cxt, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values);
+bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
+void WriteData( LPCWSTR fnm, IStream* psm);
+
 
  void TDBase::CreateControl( D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
  {
@@ -20,8 +23,6 @@ TDBase::TDBase()
 	rc_ = rc;
 	
  }
-
-
 
 
 LRESULT TDBase::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) 
@@ -32,44 +33,25 @@ LRESULT TDBase::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_SIZE:
 		{
-			//auto leftw = td->GetRect().Size().width;
+			auto leftw = td->GetRect().Size().width;
+			auto leftw2 = ls->GetRect().Size().width;
+			auto rightw3 = tr->GetRect().Size().width;
 
+			float w = rc_.Width();
+			w -= (leftw+3 + leftw2+5+rightw3);
 
-			//auto leftw2 = ls->GetRect().Size().width;
-
-			//auto rightw3 = tr->GetRect().Size().width;
-
-			//float w = rc_.Width();
-			//w -= (leftw+3 + leftw2+5+rightw3);
-
-			////auto ch = parent_window_->name_map_[L"td_chart"];
-			//auto rc = chart->GetRect();
-			//rc.SetWidth(w);
-			//chart->SetRect(rc);
-
-		
-
-
+			auto rc = chart->GetRect();
+			rc.SetWidth(w);
+			chart->SetRect(rc);
 		}
 		break;
-
-
-
-
 	}
-
-
-	bool b1 = BITFLG(STAT_ENABLE);
 
 	if ( r == 0 )
 		r = D2DControls::DefWndProc(b,message,wParam,lParam);
 
 	return r;
 }
-
-
-
-
 
 void TDBase::Draw(D2DContext& cxt) 
 {
@@ -95,18 +77,18 @@ void TDBase::Draw(D2DContext& cxt)
 
 		mat.Offset(0, top->GetRect().bottom);
 
-		//mat.PushTransform();
-		//{
-		//	mat.Offset(rc_.Size().width - tr->GetRect().Size().width, 0);
+		mat.PushTransform();
+		{
+			mat.Offset(rc_.Size().width - tr->GetRect().Size().width, 0);
 
-		//	(*cxt)->SetTransform(mat);
+			(*cxt)->SetTransform(mat);
 
-		//	tr->Draw(cxt);
+			tr->Draw(cxt);
 
-		//	mat.Offset(-ls->GetRect().Size().width, 0);
-		//	ls->Draw(cxt);
-		//}
-		//mat.PopTransform();
+			mat.Offset(-ls->GetRect().Size().width, 0);
+			ls->Draw(cxt);
+		}
+		mat.PopTransform();
 
 		mat.Offset(0, 1);
 		chart->Draw(cxt);
@@ -146,7 +128,7 @@ LRESULT TDChart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 	return r;
 }
 
-void yahooDraw(D2DContext& cxt, InternetInfo* info, float height, std::vector<Rousoku>& adj_values);
+
 
 void TDChart::Draw(D2DContext& cxt) 
 {
@@ -169,7 +151,7 @@ void TDChart::Draw(D2DContext& cxt)
 		cxt.DText( rc_.ZeroRect().LeftTop(), error_);	
 	else
 	{
-		yahooDraw(cxt,info_,rc.Height(), rousoku_ar_);
+		yahooDraw(cxt,info_,rc_.Size(), rousoku_ar_);
 	}
 
 	mat.PopTransform();
@@ -187,13 +169,6 @@ void TDChart::SetInfo(InternetInfo* info)
 	rousoku_ar_.clear();
 
 }
-bool ConvCsv(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
-
-
-
-
-void WriteData( LPCWSTR fnm, IStream* psm);
-
 
 void TDChart::GenerateGraph()
 {
@@ -207,19 +182,17 @@ void TDChart::GenerateGraph()
 	
 	std::vector<std::string> dates;
 	
-	ConvCsv(info_->pstream,rousoku_ar_,dates);
+	CreateRousokuFromtStream(info_->pstream,rousoku_ar_,dates);
 
 	WriteData(L"stock.bin", info_->pstream );
 
-	rc_.SetWidth( (rousoku_ar_.size()+5) * 4);
+	rc_.SetWidth( (rousoku_ar_.size()+5) * 4.0f);
 	
 	memo_ = cb;
 
 	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
 
 }
-
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -311,7 +284,6 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				InternetInfo* info = (InternetInfo*)lParam;
 
 				auto ch = dynamic_cast<TDChart*>(chart_);
-
 				_ASSERT(ch);
 
 				if ( info->throwerror!=0 )
@@ -372,9 +344,6 @@ void TDChartButtons::Draw(D2DContext& cxt)
 
 	mat.PopTransform();
 }
-
-
-
 
 void TDChartButtons::OnClick(int mode)
 {
@@ -447,14 +416,11 @@ void TDList::Draw(D2DContext& cxt)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
 D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 {
 	float variable = size.width;
 
-	DWORD stat = STAT_DEFAULT;
+	DWORD stat =  STAT_DEFAULT;
 
 	auto base = std::make_shared<TDBase>();
 	base->CreateControl( ctrl, FRectF(0,0, size), stat, nm );
@@ -468,8 +434,6 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 		ctrl->Add(left_bar);
 		left_bar->key_ = nm;
 		base->td = left_bar.get();
-
-		
 
 		auto top_bar = std::make_shared<TDChartButtons>();
 		top_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(variable,40)), STAT_DEFAULT, NR(L"td_top_bar",nm),-1,	D2RGBA(0,0,0,0) );
@@ -487,37 +451,34 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 			rc.Offset(ws[i]+1, 0);
 		}
 
-		
 		{
 			UIHandle h={};
 			h.p = ctrl;
-			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(0,0)), STAT_DEFAULT|STAT_IGNORE_SIZE, NR(L"td_chart_sc",nm));
+			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart_sc",nm));
 			D2DControls* ctrl2 = (D2DControls*)hchart.p;
 
 			auto chart = std::make_shared<TDChart>();
-			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(size.width,500)), STAT_DEFAULT, NR(L"td_chart",nm) );
+			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart",nm) );
 			ctrl2->Add(chart);
-			D2DSendMessage(hchart, WM_D2D_SET_SIZE, 4,0);
 			
 			base->chart = ctrl2;
 
 			left_bar->chart_ = chart.get();
 			top_bar->chart_ = chart.get();
-			
 		}
 
 
 
 
-		//auto right_list = std::make_shared<TDList>();
-		//right_list->CreateControl( ctrl, FRectF(0,0, FSizeF(267,variable)), STAT_DEFAULT, NR(L"td_list",nm) );
-		//ctrl->Add(right_list);
-		//base->ls = right_list.get();
+		auto right_list = std::make_shared<TDList>();
+		right_list->CreateControl( ctrl, FRectF(0,0, FSizeF(267,variable)), STAT_DEFAULT, NR(L"td_list",nm) );
+		ctrl->Add(right_list);
+		base->ls = right_list.get();
 
-		//auto right_bar = std::make_shared<TDChartButtons>();
-		//right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, NR(L"td_right_bar",nm), -1, ColorF::White );
-		//ctrl->Add(right_bar);
-		//base->tr = right_bar.get();
+		auto right_bar = std::make_shared<TDChartButtons>();
+		right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, NR(L"td_right_bar",nm), -1, ColorF::White );
+		ctrl->Add(right_bar);
+		base->tr = right_bar.get();
 
 
 		UIHandle hctrls={};

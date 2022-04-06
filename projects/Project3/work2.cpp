@@ -286,7 +286,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 				LPCWSTR nm[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN"};
 
-				FRectF rcs(50,80,FSizeF(150,100));
+				FRectF rcs(50,80,FSizeF(150,40));
 
 				for(int i = 0; i < _countof(nm); i++ )
 				{
@@ -299,7 +299,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 					btn->click_ = [hP1c, titlenm](std::wstring){
 					
-						auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"test" );
+						auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"ChildWin_chart" );
 						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
 
 
