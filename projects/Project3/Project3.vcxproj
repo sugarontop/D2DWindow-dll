@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\imagetool.cpp" />
     <ClCompile Include="..\lib\inet.cpp" />
     <ClCompile Include="chart_top.cpp" />
     <ClCompile Include="pch.cpp">

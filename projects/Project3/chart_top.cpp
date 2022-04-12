@@ -7,6 +7,7 @@
 #include "D2DMessage.h"
 #include "chart_top.h"
 #include "D2DColor.h"
+#include "imagetool.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
@@ -124,7 +125,22 @@ LRESULT TDChart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 	LRESULT r = 0;
 
 
+	switch( message )
+	{
+		case WM_RBUTTONDOWN:
+		{
+			MouseParam& pm = *(MouseParam*)lParam;
 
+			auto pt = mat_.DPtoLP(pm.pt);
+
+			if ( rc_.PtInRect(pt))
+			{
+				//GenerateBitmap();
+				r = 1;
+			}
+		}
+		break;
+	}
 	return r;
 }
 
@@ -153,6 +169,17 @@ void TDChart::Draw(D2DContext& cxt)
 	{
 		yahooDraw(cxt,info_,rc_.Size(), rousoku_ar_);
 	}
+
+
+	//if ( mini_bmp_ )
+	//{
+	//	FSizeF sz = rc_.Size();
+	//	float h = 100.0f;
+	//	float w = sz.width/sz.height*h;
+	//	
+	//	(*cxt)->DrawBitmap(mini_bmp_,FRectF(0,0,w,h),1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, FRectF(0,0,sz));
+
+	//}
 
 	mat.PopTransform();
 }
@@ -191,6 +218,29 @@ void TDChart::GenerateGraph()
 	memo_ = cb;
 
 	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
+
+}
+
+
+void TDChart::GenerateBitmap()
+{
+	//auto& cxt = this->GetParent()->GetContext();
+
+	//auto rc1 = mat_.LPtoDP(rc_);
+	//
+	//D2D1_RECT_U rc;
+	//rc.left = (UINT)rc1.left;
+	//rc.top = (UINT)rc1.top;
+	//rc.right = (UINT)rc1.right;
+	//rc.bottom = (UINT)rc1.bottom;
+
+	//mini_bmp_ = nullptr;
+
+	//RenderTargetToBitmp(*cxt, rc, &mini_bmp_);
+
+
+
+
 
 }
 

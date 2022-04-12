@@ -179,6 +179,11 @@ void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, 
 
 #define COMBOBOX_ID_1 10
 
+
+#include "imagetool.h"
+
+void bitmap_test();
+
 static void CreateControl(HWND hWnd)
 {
     hwin = D2DCreateMainHWnd(hWnd, 14);
@@ -187,11 +192,49 @@ static void CreateControl(HWND hWnd)
 
     FRectF rctextbox(100, 40, FSizeF(400, 700));
     UIHandle htextbox = D2DCreateTextbox(root, rctextbox, true, STAT_DEFAULT, L"textbox1");
-    D2DSetText(htextbox, L"Hello world\nHello world\nHello world\n");
+    D2DSetText(htextbox, L"Hello world one\nHello world two\nHello world three\n");
 
 
+	bitmap_test();
+}
 
+void bitmap_test()
+{
+	ComPTR<ID2D1RenderTarget> xRender;
+	ComPTR<ID2D1Factory> xfac;
+	if ( CreateMemoryRenderTarget( 300,300, &xRender))
+	{
+		xRender->BeginDraw();
 
+		FRectF rc(10,10,FSizeF(50,50));
+
+		ComPTR<ID2D1SolidColorBrush> br2, br,br3;
+		xRender->Clear(D2D1::ColorF(D2D1::ColorF::White));
+
+		xRender->CreateSolidColorBrush( ColorF(ColorF::Red), &br);
+		xRender->CreateSolidColorBrush( ColorF(ColorF::BurlyWood), &br3);
+
+		xRender->FillRectangle( rc, br);
+
+		rc.Offset(100,100);
+		xRender->FillRectangle( rc, br3);
+
+		xRender->EndDraw();
+
+		ComPTR<ID2D1Bitmap> bmp;
+		D2D1_RECT_U areaRect={};
+		areaRect.right = 300;
+		areaRect.bottom = 300;
+
+		if ( RenderTargetToBitmp(xRender, areaRect, &bmp))
+		{
+			if (SaveBitmapToFile( L"teset.png", bmp))
+			{
+				int a = 0;
+
+			}
+		}
+	}
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

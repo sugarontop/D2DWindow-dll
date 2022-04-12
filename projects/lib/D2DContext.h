@@ -119,6 +119,7 @@ inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 	{		
 		//General access denied error 0x80070005 
 
+		TRACE( L"error=%x \n", hr );
 
 		throw msg;
 	}

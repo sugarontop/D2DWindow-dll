@@ -40,11 +40,13 @@ namespace V6
 				void Clear();
 				void Error(std::wstring err);
 
+				void GenerateBitmap();
 			protected :
 				InternetInfo* info_;
 				std::wstring memo_, error_;
 
 				std::vector<Rousoku> rousoku_ar_;
+
 		};
 
 		class TDChartButtons: public D2DControls
