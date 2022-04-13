@@ -445,7 +445,7 @@ DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const D2D1_RECT_F& r
 
 	UIHandle r;
 	r.p = pgtx;
-	r.typ = TYP_CONTROLS;
+	r.typ = TYP_SIMPLE_LISTBOX;
 	return r;
 }
 
@@ -565,18 +565,36 @@ DLLEXPORT int WINAPI D2DAddItem(UIHandle h, int idx, LPCWSTR str)
 {
 	if ( h.typ == TYP_DROPDOWNLISTBOX )
 	{
-		auto cb =  (D2DDropdownListbox*)h.p;
-
-		cb->AddItem(idx, str );
+		auto cb = dynamic_cast<D2DDropdownListbox*>((D2DControl*)h.p);
+		if ( cb )
+			cb->AddItem(idx, str );
 
 	}
 	else if ( h.typ == TYP_SIMPLE_LISTBOX )
 	{
-		auto ls = (D2DSimpleListbox*)h.p;
+		auto ls = dynamic_cast<D2DSimpleListbox*>((D2DControl*)h.p);
+		if ( ls )
+			ls->AddItem(idx, str);
+	}
 
-		ls->AddItem(idx, str);
+	return 0;
+}
 
+DLLEXPORT int WINAPI D2DAddBitmapItem(UIHandle h, int idx, ID2D1Bitmap* bmp)
+{
+	//if ( h.typ == TYP_DROPDOWNLISTBOX )
+	//{
+	//	auto cb = dynamic_cast<D2DDropdownListbox*>((D2DControl*)h.p);
+	//	if ( cb )
+	//		cb->AddItem(idx, str );
 
+	//}
+	//else 
+	if ( h.typ == TYP_SIMPLE_LISTBOX )
+	{
+		auto ls = dynamic_cast<D2DSimpleListbox*>((D2DControl*)h.p);
+		if ( ls )
+			ls->AddBitmapItem(idx, bmp);
 	}
 
 	return 0;
@@ -1483,7 +1501,14 @@ DLLEXPORT void WINAPI D2DSmoothRect(int typ, int id, UIHandle h, D2D1_RECT_F* ta
 
 
 }
+DLLEXPORT ID2D1RenderTarget* WINAPI D2DGetRenderTarget(UIHandle h)
+{	
+	auto w = D2DGetWindow(h);
+	auto pw = (D2DWindow*)w.p;
+	auto& cxt = pw->GetContext();
 
+	return (*cxt);
+}
 
 DLLEXPORT bool WINAPI D2DStream2Bitmap( IStream* bmpstream, ID2D1RenderTarget* target, ID2D1Bitmap** bmp)
 {

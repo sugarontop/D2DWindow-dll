@@ -85,6 +85,7 @@ namespace V6
 			
 			float RowHeight() const;
 			void AddItem(int idx, const std::wstring& str);
+			void AddBitmapItem(int idx, ID2D1Bitmap* bmp);
 		protected :
 			LRESULT WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
 			LRESULT WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;

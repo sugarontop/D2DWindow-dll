@@ -135,5 +135,8 @@ DLLEXPORT UIHandle WINAPI D2DMDIGetControl(UIHandle hctrls, LPCWSTR nm);
 
 DLLEXPORT bool WINAPI D2DSetOnClick(UIHandle h, DelegateClick func);
 
+DLLEXPORT int WINAPI D2DAddBitmapItem(UIHandle h, int idx, ID2D1Bitmap* bmp);
 
+
+DLLEXPORT ID2D1RenderTarget* WINAPI D2DGetRenderTarget(UIHandle h);
 };

@@ -6,6 +6,7 @@
 #include "D2DColor.h"
 #include "D2DApp.h"
 #include "D2DMessage.h"
+#include "imagetool.h"
 
 using namespace V6;
 
@@ -265,7 +266,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			// 上側
 			auto hP1 = D2DCreateControlsWithScrollbar(m->hme, rc, STAT_DEFAULT|STAT_IGNORE_VSIZE, L"P1" );
 			m->hp1 = hP1;
-				auto hP1c = D2DCreateSquarePaper(hP1,FRectF(0,0,3000,3000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P1C");
+			auto hP1c = D2DCreateSquarePaper(hP1,FRectF(0,0,3000,3000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P1C");
 
 
 			
@@ -274,54 +275,134 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 			rc.SetHeight(height);
 			auto hP2 = D2DCreateControlsWithScrollbar(m->hme, rc, STAT_DEFAULT|STAT_IGNORE_VSIZE, L"P2" );
-				//auto hP2c = D2DCreateSquarePaper(hP2,FRectF(0,0,3000,1000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P2C");
-				auto hP2c = D2DCreateXXXControls(hP2,FRectF(0,0,3000,1000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P2C");
+			auto hP2c = D2DCreateXXXControls(hP2,FRectF(0,0,3000,1000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P2C");
 
 
-				D2DColor clr(D2RGB(190,190,190));
-				LPCWSTR cb = _strformat(L"mode=1&bkcolor=%d", clr.ToInt());
-				D2DSendMessage(hP2c, WM_D2D_COMMAND_SET, (WPARAM)hP2c.p, (LPARAM)cb);
+			D2DColor clr(D2RGB(190,190,190));
+			LPCWSTR cb = _strformat(L"mode=1&bkcolor=%d", clr.ToInt());
+			D2DSendMessage(hP2c, WM_D2D_COMMAND_SET, (WPARAM)hP2c.p, (LPARAM)cb);
 
 
 
-				LPCWSTR nm[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN"};
+			LPCWSTR nm[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN"};
 
-				FRectF rcs(50,80,FSizeF(150,40));
+			FRectF rcs(50,80,FSizeF(150,40));
 
-				for(int i = 0; i < _countof(nm); i++ )
-				{
-					// カスタマイズされたボタン
+			for(int i = 0; i < _countof(nm); i++ )
+			{
+				// カスタマイズされたボタン
 
-					CustomBtn* btn = new CustomBtn();
-					D2DCreateWhiteControls((LPVOID)btn,CustomBtn::df1,CustomBtn::df2, hP2c, rcs,STAT_DEFAULT, nm[i], 100+i);
+				CustomBtn* btn = new CustomBtn();
+				D2DCreateWhiteControls((LPVOID)btn,CustomBtn::df1,CustomBtn::df2, hP2c, rcs,STAT_DEFAULT, nm[i], 100+i);
 
-					LPCWSTR titlenm = nm[i];
+				LPCWSTR titlenm = nm[i];
 
-					btn->click_ = [hP1c, titlenm](std::wstring){
+				btn->click_ = [hP1c, titlenm](std::wstring){
 					
-						auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"ChildWin_chart" );
-						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
+					auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"ChildWin_chart" );
+					auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
 
 
-						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );
+					D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );
 
-						D2DColor clr(D2RGB(250,250,250));
-						LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
-						D2DSendMessage(h2, WM_D2D_COMMAND_SET, (WPARAM)h2.p,(LPARAM)cb);
-						D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
-						D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
-
-
-						/*auto h2 = D2DCreateControlsWithScrollbar(hP1c,FRectF(200,100,FSizeF(1300,680)),STAT_DEFAULT,NONAME);
-						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1300,680), titlenm );
-						D2DSendMessage(h2, WM_D2D_SET_SIZE, 3,0);*/
-
-					};
-
-					rcs.Offset( 200, 0);
+					D2DColor clr(D2RGB(250,250,250));
+					LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
+					D2DSendMessage(h2, WM_D2D_COMMAND_SET, (WPARAM)h2.p,(LPARAM)cb);
+					D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
+					D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
 
 
+					/*auto h2 = D2DCreateControlsWithScrollbar(hP1c,FRectF(200,100,FSizeF(1300,680)),STAT_DEFAULT,NONAME);
+					D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1300,680), titlenm );
+					D2DSendMessage(h2, WM_D2D_SET_SIZE, 3,0);*/
+
+				};
+
+				rcs.Offset( 200, 0);
+			}
+
+			
+
+			/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			auto hP2c1 = D2DCreateListbox(hP1c, FRectF(10,200,FSizeF(200,500)), STAT_DEFAULT,L"list_bmp");
+
+
+			ComPTR<ID2D1RenderTarget> rt;
+			
+			CreateMemoryRenderTarget(200,30, &rt);
+			
+			
+			D2DColor clrs[] = {D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255)};
+			LPCWSTR nmstock[] = {L"VTI",L"GOOG",L"MSFT"};
+
+			ComPTR<IDWriteFactory> pfact;
+			DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &pfact);
+
+			// create text format object
+			ComPTR<IDWriteTextFormat> textFormat;
+			std::wstring fontName(L"arial");
+			(pfact->CreateTextFormat(fontName.c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR,
+				DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 24, L"en-us", & textFormat));
+
+			textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+			textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+			
+			for(int i= 0; i < _countof(clrs); i++ )
+			{
+				rt->BeginDraw();
+				rt->Clear(D2DColor(D2RGB(255,255,255)));
+
+				ComPTR<ID2D1SolidColorBrush> br;
+				//
+				rt->CreateSolidColorBrush(clrs[i], &br);
+
+				FRectF rck(0,0,FSizeF(30,30));
+
+				for(int k= 0; k <4; k++ )
+				{
+					rt->FillRectangle(rck, br);
+					rck.Offset(50,0);
 				}
+
+				ComPTR<ID2D1SolidColorBrush> brblack;
+				//
+				rt->CreateSolidColorBrush(D2RGB(0,0,0), &brblack);
+
+				//rt->DrawText(nm[i],wcslen(nm[i]), textFormat,FRectF(0,0,200,30),brblack);
+
+				ComPTR<IDWriteTextLayout> tl;
+				pfact->CreateTextLayout(nm[i],wcslen(nm[i]), textFormat, 200,30,&tl);
+				rt->DrawTextLayout(FPointF(), tl, brblack);
+
+
+				auto hr = rt->EndDraw();
+				_ASSERT(hr == S_OK);
+
+				D2D1_RECT_U rcu={};
+
+				rcu.right = 200;
+				rcu.bottom = 30;
+
+				ComPTR<ID2D1Bitmap> bmp, bmp2;
+				ComPTR<IStream> sm;
+			
+				RenderTargetToBitmp(rt, rcu, &bmp );
+
+				ComPTR<IStream> sm1;
+				 auto r = CreateStreamOnHGlobal(NULL,TRUE,&sm1 );
+
+				BitmapToIStream(bmp, sm1);
+
+				auto main_rt = D2DGetRenderTarget(hP1c);
+
+				IStreamToBitmap(main_rt, sm1, &bmp2);
+			
+				D2DAddBitmapItem(hP2c1,0, bmp2);
+			}			
+
+
+
 
 			r = 1;
 		}

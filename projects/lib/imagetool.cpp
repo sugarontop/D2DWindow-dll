@@ -79,14 +79,12 @@ bool BitmapSaveToFile(ID2D1DeviceContext* cxt, LPCWSTR fnm, ID2D1Image* bmp2)
 }
 
 
-bool CreateBitampFromStream(ID2D1RenderTarget* pRenderTarget, IStream* sm, ID2D1Bitmap** nbmp)
+bool IStreamToBitmap(ID2D1RenderTarget* rt, IStream* sm, ID2D1Bitmap** bmp)
 {
     
 	try
 	{
-		//WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
-
-		_ASSERT( sm && pRenderTarget );
+		_ASSERT( sm && rt );
 
 		ComPTR<IWICImagingFactory> pIWICFactory;
 		ComPTR<IWICBitmapDecoder> pbmpdecoder;
@@ -111,8 +109,8 @@ bool CreateBitampFromStream(ID2D1RenderTarget* pRenderTarget, IStream* sm, ID2D1
 								, WICBitmapPaletteTypeMedianCut     // パレットタイプ
 							));
 
-		// ID2D1Bitmap作成、pRenderTargetが変わると使用できない
-		THR(pRenderTarget->CreateBitmapFromWicBitmap( pFormatConverter, NULL, nbmp ));
+		// ID2D1Bitmap作成、ID2D1RenderTargetに依存する
+		THR(rt->CreateBitmapFromWicBitmap( pFormatConverter, NULL, bmp ));
 
 		return true;
 	}
@@ -267,6 +265,52 @@ bool SaveBitmapToFile(LPCWSTR fnm, ID2D1Bitmap* pBitmap)
 		
 		THR(pIWICFactory->CreateStream(&pStream));
 		THR(pStream->InitializeFromFilename(fnm, GENERIC_WRITE));
+		THR(pIWICFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, &pEncoder));
+		THR(pEncoder->Initialize(pStream, WICBitmapEncoderNoCache));
+		THR(pEncoder->CreateNewFrame(&pFrameEncode, NULL));
+		THR(pFrameEncode->Initialize(NULL));
+		THR(pFrameEncode->SetSize(sc_bitmapWidth, sc_bitmapHeight));
+		THR(pFrameEncode->SetPixelFormat(&format));
+		THR(pFrameEncode->WriteSource(pWICBitmap, NULL));
+		THR(pFrameEncode->Commit());
+		THR(pEncoder->Commit());
+		return true;
+	}
+	catch( ...)
+	{
+		return false;
+
+	}
+}
+
+
+bool BitmapToIStream(ID2D1Bitmap* pBitmap, IStream* out)
+{
+	try
+	{
+		ComPTR<IWICBitmap> pWICBitmap;
+		ComPTR<IWICBitmapEncoder> pEncoder;
+		ComPTR<IWICBitmapFrameEncode> pFrameEncode;
+		ComPTR<IWICStream> pStream;
+		ComPTR<IWICImagingFactory> pIWICFactory;
+	
+		// conert ID2D1Bitmap to IWICBitmap
+		BitmpaToIWICBitmap(pBitmap, &pWICBitmap);
+
+		UINT sc_bitmapWidth = (UINT)pBitmap->GetSize().width;
+		UINT sc_bitmapHeight = (UINT)pBitmap->GetSize().height;
+
+		THR(CoCreateInstance(
+				CLSID_WICImagingFactory,
+				NULL,
+				CLSCTX_INPROC_SERVER,
+				IID_PPV_ARGS(&pIWICFactory)
+				));
+
+		WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
+		
+		THR(pIWICFactory->CreateStream(&pStream));
+		THR(pStream->InitializeFromIStream(out)); 
 		THR(pIWICFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, &pEncoder));
 		THR(pEncoder->Initialize(pStream, WICBitmapEncoderNoCache));
 		THR(pEncoder->CreateNewFrame(&pFrameEncode, NULL));

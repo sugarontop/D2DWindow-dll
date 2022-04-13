@@ -25,7 +25,7 @@ float D2DSimpleListbox::RowHeight() const
 
 void D2DSimpleListbox::Draw(D2DContext& cxt)
 {
-    if (stat_ & STAT_VISIBLE)
+    if ( BITFLG(STAT_VISIBLE))
     {
         D2DMatrix mat(*cxt);
         mat.PushTransform();
@@ -46,7 +46,15 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
         {
             float w = rc_.Width()+hscWidth_;
 
-            if (selected_idx_ == j )
+            // draw content
+			if (it->Draw(cxt, w, h))
+			{
+				// scrollbar
+				hscWidth_ = max(hscWidth_, it->ItemWidth());
+			}
+			
+			// draw select or floating area
+			if (selected_idx_ == j )
             {
                 cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 150));
             }
@@ -55,11 +63,6 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
                 cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 80));
             }
 
-            if (it->Draw(cxt, w, h))
-			{
-				// scrollbar
-				hscWidth_ = max(hscWidth_, it->ItemWidth());
-			}
             mat.Offset(0, h);
             j++;
         }
@@ -468,7 +471,7 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
             if (!rcz.PtInRect(pt))
             {
                 if ( OnEscape() )
-                    ret = 1;
+                    ret = 0;
             }
         }
         break;
@@ -658,6 +661,10 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 void D2DSimpleListbox::AddItem(int idx, const std::wstring& str)
 {
 	items_.push_back( std::make_shared<D2DListboxItemString>(idx, str)); 
+}
+void D2DSimpleListbox::AddBitmapItem(int idx, ID2D1Bitmap* bmp)
+{
+	items_.push_back( std::make_shared<D2DListboxItemImage>(idx, bmp)); 
 }
 
 
