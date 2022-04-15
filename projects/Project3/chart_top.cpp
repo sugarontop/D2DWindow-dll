@@ -11,7 +11,7 @@
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
-
+//bitcoin: https://www.blockchain.com/charts/market-price
 
 void yahooDraw(D2DContext& cxt, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values);
 bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );

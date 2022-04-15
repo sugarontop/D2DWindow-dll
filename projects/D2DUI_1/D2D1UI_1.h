@@ -65,7 +65,7 @@ DLLEXPORT void WINAPI D2DSetColor(UIHandle h, ColorF back, ColorF front, ColorF 
 DLLEXPORT void WINAPI D2DReadOnly(UIHandle h, bool readonly);
 DLLEXPORT void WINAPI D2DEnable(UIHandle h, bool enable);
 
-DLLEXPORT int WINAPI D2DAddItem(UIHandle, int idx, LPCWSTR str);
+DLLEXPORT int WINAPI D2DAddItem(UIHandle, LPCWSTR str);
 
 DLLEXPORT DWORD WINAPI D2DGetStat(UIHandle h);
 
@@ -135,7 +135,7 @@ DLLEXPORT UIHandle WINAPI D2DMDIGetControl(UIHandle hctrls, LPCWSTR nm);
 
 DLLEXPORT bool WINAPI D2DSetOnClick(UIHandle h, DelegateClick func);
 
-DLLEXPORT int WINAPI D2DAddBitmapItem(UIHandle h, int idx, ID2D1Bitmap* bmp);
+DLLEXPORT int WINAPI D2DAddBitmapItem(UIHandle h, ID2D1Bitmap* bmp);
 
 
 DLLEXPORT ID2D1RenderTarget* WINAPI D2DGetRenderTarget(UIHandle h);

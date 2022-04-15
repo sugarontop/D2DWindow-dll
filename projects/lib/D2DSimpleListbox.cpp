@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "D2DSimpleListbox.h"
 #include "D2DDropdownListbox.h"
-
+#include "D2DColor.h"
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
@@ -29,11 +29,16 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
     {
         D2DMatrix mat(*cxt);
         mat.PushTransform();
-        (*cxt)->DrawRectangle(rc_, cxt.black_);
+
+		ComPTR<ID2D1SolidColorBrush> br,br2;
+		border_clr_.Create(*cxt, &br);
+
+        (*cxt)->DrawRectangle(rc_, br);
 
         D2DRectFilter fil(cxt, rc_ );
 
-        cxt.DFillRect(rc_, D2RGB(240, 240, 240));
+		back_clr_.Create(*cxt, &br2);
+        (*cxt)->FillRectangle(rc_, br2);
 
         mat_ = mat.Offset(rc_);
         
@@ -52,15 +57,22 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
 				// scrollbar
 				hscWidth_ = max(hscWidth_, it->ItemWidth());
 			}
-			
+			br2 = nullptr;
+
 			// draw select or floating area
 			if (selected_idx_ == j )
             {
-                cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 150));
+				select_clr_.Create(*cxt, &br2);
+				(*cxt)->FillRectangle(FRectF(w, h), br2);
+
+                //cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 150)); select_clr_ = D2RGBA(0, 200, 200, 150)
             }
             else if (float_idx_ == j)
             {
-                cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 80));
+				float_clr_.Create(*cxt, &br2);
+				(*cxt)->FillRectangle(FRectF(w, h), br2);
+
+                //cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 80)); // float_clr_ = D2RGBA(0, 200, 200, 80)
             }
 
             mat.Offset(0, h);
@@ -69,24 +81,26 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
         mat.PopTransform();
 
         // V Scrollbar
-		mat.PushTransform();
+		if ( sc_barTotalHeight() < sc_dataHeight())
 		{
-            mat.Offset(0.0f, offbar_y_);
-            float overflow = max(0, sc_dataHeight() - sc_barTotalHeight());
-            scbarThumbHeight_ = sc_barTotalHeight() - overflow;
-            const float min_thum_height = _min_thum_height;
-            scbai_ = 1.0f;
-            if (scbarThumbHeight_ < min_thum_height)
-            {
-                scbarThumbHeight_ = min_thum_height;
-                scbai_ = (sc_dataHeight() - sc_barTotalHeight()) / (sc_barTotalHeight() - scbarThumbHeight_); 
-            }
+			mat.PushTransform();
+			{
+				mat.Offset(0.0f, offbar_y_);
+				float overflow = max(0, sc_dataHeight() - sc_barTotalHeight());
+				scbarThumbHeight_ = sc_barTotalHeight() - overflow;
+				const float min_thum_height = _min_thum_height;
+				scbai_ = 1.0f;
+				if (scbarThumbHeight_ < min_thum_height)
+				{
+					scbarThumbHeight_ = min_thum_height;
+					scbai_ = (sc_dataHeight() - sc_barTotalHeight()) / (sc_barTotalHeight() - scbarThumbHeight_); 
+				}
 
-            FRectF scbar(rc_.Size().width - BARW, 0, rc_.Size().width, scbarThumbHeight_);
-            cxt.DFillRect(scbar, D2GRAY);
+				FRectF scbar(rc_.Size().width - BARW, 0, rc_.Size().width, scbarThumbHeight_);
+				cxt.DFillRect(scbar, D2GRAY);
+			}
+			mat.PopTransform();
 		}
-        mat.PopTransform();
-
 
 		// W Scrollbar
 		if ( hscWidth_ )
@@ -131,6 +145,10 @@ void D2DSimpleListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol, 
     scbai_=1.0f;
 	typ_ = 0;
 	hscWidth_ = 0;
+
+	back_clr_ = D2RGB(240,240,240);
+	float_clr_ = D2RGBA(0,200,200,80);
+	select_clr_ = D2RGBA(0,200,200,150);
 
     auto ls =  dynamic_cast<D2DDropdownListbox*>(pacontrol);
     if ( ls )
@@ -393,7 +411,7 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 					{
 						if ( cmd==L"add" && (ar2[0] == L"str" || ar2[0] == L"text") )
 						{
-							AddItem(-1, ar2[1]);
+							AddItem( ar2[1]);
 						}	
 						else if ( ar2[0] == L"no" && cmd==L"select")
 						{
@@ -411,6 +429,26 @@ LRESULT D2DSimpleListbox::WndProcForControl(AppBase& b, UINT message, WPARAM wPa
 				}
 				ret = 1;
 			}
+		}
+		break;
+		case WM_D2D_SET_COLOR:
+		{
+			switch(wParam)
+			{
+				case COLOR_IDX_BORDER:
+					border_clr_ = *(D2DColor*)lParam;
+				break;
+				case COLOR_IDX_BACK:
+					back_clr_ = *(D2DColor*)lParam;
+				break;
+				case COLOR_IDX_FLOAT:
+					float_clr_ = *(D2DColor*)lParam;
+				break;
+				case COLOR_IDX_SELECT:
+					select_clr_ = *(D2DColor*)lParam;
+				break;
+			}
+			ret = 1;
 		}
 		break;
     }
@@ -636,7 +674,7 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 					{
 						if ( ar2[0] == L"str" && cmd==L"add")
 						{
-							AddItem(-1, ar2[1]);
+							AddItem( ar2[1]);
 						}	
 						else if ( ar2[0] == L"no" && cmd==L"select")
 						{
@@ -654,16 +692,38 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
 			}
 		}
 		break;
+		case WM_D2D_SET_COLOR:
+		{
+			switch(wParam)
+			{
+				case COLOR_IDX_BORDER:
+					border_clr_ = *(D2DColor*)lParam;
+				break;
+				case COLOR_IDX_BACK:
+					back_clr_ = *(D2DColor*)lParam;
+				break;
+				case COLOR_IDX_FLOAT:
+					float_clr_ = *(D2DColor*)lParam;
+				break;
+				case COLOR_IDX_SELECT:
+					select_clr_ = *(D2DColor*)lParam;
+				break;
+			}
+			ret = 1;
+		}
+		break;
     }
 
     return ret;
 }
-void D2DSimpleListbox::AddItem(int idx, const std::wstring& str)
+void D2DSimpleListbox::AddItem(const std::wstring& str)
 {
+	int idx = (int)items_.size();
 	items_.push_back( std::make_shared<D2DListboxItemString>(idx, str)); 
 }
-void D2DSimpleListbox::AddBitmapItem(int idx, ID2D1Bitmap* bmp)
+void D2DSimpleListbox::AddBitmapItem(ID2D1Bitmap* bmp)
 {
+	int idx = (int)items_.size();
 	items_.push_back( std::make_shared<D2DListboxItemImage>(idx, bmp)); 
 }
 

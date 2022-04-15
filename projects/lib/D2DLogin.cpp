@@ -99,11 +99,11 @@ LRESULT D2DLogin::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam
 		{
 			ColorF clr = *(ColorF*)lParam;
 			int idx = wParam;
-			if ( idx == 0 )
+			if ( idx == COLOR_IDX_BACK )
 				clr_[idx] = clr; //back_ = clr;
-			else if ( idx == 1 )
+			else if ( idx == COLOR_IDX_FORE )
 				clr_[idx] = clr; //fore_ = clr;
-			else if ( idx == 2 )
+			else if ( idx == COLOR_IDX_BORDER )
 				clr_[idx] = clr; //border_ = clr;
 				
 			r = 1;

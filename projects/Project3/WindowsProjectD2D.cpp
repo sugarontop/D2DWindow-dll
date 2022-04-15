@@ -145,6 +145,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+
+UIHandleWin CreateControl(HWND hWnd);
+
+
+void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
+
+
 //
 //  関数: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -155,17 +162,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 中止メッセージを表示して戻る
 //
 //
-
-
-
-UIHandleWin CreateControl(HWND hWnd);
-
-//static float scale = 1.0f;
-void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool copy);
-
-
-
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     AppBase app;
@@ -406,4 +402,10 @@ bool SaveTextFile( LPCWSTR fnm, LPCWSTR str )
 		return true;
 	}
 	return false;
+}
+
+
+void V6::app_catch_throw( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
+{
+
 }

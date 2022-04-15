@@ -9,6 +9,12 @@ namespace V6
 {
 
 
+#define COLOR_IDX_BACK		0
+#define COLOR_IDX_FORE		1
+#define COLOR_IDX_BORDER	2
+#define COLOR_IDX_SELECT	3
+#define COLOR_IDX_FLOAT		4
+
 class D2DColor
 {
 	public :
@@ -63,6 +69,10 @@ class D2DColor
 			return *this;
 		}
 
+		bool Create(ID2D1RenderTarget* rt, ID2D1SolidColorBrush** ppbr)
+		{
+			return (S_OK == rt->CreateSolidColorBrush(clr_, ppbr));
+		}
 
 		static std::vector<D2DColor> Palettes(int typ)
 		{

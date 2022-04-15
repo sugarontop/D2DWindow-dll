@@ -52,7 +52,7 @@ UIHandleWin CreateControl(HWND hWnd)
 	::GetClientRect(hWnd, &rc);
 	
 	auto bob = new BobInstance();
-	D2DCreateWhiteControls((LPVOID)bob,BobInstance::df1,BobInstance::df2, root, FRectF(0,0,rc.right,rc.bottom),STAT_DEFAULT,L"bitcoin",1);
+	D2DCreateWhiteControls((LPVOID)bob,BobInstance::df1,BobInstance::df2, root, FRectF(0.0f,0.0f,(float)rc.right,(float)rc.bottom),STAT_DEFAULT,L"bitcoin",1);
 
 	return hwin;
 }
@@ -244,6 +244,7 @@ LRESULT CustomBtn::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPara
 }
 
 D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm );
+bool CreateBitmapListboxItem(ID2D1RenderTarget* rt,UINT w, UINT h, std::wstring titlenm, ID2D1Bitmap** pbmp);
 
 LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -316,6 +317,15 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 					D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1300,680), titlenm );
 					D2DSendMessage(h2, WM_D2D_SET_SIZE, 3,0);*/
 
+
+					auto xh = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
+
+					ComPTR<ID2D1Bitmap> bmp;
+
+					auto main_rt = D2DGetRenderTarget(hP1c);
+
+					if ( CreateBitmapListboxItem(main_rt,200,30,titlenm, &bmp))
+						D2DAddBitmapItem(xh, bmp);
 				};
 
 				rcs.Offset( 200, 0);
@@ -324,22 +334,30 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			
 
 			/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Listbox内のitemをbitmapとして作成
 
-			auto hP2c1 = D2DCreateListbox(hP1c, FRectF(10,200,FSizeF(200,500)), STAT_DEFAULT,L"list_bmp");
+			// listbox作成
+			auto hP2c1 = D2DCreateListbox(hP1c, FRectF(10,200,FSizeF(200,500)), STAT_DEFAULT,L"#list_bmp");
+
+			D2DColor clrb(D2RGBA(0,0,0,0));
+			D2DSendMessage(hP2c1, WM_D2D_SET_COLOR, COLOR_IDX_BORDER,(LPARAM)&clrb);
 
 
 			ComPTR<ID2D1RenderTarget> rt;
 			
+			// メモリ上のRnderTargetを作成
 			CreateMemoryRenderTarget(200,30, &rt);
 			
 			
+			// itemの指定
 			D2DColor clrs[] = {D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255)};
 			LPCWSTR nmstock[] = {L"VTI",L"GOOG",L"MSFT"};
 
+
+			// メモリ上のRnderTargetで使用するフォント作成
 			ComPTR<IDWriteFactory> pfact;
 			DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &pfact);
 
-			// create text format object
 			ComPTR<IDWriteTextFormat> textFormat;
 			std::wstring fontName(L"arial");
 			(pfact->CreateTextFormat(fontName.c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR,
@@ -350,35 +368,39 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			
 			for(int i= 0; i < _countof(clrs); i++ )
 			{
+			
+				// itemをメモリ上に描画
 				rt->BeginDraw();
-				rt->Clear(D2DColor(D2RGB(255,255,255)));
-
-				ComPTR<ID2D1SolidColorBrush> br;
-				//
-				rt->CreateSolidColorBrush(clrs[i], &br);
-
-				FRectF rck(0,0,FSizeF(30,30));
-
-				for(int k= 0; k <4; k++ )
 				{
-					rt->FillRectangle(rck, br);
-					rck.Offset(50,0);
+					rt->Clear(D2DColor(D2RGB(255,255,255)));
+
+					ComPTR<ID2D1SolidColorBrush> br;
+					//
+					rt->CreateSolidColorBrush(clrs[i], &br);
+
+					FRectF rck(0,0,FSizeF(30,30));
+
+					for(int k= 0; k <4; k++ )
+					{
+						rt->FillRectangle(rck, br);
+						rck.Offset(50,0);
+					}
+
+					ComPTR<ID2D1SolidColorBrush> brblack;
+					//
+					rt->CreateSolidColorBrush(D2RGB(0,0,0), &brblack);
+
+					//rt->DrawText(nm[i],wcslen(nm[i]), textFormat,FRectF(0,0,200,30),brblack);
+
+					ComPTR<IDWriteTextLayout> tl;
+					pfact->CreateTextLayout(nm[i],wcslen(nm[i]), textFormat, 200,30,&tl);
+					rt->DrawTextLayout(FPointF(), tl, brblack);
 				}
-
-				ComPTR<ID2D1SolidColorBrush> brblack;
-				//
-				rt->CreateSolidColorBrush(D2RGB(0,0,0), &brblack);
-
-				//rt->DrawText(nm[i],wcslen(nm[i]), textFormat,FRectF(0,0,200,30),brblack);
-
-				ComPTR<IDWriteTextLayout> tl;
-				pfact->CreateTextLayout(nm[i],wcslen(nm[i]), textFormat, 200,30,&tl);
-				rt->DrawTextLayout(FPointF(), tl, brblack);
-
-
 				auto hr = rt->EndDraw();
 				_ASSERT(hr == S_OK);
 
+
+				// 描画されたものをbitmap->streamに変換
 				D2D1_RECT_U rcu={};
 
 				rcu.right = 200;
@@ -390,15 +412,18 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 				RenderTargetToBitmp(rt, rcu, &bmp );
 
 				ComPTR<IStream> sm1;
-				 auto r = CreateStreamOnHGlobal(NULL,TRUE,&sm1 );
+				auto r = CreateStreamOnHGlobal(NULL,TRUE,&sm1 );
 
 				BitmapToIStream(bmp, sm1);
 
-				auto main_rt = D2DGetRenderTarget(hP1c);
+				// bitmapをstreamから作り直し
 
+				auto main_rt = D2DGetRenderTarget(hP1c);
 				IStreamToBitmap(main_rt, sm1, &bmp2);
-			
-				D2DAddBitmapItem(hP2c1,0, bmp2);
+
+
+				// 完成したbitmapをlistboxへ追加
+				D2DAddBitmapItem(hP2c1, bmp2);
 			}			
 
 
@@ -432,3 +457,89 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 }
 
 
+bool CreateBitmapListboxItem(ID2D1RenderTarget* main_rt,UINT w, UINT h, std::wstring titlenm, ID2D1Bitmap** pbmp)
+{
+	ComPTR<ID2D1RenderTarget> rt;
+	
+	// メモリ上のRnderTargetを作成
+	if ( !CreateMemoryRenderTarget(w,h, &rt))
+		return false;
+			
+			
+	// itemの指定
+	D2DColor clrs[] = {D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255)};
+	
+
+	// メモリ上のRnderTargetで使用するフォント作成
+	ComPTR<IDWriteFactory> pfact;
+	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &pfact);
+
+	ComPTR<IDWriteTextFormat> textFormat;
+	std::wstring fontName(L"arial");
+	(pfact->CreateTextFormat(fontName.c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 24, L"en-us", & textFormat));
+
+	textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
+		// itemをメモリ上に描画
+		rt->BeginDraw();
+		{
+			rt->Clear(D2DColor(D2RGB(255,255,255)));
+
+			ComPTR<ID2D1SolidColorBrush> br;
+			//
+			rt->CreateSolidColorBrush(clrs[0], &br);
+
+			FRectF rck(0,0,FSizeF(h,h));
+
+			D2D1_ELLIPSE maru = {};
+
+			maru.point = FPointF(h/2,h/2);
+			maru.radiusX = h/2;
+			maru.radiusY = h/2;
+
+			for(int k= 0; k <4; k++ )
+			{
+				rt->FillEllipse(maru, br);
+				maru.point.x += 50;
+			}
+
+			ComPTR<ID2D1SolidColorBrush> brblack;
+			//
+			rt->CreateSolidColorBrush(D2RGB(0,0,0), &brblack);
+
+			ComPTR<IDWriteTextLayout> tl;
+			pfact->CreateTextLayout(titlenm.c_str(),titlenm.length(), textFormat, w,h,&tl);
+			rt->DrawTextLayout(FPointF(), tl, brblack);
+		}
+		auto hr = rt->EndDraw();
+		_ASSERT(hr == S_OK);
+
+
+		// 描画されたものをbitmap->streamに変換
+		D2D1_RECT_U rcu={};
+
+		rcu.right = w;
+		rcu.bottom = h;
+
+		ComPTR<ID2D1Bitmap> bmp, bmp2;
+		ComPTR<IStream> sm;
+			
+		RenderTargetToBitmp(rt, rcu, &bmp );
+
+		ComPTR<IStream> sm1;
+		auto r = CreateStreamOnHGlobal(NULL,TRUE,&sm1 );
+
+		BitmapToIStream(bmp, sm1);
+
+		// bitmapをstreamから作り直し
+
+		
+		IStreamToBitmap(main_rt, sm1, &bmp2);
+
+		bmp2.AddRef();
+		*pbmp = bmp2;
+
+		return true;
+}

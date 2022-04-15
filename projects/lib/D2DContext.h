@@ -113,18 +113,28 @@ private :
 	int cnt;
 };
 
+void app_catch_throw( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm );
+
+
+
 inline void ThrowIfFailed( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 {
 	if (FAILED(hr))
 	{		
 		//General access denied error 0x80070005 
 
-		TRACE( L"error=%x \n", hr );
+		//TRACE( L"error=%x \n", hr );
+
+		app_catch_throw(hr,msg,line,fnm);
 
 		throw msg;
 	}
 	
 }
+
+
+
+
 #define THR(hr) ThrowIfFailed((hr),nullptr, __LINE__, __FILE__)
 
 

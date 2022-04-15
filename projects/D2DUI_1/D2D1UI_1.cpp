@@ -561,26 +561,26 @@ DLLEXPORT UIHandle WINAPI D2DCreateDropdownListbox(UIHandle hctrls , const D2D1_
 	return r;
 }
 
-DLLEXPORT int WINAPI D2DAddItem(UIHandle h, int idx, LPCWSTR str)
+DLLEXPORT int WINAPI D2DAddItem(UIHandle h, LPCWSTR str)
 {
 	if ( h.typ == TYP_DROPDOWNLISTBOX )
 	{
 		auto cb = dynamic_cast<D2DDropdownListbox*>((D2DControl*)h.p);
 		if ( cb )
-			cb->AddItem(idx, str );
+			cb->AddItem(str );
 
 	}
 	else if ( h.typ == TYP_SIMPLE_LISTBOX )
 	{
 		auto ls = dynamic_cast<D2DSimpleListbox*>((D2DControl*)h.p);
 		if ( ls )
-			ls->AddItem(idx, str);
+			ls->AddItem(str);
 	}
 
 	return 0;
 }
 
-DLLEXPORT int WINAPI D2DAddBitmapItem(UIHandle h, int idx, ID2D1Bitmap* bmp)
+DLLEXPORT int WINAPI D2DAddBitmapItem(UIHandle h, ID2D1Bitmap* bmp)
 {
 	//if ( h.typ == TYP_DROPDOWNLISTBOX )
 	//{
@@ -594,7 +594,7 @@ DLLEXPORT int WINAPI D2DAddBitmapItem(UIHandle h, int idx, ID2D1Bitmap* bmp)
 	{
 		auto ls = dynamic_cast<D2DSimpleListbox*>((D2DControl*)h.p);
 		if ( ls )
-			ls->AddBitmapItem(idx, bmp);
+			ls->AddBitmapItem( bmp);
 	}
 
 	return 0;

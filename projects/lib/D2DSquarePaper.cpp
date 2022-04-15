@@ -159,9 +159,9 @@ LRESULT D2DSquarePaper::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		break;
 		case WM_D2D_SET_COLOR:
 		{
-			if ( wParam == 0 )
+			if ( wParam == COLOR_IDX_BACK )
 				backcolor_ = *(ColorF*)lParam;
-			else if ( wParam == 1 )
+			else if ( wParam == COLOR_IDX_FORE )
 				forecolor_ = *(ColorF*)lParam;
 
 			r = 1;
@@ -217,10 +217,10 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		auto ls = std::make_shared<D2DDropdownListbox>();
 		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"DropdownListbox",1);
 
-		ls->AddItem(0,L"50");
-		ls->AddItem(1,L"100");
-		ls->AddItem(2,L"150");
-		ls->AddItem(3,L"200");
+		ls->AddItem(L"50");
+		ls->AddItem(L"100");
+		ls->AddItem(L"150");
+		ls->AddItem(L"200");
 
 		ls->xSetSelect(0);
 		pitch_ = 50.0f;
@@ -241,10 +241,10 @@ void D2DSquarePaper::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 		auto ls = std::make_shared<D2DDropdownListbox>();
 		ls->CreateControl(parent,this,rc1,STAT_DEFAULT,L"DropdownListbox",2);
 
-		ls->AddItem(0,L"100");
-		ls->AddItem(1,L"80");
-		ls->AddItem(2,L"50");
-		ls->AddItem(3,L"120");
+		ls->AddItem(L"100");
+		ls->AddItem(L"80");
+		ls->AddItem(L"50");
+		ls->AddItem(L"120");
 
 		ls->xSetSelect(0);
 		

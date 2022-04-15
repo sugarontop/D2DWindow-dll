@@ -25,7 +25,7 @@ void D2DDropdownListbox::CreateControl(D2DWindow* parent, D2DControls* pacontrol
 }
 void D2DDropdownListbox::Draw(D2DContext& cxt)
 {
-    if (stat_ & STAT_VISIBLE)
+    if (BITFLG(STAT_VISIBLE))
     {
         (*cxt)->GetTransform(&mat_);
 
@@ -181,7 +181,7 @@ LRESULT D2DDropdownListbox::WndProc(AppBase& b, UINT message, WPARAM wp, LPARAM 
 					{
 						if ( ar2[0] == L"str" && cmd==L"add")
 						{
-							AddItem(-1, ar2[1]);
+							AddItem( ar2[1]);
 						}	
 						else if ( ar2[0] == L"no" && cmd==L"select")
 						{
@@ -269,10 +269,9 @@ void D2DDropdownListbox::OnCloseListbox(int selected_idx)
     }
 }
 
-void D2DDropdownListbox::AddItem( int idx, std::wstring text)
-{
-    if ( idx < 0 ) 
-		idx = str_items_.size();
+void D2DDropdownListbox::AddItem( std::wstring text)
+{    
+	int	idx = str_items_.size();
 	str_items_[idx] = text;
 }
 

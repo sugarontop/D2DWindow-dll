@@ -222,7 +222,7 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 		break;
 		case WM_D2D_SET_COLOR:
 		{
-			if ( wParam == 0 )
+			if ( wParam == COLOR_IDX_BACK )
 				backcolor_ = *(ColorF*)lParam;
 			//else if ( wParam == 1 )
 			//	forecolor_ = *(ColorF*)lParam;

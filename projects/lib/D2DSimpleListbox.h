@@ -3,7 +3,7 @@
 
 #include "D2DApp.h"
 #include "D2DWindowControl.h"
-
+#include "D2DColor.h"
 
 namespace V6
 {
@@ -84,8 +84,8 @@ namespace V6
 			virtual std::wstring GetTreeTyp(USHORT* typ) override;
 			
 			float RowHeight() const;
-			void AddItem(int idx, const std::wstring& str);
-			void AddBitmapItem(int idx, ID2D1Bitmap* bmp);
+			void AddItem( const std::wstring& str);
+			void AddBitmapItem(ID2D1Bitmap* bmp);
 		protected :
 			LRESULT WndProcNormal(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
 			LRESULT WndProcForControl(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) ;
@@ -119,6 +119,7 @@ namespace V6
 			float hscWidth_;
 
 			std::vector< std::shared_ptr<D2DListboxItemBase> > items_;
+			D2DColor border_clr_,back_clr_,float_clr_,select_clr_;
 	};
 
 };

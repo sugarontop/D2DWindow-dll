@@ -23,7 +23,7 @@ namespace V6
 		virtual std::wstring GetTreeTyp(USHORT* typ) override;
 
 		virtual int GetTypeid() const override{ return TYP_DROPDOWNLISTBOX; }
-		void AddItem( int idx, std::wstring text);
+		void AddItem( std::wstring text);
 	public :		
 		virtual void xAddItem(int idx, std::wstring title);
 		virtual int xItemCount() ;

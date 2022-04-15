@@ -31,13 +31,20 @@ void D2DControl::InnerCreateWindow(D2DWindow* parent, D2DControls* pacontrol, in
 
 	target_ = nullptr;
 
-	if ( wcscmp(name,NONAME) != 0 )
+	if ( wcscmp(name,NONAME) != 0 && wcslen(name) > 0 )
 	{
+		std::wstring nm;
 		if ( parent_control_ )
 		{
-			auto nm = parent_control_->GetName();
-			nm += L"@";
-			nm += name;
+			if ( name[0] != L'#')
+			{
+				nm = parent_control_->GetName();
+				nm += L"@";
+				nm += name;
+			}
+			else
+				nm = name;
+
 			parent_window_->name_map_[nm] = this;
 			name_ = nm;
 		}

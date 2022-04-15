@@ -4,6 +4,8 @@
 
 using namespace V6;
 
+
+
 #define  APP (D2DApp::GetInstance())
 std::vector<std::wstring> SplitW( LPCWSTR str, LPCWSTR split );
 
@@ -199,7 +201,7 @@ FPointF CreateCenterTextLayout(D2DContext& cxt, const std::wstring& str, const F
 	if (SOK(cxt.wfactory_->CreateTextLayout(str.c_str(), str.length(), cxt.textformat_, rc.Width(), rc.Height(), ppout )))
 	{
 		DWRITE_TEXT_METRICS t;
-		THR((*ppout)->GetMetrics(&t));
+		(*ppout)->GetMetrics(&t);
 
 		return FPointF( (rc.Width()-t.width)/2.0f, (rc.Height()-t.height)/2.0f );
 	}
@@ -274,9 +276,9 @@ void D2DButton::CreateButtonBrush(D2DContext& cxt, float height, bool normal, ID
 	gradientStops[1].color = D2D1::ColorF(clr, 1);
 	gradientStops[1].position = 1.0f;
 
-	THR((*cxt)->CreateGradientStopCollection(gradientStops, 2,&pGradientStops));
+	((*cxt)->CreateGradientStopCollection(gradientStops, 2,&pGradientStops));
 		
-	THR((*cxt)->CreateLinearGradientBrush(linearGradientBrushProperties,pGradientStops,pbr));
+	((*cxt)->CreateLinearGradientBrush(linearGradientBrushProperties,pGradientStops,pbr));
 
 }
 

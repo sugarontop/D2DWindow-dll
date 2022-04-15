@@ -189,9 +189,9 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		{
 			ColorF clr = *(ColorF*)lParam;
 
-			if ( wParam == 0 )
+			if ( wParam == COLOR_IDX_BACK )
 				back_ = clr;
-			else if ( wParam == 1 )
+			else if ( wParam == COLOR_IDX_FORE )
 				fore_ = clr;
 			//else if ( wParam == 2 )
 			//	border_ = clr;

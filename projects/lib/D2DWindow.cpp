@@ -8,6 +8,9 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
+#undef THR
+static void THR( HRESULT x){ if (x!= S_OK) throw x; }
+
 //int D2DWindow::MessageBox(const FRectF& rc, LPCWSTR text, LPCWSTR title) <-- D2Dbutton.cpp
 
 D2DWindow::D2DWindow()
@@ -53,7 +56,7 @@ bool D2DWindow::TSFInit(HWND hWnd)
 
 		return true;
 	}
-	catch( ... )
+	catch( HRESULT hr )
 	{
 		return false;
 	}

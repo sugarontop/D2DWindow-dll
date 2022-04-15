@@ -338,11 +338,11 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 		{
 			ColorF clr = *(ColorF*)lp;
 
-			if ( wp == 0 )
+			if ( wp == COLOR_IDX_BACK )
 				back_ = clr;
-			else if ( wp == 1 )
+			else if ( wp == COLOR_IDX_FORE )
 				fore_ = clr;
-			else if ( wp == 2 )
+			else if ( wp == COLOR_IDX_BORDER )
 				border_ = clr;
 
 			bl = false;

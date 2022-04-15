@@ -359,3 +359,7 @@ void CopyPasteTEXT(HWND hWnd, UIHandle uh, bool bPaste )
         ::CloseClipboard();
     }
 }
+void V6::app_catch_throw( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
+{
+
+}

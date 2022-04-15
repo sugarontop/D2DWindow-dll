@@ -15,7 +15,7 @@ using namespace V6;
 
 UIHandleWin hwin;
 
-static float scale = 1.0f;
+
 
 void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool copy);
 
@@ -154,35 +154,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
-void DrawTabButton( D2DContext& cxt,  FSizeF tabbtn, LPCWSTR* pps,  int btncnt, int activeidx )
-{
-    FRectF rc(0,0,tabbtn);
-
-    for(int i = 0; i < btncnt; i++ )
-    {        
-        LPCWSTR s = pps[i];
-
-        if ( i == activeidx )
-        {
-            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(50, 50, 255));                
-            (*cxt)->DrawText(s, wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.white_ );
-        }
-        else 
-        {
-            cxt.DDrawRect( rc, D2RGB(220,220,220), D2RGB(255, 255, 255));                
-            (*cxt)->DrawText(s, wcslen(s), cxt.textformat_, rc.OffsetRect(8,3), cxt.black_ );
-        }
-
-        rc.Offset(tabbtn.width, 0 );
-    }
-}
-
-#define COMBOBOX_ID_1 10
-
-
-#include "imagetool.h"
-
-void bitmap_test();
 
 static void CreateControl(HWND hWnd)
 {
@@ -195,46 +166,6 @@ static void CreateControl(HWND hWnd)
     D2DSetText(htextbox, L"Hello world one\nHello world two\nHello world three\n");
 
 
-	bitmap_test();
-}
-
-void bitmap_test()
-{
-	ComPTR<ID2D1RenderTarget> xRender;
-	ComPTR<ID2D1Factory> xfac;
-	if ( CreateMemoryRenderTarget( 300,300, &xRender))
-	{
-		xRender->BeginDraw();
-
-		FRectF rc(10,10,FSizeF(50,50));
-
-		ComPTR<ID2D1SolidColorBrush> br2, br,br3;
-		xRender->Clear(D2D1::ColorF(D2D1::ColorF::White));
-
-		xRender->CreateSolidColorBrush( ColorF(ColorF::Red), &br);
-		xRender->CreateSolidColorBrush( ColorF(ColorF::BurlyWood), &br3);
-
-		xRender->FillRectangle( rc, br);
-
-		rc.Offset(100,100);
-		xRender->FillRectangle( rc, br3);
-
-		xRender->EndDraw();
-
-		ComPTR<ID2D1Bitmap> bmp;
-		D2D1_RECT_U areaRect={};
-		areaRect.right = 300;
-		areaRect.bottom = 300;
-
-		if ( RenderTargetToBitmp(xRender, areaRect, &bmp))
-		{
-			if (SaveBitmapToFile( L"teset.png", bmp))
-			{
-				int a = 0;
-
-			}
-		}
-	}
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -273,8 +204,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 cxt->BeginDraw();
                 D2D1_MATRIX_3X2_F mat = {0};
 
-                mat._11 = scale;
-                mat._22 = scale;
+                mat._11 = 1.0f;
+                mat._22 = 1.0f;
 
                 cxt->SetTransform(mat);
                 cxt->Clear(D2RGB(255,255,255));
@@ -356,25 +287,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
          break;
 
-         case WM_NOTIFY:
-         {
-                // child control events         
-
-                if ( wParam == COMBOBOX_ID_1 )
-                {   
-                    D2DNMHDR& n = *(D2DNMHDR*)lParam;
-
-                    int idx = n.prm1;
-
-                    scale = 1.0f;
-                    if ( idx == 1 ) scale = 1.2f;
-                    else if ( idx == 2 ) scale = 0.8f;
-
-                }
-
-
-         }
-         break;
+        
 		 case WM_D2D_ONIME_ONOFF:
 		 {
 			D2DDefWndProc(hwin ,app, message, wParam, lParam);
@@ -426,4 +339,8 @@ void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool bPaste )
         ::CloseClipboard();
 
     }
+}
+void V6::app_catch_throw( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
+{
+
 }

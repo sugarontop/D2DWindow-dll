@@ -6,6 +6,9 @@ using namespace V6;
 
 #define SOK(a)   (S_OK == a)
 
+#undef THR
+static void THR( HRESULT x){ if (x!= S_OK) throw x; }
+
 void D2DContext::CreateDeviceIndependentResources( float fontheight)
 {
 	ComPTR<IDWriteFactory> dwriteFactory;	

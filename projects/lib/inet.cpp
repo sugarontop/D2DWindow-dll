@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <msxml6.h>
 #include "inet.h"
 
 #pragma comment( lib, "msxml6")
@@ -222,7 +223,7 @@ void DeleteInternetInfo(InternetInfo* p)
 	if ( p )
 	{
 		::SysFreeString(p->url);
-		::SysFreeString(	p->errormsg);
+		::SysFreeString(p->errormsg);
 		p->throwerror = 0;
 		::SysFreeString(p->postdata);
 		p->result = 0;
