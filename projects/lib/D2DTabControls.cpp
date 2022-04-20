@@ -39,12 +39,12 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 	USHORT k = 0;
 	for(auto& it : tabrects_)
 	{
-		auto clr1 = D2RGB(220,220,220);
+		auto clr1 = D2RGB(180,180,180);
 		auto clr2 = ColorF::Black;
 
 		if ( k == tabidx )
 		{
-			clr1 = DEFAULT_TAB_COLOR;
+			clr1 = DEFAULT_TAB_ACTIVE_COLOR;
 			clr2 = ColorF::White;
 
 		}

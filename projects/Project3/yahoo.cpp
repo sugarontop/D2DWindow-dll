@@ -10,7 +10,7 @@
 
 using namespace V6;
 
-//#define YAHOO 
+#define YAHOO 
 
 
 struct PosLenStruct
@@ -25,7 +25,7 @@ struct PosLenStruct
 #define _HOUR   (60 * _MINUTE)
 #define _DAY    (24 * _HOUR)
 
-ULONG yahoo_chart_period(int yyyy, int mm, int dd )
+ULONG yahoo_unix_time(int yyyy, int mm, int dd )
 {
 	if ( yyyy < 1970 )
 	{
@@ -168,8 +168,8 @@ void inetStockDataDownload(std::wstring cd, std::function<void(InternetInfo*)> c
 #ifdef YAHOO
 	WCHAR cb[256];
 		
-	auto dds = yahoo_chart_period(2021,3,1);
-	auto now = yahoo_chart_period(0,0,0);
+	auto dds = yahoo_unix_time(2021,4,1);
+	auto now = yahoo_unix_time(0,0,0);
 
 
 	StringCbPrintf(cb,256,L"https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%d&period2=%d&interval=1d&events=history&includeAdjustedClose=true",cd.c_str(),dds, now);

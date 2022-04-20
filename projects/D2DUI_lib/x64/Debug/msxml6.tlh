@@ -1,6 +1,6 @@
-﻿// Created by Microsoft (R) C/C++ Compiler Version 14.31.31105.0 (9b23813c).
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.31.31107.0 (6099e0d3).
 //
-// E:\work\github\sugarontop\D2DWindow-dll\projects\D2DUI_lib\x64\Debug\msxml6.tlh
+// E:\work\github\D2DWindow-dll2\projects\D2DUI_lib\x64\Debug\msxml6.tlh
 //
 // C++ source equivalent of type library msxml6.dll
 // compiler-generated file - DO NOT EDIT!
@@ -4512,7 +4512,7 @@ IXMLHTTPRequest2Callback : IUnknown
 // Wrapper method implementations
 //
 
-#include "E:\work\github\sugarontop\D2DWindow-dll\projects\D2DUI_lib\x64\Debug\msxml6.tli"
+#include "E:\work\github\D2DWindow-dll2\projects\D2DUI_lib\x64\Debug\msxml6.tli"
 
 } // namespace MSXML2
 

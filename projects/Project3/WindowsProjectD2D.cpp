@@ -181,6 +181,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			::SetTimer(hWnd,HEART_BEET_ID,1000,0);
 
             hwin = CreateControl(hWnd);
+
+
 			D2DForceWndProc(hwin, app, WM_D2D_RESOURCES_UPDATE, 2, 0);
 
 			//JavascriptAppInit();

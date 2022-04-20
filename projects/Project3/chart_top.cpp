@@ -110,8 +110,8 @@ TDChart::~TDChart()
 
 void TDChart::Clear()
 {
-	if ( info_ )
-		DeleteInternetInfo(info_);
+	//if ( info_ )
+	//	DeleteInternetInfo(info_);
 	info_ = nullptr;
 }
  void TDChart::CreateControl( D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
@@ -167,7 +167,7 @@ void TDChart::Draw(D2DContext& cxt)
 		cxt.DText( rc_.ZeroRect().LeftTop(), error_);	
 	else
 	{
-		yahooDraw(cxt,info_,rc_.Size(), rousoku_ar_);
+		yahooDraw(cxt,info_.get(),rc_.Size(), rousoku_ar_);
 	}
 
 
@@ -188,7 +188,9 @@ void TDChart::Error(std::wstring err)
 	error_ = err;
 
 }
-void TDChart::SetInfo(InternetInfo* info)
+
+
+void TDChart::SetInfo(std::shared_ptr<InternetInfo> info)
 {
 	Clear();
 	info_ = info;
@@ -346,8 +348,26 @@ LRESULT TDChartButtons::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 				}
 				else
 				{
-					ch->SetInfo(info);
+					std::shared_ptr<InternetInfo> ainfo(info, [](InternetInfo* p){ DeleteInternetInfo(p); });
+
+
+					ch->SetInfo(ainfo);
 					ch->GenerateGraph();
+
+
+					// page2‚Ìchat‚É‚à...
+					UIHandleWin hw={};
+					hw.p = parent_window_;
+					auto h1 = D2DGetControlFromName(hw, L"#page2_chart");
+					auto ch2 = dynamic_cast<TDChart*>( (D2DControl*)h1.p );
+					if ( ch2 )
+					{
+						ch2->SetInfo(ainfo);
+						ch2->GenerateGraph();
+
+						//ch2->Detach();
+					}
+
 				}
 
 				b.bRedraw = true;		
@@ -465,6 +485,20 @@ void TDList::Draw(D2DContext& cxt)
 
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+D2DControls* CreateSolidStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
+{
+	UIHandle h={};
+	h.p = ctrl;
+	auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"page2_td_chart_sc",nm));
+	D2DControls* ctrl2 = (D2DControls*)hchart.p;
+
+	auto chart = std::make_shared<TDChart>();
+	chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, L"#page2_chart" );
+	ctrl2->Add(chart);
+	return chart.get();
+}
+
 
 D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 {

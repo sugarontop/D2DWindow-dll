@@ -6,6 +6,7 @@
 #include "D2DColor.h"
 
 #define DEFAULT_TAB_COLOR	D2RGB(110,110,110)
+#define DEFAULT_TAB_ACTIVE_COLOR	D2RGB(110,110,210)
 
 namespace V6 {
 

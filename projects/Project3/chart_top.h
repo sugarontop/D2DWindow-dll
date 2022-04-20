@@ -35,14 +35,18 @@ namespace V6
 				virtual void Draw(D2DContext& cxt) override;
 
 
-				void SetInfo(InternetInfo* info);
+				void SetInfo(std::shared_ptr<InternetInfo> info);
 				void GenerateGraph();
 				void Clear();
 				void Error(std::wstring err);
 
 				void GenerateBitmap();
+				void Detach();
 			protected :
-				InternetInfo* info_;
+				//InternetInfo* info_;
+				std::shared_ptr<InternetInfo> info_;
+				
+
 				std::wstring memo_, error_;
 
 				std::vector<Rousoku> rousoku_ar_;

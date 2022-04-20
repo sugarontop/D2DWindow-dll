@@ -244,7 +244,10 @@ LRESULT CustomBtn::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPara
 }
 
 D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm );
+D2DControls* CreateSolidStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm );
 bool CreateBitmapListboxItem(ID2D1RenderTarget* rt,UINT w, UINT h, std::wstring titlenm, ID2D1Bitmap** pbmp);
+
+
 
 LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -264,14 +267,28 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 			rc.bottom = rc.top + height*2;
 
-			// ã‘¤
+			// ã‘¤ --------------------------------------------------------------------------------------
 			auto hP1 = D2DCreateControlsWithScrollbar(m->hme, rc, STAT_DEFAULT|STAT_IGNORE_VSIZE, L"P1" );
 			m->hp1 = hP1;
-			auto hP1c = D2DCreateSquarePaper(hP1,FRectF(0,0,3000,3000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"P1C");
+
+				
+			// Create Tab Control
+			auto htab = D2DCreateTabControls(hP1,FRectF(0,0,3000,3000),STAT_DEFAULT|STAT_IGNORE_SIZE,L"P1_TABC");
+			
+				// Tab page1
+				D2DSendMessage(htab,WM_D2D_SET_TEXT,0,(LPARAM)L"page1");
+
+				auto htabc1 = D2DGetTab(htab,0);				
+				auto hP1c = D2DCreateSquarePaper(htabc1,FRectF(0,0,3000,3000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"TAB_PAGE1");
+
+				// Tab page2
+				auto htabc2 = D2DAddNewTab(htab, L"page2");
+				auto htabc21 = D2DCreateSquarePaper(htabc2,FRectF(0,0,3000,3000), STAT_DEFAULT|STAT_IGNORE_SIZE,L"TAB_PAGE2");
+			
 
 
 			
-			// ‰º‘¤
+			// ‰º‘¤ --------------------------------------------------------------------------------------
 			rc.top = rc.bottom;
 
 			rc.SetHeight(height);
@@ -298,8 +315,12 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 				LPCWSTR titlenm = nm[i];
 
-				btn->click_ = [hP1c, titlenm](std::wstring){
+				
+				//page1 ƒ{ƒ^ƒ“‚ðPUSH
+				btn->click_ = [hP1c, titlenm, htabc21](std::wstring)
+				{
 					
+					// page1
 					auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"ChildWin_chart" );
 					auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
 
@@ -313,19 +334,31 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 					D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
 
 
-					/*auto h2 = D2DCreateControlsWithScrollbar(hP1c,FRectF(200,100,FSizeF(1300,680)),STAT_DEFAULT,NONAME);
-					D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1300,680), titlenm );
-					D2DSendMessage(h2, WM_D2D_SET_SIZE, 3,0);*/
-
-
+					// list_bmp
 					auto xh = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
-
 					ComPTR<ID2D1Bitmap> bmp;
 
 					auto main_rt = D2DGetRenderTarget(hP1c);
 
 					if ( CreateBitmapListboxItem(main_rt,200,30,titlenm, &bmp))
 						D2DAddBitmapItem(xh, bmp);
+
+
+
+					// page2
+
+					auto hm = D2DGetControlFromName(D2DGetWindow(hP1c), L"#msft");
+
+					if ( hm.p )
+						D2DDestroyControl(hm);
+
+					h2 = D2DCreateControlsWithScrollbar(htabc21,FRectF(100,100,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,L"#msft");
+
+					x = CreateSolidStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );					
+					D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
+					
+
+
 				};
 
 				rcs.Offset( 200, 0);
