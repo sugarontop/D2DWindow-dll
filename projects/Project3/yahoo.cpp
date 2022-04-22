@@ -194,11 +194,23 @@ void inetStockDataDownload(std::wstring cd, std::function<void(InternetInfo*)> c
 }
 
 
+struct ChartAverageInfo
+{
+	ChartAverageInfo():distance(0){}
+
+	WORD distance;
+	std::vector<float> ar;
+};
+
+
+
 struct ChartInfo
 {
 	float fmax, fmin;
 	float step;
 	FSizeF vsz;
+
+	ChartAverageInfo avginfo1[2];
 
 };
 
@@ -245,7 +257,7 @@ static ChartInfo yahooDrawChart(D2DContext& cxt,FSizeF vsz, std::vector<Rousoku>
 			rc = FRectF(x, y1min, x+3, y1max);
 
 			auto br = bblue; 
-			auto br1 = cxt.white_;
+			auto br1 = bblue;
 
 			y1max = h- (y.ymax-fmin)*step;
 			y1min = h- (y.ymin-fmin)*step;
@@ -302,7 +314,7 @@ static void yahooDrawErrorMsgt(D2DContext& cxt, long result)
 }
 
 
-static void yahooDrawLine(D2DContext& cxt,ChartInfo chinfo, std::vector<Rousoku>& adj_values)
+static void yahooDrawLine(D2DContext& cxt,ChartInfo& chinfo, std::vector<Rousoku>& adj_values)
 {
 	float fstart,fend;
 	float plotstep = CalcPlotSetpLine(chinfo.fmax, chinfo.fmin, &fstart, &fend);
@@ -346,8 +358,83 @@ static void yahooDrawLine(D2DContext& cxt,ChartInfo chinfo, std::vector<Rousoku>
 
 	//(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 }
-static void yahooDrawString(D2DContext& cxt,ChartInfo chi, std::vector<Rousoku>& adj_values)
+static void yahooDrawString(D2DContext& cxt,ChartInfo& chi, std::vector<Rousoku>& adj_values)
 {
+
+}
+
+
+void CalcAverage(UINT period, std::vector<float>& ar, std::vector<float>& outar)
+{
+	_ASSERT(period != 0);
+	float sum=0;
+	outar.resize( ar.size());
+	for(int i=0; i < period; i++ )
+	{
+		sum += ar[i];
+		outar[i] = -1;
+	}
+
+	for(int i = period; i < ar.size(); i++ )
+	{
+		outar[i] = sum/period;
+		sum += ar[i];
+		sum -= ar[i-period];
+	}
+}
+
+static void yahooDrawAverageCurve(D2DContext& cxt,ChartInfo& chi,int idx, int distance, std::vector<Rousoku>& adj_values)
+{
+	if ( chi.avginfo1[idx].distance == 0 )
+	{		
+		chi.avginfo1[idx].distance = distance;
+
+		std::vector<float> ar;
+		for(auto& it : adj_values )
+			ar.push_back(it.yend);
+
+
+		CalcAverage(distance, ar, chi.avginfo1[idx].ar);
+	}
+
+	float fstart,fend;
+	float plotstep = CalcPlotSetpLine(chi.fmax, chi.fmin, &fstart, &fend);
+
+	float h = chi.vsz.height;
+	float prplotx = 0, prploty = 0;
+	
+	ComPTR<ID2D1SolidColorBrush> graybr;
+	(*cxt)->CreateSolidColorBrush(D2RGB(170,170,170),&graybr);
+
+	int k = 0;
+	
+	for(auto& it : chi.avginfo1[idx].ar)
+	{	
+		if ( (distance+1)*4 <= k )
+		{
+			float ploty = h - (it-chi.fmin)*chi.step;
+			float plotx = k;
+
+			FPointF pt1(plotx, ploty);
+			FPointF pt2(prplotx, prploty);
+
+			(*cxt)->DrawLine(pt1,pt2,graybr);
+
+			prplotx = plotx;
+			prploty = ploty;
+		}
+		else if ( (distance)*4 == k )
+		{
+			prploty = h - (it-chi.fmin)*chi.step;
+			prplotx = k;
+		}
+		
+
+		k += 4;
+	}
+
+
+
 
 }
 
@@ -363,6 +450,10 @@ void yahooDraw(D2DContext& cxt, InternetInfo* info, FSizeF vsz, std::vector<Rous
 
 			auto chi = yahooDrawChart(cxt,vsz,adj_values);
 			
+
+			yahooDrawAverageCurve(cxt,chi,0,120,adj_values);
+			yahooDrawAverageCurve(cxt,chi,1,7,adj_values);
+
 			yahooDrawLine(cxt,chi,adj_values);
 
 			yahooDrawString(cxt,chi,adj_values);
