@@ -244,7 +244,10 @@ LRESULT CustomBtn::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPara
 }
 
 D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm );
-D2DControls* CreateSolidStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm );
+D2DControls* CreateSolidStockChart(D2DControls* ctrl, std::wstring cd, FRectF rc, LPCWSTR nm );
+D2DControls* CreateWealthNaviStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm );
+
+
 bool CreateBitmapListboxItem(ID2D1RenderTarget* rt,UINT w, UINT h, std::wstring titlenm, ID2D1Bitmap** pbmp);
 
 
@@ -302,7 +305,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 
 
-			LPCWSTR nm[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN"};
+			LPCWSTR nm[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN",L"WEALTH_NAVI"};
 
 			FRectF rcs(50,80,FSizeF(150,40));
 
@@ -315,51 +318,73 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 				LPCWSTR titlenm = nm[i];
 
-				
-				//page1 ボタンをPUSH
-				btn->click_ = [hP1c, titlenm, htabc21](std::wstring)
+				if ( !wcscmp(titlenm, L"WEALTH_NAVI"))
 				{
+					//page1 ボタンをPUSHした時の挙動
+					btn->click_ = [hP1c, titlenm, htabc21](std::wstring)
+					{
+						FRectF  rc(200,25,FSizeF(1000,800));
+						auto h1 = D2DCreateChildWindow(hP1c, rc, STAT_DEFAULT, L"ChildWin_chart" );
+						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
+
+
+						D2DControls* x = CreateWealthNaviStockChart((D2DControls*)h2.p, rc.Size(), titlenm );
+
+						D2DColor clr(D2RGB(250,250,250));
+						LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
+						D2DSendMessage(h2, WM_D2D_COMMAND_SET, (WPARAM)h2.p,(LPARAM)cb);
+						D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
+						D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
+
+					};
+				}
+				else
+				{
+					//page1 ボタンをPUSHした時の挙動
+					btn->click_ = [hP1c, titlenm, htabc21](std::wstring)
+					{
 					
-					// page1
-					auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"ChildWin_chart" );
-					auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
+						// page1
+						auto h1 = D2DCreateChildWindow(hP1c, FRectF(200,150,FSizeF(1200,650)), STAT_DEFAULT, L"ChildWin_chart" );
+						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
 
 
-					D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );
+						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );
 
-					D2DColor clr(D2RGB(250,250,250));
-					LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
-					D2DSendMessage(h2, WM_D2D_COMMAND_SET, (WPARAM)h2.p,(LPARAM)cb);
-					D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
-					D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
-
-
-					// list_bmp
-					auto xh = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
-					ComPTR<ID2D1Bitmap> bmp;
-
-					auto main_rt = D2DGetRenderTarget(hP1c);
-
-					if ( CreateBitmapListboxItem(main_rt,200,30,titlenm, &bmp))
-						D2DAddBitmapItem(xh, bmp);
+						D2DColor clr(D2RGB(250,250,250));
+						LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
+						D2DSendMessage(h2, WM_D2D_COMMAND_SET, (WPARAM)h2.p,(LPARAM)cb);
+						D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
+						D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
 
 
+						// bitmapがitemのlistboxを作成
+						auto xh = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
+						ComPTR<ID2D1Bitmap> bmp;
 
-					// page2
+						auto main_rt = D2DGetRenderTarget(hP1c);
 
-					auto hm = D2DGetControlFromName(D2DGetWindow(hP1c), L"#msft");
+						if ( CreateBitmapListboxItem(main_rt,200,30,titlenm, &bmp))
+							D2DAddBitmapItem(xh, bmp);
 
-					if ( hm.p )
-						D2DDestroyControl(hm);
 
-					h2 = D2DCreateControlsWithScrollbar(htabc21,FRectF(100,100,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,L"#msft");
 
-					x = CreateSolidStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );					
-					D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
+						// page2の作り直し
+
+						auto hm = D2DGetControlFromName(D2DGetWindow(hP1c), L"#msft");
+
+						if ( hm.p )
+							D2DDestroyControl(hm);
+
+						h2 = D2DCreateControlsWithScrollbar(htabc21,FRectF(100,100,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,L"#msft");
+
+						x = CreateSolidStockChart((D2DControls*)h2.p, L"not",  FRectF(0,0,FSizeF(1200,680)), titlenm );					
+						D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
 					
 
 
-				};
+					};
+				}
 
 				rcs.Offset( 200, 0);
 			}

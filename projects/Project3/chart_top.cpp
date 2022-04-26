@@ -11,9 +11,11 @@
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
 
+#define WM_MYAPP_INET_COMPLETE	(WM_D2D_USER_FIRST)
+
 //bitcoin: https://www.blockchain.com/charts/market-price
 
-void yahooDraw(D2DContext& cxt, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values);
+void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values);
 bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
 void WriteData( LPCWSTR fnm, IStream* psm);
 
@@ -99,7 +101,7 @@ void TDBase::Draw(D2DContext& cxt)
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
-TDChart::TDChart():info_(nullptr)
+TDChart::TDChart(std::wstring cd):info_(nullptr),cd_(cd)
 {
 
 }
@@ -110,8 +112,7 @@ TDChart::~TDChart()
 
 void TDChart::Clear()
 {
-	//if ( info_ )
-	//	DeleteInternetInfo(info_);
+
 	info_ = nullptr;
 }
  void TDChart::CreateControl( D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
@@ -140,6 +141,53 @@ LRESULT TDChart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		break;
+		case WM_MYAPP_INET_COMPLETE:
+		{
+			if ((UINT_PTR)this == (UINT_PTR)wParam)
+			{
+				InternetInfo* info = (InternetInfo*)lParam;
+
+				TDChart* ch = this; //dynamic_cast<TDChart*>(chart_);
+				_ASSERT(ch);
+
+				if ( info->throwerror!=0 )
+				{
+					WCHAR cb[256];
+					StringCbPrintf(cb,256,L"throwed %d", info->throwerror);
+
+					ch->Error(cb) ;
+
+				}
+				else
+				{
+					std::shared_ptr<InternetInfo> ainfo(info, [](InternetInfo* p){ DeleteInternetInfo(p); });
+
+
+					ch->SetInfo(ainfo);
+					ch->GenerateGraph();
+
+
+					// page2‚Ìchat‚É‚à...
+					//UIHandleWin hw={};
+					//hw.p = parent_window_;
+					//auto h1 = D2DGetControlFromName(hw, L"#page2_chart");
+					//auto ch2 = dynamic_cast<TDChart*>( (D2DControl*)h1.p );
+					//if ( ch2 )
+					//{
+					//	ch2->SetInfo(ainfo);
+					//	ch2->GenerateGraph();
+
+					//	//ch2->Detach();
+					//}
+
+				}
+
+				b.bRedraw = true;		
+				//running_mode_ = 0;
+				r = 1;
+			}
+		}
+		break;
 	}
 	return r;
 }
@@ -160,26 +208,19 @@ void TDChart::Draw(D2DContext& cxt)
 	
 	rc.left = rc.right-55.0f;
 
-	cxt.DText( rc.LeftTop(), L"480.00");
+	//cxt.DText( rc.LeftTop(), L"480.00");
 
 
 	if ( error_.length() > 0)
 		cxt.DText( rc_.ZeroRect().LeftTop(), error_);	
 	else
 	{
-		yahooDraw(cxt,info_.get(),rc_.Size(), rousoku_ar_);
+		//yahooDraw(cxt,info_.get(),rc_.Size(), rousoku_ar_);
+
+		yahooDraw(cxt, cd_,  info_.get(),rc_.Size(), rousoku_ar_);
 	}
 
 
-	//if ( mini_bmp_ )
-	//{
-	//	FSizeF sz = rc_.Size();
-	//	float h = 100.0f;
-	//	float w = sz.width/sz.height*h;
-	//	
-	//	(*cxt)->DrawBitmap(mini_bmp_,FRectF(0,0,w,h),1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, FRectF(0,0,sz));
-
-	//}
 
 	mat.PopTransform();
 }
@@ -215,7 +256,7 @@ void TDChart::GenerateGraph()
 
 	WriteData(L"stock.bin", info_->pstream );
 
-	rc_.SetWidth( (rousoku_ar_.size()+5) * 4.0f);
+//	rc_.SetWidth( (rousoku_ar_.size()+5) * 4.0f);
 	
 	memo_ = cb;
 
@@ -249,7 +290,7 @@ void TDChart::GenerateBitmap()
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void inetStockDataDownload(std::wstring cd, std::function<void(InternetInfo*)> compfunc);
-#define WM_MYAPP_INET_COMPLETE	(WM_D2D_USER_FIRST)
+
 
 LPCWSTR NR(LPCWSTR s, std::wstring k)
 {
@@ -486,16 +527,27 @@ void TDList::Draw(D2DContext& cxt)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-D2DControls* CreateSolidStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
+D2DControls* CreateSolidStockChart(D2DControls* ctrl, std::wstring cd, FRectF rc, LPCWSTR nm )
 {
 	UIHandle h={};
 	h.p = ctrl;
-	auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"page2_td_chart_sc",nm));
+	auto hchart = D2DCreateControlsWithScrollbar(h,rc, STAT_DEFAULT, NR(L"page2_td_chart_sc",nm));
 	D2DControls* ctrl2 = (D2DControls*)hchart.p;
 
-	auto chart = std::make_shared<TDChart>();
-	chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, L"#page2_chart" );
+	auto chart = std::make_shared<TDChart>( cd );
+	chart->CreateControl( ctrl2, rc, STAT_DEFAULT, L"#page2_chart" );
 	ctrl2->Add(chart);
+	return chart.get();
+}
+
+D2DControls* CreateSolidStockChart2(D2DControls* ctrl, std::wstring cd, FRectF rc, LPCWSTR nm )
+{
+	auto chart = std::make_shared<TDChart>( cd );
+	chart->CreateControl( ctrl, rc, STAT_DEFAULT, nm );
+	ctrl->Add(chart);
+
+	
+
 	return chart.get();
 }
 
@@ -541,7 +593,8 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart_sc",nm));
 			D2DControls* ctrl2 = (D2DControls*)hchart.p;
 
-			auto chart = std::make_shared<TDChart>();
+			auto cd = nm;
+			auto chart = std::make_shared<TDChart>(cd);
 			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart",nm) );
 			ctrl2->Add(chart);
 			
@@ -579,6 +632,58 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 	return base.get();
 
 }
+
+
+D2DControls* CreateWealthNaviStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
+{
+	LPCWSTR cd[] = {L"VTI",L"VEA",L"VWO",L"GLD",L"IYR",L"AGG" };
+
+	FSizeF sz(500,300);
+	FRectF rc(0,0, sz);
+
+	UIHandle h={};
+	h.p = ctrl;
+	auto hchart = D2DCreateControlsWithScrollbar(h, FRectF(0,0,size), STAT_DEFAULT, NR(L"page1_td_chart_sc_wb",nm));
+
+	auto ht = D2DCreateControls(hchart, FRectF(0,0,size), STAT_DEFAULT, NONAME);
+
+
+
+	D2DControls* ctrl2 = (D2DControls*)ht.p;
+
+
+	for(int i = 0; i < _countof(cd); i++ )
+	{
+		auto p = CreateSolidStockChart2(ctrl2, cd[i], rc, nm );
+		
+
+		auto complete = [ctrl, p](InternetInfo* info)
+		{
+			ctrl->GetParent()->PostMessage(WM_MYAPP_INET_COMPLETE, (WPARAM)p, (LPARAM)info);
+		};
+
+		inetStockDataDownload( cd[i], complete );
+
+
+		if ( i == 2 )
+			rc = FRectF(0,305,sz);
+		else
+			rc.Offset(505,0);
+	}
+
+	auto pt = rc.RightBottom();
+	D2DSetRect(ht, FRectF(0,0, pt.x-505, pt.y ));
+
+
+
+	return nullptr;
+
+}
+
+
+
+
+
 
 void WriteData( LPCWSTR fnm, IStream* psm)
 {

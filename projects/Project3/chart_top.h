@@ -28,7 +28,7 @@ namespace V6
 		class TDChart : public D2DControls
 		{
 			public :
-				TDChart();
+				TDChart(std::wstring cd);
 				virtual ~TDChart();
 				virtual void CreateControl(D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id = -1);
 				virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;
@@ -47,9 +47,10 @@ namespace V6
 				std::shared_ptr<InternetInfo> info_;
 				
 
-				std::wstring memo_, error_;
+				std::wstring memo_, error_, cd_;
 
 				std::vector<Rousoku> rousoku_ar_;
+
 
 		};
 

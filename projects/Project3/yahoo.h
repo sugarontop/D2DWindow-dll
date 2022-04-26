@@ -9,6 +9,10 @@ namespace V6 {
 	{
 		float ymax,ymin;
 		float ystart,yend;
+
+
+		float average[2]; // 0:7days, 1:120days
+		WORD xpos;
 	};
 };
 

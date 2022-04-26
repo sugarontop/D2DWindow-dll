@@ -2,6 +2,8 @@
 #include <msxml6.h>
 #include "inet.h"
 
+#pragma warning( disable : 26812 )
+
 #pragma comment( lib, "msxml6")
 
 class CBstr
