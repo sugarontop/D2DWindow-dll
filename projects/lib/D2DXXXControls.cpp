@@ -101,18 +101,29 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		}
 		break;
 		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
 		{
-			if ( mode_ == 1 )
-			{
-				
-				
-				UIHandle h={};
-				h.p = this;
+			MouseParam& pm = *(MouseParam*)lParam;
+			auto pt = mat_.DPtoLP(pm.pt);
 
-				D2DSmoothRect(1,0,h, &rc_, FRectF(500,100,FSizeF(50,30)));
+			if ( rc_.PtInRect(pt))
+			{
 
 				r = 1;
 			}
+
+			
+			//if ( mode_ == 1 )
+			//{
+			//	
+			//	
+			//	UIHandle h={};
+			//	h.p = this;
+
+			//	D2DSmoothRect(1,0,h, &rc_, FRectF(500,100,FSizeF(50,30)));
+
+			//	r = 1;
+			//}
 			
 		}
 		break;
@@ -198,3 +209,59 @@ LRESULT D2DXXXControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 
 }
 
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void D2DSimpleControls::Draw(D2DContext& cxt)
+{
+	if (!BITFLG(STAT_VISIBLE)) return;
+	
+	D2DMatrix mat(*cxt);
+	mat_ = mat.PushTransform();
+
+	mat.Offset(rc_);
+
+	cxt.DFillRect(rc_.ZeroRect(), back_color_);
+
+	InnerDraw(cxt);
+
+	mat.PopTransform();
+}
+void D2DSimpleControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
+{
+	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
+	rc_ = rc;
+	back_color_ = ColorF::Blue;
+
+}
+LRESULT D2DSimpleControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT r = 0;
+
+	switch( message )
+	{
+		case WM_D2D_CREATE:
+		{
+			r = 1;
+
+		}
+		break;
+		case WM_D2D_SET_COLOR:
+		{
+			switch(wParam)
+			{
+				
+				case COLOR_IDX_BACK:
+					back_color_ = *(D2DColor*)lParam;
+				break;				
+			}
+			r = 1;
+		}
+		break;
+	}
+
+	if (r == 0 )
+		r = D2DControls::DefWndProc(b,message,wParam,lParam);
+
+	return r;
+
+}

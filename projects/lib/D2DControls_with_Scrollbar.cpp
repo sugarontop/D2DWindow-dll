@@ -93,7 +93,8 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 				{
 					FRectF& rc = *(FRectF*)(lParam);
 
-					
+					// ‚±‚±‚Å—Ž‚¿‚½‚ç@STAT_IGNORE_SIZE‚ð‚Â‚¯‚é
+
 					if ( wParam == 0 )
 					{
 						if (BITFLG(STAT_IGNORE_HSIZE) == false )
@@ -120,10 +121,7 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 				}	
 				else if ( wParam == 3 )
 				{
-					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
-
-					
-
+					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child				
 					SetViewMaxSize(crc.Size());
 				}
 				else if ( wParam == 4 )
@@ -131,6 +129,15 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
 					rc_.SetSize(crc.Size());
 
+					SetViewMaxSize(crc.Size());
+				}
+				else if ( wParam == 5 )
+				{
+					
+
+					rc_.SetSize( this->parent_control_->GetRect().Size());
+					
+					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
 					SetViewMaxSize(crc.Size());
 				}
 			}

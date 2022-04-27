@@ -31,6 +31,10 @@ struct BobInstance
 	D2DMat mat;
 	UIHandle hme;
 	UIHandle hprv;
+	UIHandle hp1c;
+
+
+	std::vector<std::function<void(std::wstring)>> event_ar;
 
 	UIHandle hactive;
 	D2DControls* child;
@@ -249,8 +253,10 @@ D2DControls* CreateWealthNaviStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR
 
 
 bool CreateBitmapListboxItem(ID2D1RenderTarget* rt,UINT w, UINT h, std::wstring titlenm, ID2D1Bitmap** pbmp);
+void ShowToolListBox(UIHandle h, bool bShow);
 
-
+#define TOOL_BTN		1001
+#define TOOL_LISTBOX	1002
 
 LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -321,7 +327,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 				if ( !wcscmp(titlenm, L"WEALTH_NAVI"))
 				{
 					//page1 ボタンをPUSHした時の挙動
-					btn->click_ = [hP1c, titlenm, htabc21](std::wstring)
+					auto push1 = [hP1c, titlenm, htabc21](std::wstring)
 					{
 						FRectF  rc(200,25,FSizeF(1000,800));
 						auto h1 = D2DCreateChildWindow(hP1c, rc, STAT_DEFAULT, L"ChildWin_chart" );
@@ -337,11 +343,13 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 						D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
 
 					};
+					m->event_ar.push_back(push1);
+					btn->click_ = push1;
 				}
 				else
 				{
 					//page1 ボタンをPUSHした時の挙動
-					btn->click_ = [hP1c, titlenm, htabc21](std::wstring)
+					auto push1 = [hP1c, titlenm, htabc21](std::wstring)
 					{
 					
 						// page1
@@ -349,7 +357,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
 
 
-						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,680), titlenm );
+						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,600), titlenm );
 
 						D2DColor clr(D2RGB(250,250,250));
 						LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());
@@ -359,17 +367,15 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 
 						// bitmapがitemのlistboxを作成
-						auto xh = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
+						/*auto xh = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
 						ComPTR<ID2D1Bitmap> bmp;
-
 						auto main_rt = D2DGetRenderTarget(hP1c);
-
 						if ( CreateBitmapListboxItem(main_rt,200,30,titlenm, &bmp))
-							D2DAddBitmapItem(xh, bmp);
+							D2DAddBitmapItem(xh, bmp);*/
 
 
 
-						// page2の作り直し
+						// page2 作り直し
 
 						auto hm = D2DGetControlFromName(D2DGetWindow(hP1c), L"#msft");
 
@@ -384,6 +390,10 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 
 					};
+
+					m->event_ar.push_back(push1);
+
+					btn->click_ = push1;
 				}
 
 				rcs.Offset( 200, 0);
@@ -392,99 +402,8 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			
 
 			/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			// Listbox内のitemをbitmapとして作成
-
-			// listbox作成
-			auto hP2c1 = D2DCreateListbox(hP1c, FRectF(10,200,FSizeF(200,500)), STAT_DEFAULT,L"#list_bmp");
-
-			D2DColor clrb(D2RGBA(0,0,0,0));
-			D2DSendMessage(hP2c1, WM_D2D_SET_COLOR, COLOR_IDX_BORDER,(LPARAM)&clrb);
-
-
-			ComPTR<ID2D1RenderTarget> rt;
-			
-			// メモリ上のRnderTargetを作成
-			CreateMemoryRenderTarget(200,30, &rt);
-			
-			
-			// itemの指定
-			D2DColor clrs[] = {D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255)};
-			LPCWSTR nmstock[] = {L"VTI",L"GOOG",L"MSFT"};
-
-
-			// メモリ上のRnderTargetで使用するフォント作成
-			ComPTR<IDWriteFactory> pfact;
-			DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &pfact);
-
-			ComPTR<IDWriteTextFormat> textFormat;
-			std::wstring fontName(L"arial");
-			(pfact->CreateTextFormat(fontName.c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR,
-				DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 24, L"en-us", & textFormat));
-
-			textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-			textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-			
-			for(int i= 0; i < _countof(clrs); i++ )
-			{
-			
-				// itemをメモリ上に描画
-				rt->BeginDraw();
-				{
-					rt->Clear(D2DColor(D2RGB(255,255,255)));
-
-					ComPTR<ID2D1SolidColorBrush> br;
-					//
-					rt->CreateSolidColorBrush(clrs[i], &br);
-
-					FRectF rck(0,0,FSizeF(30,30));
-
-					for(int k= 0; k <4; k++ )
-					{
-						rt->FillRectangle(rck, br);
-						rck.Offset(50,0);
-					}
-
-					ComPTR<ID2D1SolidColorBrush> brblack;
-					//
-					rt->CreateSolidColorBrush(D2RGB(0,0,0), &brblack);
-
-					//rt->DrawText(nm[i],wcslen(nm[i]), textFormat,FRectF(0,0,200,30),brblack);
-
-					ComPTR<IDWriteTextLayout> tl;
-					pfact->CreateTextLayout(nm[i],wcslen(nm[i]), textFormat, 200,30,&tl);
-					rt->DrawTextLayout(FPointF(), tl, brblack);
-				}
-				auto hr = rt->EndDraw();
-				_ASSERT(hr == S_OK);
-
-
-				// 描画されたものをbitmap->streamに変換
-				D2D1_RECT_U rcu={};
-
-				rcu.right = 200;
-				rcu.bottom = 30;
-
-				ComPTR<ID2D1Bitmap> bmp, bmp2;
-				ComPTR<IStream> sm;
-			
-				RenderTargetToBitmp(rt, rcu, &bmp );
-
-				ComPTR<IStream> sm1;
-				auto r = CreateStreamOnHGlobal(NULL,TRUE,&sm1 );
-
-				BitmapToIStream(bmp, sm1);
-
-				// bitmapをstreamから作り直し
-
-				auto main_rt = D2DGetRenderTarget(hP1c);
-				IStreamToBitmap(main_rt, sm1, &bmp2);
-
-
-				// 完成したbitmapをlistboxへ追加
-				D2DAddBitmapItem(hP2c1, bmp2);
-			}			
-
-
+			m->hp1c = hP1c;
+			auto btn = D2DCreateButton(hP1c, FRectF(100,100,FSizeF(100,30)), STAT_DEFAULT, L"tool", TOOL_BTN );
 
 
 			r = 1;
@@ -501,6 +420,61 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			*(m->prc) = rc;			
 		}
 		break;
+		case WM_NOTIFY:
+		{
+			if (TOOL_BTN == wParam )
+			{
+				auto h = D2DGetControlFromName( D2DGetWindow(m->hp1c), L"#list_bmp");
+				
+				if ( h.p == nullptr )				
+					ShowToolListBox(m->hp1c, true);
+				else
+					ShowToolListBox(m->hp1c, false); 
+
+				r = 1;
+			}
+			else if ( TOOL_LISTBOX == wParam )
+			{
+				D2DNMHDR& pm = *(D2DNMHDR*)lParam;
+
+
+				if ( pm.code == EVENTID_SELECTCHANGED )
+				{
+					int idx = pm.prm1;
+
+
+					m->event_ar[idx](L"xxx");
+
+					//CreateStockChartWindow( idx );
+				}
+
+				r = 1;
+			}
+		}
+		break;
+		case WM_D2D_SMOOTH_COMPLETE:
+		{
+			if ( lParam == 11)
+			{
+				auto h = D2DGetControlFromName( D2DGetWindow(m->hp1c), L"#list_bmp");
+
+				D2DDestroyControl(h);
+
+
+				h = D2DGetControlFromName( D2DGetWindow(m->hp1c), L"#list_bmp");
+				_ASSERT(h.p == nullptr);
+
+
+
+				r = 1;
+			}
+			else if ( lParam == 10)
+			{
+
+				r = 1;
+			}
+		}
+		break;
 
 
 	}
@@ -513,7 +487,120 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 
 }
+void ShowToolListBox( UIHandle hP1c, bool bShow)
+{
+	FRectF rcDest(10,200,FSizeF(200,500));
+	FRectF rcFirst(1000,0,FSizeF(200,0));
 
+	if ( !bShow )
+	{
+		auto hP2c1 = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
+		
+		D2DSmoothRect(1,11, hP1c, D2DGetRect2(hP2c1), rcFirst);
+	}
+	else
+	{
+		// listbox作成
+		auto hP2c1 = D2DCreateListbox(hP1c, rcFirst, STAT_DEFAULT,L"#list_bmp", TOOL_LISTBOX);
+
+		// リサイズ
+		D2DSmoothRect(1,10, hP1c, D2DGetRect2(hP2c1), rcDest);
+
+
+		// listbox内の内容
+		D2DColor clrb(D2RGBA(0,0,0,0));
+		D2DSendMessage(hP2c1, WM_D2D_SET_COLOR, COLOR_IDX_BORDER,(LPARAM)&clrb);
+
+
+		ComPTR<ID2D1RenderTarget> rt;
+			
+		// メモリ上のRnderTargetを作成
+		CreateMemoryRenderTarget(200,30, &rt);
+			
+			
+		// itemの指定
+		D2DColor clrs[] = {D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255),D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255)};
+		LPCWSTR nmstock[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN",L"WEALTH_NAVI"};
+
+
+		// メモリ上のRnderTargetで使用するフォント作成
+		ComPTR<IDWriteFactory> pfact;
+		DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &pfact);
+
+		ComPTR<IDWriteTextFormat> textFormat;
+		std::wstring fontName(L"arial");
+		(pfact->CreateTextFormat(fontName.c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR,
+			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 24, L"en-us", & textFormat));
+
+		textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+			
+		for(int i= 0; i < _countof(clrs); i++ )
+		{
+			
+			// itemをメモリ上に描画
+			rt->BeginDraw();
+			{
+				rt->Clear(D2DColor(D2RGB(255,255,255)));
+
+				ComPTR<ID2D1SolidColorBrush> br;
+				//
+				rt->CreateSolidColorBrush(clrs[i], &br);
+
+				FRectF rck(0,0,FSizeF(30,30));
+
+				for(int k= 0; k <4; k++ )
+				{
+					rt->FillRectangle(rck, br);
+					rck.Offset(50,0);
+				}
+
+				ComPTR<ID2D1SolidColorBrush> brblack;
+				//
+				rt->CreateSolidColorBrush(D2RGB(0,0,0), &brblack);
+
+				//rt->DrawText(nm[i],wcslen(nm[i]), textFormat,FRectF(0,0,200,30),brblack);
+
+				ComPTR<IDWriteTextLayout> tl;
+				pfact->CreateTextLayout(nmstock[i],wcslen(nmstock[i]), textFormat, 200,30,&tl);
+				rt->DrawTextLayout(FPointF(), tl, brblack);
+			}
+			auto hr = rt->EndDraw();
+			_ASSERT(hr == S_OK);
+
+
+			// 描画されたものをbitmap->streamに変換
+			D2D1_RECT_U rcu={};
+
+			rcu.right = 200;
+			rcu.bottom = 30;
+
+			ComPTR<ID2D1Bitmap> bmp, bmp2;
+			ComPTR<IStream> sm;
+			
+			RenderTargetToBitmp(rt, rcu, &bmp );
+
+			ComPTR<IStream> sm1;
+			auto r = CreateStreamOnHGlobal(NULL,TRUE,&sm1 );
+
+			BitmapToIStream(bmp, sm1);
+
+			// bitmapをstreamから作り直し
+
+			auto main_rt = D2DGetRenderTarget(hP1c);
+			IStreamToBitmap(main_rt, sm1, &bmp2);
+
+
+			// 完成したbitmapをlistboxへ追加
+			D2DAddBitmapItem(hP2c1, bmp2);
+		}			
+	}
+	
+
+
+
+
+}
 
 bool CreateBitmapListboxItem(ID2D1RenderTarget* main_rt,UINT w, UINT h, std::wstring titlenm, ID2D1Bitmap** pbmp)
 {

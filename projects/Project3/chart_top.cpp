@@ -588,20 +588,25 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 		}
 
 		{
+			
 			UIHandle h={};
 			h.p = ctrl;
-			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart_sc",nm));
+			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT|STAT_IGNORE_SIZE, NR(L"td_chart_sc111111",nm));
 			D2DControls* ctrl2 = (D2DControls*)hchart.p;
 
 			auto cd = nm;
 			auto chart = std::make_shared<TDChart>(cd);
-			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart",nm) );
+			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1100,600)), STAT_DEFAULT, NR(L"td_chart",nm) );
 			ctrl2->Add(chart);
 			
 			base->chart = ctrl2;
 
 			left_bar->chart_ = chart.get();
 			top_bar->chart_ = chart.get();
+
+
+			D2DSendMessage(hchart, WM_D2D_SET_SIZE, 3,0);
+			
 		}
 
 

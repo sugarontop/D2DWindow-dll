@@ -431,6 +431,24 @@ DLLEXPORT UIHandle WINAPI D2DCreateXXXControls(UIHandle hctrls, const D2D1_RECT_
 	return r;
 }
 
+DLLEXPORT UIHandle WINAPI D2DCreateSimpleControls(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
+
+	auto pgtx = std::make_shared<D2DSimpleControls>(); 
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win,ctrls, rc, stat, name, id );
+	ctrls->Add( pgtx);	
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_CONTROLS;
+	return r;
+}
+
 DLLEXPORT UIHandle WINAPI D2DCreateListbox(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
@@ -1263,9 +1281,12 @@ DLLEXPORT void WINAPI D2DForceWndProc(UIHandleWin main, AppBase& app, UINT messa
 DLLEXPORT  void WINAPI D2DDestroyControl(UIHandle h)
 {
 	D2DControl* h2 = D2DCastControl(h);
-
-
 	h2->DestroyControl();
+
+
+
+
+
 
 }
 DLLEXPORT void WINAPI D2DEventHandler( UIHandle h, D2DEventHandlerDelegate handler)

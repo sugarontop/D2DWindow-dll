@@ -736,7 +736,7 @@ bool D2DSimpleListbox::OnEscape()
         selected_idx_ = -1;
 		float_idx_ = -1;
 
-        OnClick();
+        //OnClick();
         return true;
     }
     return false;
@@ -756,6 +756,27 @@ void D2DSimpleListbox::OnClick()
         }
 
     }
+	else
+	{				
+		int a = GetID();
+
+		D2DNMHDR nmh = {0};
+
+        UIHandle u;
+        u.p = this;
+        u.typ = TYP_DROPDOWNLISTBOX;
+
+		nmh.sender_parent = parent_control_;
+        nmh.sender = u;
+        nmh.code = EVENTID_SELECTCHANGED; // onchanged
+        nmh.prm1 = selected_idx_;
+
+		auto hr = parent_control_->SendMesage(WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh);
+
+		if ( hr == 0 )
+				parent_window_->SendMessage( WM_NOTIFY, (WPARAM)a, (LPARAM)&nmh );
+
+	}
 
 }
 float D2DSimpleListbox::sc_barThumbHeight()

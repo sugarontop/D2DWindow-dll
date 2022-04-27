@@ -65,6 +65,9 @@ void D2DControl::DestroyControl()
 		{
 			auto p = parent_control_->Detach(this);
 			parent_window_->death_objects_.push_back(p);
+
+			parent_window_->name_map_.erase(name_);
+
 		}
 
 		parent_control_->SendMesage(WM_D2D_ONCLOSE, 0, (LPARAM)this);
