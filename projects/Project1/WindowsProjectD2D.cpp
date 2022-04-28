@@ -172,22 +172,15 @@ void test( UIHandle h)
 
 
 
-			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, L"td_chart_sc");
+			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT|STAT_IGNORE_SIZE, L"td_chart_sc");
 
 
-			auto hc1 = D2DCreateSimpleControls(hchart, FRectF(0,0, FSizeF(1100,600)),STAT_DEFAULT, L"td_chart" );
+			//auto hc1 = D2DCreateSimpleControls(hchart, FRectF(0,0, FSizeF(1000,600)),STAT_DEFAULT, L"td_chart" );
+
+			auto hc1 = D2DCreateSquarePaper(hchart,FRectF(0,0, FSizeF(1000,600)),STAT_DEFAULT|STAT_IGNORE_SIZE, L"td_chart" );
+
 	
 			D2DSendMessage(hc1, WM_D2D_SET_COLOR, COLOR_IDX_BACK,(LPARAM)&clr);
-
-			/*chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1100,600)), STAT_DEFAULT, NR(L"td_chart",nm) );
-			ctrl2->Add(chart);
-			
-			base->chart = ctrl2;
-
-			left_bar->chart_ = chart.get();
-			top_bar->chart_ = chart.get();*/
-
-
 			D2DSendMessage(hchart, WM_D2D_SET_SIZE, 3,0);
 
 

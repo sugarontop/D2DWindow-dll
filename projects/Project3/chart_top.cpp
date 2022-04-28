@@ -80,18 +80,18 @@ void TDBase::Draw(D2DContext& cxt)
 
 		mat.Offset(0, top->GetRect().bottom);
 
-		mat.PushTransform();
-		{
-			mat.Offset(rc_.Size().width - tr->GetRect().Size().width, 0);
+		//mat.PushTransform();
+		//{
+		//	mat.Offset(rc_.Size().width - tr->GetRect().Size().width, 0);
 
-			(*cxt)->SetTransform(mat);
+		//	(*cxt)->SetTransform(mat);
 
-			tr->Draw(cxt);
+		//	tr->Draw(cxt);
 
-			mat.Offset(-ls->GetRect().Size().width, 0);
-			ls->Draw(cxt);
-		}
-		mat.PopTransform();
+		//	mat.Offset(-ls->GetRect().Size().width, 0);
+		//	ls->Draw(cxt);
+		//}
+		//mat.PopTransform();
 
 		mat.Offset(0, 1);
 		chart->Draw(cxt);
@@ -591,12 +591,12 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 			
 			UIHandle h={};
 			h.p = ctrl;
-			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT|STAT_IGNORE_SIZE, NR(L"td_chart_sc111111",nm));
+			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT|STAT_IGNORE_SIZE, NR(L"td_chart_sc11",nm));
 			D2DControls* ctrl2 = (D2DControls*)hchart.p;
 
 			auto cd = nm;
 			auto chart = std::make_shared<TDChart>(cd);
-			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1100,600)), STAT_DEFAULT, NR(L"td_chart",nm) );
+			chart->CreateControl( ctrl2, FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT, NR(L"td_chart",nm) );
 			ctrl2->Add(chart);
 			
 			base->chart = ctrl2;
@@ -612,7 +612,7 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 
 
 
-		auto right_list = std::make_shared<TDList>();
+		/*auto right_list = std::make_shared<TDList>();
 		right_list->CreateControl( ctrl, FRectF(0,0, FSizeF(267,variable)), STAT_DEFAULT, NR(L"td_list",nm) );
 		ctrl->Add(right_list);
 		base->ls = right_list.get();
@@ -620,7 +620,7 @@ D2DControls* CreateStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR nm )
 		auto right_bar = std::make_shared<TDChartButtons>();
 		right_bar->CreateControl( ctrl, FRectF(0,0, FSizeF(45,variable)), STAT_DEFAULT, NR(L"td_right_bar",nm), -1, ColorF::White );
 		ctrl->Add(right_bar);
-		base->tr = right_bar.get();
+		base->tr = right_bar.get();*/
 
 
 		UIHandle hctrls={};
@@ -648,9 +648,9 @@ D2DControls* CreateWealthNaviStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR
 
 	UIHandle h={};
 	h.p = ctrl;
-	auto hchart = D2DCreateControlsWithScrollbar(h, FRectF(0,0,size), STAT_DEFAULT, NR(L"page1_td_chart_sc_wb",nm));
+	auto hchart = D2DCreateControlsWithScrollbar(h, FRectF(0,0,size), STAT_DEFAULT|STAT_AUTOFIT_CHILDWIN, NR(L"page1_td_chart_sc_wb",nm));
 
-	auto ht = D2DCreateControls(hchart, FRectF(0,0,size), STAT_DEFAULT, NONAME);
+	auto ht = D2DCreateControls(hchart, FRectF(0,0,FSizeF(505*3, size.height )), STAT_DEFAULT, NONAME);
 
 
 
@@ -677,8 +677,11 @@ D2DControls* CreateWealthNaviStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR
 	}
 
 	auto pt = rc.RightBottom();
-	D2DSetRect(ht, FRectF(0,0, pt.x-505, pt.y ));
+	//D2DSetRect(ht, FRectF(0,0, pt.x-505, pt.y ));
 
+
+
+	D2DSendMessage(hchart, WM_D2D_SET_SIZE, 3,0);
 
 
 	return nullptr;

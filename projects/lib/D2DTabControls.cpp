@@ -123,7 +123,7 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			}
 		}
 		break;
-		case WM_D2D_SET_SIZE_SIZE:
+		case WM_D2D_SET_SIZE_FROM_CHILDWINDOW:
 		{
 			FSizeF sz = *(FSizeF*)lParam;
 			rc_.SetSize(sz);
@@ -131,7 +131,7 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			sz.height -= tabrects_[0].Height();
 
 			for(auto& it : controls_)
-				it->WndProc(b,WM_D2D_SET_SIZE_SIZE,wParam,(LPARAM)&sz);
+				it->WndProc(b,WM_D2D_SET_SIZE_FROM_CHILDWINDOW,wParam,(LPARAM)&sz);
 			return 0;
 		}
 		break;

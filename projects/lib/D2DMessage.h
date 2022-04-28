@@ -9,11 +9,12 @@
 #define STAT_ENABLE				0x10
 #define STAT_FLOATING			0x20
 
-#define STAT_DEBUG				0x20
-#define STAT_DEBUG1				0x40
-#define STAT_SIMPLE				0x80
-#define STAT_IGNORE_VSIZE		0x100
-#define STAT_IGNORE_HSIZE		0x200
+#define STAT_DEBUG				0x40
+#define STAT_DEBUG1				0x80
+#define STAT_SIMPLE				0x100
+#define STAT_IGNORE_VSIZE		0x200
+#define STAT_IGNORE_HSIZE		0x400
+#define STAT_AUTOFIT_CHILDWIN	0x800
 
 #define STAT_DEFAULT		(STAT_VISIBLE|STAT_ENABLE)
 #define STAT_IGNORE_SIZE	(STAT_IGNORE_HSIZE|STAT_IGNORE_VSIZE)
@@ -109,7 +110,9 @@ typedef DWORD (*D2DEventHandlerDelegate)(void* sender,LPCWSTR eventName, void* p
 #define WM_D2D_TAB_CHANGE						(WM_APP+14)
 #define WM_D2D_TABCONTROL_TAB_NAME				(WM_APP+15)
 
-#define WM_D2D_SET_SIZE_SIZE					(WM_APP+16) // LPARAM is FSizeF
+//#define WM_D2D_SET_SIZE_SIZE					(WM_APP+16) // LPARAM is FSizeF
+#define WM_D2D_SET_SIZE_FROM_CHILDWINDOW		(WM_APP+16) // LPARAM is FSizeF
+
 #define WM_D2D_GET_RESOURCE_BINARY				(WM_APP+17) // LPARAM is IStream**
 #define WM_D2D_SET_RESOURCE						(WM_APP+18) // LPARAM is name
 #define WM_D2D_IME_ONOFF						(WM_APP+19) 

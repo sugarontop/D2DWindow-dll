@@ -20,9 +20,9 @@ void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)
 	
 	D2DRectFilter f(cxt, rc_);
 
-	mat.Offset(rc_);
+	cxt.DFillRect(rc_, backcolor_);
 
-	cxt.DFillRect(rc_.ZeroRect(), backcolor_);
+	mat.Offset(rc_);
 
 	{
 		mat.PushTransform();	
@@ -65,10 +65,7 @@ void D2DControls_with_Scrollbar::SetViewMaxSize(FSizeF sz)
 		sch_->SetStat(0);
 	if (sz.height <= rc_.Size().height)
 		scv_->SetStat(0);
-	else
-	{
-		int a =0;
-	}
+	
 }
 
 
@@ -145,21 +142,22 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 			return 0;
 		}
 		break;
-		case WM_D2D_SET_SIZE_SIZE:
+		case WM_D2D_SET_SIZE_FROM_CHILDWINDOW:
 		{
-			FSizeF sz = *(FSizeF*)lParam;
+			if (BITFLG(STAT_AUTOFIT_CHILDWIN))
+			{
+				FSizeF sz = *(FSizeF*)lParam;
 
-			rc_.SetSize(sz);
+				rc_.SetSize(sz);
 
-			if ( 2 < controls_.size() )
-			{				
-				this->controls_[2]->WndProc(b,WM_D2D_SET_SIZE_SIZE,wParam,(LPARAM)&sz);
+				if ( 2 < controls_.size() )
+				{				
+					this->controls_[2]->WndProc(b,WM_D2D_SET_SIZE_FROM_CHILDWINDOW,wParam,(LPARAM)&sz);
 
+					auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
 
-				auto crc = this->controls_[2]->GetRect(); // 0,1 is scrollbar, 2 is child
-
-				SetViewMaxSize(crc.Size());
-				
+					SetViewMaxSize(crc.Size());
+				}
 			}
 			return 0;
 		}

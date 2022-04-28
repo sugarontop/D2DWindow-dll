@@ -329,11 +329,11 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 					//page1 ƒ{ƒ^ƒ“‚ðPUSH‚µ‚½Žž‚Ì‹““®
 					auto push1 = [hP1c, titlenm, htabc21](std::wstring)
 					{
-						FRectF  rc(200,25,FSizeF(1000,800));
+						FRectF  rc(200,25,FSizeF(1000,650));
 						auto h1 = D2DCreateChildWindow(hP1c, rc, STAT_DEFAULT, L"ChildWin_chart" );
-						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
+						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE|STAT_AUTOFIT_CHILDWIN,NONAME);
 
-
+						
 						D2DControls* x = CreateWealthNaviStockChart((D2DControls*)h2.p, rc.Size(), titlenm );
 
 						D2DColor clr(D2RGB(250,250,250));
@@ -357,7 +357,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 						auto h2 = D2DCreateControlsWithScrollbar(h1,FRectF(0,0,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,NONAME);
 
 
-						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,600), titlenm );
+						D2DControls* x = CreateStockChart((D2DControls*)h2.p,  FSizeF(1200,650), titlenm );
 
 						D2DColor clr(D2RGB(250,250,250));
 						LPCWSTR cb = _strformat(L"mode=1&title=%s&bkcolor=%d",  titlenm, clr.ToInt());

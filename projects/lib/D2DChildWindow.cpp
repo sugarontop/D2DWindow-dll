@@ -45,6 +45,8 @@ void D2DChildWindow::Draw(D2DContext& cxt)
 
 	mat_ = mat.PushTransform();
 
+	//D2DRectFilter f(cxt, rc_);
+
 	if ( window_mode_ == 1 )
 		mini_window_->Draw(cxt);
 	else
@@ -87,7 +89,7 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			auto sz = rc_.Size();
 			sz.height -= TITLEBAR_HEIGHT;  // TITLEBAR_HEIGHT:26
 
-			DefWndProc(b,WM_D2D_SET_SIZE_SIZE,0,(LPARAM)&sz);
+			DefWndProc(b,WM_D2D_SET_SIZE_FROM_CHILDWINDOW,0,(LPARAM)&sz);
 
 			bl = false;
 

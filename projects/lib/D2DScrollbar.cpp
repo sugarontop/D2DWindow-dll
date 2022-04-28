@@ -40,16 +40,21 @@ float D2DScrollbar::LogicalOffset()
 	}
 	else if (max_size_ < VIEW_SIZE * 2 )
 	{
-		thumb_size_ = (max_size_-VIEW_SIZE)/2; // ‹C•ª‚Å/2
+		auto mv_size = (max_size_-VIEW_SIZE);
+		thumb_size_ = VIEW_SIZE - mv_size;
+
+		thumb_size_ = max(10.0f, thumb_size_);
+
+
 	}
-	else if (max_size_ < VIEW_SIZE * 3 )
-	{
-		thumb_size_ = 100;
-	}
-	else
-	{
-		thumb_size_ = 10;
-	}
+	//else if (max_size_ < VIEW_SIZE * 3 )
+	//{
+	//	thumb_size_ = 100;
+	//}
+	//else
+	//{
+	//	thumb_size_ = 10;
+	//}
 
 	return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
 }
