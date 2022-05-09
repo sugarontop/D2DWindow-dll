@@ -6,11 +6,21 @@
 #include "D2DMessage.h"
 #include "yahoo.h"
 #include "D2DColor.h"
+#include "sqlite3pp.h"
 
 
 using namespace V6;
 
 #define YAHOO 
+
+
+// SQLite3 /////////////////////////////////////////////////////////////////////
+#pragma comment (lib,"sqlite3")
+
+bool DbUpdateDaillyData(std::vector<std::string>& days);
+bool DbUpdateStockData( LPCSTR cd, std::vector<Rousoku>& stock);
+///////////////////////////////////////////////////////////////////////////////
+
 
 
 struct PosLenStruct
@@ -369,30 +379,6 @@ static void yahooDrawErrorMsgt(D2DContext& cxt, long result)
 
 }
 
-//void yahooDrawAverageLine(D2DContext& cxt, int idx, ChartInfo& chi, std::vector<Rousoku>& adj_values)
-//{
-//	float x = chi.first_x;
-//	const float Roudoku_width = 4.0f;
-//
-//	for(WORD i= chi.first_idx; i < chi.last_idx; i++ )
-//	{
-//		auto y = adj_values[i];
-//
-//		
-//
-//		for(int i = 0; i < 2; i++ )
-//		{
-//			float avg_ypos = chi.convet_func( y.average[i] );
-//
-//			auto rc = FRectF(x+1, avg_ypos-1.0f, x+2, avg_ypos+1.0f);
-//			(*cxt)->FillRectangle(rc, cxt.black_);
-//		}
-//
-//		x += Roudoku_width;
-//	}
-//}
-
-
 static void yahooDrawLine(D2DContext& cxt,ChartInfo& chinfo, std::vector<Rousoku>& adj_values)
 {
 	float fstart,fend;
@@ -487,7 +473,7 @@ void CalcAverage(UINT idx,UINT period, std::vector<Rousoku>& ar)
 
 
 
-bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates )
+bool CreateRousokuFromtStream(LPCSTR cd, IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates )
 {
 	ULONG len;
 	LRESULT hr=0;
@@ -526,6 +512,9 @@ bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std
 			r.yend = myatof(kstr, cols[4]);
 			r.ymin = myatof(kstr, cols[3]);
 			r.ymax = myatof(kstr, cols[2]);
+
+			lstrcpyA(r.date, mysubstr(kstr, cols[0]).c_str());
+
 			r.xpos = i-1;
 
 			adj_values.push_back(r);
@@ -533,10 +522,14 @@ bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std
 		}
 	}
 	
+	// SQLLite3 database
+
+	DbUpdateStockData(cd,  adj_values);
+	DbUpdateDaillyData(dates);
+
 	return true;
-
-
 }
+
 void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values)
 {
 	if ( info )
@@ -561,3 +554,78 @@ void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz,
 	}
 }
 
+
+bool DbUpdateDaillyData(std::vector<std::string>& days)
+{
+	try
+	{
+		sqlite3pp::database db("stock.db");
+		sqlite3pp::transaction xct(db);
+		
+		sqlite3pp::command cmd(
+			db, "insert into daily_data(nox,dt) select ?1, ?2 where not exists (select * from daily_data where dt=?2)");
+		
+		for(auto& it : days )
+		{
+			sqlite3pp::query qry(db, "SELECT max(nox) FROM daily_data");
+			sqlite3pp::query::iterator i = qry.begin();
+			int nox = (*i).get<int>(0);
+
+			cmd.bind(1, nox+1);
+			cmd.bind(2, it.c_str());
+			
+
+			cmd.execute();
+
+			cmd.reset();
+		}
+		
+		xct.commit();
+
+	}
+	catch( sqlite3pp::database_error str)
+	{
+		return false;
+	}
+
+	return true;
+}
+bool DbUpdateStockData( LPCSTR cd, std::vector<Rousoku>& stock)
+{
+	try
+	{
+		sqlite3pp::database db("stock.db");
+		sqlite3pp::transaction xct(db);
+		
+		sqlite3pp::command cmd(
+			db, "insert into kabu_data(dt,cd,m1,m2,m3,m4,vol) select ?1,?2,?3,?4,?5,?6,?7 where not exists (select * from kabu_data where dt=?1 and cd=?2)"); 
+		
+		for(auto& it : stock )
+		{
+			cmd.bind(1, it.date);
+			cmd.bind(2, cd);
+			cmd.bind(3, it.ystart);
+			cmd.bind(4, it.ymax);
+			cmd.bind(5, it.ymin);
+			cmd.bind(6, it.yend);
+			cmd.bind(7, 0);
+			
+
+			cmd.execute();
+
+			cmd.reset();
+		}
+		
+		xct.commit();
+	}
+	catch( sqlite3pp::database_error str)
+	{
+		auto s = str;
+
+		return false;
+	}	
+
+	return true;
+
+
+}

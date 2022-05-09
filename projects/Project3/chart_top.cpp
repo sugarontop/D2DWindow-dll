@@ -16,7 +16,7 @@ using namespace V6;
 //bitcoin: https://www.blockchain.com/charts/market-price
 
 void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values);
-bool CreateRousokuFromtStream(IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
+bool CreateRousokuFromtStream(LPCSTR cd, IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
 void WriteData( LPCWSTR fnm, IStream* psm);
 
 
@@ -163,6 +163,11 @@ LRESULT TDChart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 					std::shared_ptr<InternetInfo> ainfo(info, [](InternetInfo* p){ DeleteInternetInfo(p); });
 
 
+
+
+
+
+
 					ch->SetInfo(ainfo);
 					ch->GenerateGraph();
 
@@ -251,13 +256,15 @@ void TDChart::GenerateGraph()
 
 	
 	std::vector<std::string> dates;
+
+
+	char cd1[1024]={};
+	::WideCharToMultiByte(CP_ACP,0,cd_.c_str(), cd_.length(), cd1, 1024,nullptr,nullptr);
 	
-	CreateRousokuFromtStream(info_->pstream,rousoku_ar_,dates);
+	CreateRousokuFromtStream(cd1, info_->pstream,rousoku_ar_,dates);
 
 	WriteData(L"stock.bin", info_->pstream );
 
-//	rc_.SetWidth( (rousoku_ar_.size()+5) * 4.0f);
-	
 	memo_ = cb;
 
 	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
