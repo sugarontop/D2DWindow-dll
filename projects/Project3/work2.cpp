@@ -437,15 +437,12 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			{
 				D2DNMHDR& pm = *(D2DNMHDR*)lParam;
 
-
 				if ( pm.code == EVENTID_SELECTCHANGED )
 				{
 					int idx = pm.prm1;
 
-
-					m->event_ar[idx](L"xxx");
-
-					//CreateStockChartWindow( idx );
+					if ( idx < m->event_ar.size() )
+						m->event_ar[idx](L"xxx");
 				}
 
 				r = 1;

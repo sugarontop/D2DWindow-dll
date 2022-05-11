@@ -19,6 +19,7 @@ using namespace V6;
 
 bool DbUpdateDaillyData(std::vector<std::string>& days);
 bool DbUpdateStockData( LPCSTR cd, std::vector<Rousoku>& stock);
+bool DbReadStockData( LPCSTR cd, IStream** ppout);
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -188,6 +189,8 @@ float CalcPlotStepLine( float fmax, float fmin, float* calc_fstart, float* calc_
 ULONG yahoo_chart_period(int yyyy, int mm, int dd );
 bool ReadData( LPCWSTR fnm, IStream** psm);
 
+std::string W2A(std::wstring s);
+std::wstring A2W(std::string s);
 
 void inetStockDataDownload(std::wstring cd, std::function<void(InternetInfo*)> complete_func)
 {
@@ -211,16 +214,28 @@ void inetStockDataDownload(std::wstring cd, std::function<void(InternetInfo*)> c
 	::CreateThread(0,0,InetAsync, info, 0, &dw);
 
 #else
-	IStream* sm = nullptr;
+	//IStream* sm = nullptr;
 
-	if ( ReadData( L"stock.bin", &sm) && sm)
+	//if ( ReadData( L"stock.bin", &sm) && sm)
+	//{
+	//	info->url = nullptr;
+	//	info->result = 200;
+	//	info->pstream = sm;
+
+	//	complete_func(info);
+	//}
+
+	IStream* sm2 = nullptr;
+	if (DbReadStockData( W2A(cd).c_str(), &sm2))
 	{
 		info->url = nullptr;
 		info->result = 200;
-		info->pstream = sm;
+		info->pstream = sm2;
 
 		complete_func(info);
 	}
+
+
 #endif
 }
 
@@ -473,15 +488,17 @@ void CalcAverage(UINT idx,UINT period, std::vector<Rousoku>& ar)
 
 
 
-bool CreateRousokuFromtStream(LPCSTR cd, IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates )
+bool CreateRousokuFromtStream(LPCSTR cd, bool bSave, IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates )
 {
 	ULONG len;
 	LRESULT hr=0;
 	char cb[64];
 
+	adj_values.clear();
+	dates.clear();
+
 	std::stringstream sm;
 
-	
 	ism->Seek({0},STREAM_SEEK_SET, nullptr);
 
 	do
@@ -503,7 +520,7 @@ bool CreateRousokuFromtStream(LPCSTR cd, IStream* ism,std::vector<Rousoku>& adj_
 	{
 		auto cols = SplitEx(r.c_str(), ",");
 
-		if (i++ > 0)
+		if (i++ > 0 &&  !cols.empty())
 		{
 			auto kstr = r.c_str();
 
@@ -522,36 +539,36 @@ bool CreateRousokuFromtStream(LPCSTR cd, IStream* ism,std::vector<Rousoku>& adj_
 		}
 	}
 	
-	// SQLLite3 database
-
-	DbUpdateStockData(cd,  adj_values);
-	DbUpdateDaillyData(dates);
+	if ( bSave )
+	{
+		// SQLLite3 database
+		DbUpdateStockData(cd,  adj_values);
+		DbUpdateDaillyData(dates);
+	}
 
 	return true;
 }
 
 void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values)
 {
-	if ( info )
+	if ( !adj_values.empty())
 	{
-		if ( info->result == 200 )
-		{
-			D2DRectFilter f(cxt,FRectF(0,0, vsz));
+		D2DRectFilter f(cxt,FRectF(0,0, vsz));
 
-			auto chi = yahooDrawChart(cxt,vsz,adj_values);
+		auto chi = yahooDrawChart(cxt,vsz,adj_values);
 
 			
-			//yahooDrawAverageLine(cxt,0,chi,adj_values);
+		//yahooDrawAverageLine(cxt,0,chi,adj_values);
 
-			yahooDrawLine(cxt,chi,adj_values);
+		yahooDrawLine(cxt,chi,adj_values);
 
-			yahooDrawString(cxt,cd,chi,adj_values);
-		}
-		else
-		{
-			yahooDrawErrorMsgt(cxt, info->result);			
-		}
+		yahooDrawString(cxt,cd,chi,adj_values);
 	}
+	else
+	{
+		yahooDrawErrorMsgt(cxt, -1);			
+	}
+
 }
 
 
@@ -628,4 +645,57 @@ bool DbUpdateStockData( LPCSTR cd, std::vector<Rousoku>& stock)
 	return true;
 
 
+}
+bool DbReadStockData( LPCSTR cd, IStream** ppout)
+{
+	try {
+	
+		sqlite3pp::database db("stock.db");
+
+
+		std::string sql = "select dt,m1,m2,m3,m4 from kabu_data where cd='";
+		sql += cd;
+		sql += "'";
+
+		sqlite3pp::query qry(db, sql.c_str());
+
+
+		std::stringstream sm;
+
+		sm << 'date' << ',' << 'm1' << ',' << 'm2' << ',' << 'm3' << ',' << 'm4' << '\n';
+	
+		for(auto i = qry.begin(); i != qry.end(); i++ )
+		{
+			auto dte = (*i).get<std::string>(0);
+			auto q1 = (*i).get<float>(1);
+			auto q2 = (*i).get<float>(2);
+			auto q3 = (*i).get<float>(3);
+			auto q4 = (*i).get<float>(4);
+
+			sm << dte << ',' << q1 << ',' << q2 << ',' << q3 << ',' << q4 << '\n';
+
+		}
+
+		ComPTR<IStream> is;
+		auto r = CreateStreamOnHGlobal(NULL,FALSE,&is );
+
+		auto s = sm.str();
+		auto slen = s.length();
+		ULONG dw;
+
+		is->Write(s.c_str(), slen,&dw);
+
+		is->AddRef();
+		*ppout = is;
+
+	}
+	catch( sqlite3pp::database_error str)
+	{
+		auto s = str;
+
+		return false;
+	}	
+
+
+	return true;
 }

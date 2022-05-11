@@ -37,6 +37,7 @@ namespace V6
 
 				void SetInfo(std::shared_ptr<InternetInfo> info);
 				void GenerateGraph();
+				void GenerateGraph2(LPCWSTR cd);
 				void Clear();
 				void Error(std::wstring err);
 
@@ -44,14 +45,9 @@ namespace V6
 				void Detach();
 			protected :
 				//InternetInfo* info_;
-				std::shared_ptr<InternetInfo> info_;
-				
-
+				std::shared_ptr<InternetInfo> info_;				
 				std::wstring memo_, error_, cd_;
-
 				std::vector<Rousoku> rousoku_ar_;
-
-
 		};
 
 		class TDChartButtons: public D2DControls
@@ -69,6 +65,10 @@ namespace V6
 				std::wstring key_;
 				int running_mode_;
 				D2DControls* chart_;
+
+			protected :
+				void LoadDataFromDB();
+				void LoadDataInternet();
 		};
 
 		class TDList : public D2DControls

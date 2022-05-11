@@ -526,3 +526,21 @@ namespace sqlite3pp
 
 
 }
+
+#include <Windows.h>
+
+std::string W2A(std::wstring s)
+{
+	int len = ::WideCharToMultiByte(CP_ACP,0,s.c_str(),s.length(),nullptr,0,nullptr,nullptr);
+	std::unique_ptr<char[]> cb(new char[len]);
+	::WideCharToMultiByte(CP_ACP,0,s.c_str(),s.length(), cb.get(), len,nullptr,nullptr);
+	return std::string(cb.get(),len);	
+}
+
+std::wstring A2W(std::string s)
+{
+	int wlen = ::MultiByteToWideChar(CP_ACP,0,s.c_str(),s.length(),nullptr,0);
+	std::unique_ptr<WCHAR[]> wcb(new WCHAR[wlen]);
+	::MultiByteToWideChar(CP_ACP,0,s.c_str(),s.length(), wcb.get(), wlen);
+	return std::wstring(wcb.get(),wlen);	
+}

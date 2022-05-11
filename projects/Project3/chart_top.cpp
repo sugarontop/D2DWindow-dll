@@ -16,7 +16,7 @@ using namespace V6;
 //bitcoin: https://www.blockchain.com/charts/market-price
 
 void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values);
-bool CreateRousokuFromtStream(LPCSTR cd, IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
+bool CreateRousokuFromtStream(LPCSTR cd, bool bSave, IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
 void WriteData( LPCWSTR fnm, IStream* psm);
 
 
@@ -222,7 +222,11 @@ void TDChart::Draw(D2DContext& cxt)
 	{
 		//yahooDraw(cxt,info_.get(),rc_.Size(), rousoku_ar_);
 
-		yahooDraw(cxt, cd_,  info_.get(),rc_.Size(), rousoku_ar_);
+		if ( info_.get() && info_.get()->result == 200 )
+			yahooDraw(cxt, cd_, nullptr,rc_.Size(), rousoku_ar_);
+		else if ( info_.get() == nullptr )
+			yahooDraw(cxt, cd_, nullptr,rc_.Size(), rousoku_ar_);
+
 	}
 
 
@@ -261,7 +265,7 @@ void TDChart::GenerateGraph()
 	char cd1[1024]={};
 	::WideCharToMultiByte(CP_ACP,0,cd_.c_str(), cd_.length(), cd1, 1024,nullptr,nullptr);
 	
-	CreateRousokuFromtStream(cd1, info_->pstream,rousoku_ar_,dates);
+	CreateRousokuFromtStream(cd1,true, info_->pstream,rousoku_ar_,dates);
 
 	WriteData(L"stock.bin", info_->pstream );
 
@@ -270,7 +274,27 @@ void TDChart::GenerateGraph()
 	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
 
 }
+bool DbReadStockData( LPCSTR cd, IStream** ppout);
+std::string W2A(std::wstring s);
 
+void TDChart::GenerateGraph2(LPCWSTR cd)
+{
+	auto acd = W2A(cd);
+
+	std::vector<std::string> dates;
+
+	ComPTR<IStream> sm;
+	if ( DbReadStockData( acd.c_str(), &sm))
+		CreateRousokuFromtStream(acd.c_str(),false, sm, rousoku_ar_, dates);
+	
+	memo_ = L"from db";
+	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
+
+
+
+	
+	
+}
 
 void TDChart::GenerateBitmap()
 {
@@ -443,7 +467,11 @@ void TDChartButtons::Draw(D2DContext& cxt)
 	}
 
 	if ( GetLocalName() == NR(L"td_top_bar",key_))
+	{
 		cxt.DText(btnar_[1].LeftTop(0,5), L"*Seek*");
+		cxt.DText(btnar_[2].LeftTop(0,5), L"*DbSeek*");
+	}
+
 
 	if ( running_mode_ == 1 )
 	{
@@ -468,37 +496,58 @@ void TDChartButtons::OnClick(int mode)
 	if ( mode == 1 )
 	{
 		// seek
-
-		auto complete = [this](InternetInfo* info)
-		{
-			parent_window_->PostMessage(WM_MYAPP_INET_COMPLETE, (WPARAM)this, (LPARAM)info);
-		};
-
-		UIHandleWin hw={};
-		hw.p = parent_window_;
-
-		UIHandle t;
-		t.p = this;
-
-		//std::wstring nm = D2DGetName(D2DGetParent(t));
-		//nm += L"@";
-		//nm += NR(L"td_stock_cd",key_);
-
-		std::wstring nm = GetGlobalName(t,NR(L"td_stock_cd",key_));
-
-		auto tx = D2DGetControlFromName(hw, nm.c_str()); // NR(L"td_stock_cd", key_));
-		
-
-		BSTR cd = D2DGetText(tx, true );
-
-		inetStockDataDownload( cd, complete );
-
-
-		::SysFreeString(cd);
-
-		running_mode_ = 1;
+		LoadDataInternet();
+	}
+	else if ( mode == 2 )
+	{
+		// The Data load from Database.
+		LoadDataFromDB();
 	}
 }
+
+bool DbReadStockData( LPCSTR cd, IStream** ppout);
+std::string W2A(std::wstring s);
+
+void TDChartButtons::LoadDataFromDB()
+{
+	UIHandle t;
+	t.p = this;
+	UIHandleWin hw={};
+	hw.p = parent_window_;
+
+	std::wstring nm = GetGlobalName(t,NR(L"td_stock_cd",key_));
+	auto tx = D2DGetControlFromName(hw, nm.c_str());
+	BSTR cd = D2DGetText(tx, true );
+
+
+	((TDChart*)chart_)->GenerateGraph2(cd);
+
+}
+void TDChartButtons::LoadDataInternet()
+{
+	auto complete = [this](InternetInfo* info)
+	{
+		parent_window_->PostMessage(WM_MYAPP_INET_COMPLETE, (WPARAM)this, (LPARAM)info);
+	};
+
+	UIHandleWin hw={};
+	hw.p = parent_window_;
+
+	UIHandle t;
+	t.p = this;
+
+	std::wstring nm = GetGlobalName(t,NR(L"td_stock_cd",key_));
+
+	auto tx = D2DGetControlFromName(hw, nm.c_str());
+	BSTR cd = D2DGetText(tx, true );
+
+	inetStockDataDownload( cd, complete );
+
+	::SysFreeString(cd);
+
+	running_mode_ = 1;
+}
+
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////////
 TDList::TDList()
