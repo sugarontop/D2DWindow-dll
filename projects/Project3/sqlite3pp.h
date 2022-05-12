@@ -307,4 +307,10 @@ namespace sqlite3pp
 
 } // namespace sqlite3pp
 
+
+
+
+std::string W2A(std::wstring s);
+std::wstring A2W(std::string s);
+
 #endif

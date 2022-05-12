@@ -45,7 +45,7 @@ struct BobInstance
 	static LRESULT df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
-
+void CreatePage2(UIHandle h2);
 
 UIHandleWin CreateControl(HWND hWnd)
 {
@@ -254,9 +254,11 @@ D2DControls* CreateWealthNaviStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR
 
 bool CreateBitmapListboxItem(ID2D1RenderTarget* rt,UINT w, UINT h, std::wstring titlenm, ID2D1Bitmap** pbmp);
 void ShowToolListBox(UIHandle h, bool bShow);
+void SqlCommandRun(UIHandleWin hwin);
 
 #define TOOL_BTN		1001
 #define TOOL_LISTBOX	1002
+#define SQL_RUN			1003
 
 LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -311,7 +313,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 
 
-			LPCWSTR nm[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN",L"WEALTH_NAVI"};
+			LPCWSTR nm[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN",L"ROBO_ADVISER"};
 
 			FRectF rcs(50,80,FSizeF(150,40));
 
@@ -324,7 +326,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 				LPCWSTR titlenm = nm[i];
 
-				if ( !wcscmp(titlenm, L"WEALTH_NAVI"))
+				if ( !wcscmp(titlenm, L"ROBO_ADVISER"))
 				{
 					//page1 ボタンをPUSHした時の挙動
 					auto push1 = [hP1c, titlenm, htabc21](std::wstring)
@@ -366,14 +368,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 						D2DSendMessage(h1, WM_D2D_SET_SIZE,0,0);
 
 
-						// bitmapがitemのlistboxを作成
-						/*auto xh = D2DGetControlFromName( D2DGetWindow(hP1c), L"#list_bmp");
-						ComPTR<ID2D1Bitmap> bmp;
-						auto main_rt = D2DGetRenderTarget(hP1c);
-						if ( CreateBitmapListboxItem(main_rt,200,30,titlenm, &bmp))
-							D2DAddBitmapItem(xh, bmp);*/
-
-
+						
 
 						// page2 作り直し
 
@@ -382,9 +377,12 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 						if ( hm.p )
 							D2DDestroyControl(hm);
 
-						h2 = D2DCreateControlsWithScrollbar(htabc21,FRectF(100,100,FSizeF(0,0)),STAT_DEFAULT|STAT_IGNORE_SIZE,L"#msft");
+						h2 = D2DCreateControlsWithScrollbar(htabc21,FRectF(100,100,FSizeF(1200,1000)),STAT_DEFAULT|STAT_IGNORE_SIZE,L"#msft");
 
-						x = CreateSolidStockChart((D2DControls*)h2.p, L"not",  FRectF(0,0,FSizeF(1200,680)), titlenm );					
+						//x = CreateSolidStockChart((D2DControls*)h2.p, L"not",  FRectF(0,0,FSizeF(1200,680)), titlenm );					
+						CreatePage2(h2);
+					
+
 						D2DSendMessage(h2, WM_D2D_SET_SIZE, 4,0);
 					
 
@@ -447,6 +445,16 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 
 				r = 1;
 			}
+			else if (SQL_RUN == wParam)
+			{
+				
+				auto h = D2DGetWindow(m->hme);
+				
+				SqlCommandRun(h);
+
+
+				r = 1;
+			}
 		}
 		break;
 		case WM_D2D_SMOOTH_COMPLETE:
@@ -467,7 +475,7 @@ LRESULT BobInstance::df2(LPVOID captureobj, AppBase& b, UINT message, WPARAM wPa
 			}
 			else if ( lParam == 10)
 			{
-
+				
 				r = 1;
 			}
 		}
@@ -517,7 +525,7 @@ void ShowToolListBox( UIHandle hP1c, bool bShow)
 			
 		// itemの指定
 		D2DColor clrs[] = {D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255),D2RGB(0,255,0),D2RGB(255,255,0),D2RGB(0,255,255)};
-		LPCWSTR nmstock[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN",L"WEALTH_NAVI"};
+		LPCWSTR nmstock[] = {L"VTI",L"MSFT",L"GOOG",L"AAPL",L"AMZN",L"ROBO_ADVISER"};
 
 
 		// メモリ上のRnderTargetで使用するフォント作成
@@ -684,4 +692,74 @@ bool CreateBitmapListboxItem(ID2D1RenderTarget* main_rt,UINT w, UINT h, std::wst
 		*pbmp = bmp2;
 
 		return true;
+}
+
+void CreatePage2(UIHandle handle)
+{
+	auto h1 = D2DCreateTextbox(handle, FRectF(100,100,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_input" );
+
+	D2DSetText(h1, L"select * from sqlite_master;");
+
+	auto h2 = D2DCreateTextbox(handle, FRectF(100,500,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_output" );
+	//D2DSetop
+
+	auto b1 = D2DCreateButton(handle, FRectF(100,420, FSizeF(100,26)), STAT_DEFAULT, L"Run", SQL_RUN);
+
+	
+
+
+}
+
+#include "sqlite3pp.h"
+
+void SqlCommandRun(UIHandleWin hwin)
+{
+	try
+	{
+		sqlite3pp::database db("stock.db");
+
+		auto h1 = D2DGetControlFromName( hwin, L"#sql_input");
+
+		auto cqry = D2DGetText(h1,true);
+
+		std::string sql = W2A( std::wstring(cqry));
+
+		sqlite3pp::query qry(db, sql.c_str());
+
+		int colcnt = qry.column_count();
+
+		std::wstringstream sm;
+		for(int c = 0; c < colcnt; c++ )
+		{
+			sm << A2W(qry.column_name(c));
+			sm << L"    ";
+		}
+		sm << L"\n";
+		
+		for(auto i = qry.begin(); i != qry.end(); i++ )
+		{						
+			for(int c = 0; c < colcnt; c++ )
+			{
+				int ctyp = (*i).column_type(c);
+				
+				if ( ctyp != 5 ) {
+					auto col = (*i).get<std::string>(c);
+					sm << A2W(col);
+					sm << L"    ";
+				}
+			}
+			sm << L"\n";
+		}
+
+		D2DSetText(D2DGetControlFromName( hwin, L"#sql_output"), sm.str().c_str());
+
+
+	}
+	catch( sqlite3pp::database_error er)
+	{
+		auto s = A2W(er.what());
+
+		D2DSetText(D2DGetControlFromName( hwin, L"#sql_output"),  s.c_str());
+	}
+
 }
