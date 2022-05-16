@@ -189,6 +189,7 @@
     <ClInclude Include="..\lib\D2DMessage.h" />
     <ClInclude Include="..\lib\D2DGridView.h" />
     <ClInclude Include="..\lib\D2DSimpleListbox.h" />
+    <ClInclude Include="..\lib\D2DSqlDataGrid.h" />
     <ClInclude Include="..\lib\D2DWhiteControl.h" />
     <ClInclude Include="..\lib\D2DWhiteWindow.h" />
     <ClInclude Include="..\lib\D2DXXXControls.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="..\lib\D2DGridView.cpp" />
     <ClCompile Include="..\lib\D2DScrollbar.cpp" />
     <ClCompile Include="..\lib\D2DSimpleListbox.cpp" />
+    <ClCompile Include="..\lib\D2DSqlDataGrid.cpp" />
     <ClCompile Include="..\lib\D2DSquarePaper.cpp" />
     <ClCompile Include="..\lib\D2DStatic.cpp" />
     <ClCompile Include="..\lib\D2DTabControls.cpp" />

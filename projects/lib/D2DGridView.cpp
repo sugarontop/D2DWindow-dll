@@ -39,6 +39,8 @@ void D2DGridView::Draw(D2DContext& cxt)
 		(*cxt)->CreateSolidColorBrush(fore_, &fore);	
 		(*cxt)->CreateSolidColorBrush(back_, &back);
 
+
+
 		D2DMatrix mat(*cxt);
         mat.PushTransform();
 

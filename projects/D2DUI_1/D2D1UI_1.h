@@ -50,6 +50,7 @@ DLLEXPORT UIHandle WINAPI D2DGetControlFromIdx(UIHandle hctrls, USHORT idx);
 DLLEXPORT bool WINAPI D2DIsControls(UIHandle h);
 
 DLLEXPORT void WINAPI D2DInnerDraw(UIHandle h, LPVOID cxt);
+DLLEXPORT UIHandle WINAPI D2DCreateSqlDataGrid(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id );
 
 
 DLLEXPORT UIHandle WINAPI D2DCreateImage(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id=-1 );

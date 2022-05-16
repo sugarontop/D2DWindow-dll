@@ -696,17 +696,13 @@ bool CreateBitmapListboxItem(ID2D1RenderTarget* main_rt,UINT w, UINT h, std::wst
 
 void CreatePage2(UIHandle handle)
 {
-	auto h1 = D2DCreateTextbox(handle, FRectF(100,100,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_input" );
+	auto h1 = D2DCreateTextbox(handle, FRectF(100,50,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_input" );
 
-	D2DSetText(h1, L"select * from sqlite_master;");
+	D2DSetText(h1, L"select * from kabu_data where cd='VTI';" );// sqlite_master;");
 
-	auto h2 = D2DCreateTextbox(handle, FRectF(100,500,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_output" );
-	//D2DSetop
+	auto h2 = D2DCreateSqlDataGrid(handle, FRectF(100,400,FSizeF(1000,300)), STAT_DEFAULT, L"#sql_output",-1 );
 
-	auto b1 = D2DCreateButton(handle, FRectF(100,420, FSizeF(100,26)), STAT_DEFAULT, L"Run", SQL_RUN);
-
-	
-
+	auto b1 = D2DCreateButton(handle, FRectF(100,370, FSizeF(100,26)), STAT_DEFAULT, L"Run", SQL_RUN);
 
 }
 
@@ -731,8 +727,10 @@ void SqlCommandRun(UIHandleWin hwin)
 		std::wstringstream sm;
 		for(int c = 0; c < colcnt; c++ )
 		{
-			sm << A2W(qry.column_name(c));
-			sm << L"    ";
+			if ( c!=0)
+				sm << L"\t";
+
+			sm << A2W(qry.column_name(c));			
 		}
 		sm << L"\n";
 		
@@ -742,10 +740,13 @@ void SqlCommandRun(UIHandleWin hwin)
 			{
 				int ctyp = (*i).column_type(c);
 				
-				if ( ctyp != 5 ) {
+				if ( ctyp != 5 ) 
+				{
+					if ( c!=0)
+						sm << L"\t";
+
 					auto col = (*i).get<std::string>(c);
-					sm << A2W(col);
-					sm << L"    ";
+					sm << A2W(col);					
 				}
 			}
 			sm << L"\n";

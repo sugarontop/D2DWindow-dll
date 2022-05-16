@@ -23,6 +23,7 @@
 #include "D2DGridView.h"
 #include "D2DLogin.h"
 #include "D2DInstance.h"
+#include "D2DSqlDataGrid.h"
 
 using namespace V6;
 #define  APP (D2DApp::GetInstance())
@@ -208,6 +209,27 @@ DLLEXPORT UIHandle WINAPI D2DCreateGridView(UIHandle hctrls, const D2D1_RECT_F& 
 	r.typ = TYP_GRIDVIEW;
 	return r;
 }
+
+DLLEXPORT UIHandle WINAPI D2DCreateSqlDataGrid(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
+{
+	_ASSERT(hctrls.p);
+
+	auto pgtx = std::make_shared<D2DSqlDataGrid>();
+
+	auto ctrls = (D2DControls*)hctrls.p;
+	auto win = ctrls->GetParent();
+
+	pgtx->CreateControl(win, ctrls, rc, stat, name, id );
+	ctrls->Add(pgtx);	
+
+	UIHandle r;
+	r.p = pgtx.get();
+	r.typ = TYP_SQLDATAGRID;
+	return r;
+}
+
+
+
 DLLEXPORT UIHandle WINAPI D2DCreateLogin(UIHandle hctrls, const D2D1_RECT_F& rc, DWORD stat, LPCWSTR name, int id )
 {
 	_ASSERT(hctrls.p);
@@ -934,6 +956,12 @@ DLLEXPORT void WINAPI D2DSetText( UIHandle h, LPCWSTR str )
 		auto tx = static_cast<D2DTextbox*>( D2DCastControl(h));
 		tx->Clear();
 		tx->SetText(str, wcslen(str) );
+	}
+	else if ( h.typ == TYP_SQLDATAGRID )
+	{
+		auto tx = static_cast<D2DSqlDataGrid*>( D2DCastControl(h));
+		tx->Clear();
+		tx->SetData(str );
 	}
 	else if ( h.typ == TYP_BUTTON )
 	{
