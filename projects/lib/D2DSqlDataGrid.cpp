@@ -6,60 +6,117 @@ using namespace V6;
 
 #define NO_WIDTH 40.0f
 #define ROW_HEIGHT 24.0f
+#define HEADER_HEIGHT ROW_HEIGHT
+#define ALL_CELL -1
 
 static std::wstring CNo(UINT no);
 static std::vector<std::wstring> Split(const std::wstring& str, LPCWSTR split);
 static void DrawCell(D2DContext& cxt, const std::wstring& s,float xpos, float width, ID2D1SolidColorBrush* text,ID2D1SolidColorBrush* back, ID2D1SolidColorBrush* line);
+ComPTR<ID2D1SolidColorBrush> MakeColor(ID2D1DeviceContext* pcxt, ColorF clr);
+
+#define mk_color(clr)	MakeColor(*cxt,clr)
+
 
 void D2DSqlDataGrid::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
 {
 	D2DControl::InnerCreateWindow(parent,pacontrol,stat,name,local_id);
 
 	fore_ = ColorF::Black;
-	back_ = ColorF::White;
-	row_first_ = 0;
+	back_ = ColorF::White;	
 	rc_ = rc;
+
+	FRectF rc1(0,0,BARW,100); 
+	auto scV = std::make_shared<D2DScrollbar>();
+	scV->CreateControl(parent, this, rc1,0, NONAME );
+	this->Add(scV);
+	scv_ = scV;
+	vrow_top_ = 0;
+	vscroll_x_ = 0;
+	select_row_col_ = {};
+
+	scV->SetMaxSize(rc_.Height()-HEADER_HEIGHT);
+	
 }
 void D2DSqlDataGrid::Clear()
 {
 	colnms_.clear();
 	rows_.clear();
+	select_row_col_ = {};
+	vrow_top_ = 0;
 }
 void D2DSqlDataGrid::Draw(D2DContext& cxt)
 {
 	if (BITFLG(STAT_VISIBLE))
     {	
 		D2DRectFilter f(cxt, rc_);
-
 		(*cxt)->FillRectangle(rc_,cxt.white_);
 		
-		
 		D2DMatrix mat(*cxt);
-		mat.PushTransform();
+		mat_ = mat.PushTransform();
 		mat.Offset(rc_);
+		{		
+			mat.PushTransform();
 
-		DrawTitle(cxt);
+				DrawTitle(cxt);
 
-		mat.Offset(0,ROW_HEIGHT);
+				mat.Offset(0,ROW_HEIGHT);
 
-		DrawRowData(cxt);
+				vrow_top_ =  (int)(scv_->LogicalOffset() / ROW_HEIGHT);
+			
+				DrawRowData(cxt);
 
+			mat.PopTransform();
+		
+
+			mat.PushTransform();	
+				mat.Offset(vscroll_x_, HEADER_HEIGHT );
+				scv_->Draw2(cxt);
+			mat.PopTransform();
+		}
 		mat.PopTransform();
 	}
 }
+
+void D2DSqlDataGrid::SetViewMaxSize(FSizeF sz)
+{				
+	//_ASSERT((0 < sz.width) && (0 < sz.height));
+	_ASSERT((0 < sz.height));
+
+	vscroll_x_ = rc_.Width()-BARW;
+	//hscroll_x_ = 0;
+
+	scv_->SetStat(STAT_DEFAULT);
+	//sch_->SetStat(STAT_DEFAULT);
+
+	scv_->SetMaxSize( sz.height );
+	//sch_->SetMaxSize( sz.width );
+	//sch_->SetSize(rc_.Size());
+
+
+	FSizeF tsz(rc_.Size());
+	tsz.height -= HEADER_HEIGHT;
+	scv_->SetSize(tsz);
+
+	//if (sz.width <= rc_.Size().width)
+	//	sch_->SetStat(0);
+	if (sz.height <= rc_.Size().height-HEADER_HEIGHT)
+		scv_->SetStat(0);
+	
+}
+
+
 
 void D2DSqlDataGrid::DrawTitle(D2DContext& cxt)
 {
 	FPointF pt(NO_WIDTH,0);
 
-	ComPTR<ID2D1SolidColorBrush> gray;
-	(*cxt)->CreateSolidColorBrush(D2RGB(200,200,200), &gray);
-	ComPTR<ID2D1SolidColorBrush> gray2;
-	(*cxt)->CreateSolidColorBrush(D2RGB(240,240,240), &gray2);
+	auto gray = mk_color(D2RGB(200,200,200));
+	auto gray2 = mk_color(D2RGB(240,240,240));
+
 	
 	for(auto& it : colnms_ )
 	{		
-		if ( it.width ==0 )
+		if ( it.width == 0 )
 		{
 			DWRITE_TEXT_METRICS t;
 
@@ -78,39 +135,45 @@ void D2DSqlDataGrid::DrawTitle(D2DContext& cxt)
 
 void D2DSqlDataGrid::DrawRowData(D2DContext& cxt)
 {
+	if ( rows_.empty()) return;
+
 	D2DMatrix mat(*cxt);
-	UINT no = 1;
 
 	FPointF pt(0,0);
 
-	ComPTR<ID2D1SolidColorBrush> gray;
-	(*cxt)->CreateSolidColorBrush(D2RGB(200,200,200), &gray);
-	ComPTR<ID2D1SolidColorBrush> gray2;
-	(*cxt)->CreateSolidColorBrush(D2RGB(240,240,240), &gray2);
+	auto gray = mk_color(D2RGB(200,200,200));
+	auto gray2 = mk_color(D2RGB(240,240,240));
 
 	auto cnt = colnms_.size();
-	UINT ir = row_first_;
+	UINT ir = vrow_top_;
 
-	auto it = rows_.begin() + row_first_;
+	auto it = rows_.begin() + vrow_top_;
 
-	auto limit = 1 + (UINT)(rc_.Height() / ROW_HEIGHT);
+	auto limit = it->no + (UINT)(rc_.Height() / ROW_HEIGHT);
 
 	for( ; it != rows_.end(); it++ )
 	{
-		std::vector<std::wstring> cols = Split(*it, L"\t");
+		std::vector<std::wstring> cols = Split( (*it).row, L"\t");
 
 		if (cnt <= cols.size())
 		{
-
-			DrawCell(cxt, CNo(no++), pt.x, NO_WIDTH, cxt.black_, gray2, gray);
+			DrawCell(cxt, CNo((*it).no), pt.x, NO_WIDTH, cxt.black_, gray2, gray);
 			pt.x += NO_WIDTH;
 
 			UINT ci = 0;
 			for(auto& c : cols )
 			{
-				auto width = colnms_[ci++].width;
+				auto width = colnms_[ci].width;
 				DrawCell(cxt, c, pt.x, width, cxt.black_, cxt.white_, gray);
+
+				if (IsSelectedCell( it->no, ci ))
+				{
+					auto br = mk_color(D2RGBA(124,156,200,80));
+					(*cxt)->FillRectangle(FRectF(pt.x,0,pt.x+width,ROW_HEIGHT), br);
+				}
+
 				pt.x += width;
+				ci++;
 			}
 			mat.Offset(0,ROW_HEIGHT);
 			pt.x = 0;
@@ -123,21 +186,53 @@ void D2DSqlDataGrid::DrawRowData(D2DContext& cxt)
 	}
 }
 
+bool D2DSqlDataGrid::IsSelectedCell(int no, int col)
+{
+	if ( select_row_col_.r == no && select_row_col_.c == ALL_CELL )
+		return true;
+	else if ( select_row_col_.r == no && select_row_col_.c == col )
+		return true;
+	else if ( select_row_col_.r == ALL_CELL && select_row_col_.c == col ) 
+		return true;
+	else if ( select_row_col_.r == ALL_CELL && select_row_col_.c == ALL_CELL )
+		return true;
+
+	return false;
+}
+
 void D2DSqlDataGrid::SetData(LPCWSTR str)
 {
 
-	rows_ = Split(str, L"\n");
+	auto rows = Split(str, L"\n");
 
-	if ( !rows_.empty() )
+	if ( !rows.empty() )
 	{
-		auto titles = rows_[0];
+		auto titles = rows[0];
 
 		auto ar = Split(titles, L"\t");
 		
 		for(auto& it : ar )
 			AddTitle(it);
 
-		rows_.erase( rows_.begin());
+		rows.erase( rows.begin()); // ヘッダー行を削除
+		vrow_top_ = 0;
+
+		rows_.clear();
+		UINT no = 1;
+		for(auto& it : rows )
+		{
+			RowData d;
+			d.no = no++;
+			d.row = it;
+			rows_.push_back(d);
+		}
+
+
+
+		FSizeF sz;
+		sz.height = rows_.size() * ROW_HEIGHT;
+		SetViewMaxSize(sz);
+		
 	}
 
 
@@ -154,7 +249,102 @@ LRESULT D2DSqlDataGrid::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			r = 1;
 		break;
 
+		case WM_MOUSEWHEEL:
+		{
+			MouseParam* mp = (MouseParam*)lParam;
+            auto pt = mat_.DPtoLP(mp->pt);
+            auto md = (rc_.PtInRect(pt) ? 1 : 0);
 
+            if ( md == 1 )
+            {
+				r = InnerWndProc(b,message,wParam,lParam);
+
+				if( r == 0)
+				{
+					float a = 0;
+					if (mp->zDelta > 0)
+						a = -ROW_HEIGHT;
+					else if (mp->zDelta < 0)
+						 a= ROW_HEIGHT;// 10.0f;
+
+					scv_->Offset(a);
+				}
+				r = 1;
+            }
+		}
+		break;
+		case WM_LBUTTONDOWN:
+		{
+			MouseParam* mp = (MouseParam*)lParam;
+            auto pt = mat_.DPtoLP(mp->pt);
+
+			FRectF rc(rc_);
+			rc.right -= BARW;
+
+            if (rc.PtInRect(pt) )
+			{
+				if ( pt.x < rc_.left + NO_WIDTH )
+				{
+					select_row_col_.c = ALL_CELL;
+					select_row_col_.r = (int)( (pt.y-rc.top) / ROW_HEIGHT) + vrow_top_;
+				}
+				else if ( pt.y < rc_.top + HEADER_HEIGHT )
+				{
+					select_row_col_.r = ALL_CELL;
+
+					auto x = pt.x - rc.left - NO_WIDTH;
+					int c = 0;
+					for(auto& it : colnms_ )
+					{
+						if ( x < it.width )
+							break;
+						x -= it.width;
+						c++;
+					}
+					select_row_col_.c = ( c < colnms_.size() ? c : 0);
+				}
+				else
+				{
+					select_row_col_.r = (int)( (pt.y-rc.top) / ROW_HEIGHT) + vrow_top_;
+
+					auto x = pt.x - rc.left - NO_WIDTH;
+					int c = 0;
+					for(auto& it : colnms_ )
+					{
+						if ( x < it.width )
+							break;
+						x -= it.width;
+						c++;
+					}
+					select_row_col_.c = ( c < colnms_.size() ? c : 0);
+
+				}
+
+
+
+				r = 1;
+			}
+		}
+		break;
+		case WM_KEYDOWN:
+		{
+			auto key = 0xff & wParam;
+
+			if ( key == VK_ESCAPE )
+			{
+				select_row_col_ = {};
+				r = 1;
+			}
+
+		}
+		break;
+
+
+	}
+
+	if ( r == 0 ) //&& bl )
+	{
+		r = InnerWndProc(b,message,wParam,lParam);
 	}
 
 
@@ -171,7 +361,13 @@ void D2DSqlDataGrid::AddTitle(const std::wstring& title)
 }
 void D2DSqlDataGrid::AddRow(const std::wstring& row)
 {
-	rows_.push_back(row);
+	auto no = rows_.rbegin()->no;
+	
+	RowData d;
+	d.no = no+1;
+	d.row = row;
+
+	rows_.push_back(d);
 }
 
 static void DrawCell(D2DContext& cxt, const std::wstring& s,float xpos, float width, ID2D1SolidColorBrush* text,ID2D1SolidColorBrush* back, ID2D1SolidColorBrush* line)
@@ -212,4 +408,12 @@ static std::vector<std::wstring> Split(const std::wstring& str, LPCWSTR split)
         }       
     }
     return ar;
+}
+
+ComPTR<ID2D1SolidColorBrush> MakeColor(ID2D1DeviceContext* pcxt, ColorF clr)
+{
+	ComPTR<ID2D1SolidColorBrush> br;	
+	auto hr = pcxt->CreateSolidColorBrush(clr, &br);
+	_ASSERT(hr == S_OK);
+	return br;
 }

@@ -968,6 +968,11 @@ DLLEXPORT void WINAPI D2DSetText( UIHandle h, LPCWSTR str )
 		auto btn = (D2DButton*)h.p;
 		btn->SetText(str);
 	}
+	else if ( h.typ == TYP_CONTROLS )
+	{
+		auto ctrl = (D2DControls*)h.p;
+		ctrl->SetText(str);
+	}
 }
 DLLEXPORT void WINAPI D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
 {

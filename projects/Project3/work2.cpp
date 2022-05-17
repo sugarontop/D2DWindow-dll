@@ -700,9 +700,20 @@ void CreatePage2(UIHandle handle)
 
 	D2DSetText(h1, L"select * from kabu_data where cd='VTI';" );// sqlite_master;");
 
-	auto h2 = D2DCreateSqlDataGrid(handle, FRectF(100,400,FSizeF(1000,300)), STAT_DEFAULT, L"#sql_output",-1 );
-
 	auto b1 = D2DCreateButton(handle, FRectF(100,370, FSizeF(100,26)), STAT_DEFAULT, L"Run", SQL_RUN);
+	
+	
+	auto h2 = D2DCreateTabControls(handle, FRectF(100,450,FSizeF(1000,300)), STAT_DEFAULT, L"#sql", -1 );
+
+	auto h2_1 = D2DGetTab(h2,0);
+	//D2DSetText(h2_1, L"Result");
+
+	auto h3 = D2DCreateSqlDataGrid(h2_1, FRectF(0,0,FSizeF(1000,300)), STAT_DEFAULT, L"#sql_output",-1 );
+
+	//auto h2_2 = D2DAddNewTab(h2,L"message");
+
+	//D2DCreateTextbox(h2_2, FRectF(0,0,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_msg" );
+
 
 }
 

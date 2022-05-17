@@ -13,9 +13,24 @@ D2DScrollbar::D2DScrollbar()
 	offset_ = 0; 
 	max_size_ = 0;
 	view_size_ = 0;
-	thumb_size_ = 0;
+	thumb_size_ = 10;
 	other_scrollbar_size_ = 0;
 }
+void D2DScrollbar::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
+{
+	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
+	sz_ = rc.Size();
+
+	bVertical_ = ( sz_.height > sz_.width );
+
+	view_size_ = (bVertical_ ? sz_.height : sz_.width );
+	max_size_ = view_size_ ;
+	thumb_size_ = 10;
+	other_scrollbar_size_ = BARW;
+	offset_ = 0;
+}
+
+
 float D2DScrollbar::Thumheight() const
 {
 	return thumb_size_;
@@ -186,16 +201,3 @@ void D2DScrollbar::Offset( float off )
 	offset_ = min(VIEW_SIZE-thumb_size_, offset_);
 }
 
-void D2DScrollbar::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
-{
-	InnerCreateWindow(parent,pacontrol,stat,name,local_id);
-	sz_ = rc.Size();
-
-	bVertical_ = ( sz_.height > sz_.width );
-
-	view_size_ = (bVertical_ ? sz_.height : sz_.width );
-	max_size_ = view_size_ ;
-	thumb_size_ = 0;
-	other_scrollbar_size_ = BARW;
-	offset_ = 0;
-}

@@ -205,7 +205,8 @@ LRESULT D2DControls_with_Scrollbar::WndProc(AppBase& b, UINT message, WPARAM wPa
 		{
 			MouseParam* mp = (MouseParam*)lParam;
             auto pt = mat_.DPtoLP(mp->pt);
-            auto md = (rc_.ZeroRect().PtInRect(pt) ? 1 : 0);
+            //auto md = (rc_.ZeroRect().PtInRect(pt) ? 1 : 0);
+			auto md = (rc_.PtInRect(pt) ? 1 : 0);
 
             if ( md == 1 )
             {

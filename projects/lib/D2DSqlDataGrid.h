@@ -23,11 +23,13 @@ namespace V6
 		protected :
 			void DrawTitle(D2DContext& cxt);
 			void DrawRowData(D2DContext& cxt);
+			void SetViewMaxSize(FSizeF sz);
+			bool IsSelectedCell(int no, int col);
 
 		protected :
 			D2DColor fore_,back_;
 
-			UINT row_first_;
+			int vrow_top_;
 
 			struct ColumTitle
 			{
@@ -35,12 +37,25 @@ namespace V6
 				float width;
 			};
 
+			struct RowData
+			{
+				UINT no;
+				std::wstring row;
+			};
+
 			std::vector<ColumTitle> colnms_;
-			std::vector<std::wstring> rows_;
+			std::vector<RowData> rows_;
 
 			
-			D2DScrollbar vscroll_;
+			std::shared_ptr<D2DScrollbar> scv_;
+			float vscroll_x_;
 
+			struct RowCol
+			{
+				int r,c;
+			};
+
+			RowCol select_row_col_;
 
 
 	};
