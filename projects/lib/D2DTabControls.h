@@ -31,6 +31,8 @@ class D2DTabControls : public D2DControls
 		bool size_fix_;
 		D2DColor back_,fore_;
 
+		D2DMat mat2_;
+
 
 };
 

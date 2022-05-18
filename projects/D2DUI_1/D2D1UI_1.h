@@ -68,6 +68,7 @@ DLLEXPORT void WINAPI D2DReadOnly(UIHandle h, bool readonly);
 DLLEXPORT void WINAPI D2DEnable(UIHandle h, bool enable);
 
 DLLEXPORT int WINAPI D2DAddItem(UIHandle, LPCWSTR str);
+DLLEXPORT void WINAPI D2DSetTabText(UIHandle h, LPCWSTR str);
 
 DLLEXPORT DWORD WINAPI D2DGetStat(UIHandle h);
 

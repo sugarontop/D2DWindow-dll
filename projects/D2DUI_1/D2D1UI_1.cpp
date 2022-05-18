@@ -984,6 +984,18 @@ DLLEXPORT void WINAPI D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
 	}
 }
 
+DLLEXPORT void WINAPI D2DSetTabText(UIHandle h, LPCWSTR str)
+{
+	if ( h.typ == TYP_CONTROLS )
+	{
+		auto ctrl = (D2DControls*)h.p;
+		std::wstring s = L"#";
+		s += str;
+
+		ctrl->SetName(s.c_str());
+	}
+}
+
 DLLEXPORT void WINAPI D2DInsertText(UIHandle h, LPCWSTR str, int len, int start_pos)
 {
 	if (h.typ == TYP_TEXTBOX)

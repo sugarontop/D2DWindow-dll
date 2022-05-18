@@ -13,7 +13,7 @@ void D2DTabControls::Draw(D2DContext& cxt)
 {
 	D2DMatrix mat(*cxt);
 
-	mat.PushTransform();
+	mat2_ = mat.PushTransform();
 
 	mat_ = mat.Offset(rc_);
 
@@ -33,8 +33,6 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 	mat.PushTransform();
 
 	float tab_height = tabrects_[0].Height();
-
-	
 
 	USHORT k = 0;
 	for(auto& it : tabrects_)
@@ -88,14 +86,20 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 		{
 			MouseParam& pm = *(MouseParam*)lParam;
 
-			auto pt = mat_.DPtoLP(pm.pt);
+			auto pt = mat2_.DPtoLP(pm.pt);
+
+			auto nm = GetName();
 
 			if ( rc_.PtInRect(pt))
 			{
 				int k = 0;
 				auto old = tab_idx_;
+				pt = mat_.DPtoLP(pm.pt);
+
 				for(auto& it : tabrects_)
 				{
+					nm = controls_[k]->GetName();
+
 					if ( it.PtInRect(pt))
 					{
 						tab_idx_ = k;
@@ -206,23 +210,11 @@ LRESULT D2DTabControls::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 	{
 		auto ctrls = dynamic_cast<D2DControls*>(controls_[tab_idx_].get());
 
-
-		if ( message == WM_LBUTTONDOWN )
-		{
-			int a = 0;
-
-		}
-
-
-		r = ctrls->InnerWndProc(b,message,wParam,lParam);
-
-
-		//r = D2DControls::DefWndProc(b,message,wParam,lParam);
+		if ( ctrls )
+			r = ctrls->InnerWndProc(b,message,wParam,lParam);
 	}
 
-
 	return r;
-
 }
 
 #include "..\D2DUI_1\D2D1UI_1.h"
