@@ -974,14 +974,15 @@ DLLEXPORT void WINAPI D2DSetText( UIHandle h, LPCWSTR str )
 		ctrl->SetText(str);
 	}
 }
-DLLEXPORT void WINAPI D2DSetFont(UIHandle h, LPCWSTR fontnm, float height)
+DLLEXPORT bool WINAPI D2DSetFont(UIHandle h, LPCWSTR fontnm, float height, bool bold)
 {
 	if ( h.typ == TYP_TEXTBOX )
 	{
 		auto tx = static_cast<D2DTextbox*>( D2DCastControl(h));
-		tx->SetFont(fontnm, height );
+		return tx->SetFont(fontnm, height, bold );
 
 	}
+	return false;
 }
 
 DLLEXPORT void WINAPI D2DSetTabText(UIHandle h, LPCWSTR str)

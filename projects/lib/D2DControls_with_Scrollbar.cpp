@@ -5,11 +5,13 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
+#define TEST_COLOR		D2RGB(110,110,110)
+
 D2DControls_with_Scrollbar::D2DControls_with_Scrollbar()
 {
 	vscroll_x_ = 0;
 	hscroll_x_ = 0;
-	backcolor_ = DEFAULT_TAB_COLOR;
+	backcolor_ = TEST_COLOR;
 }
 
 void D2DControls_with_Scrollbar::Draw(D2DContext& cxt)

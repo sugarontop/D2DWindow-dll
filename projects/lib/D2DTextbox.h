@@ -66,7 +66,7 @@ namespace V6
 		bool GetSelectText(std::wstringstream* out, bool crlf = true);
 		void Clear();
 		void SetReadonly(bool bReadonly);
-		bool SetFont(LPCWSTR fontnm, float height);
+		bool SetFont(LPCWSTR fontnm, float height, bool bold=false);
 
 		virtual bool OnChangeFocus(bool bActive, D2DCaptureObject* pnew) ;
 		bool IsMultiline() const;
@@ -103,6 +103,7 @@ namespace V6
 		void SetMultilineText(LPCWSTR str, int len, int insert_pos );
 		void SetSinglelineText(LPCWSTR str, int len, int insert_pos );
 		void ImeActive(bool bActive);
+		void Undo();
 	public:
 		// D2DCaptureObject interface
 		virtual LRESULT WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam) override;

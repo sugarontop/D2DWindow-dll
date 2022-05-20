@@ -62,14 +62,6 @@ float D2DScrollbar::LogicalOffset()
 
 
 	}
-	//else if (max_size_ < VIEW_SIZE * 3 )
-	//{
-	//	thumb_size_ = 100;
-	//}
-	//else
-	//{
-	//	thumb_size_ = 10;
-	//}
 
 	return offset_ * (max_size_ - VIEW_SIZE)/ (VIEW_SIZE - thumb_size_);
 }

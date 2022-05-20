@@ -17,7 +17,7 @@ using namespace V6;
 
 void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz, std::vector<Rousoku>& adj_values);
 bool CreateRousokuFromtStream(LPCSTR cd, bool bSave, IStream* ism,std::vector<Rousoku>& adj_values, std::vector<std::string>& dates );
-void WriteData( LPCWSTR fnm, IStream* psm);
+
 
 
  void TDBase::CreateControl( D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id )
@@ -162,12 +162,6 @@ LRESULT TDChart::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					std::shared_ptr<InternetInfo> ainfo(info, [](InternetInfo* p){ DeleteInternetInfo(p); });
 
-
-
-
-
-
-
 					ch->SetInfo(ainfo);
 					ch->GenerateGraph();
 
@@ -213,20 +207,14 @@ void TDChart::Draw(D2DContext& cxt)
 	
 	rc.left = rc.right-55.0f;
 
-	//cxt.DText( rc.LeftTop(), L"480.00");
-
-
 	if ( error_.length() > 0)
 		cxt.DText( rc_.ZeroRect().LeftTop(), error_);	
 	else
 	{
-		//yahooDraw(cxt,info_.get(),rc_.Size(), rousoku_ar_);
-
 		if ( info_.get() && info_.get()->result == 200 )
 			yahooDraw(cxt, cd_, nullptr,rc_.Size(), rousoku_ar_);
 		else if ( info_.get() == nullptr )
 			yahooDraw(cxt, cd_, nullptr,rc_.Size(), rousoku_ar_);
-
 	}
 
 
@@ -267,7 +255,7 @@ void TDChart::GenerateGraph()
 	
 	CreateRousokuFromtStream(cd1,true, info_->pstream,rousoku_ar_,dates);
 
-	WriteData(L"stock.bin", info_->pstream );
+	//WriteData(L"stock.bin", info_->pstream );
 
 	memo_ = cb;
 
@@ -275,11 +263,13 @@ void TDChart::GenerateGraph()
 
 }
 bool DbReadStockData( LPCSTR cd, IStream** ppout);
-std::string W2A(std::wstring s);
+std::string W2A(const std::wstring& s);
 
 void TDChart::GenerateGraph2(LPCWSTR cd)
 {
 	auto acd = W2A(cd);
+
+	cd_ = cd;
 
 	std::vector<std::string> dates;
 
@@ -289,11 +279,6 @@ void TDChart::GenerateGraph2(LPCWSTR cd)
 	
 	memo_ = L"from db";
 	parent_control_->SendMesage(WM_D2D_SET_SIZE,3,0);
-
-
-
-	
-	
 }
 
 void TDChart::GenerateBitmap()
@@ -747,48 +732,48 @@ D2DControls* CreateWealthNaviStockChart(D2DControls* ctrl,  FSizeF size, LPCWSTR
 
 
 
-
-
-void WriteData( LPCWSTR fnm, IStream* psm)
-{
-	_ASSERT(psm);
-    auto h = ::CreateFile(fnm, GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,0,nullptr);
-
-	if ( h != INVALID_HANDLE_VALUE )
-	{
-		char cb[256];
-		psm->Seek({0},STREAM_SEEK_SET, nullptr);
-
-		ULONG len;
-		while ( S_OK == psm->Read(cb,256,&len) && len > 0)
-		{
-			DWORD d;
-		    ::WriteFile(h, cb, len, &d, 0 );
-		}
-		::CloseHandle(h);
-	}
-}
-
-
-
-bool ReadData( LPCWSTR fnm, IStream** psm)
-{
-	ComPTR<IStream> sm;
-	HRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, &sm);
-	auto h = ::CreateFile(fnm, GENERIC_READ,0,nullptr,OPEN_EXISTING,0,nullptr);
-	if ( h != INVALID_HANDLE_VALUE )
-	{
-		char cb[256];
-		DWORD len;
-		while( ::ReadFile(h,cb,256, &len,nullptr) && len > 0 )
-		{
-			sm->Write(cb, len, nullptr);
-		}
-		::CloseHandle(h);
-
-		sm.AddRef();
-		*psm = sm;
-		return true;
-	}
-	return false;
-}
+//
+//
+//void WriteData( LPCWSTR fnm, IStream* psm)
+//{
+//	_ASSERT(psm);
+//    auto h = ::CreateFile(fnm, GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,0,nullptr);
+//
+//	if ( h != INVALID_HANDLE_VALUE )
+//	{
+//		char cb[256];
+//		psm->Seek({0},STREAM_SEEK_SET, nullptr);
+//
+//		ULONG len;
+//		while ( S_OK == psm->Read(cb,256,&len) && len > 0)
+//		{
+//			DWORD d;
+//		    ::WriteFile(h, cb, len, &d, 0 );
+//		}
+//		::CloseHandle(h);
+//	}
+//}
+//
+//
+//
+//bool ReadData( LPCWSTR fnm, IStream** psm)
+//{
+//	ComPTR<IStream> sm;
+//	HRESULT hr = ::CreateStreamOnHGlobal(NULL,TRUE, &sm);
+//	auto h = ::CreateFile(fnm, GENERIC_READ,0,nullptr,OPEN_EXISTING,0,nullptr);
+//	if ( h != INVALID_HANDLE_VALUE )
+//	{
+//		char cb[256];
+//		DWORD len;
+//		while( ::ReadFile(h,cb,256, &len,nullptr) && len > 0 )
+//		{
+//			sm->Write(cb, len, nullptr);
+//		}
+//		::CloseHandle(h);
+//
+//		sm.AddRef();
+//		*psm = sm;
+//		return true;
+//	}
+//	return false;
+//}

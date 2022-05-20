@@ -45,20 +45,20 @@ void D2DChildWindow::Draw(D2DContext& cxt)
 
 	mat_ = mat.PushTransform();
 
-	//D2DRectFilter f(cxt, rc_);
+//D2DRectFilter f(cxt, rc_);
 
 	if ( window_mode_ == 1 )
 		mini_window_->Draw(cxt);
 	else
 	{
-		(*cxt)->DrawRectangle(rc_, cxt.black_);// colors_[CLR::BACKCOLOR]);
+		cxt.DDrawRect(rc_, ColorF::Black, ColorF::White);
 
-		mat.Offset(rc_.LeftTop());
+		mat.Offset(rc_);
 	
 		DrawTitlebar(cxt);
 
 		mat.Offset(0,TITLEBAR_HEIGHT);
-
+		
 		for(auto& it : controls_ )
 			it->Draw(cxt);
 	}
@@ -89,7 +89,10 @@ LRESULT D2DChildWindow::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM 
 			auto sz = rc_.Size();
 			sz.height -= TITLEBAR_HEIGHT;  // TITLEBAR_HEIGHT:26
 
-			DefWndProc(b,WM_D2D_SET_SIZE_FROM_CHILDWINDOW,0,(LPARAM)&sz);
+			//DefWndProc(b,WM_D2D_SET_SIZE_FROM_CHILDWINDOW,0,(LPARAM)&sz);
+
+			InnerWndProc(b,WM_D2D_SET_SIZE_FROM_CHILDWINDOW,0,(LPARAM)&sz);
+
 
 			bl = false;
 

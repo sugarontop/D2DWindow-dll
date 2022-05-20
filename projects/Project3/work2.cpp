@@ -8,6 +8,7 @@
 #include "D2DMessage.h"
 #include "imagetool.h"
 
+
 using namespace V6;
 
 struct BobInstance
@@ -715,6 +716,8 @@ void CreatePage2(UIHandle handle)
 
 	auto h2_2_1 = D2DCreateTextbox(h2_2, FRectF(0,0,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_msg",-1, 2 ); // 2:read only
 
+	//auto h2_3 = D2DAddNewTab(h2,L"test");
+	//auto h2_3_1 = D2DCreateTextbox(h2_3, FRectF(0,0,FSizeF(1000,300)), true, STAT_DEFAULT, L"#sql_msg1",-1, 2 ); // 2:read only
 	
 
 

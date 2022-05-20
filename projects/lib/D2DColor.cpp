@@ -43,3 +43,28 @@ bool D2DColor::ColorFromString( LPCWSTR s, DWORD* ret )
 	}
 	return false;
 }
+using namespace V6::TOOL;
+
+std::wstring A2W( const std::string& s )
+{
+	int len = (int)s.length();
+	int cblen = ::MultiByteToWideChar(CP_ACP, 0, s.c_str(), len, nullptr, 0);
+	std::wstring x(cblen, L'\0');
+	::MultiByteToWideChar(CP_ACP, 0, s.c_str(), len, (LPWSTR)(LPCWSTR)x.c_str(), cblen);
+	return x;
+}
+std::string W2A( const std::wstring& s )
+{
+	int len = (int)s.length();
+	int cblen = ::WideCharToMultiByte(CP_ACP, 0, s.c_str(), len, nullptr, 0, nullptr, nullptr);
+	std::string cb(cblen, '\0');
+	::WideCharToMultiByte(CP_ACP, 0, s.c_str(), len, (LPSTR)(LPCSTR)cb.c_str(), cblen, nullptr, nullptr);
+	return cb;
+}
+ComPTR<ID2D1SolidColorBrush> TOOL::MakeColor(ID2D1DeviceContext* pcxt, ColorF clr)
+{
+	ComPTR<ID2D1SolidColorBrush> br;	
+	auto hr = pcxt->CreateSolidColorBrush(clr, &br);
+	_ASSERT(hr == S_OK);	
+	return br;
+}

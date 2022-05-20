@@ -7,6 +7,8 @@ using namespace V6;
 
 #define  APP (D2DApp::GetInstance())
 
+#define TAB_HEIGHT	26.0f
+#define TAB_WIDTH	200.0f
 
 
 void D2DTabControls::Draw(D2DContext& cxt)
@@ -37,22 +39,19 @@ float D2DTabControls::DrawTab(D2DContext& cxt, USHORT tabidx)
 	USHORT k = 0;
 	for(auto& it : tabrects_)
 	{
-		auto clr1 = D2RGB(180,180,180);
+		auto clr1 = DEFAULT_TAB_COLOR; 
 		auto clr2 = ColorF::Black;
 
 		if ( k == tabidx )
 		{
 			clr1 = DEFAULT_TAB_ACTIVE_COLOR;
 			clr2 = ColorF::White;
-
 		}
 
-		cxt.DFillRect(it, clr1);
-		auto tab_nm = this->controls_[k]->GetLocalName();
+		cxt.DDrawRect(it, ColorF::Black, clr1);
 
-
-
-		cxt.DText(FPointF(it.left+5, it.top), tab_nm.c_str(), clr2);
+		auto tab_name = this->controls_[k]->GetLocalName();
+		cxt.DText(FPointF(it.left+6, it.top), tab_name.c_str(), clr2);
 
 		k++;
 	}
@@ -260,10 +259,12 @@ void D2DTabControls::CreateControl(D2DWindow* parent, D2DControls* pacontrol, co
 			Add(page1);
 		}
 	}
+
+	// 
 	for(int i=0; i < 1; i++ )
 	{
-		FRectF rc(0,0,FSizeF(200,20));
-		rc.Offset(i*180.0f,0);
+		FRectF rc(0,0,FSizeF(TAB_WIDTH,TAB_HEIGHT));
+		rc.Offset(i*TAB_WIDTH,0);
 		tabrects_.push_back(rc);
 
 	}
@@ -296,8 +297,8 @@ D2DControls* D2DTabControls::AddNewTab(LPCWSTR tabnm)
 
 
 	auto i = tabrects_.size();
-	FRectF rc(0,0,FSizeF(200,20));
-	rc.Offset(i*180.0f,0);
+	FRectF rc(0,0,FSizeF(TAB_WIDTH,TAB_HEIGHT));
+	rc.Offset(i*TAB_WIDTH,0);
 	tabrects_.push_back(rc);
 
 	return ret;

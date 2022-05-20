@@ -174,12 +174,14 @@ float CalcPlotStepLine( float fmax, float fmin, float* calc_fstart, float* calc_
 
 	int cn = (int)(*calc_fend- *calc_fstart) / step;
 
-	if ( cn > 15 )
+	while ( cn > 10 )
 	{
 		step = step * 2;
 		
 		*calc_fstart = floor(fmin-step);
 		*calc_fend = floor(fmax+step+1);
+
+		cn = (int)(*calc_fend- *calc_fstart) / step;
 	}
 
 	return max(1.0f,step);
@@ -394,6 +396,13 @@ static void yahooDrawErrorMsgt(D2DContext& cxt, long result)
 
 }
 
+static std::wstring CStr(float v)
+{
+	WCHAR cb[64];
+	StringCbPrintf(cb,64,L"%0.0f", v);
+	return cb;
+}
+
 static void yahooDrawLine(D2DContext& cxt,ChartInfo& chinfo, std::vector<Rousoku>& adj_values)
 {
 	float fstart,fend;
@@ -418,16 +427,22 @@ static void yahooDrawLine(D2DContext& cxt,ChartInfo& chinfo, std::vector<Rousoku
 		&dotline_
 	);
 
-	float h = chinfo.vsz.height;
-	for(float yyy=fstart; yyy < fend; yyy+=plotstep )
+	for(float yvalue=fstart; yvalue < fend; yvalue+=plotstep )
 	{			
-		float ploty = h - (yyy-chinfo.fmin)*chinfo.step;
+		float ploty = chinfo.vsz.height - (yvalue-chinfo.fmin)*chinfo.step;
 
 		FPointF pt1(0,ploty);
 		FPointF pt2(chinfo.vsz.width,ploty);
 
 		(*cxt)->DrawLine(pt1,pt2,cxt.black_, futosa, dotline_);
+		
+		cxt.DText(FPointF(0,ploty), CStr(yvalue) );
 	}
+	
+	//yvalue = -(ploty - chinfo.vsz.height)/chinfo.step + chinfo.fmin;
+
+
+
 }
 
 void xDraw( D2DContext& cxt, std::wstring txt, LPCWSTR fontnm, float fontheight, ColorF clr, FPointF pt)
@@ -561,6 +576,8 @@ void yahooDraw(D2DContext& cxt, std::wstring cd, InternetInfo* info, FSizeF vsz,
 		//yahooDrawAverageLine(cxt,0,chi,adj_values);
 
 		yahooDrawLine(cxt,chi,adj_values);
+
+		// yvalue = -(ploty - chinfo.vsz.height)/chinfo.step + chinfo.fmin;
 
 		yahooDrawString(cxt,cd,chi,adj_values);
 	}

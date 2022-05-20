@@ -18,6 +18,7 @@ UIHandleWin hwin;
 
 
 void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool copy);
+static void CreateControl(HWND hWnd);
 
 
 //////////////////////////////////////
@@ -153,57 +154,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 中止メッセージを表示して戻る
 //
 //
-
-
-void test( UIHandle h)
-{
-	//auto hc = D2DCreateSimpleControls(h, FRectF(0,0, FSizeF(1000,500)),STAT_DEFAULT, L"t" );
-
-	D2DColor clr(D2RGB(170,170,170));
-
-	//auto hchart = D2DCreateControlsWithScrollbar(hc,FRectF(), STAT_DEFAULT, L"td_chart_sc");
-	//
-	//auto hc1 = D2DCreateSimpleControls(hchart, FRectF(0,0, FSizeF(1100,600)),STAT_DEFAULT, L"td_chart" );
-	//
-	//D2DSendMessage(hc1, WM_D2D_SET_COLOR, COLOR_IDX_BACK,(LPARAM)&clr);
-	//D2DSendMessage(hchart, WM_D2D_SET_SIZE, 5,0);
-
-
-
-
-
-			auto hchart = D2DCreateControlsWithScrollbar(h,FRectF(0,0, FSizeF(1000,500)), STAT_DEFAULT|STAT_IGNORE_SIZE, L"td_chart_sc");
-
-
-			//auto hc1 = D2DCreateSimpleControls(hchart, FRectF(0,0, FSizeF(1000,600)),STAT_DEFAULT, L"td_chart" );
-
-			auto hc1 = D2DCreateSquarePaper(hchart,FRectF(0,0, FSizeF(1000,600)),STAT_DEFAULT|STAT_IGNORE_SIZE, L"td_chart" );
-
-	
-			D2DSendMessage(hc1, WM_D2D_SET_COLOR, COLOR_IDX_BACK,(LPARAM)&clr);
-			D2DSendMessage(hchart, WM_D2D_SET_SIZE, 3,0);
-
-
-
-}
-
-
-static void CreateControl(HWND hWnd)
-{
-    hwin = D2DCreateMainHWnd(hWnd, 14);
-    
-    auto root = D2DGetRootControls(hwin);
-
-    FRectF rctextbox(100, 40, FSizeF(400, 700));
-    UIHandle htextbox = D2DCreateTextbox(root, rctextbox, true, STAT_DEFAULT, L"textbox1");
-    D2DSetText(htextbox, L"Hello world one\nHello world two\nHello world three\n");
-
-
-	///////////////////////////////////////
-
-	//test(root);
-
-}
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -377,6 +327,27 @@ void ClipboardCopyPasteText(HWND hWnd, UIHandle uh, bool bPaste )
 
     }
 }
+
+static void CreateControl(HWND hWnd)
+{
+	hwin = D2DCreateMainHWnd(hWnd, 14);
+    
+	auto root = D2DGetRootControls(hwin);
+
+	FRectF rctextbox(100, 40, FSizeF(400, 700));
+	UIHandle tx = D2DCreateTextbox(root, rctextbox, true, STAT_DEFAULT, L"textbox1");
+	D2DSetText(tx, L"Hello world one\nHello world two\nHello world three\n");
+
+	///////////////////////////////////////
+
+	//D2DSetFont(tx, L"ＭＳ 明朝", 20, true);
+	//D2DSetColor(tx, ColorF::LightGray, ColorF::Black,ColorF::Yellow);
+
+
+
+}
+
+
 void V6::app_catch_throw( LRESULT hr, LPCWSTR msg, UINT line, LPCSTR fnm )
 {
 

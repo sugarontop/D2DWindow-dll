@@ -151,6 +151,8 @@ void D2DFileManage::Draw(D2DContext& cxt)
 	ID2D1Bitmap* x[] = {bmp_[0],bmp_[1]};
 
 	root_->Draw(cxt, mat, x );
+
+	
 	
 	mat.PopTransform();
 }

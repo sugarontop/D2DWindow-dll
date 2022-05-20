@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "D2DSqlDataGrid.h"
-
+#include "D2DColor.h"
 
 using namespace V6;
+using namespace V6::TOOL;
 
 #define NO_WIDTH 40.0f
 #define ROW_HEIGHT 24.0f
@@ -12,9 +13,6 @@ using namespace V6;
 static std::wstring CNo(UINT no);
 static std::vector<std::wstring> Split(const std::wstring& str, LPCWSTR split);
 static void DrawCell(D2DContext& cxt, const std::wstring& s,float xpos, float width, ID2D1SolidColorBrush* text,ID2D1SolidColorBrush* back, ID2D1SolidColorBrush* line);
-ComPTR<ID2D1SolidColorBrush> MakeColor(ID2D1DeviceContext* pcxt, ColorF clr);
-
-#define mk_color(clr)	MakeColor(*cxt,clr)
 
 
 void D2DSqlDataGrid::CreateControl(D2DWindow* parent, D2DControls* pacontrol, const FRectF& rc, DWORD stat, LPCWSTR name, int local_id)
@@ -410,10 +408,3 @@ static std::vector<std::wstring> Split(const std::wstring& str, LPCWSTR split)
     return ar;
 }
 
-ComPTR<ID2D1SolidColorBrush> MakeColor(ID2D1DeviceContext* pcxt, ColorF clr)
-{
-	ComPTR<ID2D1SolidColorBrush> br;	
-	auto hr = pcxt->CreateSolidColorBrush(clr, &br);
-	_ASSERT(hr == S_OK);
-	return br;
-}

@@ -166,7 +166,7 @@ void CreateControl1(HWND hWnd)
 
 		auto ch1 = D2DCreateChildWindow(root, FRectF(50+r,250+r,FSizeF(400,600)), STAT_DEFAULT, L"childwin" );
 
-		auto sccontrols = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT, L"filemng_sc");
+		auto sccontrols = D2DCreateControlsWithScrollbar(ch1, FRectF(0,0,0,0), STAT_DEFAULT|STAT_AUTOFIT_CHILDWIN, L"filemng_sc");
 
 		D2DSetColor(sccontrols, ColorF::White, ColorF::Black, ColorF::Black);
 

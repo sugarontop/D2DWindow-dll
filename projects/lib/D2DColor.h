@@ -94,5 +94,15 @@ class D2DColor
 		ColorF clr_;
 };
 
+namespace TOOL
+{
+	std::wstring A2W(const std::string& s);
+	std::string W2A(const std::wstring& s);
+
+	ComPTR<ID2D1SolidColorBrush> MakeColor(ID2D1DeviceContext* pcxt, ColorF clr);
+
+	#define mk_color(clr)	MakeColor(*cxt,clr)
+
+};
 
 };

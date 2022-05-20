@@ -71,8 +71,6 @@ void D2DSimpleListbox::Draw(D2DContext& cxt)
             {
 				float_clr_.Create(*cxt, &br2);
 				(*cxt)->FillRectangle(FRectF(w, h), br2);
-
-                //cxt.DFillRect(FRectF(w, h), D2RGBA(0, 200, 200, 80)); // float_clr_ = D2RGBA(0, 200, 200, 80)
             }
 
             mat.Offset(0, h);
@@ -606,7 +604,17 @@ LRESULT D2DSimpleListbox::WndProcNormal(AppBase& b, UINT message, WPARAM wParam,
             if (key == VK_ESCAPE ) 
             {
                 if ( OnEscape() )
-                    ret = 1;
+				{
+					auto ls =  dynamic_cast<D2DDropdownListbox*>(parent_control_);
+					if ( ls )
+					{
+						if (APP.IsCapture(this))    
+							APP.ReleaseCapture();
+						
+						ls->OnCloseListbox(-1);
+					}
+					ret = 1;
+				}
             }
         }
         break;
@@ -751,7 +759,7 @@ void D2DSimpleListbox::OnClick()
 
         if (ls)
         {
-            stat_ &= ~STAT_VISIBLE;
+            //stat_ &= ~STAT_VISIBLE;
             ls->OnCloseListbox(selected_idx_);
         }
 

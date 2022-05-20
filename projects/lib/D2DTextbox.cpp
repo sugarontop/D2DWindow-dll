@@ -3,6 +3,7 @@
 #include "TextMemory.h"
 #include "D2DColor.h"
 using namespace V6;
+using namespace V6::TOOL;
 
 #define  APP (D2DApp::GetInstance())
 
@@ -58,14 +59,10 @@ void D2DTextbox::Draw(D2DContext& cxt)
 { 
 	if ( BITFLG(STAT_VISIBLE) )
 	{
-		ComPTR<ID2D1SolidColorBrush> border;
-		ComPTR<ID2D1SolidColorBrush> back;
-		ComPTR<ID2D1SolidColorBrush> fore;
-		
-		(*cxt)->CreateSolidColorBrush(fore_, &fore);	
-		(*cxt)->CreateSolidColorBrush(back_, &back);
-		(*cxt)->CreateSolidColorBrush(border_, &border);
-		
+		ComPTR<ID2D1SolidColorBrush> border = mk_color(border_);
+		ComPTR<ID2D1SolidColorBrush> back = mk_color(back_);
+		ComPTR<ID2D1SolidColorBrush> fore = mk_color(fore_);
+
 
 		D2DMatrix mat(*cxt);
 		mat_ = mat.PushTransform();
@@ -79,6 +76,7 @@ void D2DTextbox::Draw(D2DContext& cxt)
 		rc.InflateRect(1,1);
 
 		D2DRectFilter fil(cxt, rc, vscrollbar_.Width());
+		
 
 		if (APP.IsCaptureEx(this)==1)
 		{
@@ -115,31 +113,34 @@ void D2DTextbox::Draw(D2DContext& cxt)
 					{
 						if ((::GetTickCount64() / 500)%2 == 0)							
 							(*cxt)->FillRectangle( FRectF(rc.right, rc.top, FSizeF(CARET_W, rc.Height())), fore );
-							//(*cxt)->FillRectangle( FRectF(rc.right, rc.bottom-CARET_W, FSizeF(rc.Width(), CARET_W)), fore );
 					
 						if (bMultiline)
-							(*cxt)->FillRectangle( FRectF(0, rc.bottom-0.5f, FSizeF( rctext_.Width(), 0.5f)), fore );
+						{
+							(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+							(*cxt)->DrawLine(FPointF(0,rc.bottom), FPointF(rctext_.Width(),rc.bottom),cxt.black_ );
+							(*cxt)->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+						}
 					}
 					cxt.Redraw();
 				}	
 			}
 		}
-		else if ( text_layout_ )
+		else
 		{			
 			mat.Offset(rctext_);
 			mat.Offset(0, -vscrollbar_.Scroll());
 			mat_sc_ = mat.Copy();
 
-			
-			if ( font_weight_ != DWRITE_FONT_WEIGHT_NORMAL )
+			if ( text_layout_ == nullptr && fmt_ != nullptr)
 			{
-				DWRITE_TEXT_RANGE rng = {0, 99999};
-				text_layout_->SetFontWeight(font_weight_, rng);
+				ctrl()->CalcRender( cxt, fmt_ );	
+				ctrl()->GetLayout()->GetTextLayout( &text_layout_ );
 			}
 
-			(*cxt)->DrawTextLayout(FPointF(), text_layout_, fore );		
-
+			if ( text_layout_ != nullptr)
+				(*cxt)->DrawTextLayout(FPointF(), text_layout_, fore );			
 		}
+
 		mat.PopTransform();
 
 		if (bMultiline)
@@ -308,11 +309,21 @@ LRESULT D2DTextbox::WndProc(AppBase& b, UINT msg, WPARAM wp, LPARAM lp)
 					
 				if ( msg == WM_KEYDOWN )
 				{
+					bool bShift   = ((GetKeyState(VK_SHIFT)& 0x80) != 0);    
+					bool bControl = ((GetKeyState(VK_CONTROL)& 0x80) != 0);    
+
+
 					if ( wp == VK_RETURN && !IsMultiline() )
 					{						
 						parent_window_->SendMessage(WM_D2D_ON_TEXTBOX_RETURN, (WPARAM)this,0);
 						ret = 1;
 					}
+					else if ( (wp == 'z' || wp == 'Z') && bControl )
+					{
+						Undo();
+						ret = 1;		
+					}
+
 					ret = 1;
 				}
 			}
@@ -529,16 +540,23 @@ int D2DTextbox::CurrentPos() const
 {
 	return ct_.SelStart();
 }
-bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight)
+bool D2DTextbox::SetFont(LPCWSTR fontnm, float fontheight, bool bold)
 {
 	ComPTR<IDWriteTextFormat> textformat;
+
+	DWRITE_FONT_WEIGHT weight = (bold ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_REGULAR);
+
 	if ( S_OK == parent_window_->GetContext().tsf_wfactory_->CreateTextFormat(fontnm, NULL, 
-		DWRITE_FONT_WEIGHT_REGULAR,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		weight,DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
 		fontheight, LOCALE, & textformat))
 	{
-	
+		font_weight_ = weight;
+
 		fmt_ = nullptr;
 		fmt_ = textformat;
+
+		text_layout_ = nullptr;
+
 		return true;
 	}	
 	
@@ -755,27 +773,16 @@ float D2DTextbox::sc_dataHeight(bool bHbar)
 	return 0;
 
 }
+void D2DTextbox::Undo()
+{ 
+	// not implement
+
+
+}
 std::wstring D2DTextbox::GetTreeTyp(USHORT* typ)
 { 
 	*typ=2; 
 	return L"D2DTextbox";
-}
-
-std::wstring D2DTextbox::Ascii2W( LPCSTR s )
-{
-	int len = (int)strlen(s);
-	int cblen = ::MultiByteToWideChar(CP_ACP, 0, s, len, nullptr, 0);
-	std::wstring x(cblen, L'\0');
-	::MultiByteToWideChar(CP_ACP, 0, s, len, (LPWSTR)(LPCWSTR)x.c_str(), cblen);
-	return x;
-}
-std::string D2DTextbox::W2Ascii( LPCWSTR s )
-{
-	int len = (int)wcslen(s);
-	int cblen = ::WideCharToMultiByte(CP_ACP, 0, s, len, nullptr, 0, nullptr, nullptr);
-	std::string cb(cblen, '\0');
-	::WideCharToMultiByte(CP_ACP, 0, s, len, (LPSTR)(LPCSTR)cb.c_str(), cblen, nullptr, nullptr);
-	return cb;
 }
 
 

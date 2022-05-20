@@ -877,6 +877,7 @@ class FRectU : public D2D1_RECT_U
 				Pop();			
 				g_->SetTransform( *this );			
 			}
+			
 			D2DMat& Offset( const FRectF& rc )
 			{
 				return Offset( rc.left, rc.top );
