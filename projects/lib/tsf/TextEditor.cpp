@@ -470,7 +470,7 @@ BOOL CTextEditor::DeleteAtSelection(BOOL fBack)
 
 BOOL CTextEditor::DeleteSelection()
 {
-    //layout_.bRecalc_ = true;
+
     ULONG nSelOldEnd = ct_->SelEnd();
     ct_->RemoveText(ct_->SelStart(), ct_->SelEnd() - ct_->SelStart());
 
@@ -1118,6 +1118,43 @@ void CTextEditorCtrl::OnSetFocus(WPARAM wParam, LPARAM lParam)
     //SetFocus();
 }
 
+
+
+//----------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------
+void CTextEditor::Undo()
+{
+	auto b = ct_->Undo();
+
+	if ( b.enable == false)
+		return;
+
+	if ( b.p == nullptr )
+	{
+		// cancel insert
+
+		ct_->RemoveText(b.caretpos, b.len, false);
+
+		auto pos = b.caretpos;
+		MoveSelection(pos, pos );
+	}
+	else
+	{
+		// cancel delete
+
+		std::wstring deleted_string = (LPCWSTR)b.p.get();
+
+		UINT res;
+		ct_->InsertText(b.caretpos,deleted_string.c_str(),b.len, res, false );
+
+		auto pos = b.caretpos+b.len;
+		
+		MoveSelection(pos, pos );
+	}
+}
 //----------------------------------------------------------------
 //
 //

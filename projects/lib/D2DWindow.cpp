@@ -56,7 +56,7 @@ bool D2DWindow::TSFInit(HWND hWnd)
 
 		return true;
 	}
-	catch( HRESULT hr )
+	catch( HRESULT  )
 	{
 		return false;
 	}

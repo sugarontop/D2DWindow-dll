@@ -100,7 +100,7 @@ LRESULT D2DStatic::WndProc(AppBase& b, UINT message, WPARAM wParam, LPARAM lPara
 	if (message == WM_D2D_SET_COLOR )
 	{
 		ColorF clr = *(ColorF*)lParam;
-		int idx = wParam;
+		int idx = (int)wParam;
 
 		if ( idx == COLOR_IDX_FORE )
 			txt_clr_ = clr; //fore_ = clr;

@@ -183,9 +183,15 @@ void D2DTextbox::StatActive(bool bActive)
 { 
 	ActiveSw(bActive);
 
+	
+
 	if (bActive)
 	{			
 		ctrl()->SetFocus(&mat_sc_);
+
+
+		ctrl()->bri_->GetClientRect();
+
 		//TRACE( L"D2DTextbox::StatActive(TRUE)   %x\n", this );
 
 	}
@@ -777,7 +783,7 @@ void D2DTextbox::Undo()
 { 
 	// not implement
 
-
+	ctrl()->Undo();
 }
 std::wstring D2DTextbox::GetTreeTyp(USHORT* typ)
 { 

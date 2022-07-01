@@ -159,3 +159,4 @@ std::wstring_view TextSentence::str()
 	return std::wstring_view( get() );
 
 }
+

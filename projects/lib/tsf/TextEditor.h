@@ -77,6 +77,7 @@ class CTextEditor
 		BOOL IsImeOn() const;
 		void OnChangeIME(bool bOn);
 		BOOL SelectionTab(BOOL bIns);
+		void Undo();
 	public :
 		CTextLayout layout_;
 		CTextContainer* ct_;

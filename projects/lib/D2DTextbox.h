@@ -8,6 +8,8 @@
 
 struct AppBase;
 
+class UndoTextEditor;
+
 
 #define CARET_W	2
 
@@ -131,5 +133,6 @@ namespace V6
 		ColorF border_;
 		DWRITE_FONT_WEIGHT font_weight_;
 		bool isImeOn_;
+		
 	};
 };
