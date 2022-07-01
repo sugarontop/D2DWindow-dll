@@ -163,7 +163,7 @@ class CTextEditorCtrl : public CTextEditor
 
 };
 
-// mainframe.cpp‚É‚ ‚é
+// see mainframe.cpp
 CTextEditorCtrl* GetTextEditorCtrl(); 
 
 #endif

@@ -1,7 +1,16 @@
 #include "pch.h"
 #include "D2DTextbox.h"
-#include "TextMemory.h"
 #include "D2DColor.h"
+
+/*
+
+ TextLayout.h -> CTextLayout
+ TSF/TextContainer.h -> CTextContainer, UndoTextEditor
+ TSF/TextEditor.h -> CTextEditor, CTextEditorCtrl			
+ D2DTextbox.h -> D2DTextbox
+
+*/
+
 using namespace V6;
 using namespace V6::TOOL;
 
