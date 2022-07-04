@@ -677,12 +677,15 @@ void CTextEditor::OnComposition( int msg, int len )
 
             ti_.decoration_start_pos = GetSelectionStart();
             ti_.decoration_end_pos = GetSelectionEnd();
+
+			ct_->ime_stat_ = 1;
         }
         break;
         case 2:
         {            
             ti_.decoration_start_pos = max(0, GetSelectionEnd() - len);
             ti_.decoration_end_pos =GetSelectionEnd();
+			ct_->ime_stat_ = 2;
         }
         break;
         case 3:
@@ -690,6 +693,10 @@ void CTextEditor::OnComposition( int msg, int len )
             ti_.decoration_typ = 0;
             ti_.decoration_end_pos = 0;
             ti_.decoration_start_pos = 0;
+			
+			
+			ct_->ime_stat_ = 3;
+			ct_->UndoAdjust();
         }
         break;
     }
@@ -1129,7 +1136,7 @@ void CTextEditor::Undo()
 {
 	auto b = ct_->Undo();
 
-	if ( b.enable == false)
+	if ( b.len < 0 )
 		return;
 
 	if ( b.p == nullptr )

@@ -134,7 +134,7 @@ STDAPI CTextStore::RequestLock(DWORD dwLockFlags, HRESULT *phrSession)
 {
 
 
-TRACE(L"CTextStore::RequestLock %d\n", dwLockFlags);
+//TRACE(L"CTextStore::RequestLock %d\n", dwLockFlags);
 
 
 	if(m_fLocked)
@@ -385,7 +385,6 @@ STDAPI CTextStore::SetText(DWORD dwFlags, LONG acpStart, LONG acpEnd, __in_ecoun
         return TS_E_NOLOCK;
     }
 
-
     LONG acpRemovingEnd;
 
     if (acpStart > (LONG)_pEditor->ct_->GetTextLength())
@@ -630,7 +629,7 @@ STDAPI CTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, R
     }
 
 
-    TRACE( L"候補ダイアログボックス  left=%d top=%d,size=(%d,%d)\n", prc->left, prc->top, prc->right-prc->left, prc->bottom-prc->top );
+    //TRACE( L"候補ダイアログボックス  left=%d top=%d,size=(%d,%d)\n", prc->left, prc->top, prc->right-prc->left, prc->bottom-prc->top );
 
 
     *pfClipped = FALSE;

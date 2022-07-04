@@ -18,6 +18,7 @@ CTextContainer::CTextContainer()
 	view_size_ = {0};
 	nBufferCharCount_ = 0;
 	undo_ = std::make_shared<UndoTextEditor>();
+	ime_stat_ = 0;
 
 	EnsureBuffer(MINI_BUFFER_SIZE);
 }
@@ -64,8 +65,8 @@ BOOL CTextContainer::InsertText(int nPos, const WCHAR *psz, UINT nCnt, UINT& nRe
 
 	psz_[nTextSize_] = 0;
 
-	if (undo_process)
-		undo_->AddChar( nPos, nCnt);
+	if ( undo_process )
+		undo_->AddChar( nPos, nCnt, ime_stat_ ); // ime_stat_: [0 ansi input, 1-3 ime imput]
 
 	nResultCnt = nCnt;
 	return TRUE;
@@ -84,11 +85,18 @@ BOOL CTextContainer::RemoveText(int nPos, UINT nCnt, bool undo_process)
 	auto end =  psz_ + nPos + nCnt;
 
 	if (undo_process)
-		undo_->Delete(psz_, nPos, nPos+nCnt);
+		undo_->Delete(psz_, nPos, nPos+nCnt, ime_stat_);
 
-	memmove( start, end,  sizeof(WCHAR)*(nTextSize_-(nPos+nCnt)));
+
+	int cnt = (int)nTextSize_-(nPos+nCnt);
+
+	if (cnt > 0 )
+	{
+		memmove( start, end,  sizeof(WCHAR)*cnt );
+	}
 
 	nTextSize_ -= nCnt;
+
 	return TRUE;
 }
 
@@ -120,7 +128,11 @@ void CTextContainer::Clear()
 	nStartCharPos_ = 0;
 	undo_->Clear();
 }
+void CTextContainer::UndoAdjust()
+{
+	undo_->UndoAdjust();
 
+}
 void CTextContainer::Reset()
 {
 	Clear();
@@ -193,31 +205,65 @@ int CTextContainer::LineNo(LONG nPos) const
 
 /////////////////////////////////////////////////////////////
 
-void UndoTextEditor::AddChar(UINT pos,UINT len)
+void UndoTextEditor::AddChar(UINT pos,UINT len, byte stat)
 {	
 	BInfo b;
 	b.caretpos = pos;
 	b.len = len;
 	b.p = nullptr;
+	b.stat = stat * 10; // 入力系は1->10, 2->20, 3->30へ変更
 
 	undo_.push(b);
 
 }
 
+void UndoTextEditor::UndoAdjust()
+{
+	// IME ONして入力開始のstat=10までさかのぼってundo情報を消す。
+	auto& undo2 = undo_;
+
+	std::vector<BInfo> ar;
+
+	while( !undo2.empty() )
+	{
+		auto b = undo2.top();
+		
+		ar.push_back(b);
+
+		_ASSERT( ar[0].stat == 20 );
+
+		if ( b.stat == 10 )
+		{
+			undo2.pop();
+
+			undo2.push( ar[0] );
+			break;
+		}
+		undo2.pop();
+		
+	}
+
+}
 UndoTextEditor::BInfo UndoTextEditor::Undo()
 {
-	BInfo b;
-	b.enable = false;
+	BInfo b;	
 
-	if ( undo_.empty()) return b ;
+	while( !undo_.empty() )
+	{
+		b = undo_.top();
 
-	b = undo_.top();
+		if ( b.stat != 2 )
+		{
+			undo_.pop();
+			break;
+		}
 
-	undo_.pop();
+		undo_.pop();
+	}
 
 	return b;
 }
-void UndoTextEditor::Delete(LPCWSTR str, UINT pos0, UINT pos1)
+void UndoTextEditor::Delete(LPCWSTR str, UINT pos0, UINT pos1, byte stat)
 {
 	_ASSERT( pos0 <= pos1 );
 	
@@ -230,8 +276,9 @@ void UndoTextEditor::Delete(LPCWSTR str, UINT pos0, UINT pos1)
 	cb[pos1-pos0] = 0;
 
 	b.p = std::shared_ptr<WCHAR[]>(cb);
-	b.len = pos1-pos0;
+	b.len = (int)pos1- (int)pos0;
 	b.caretpos = pos0;
+	b.stat = stat;
 
 	undo_.push(b);
 }

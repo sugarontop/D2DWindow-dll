@@ -9,12 +9,12 @@ class UndoTextEditor
 
 		struct BInfo
 		{
-			BInfo():len(0),caretpos(0),enable(true){}
+			BInfo():len(-1),caretpos(0),stat(0){}
 
 			std::shared_ptr<WCHAR[]> p;
-			UINT len;
+			int len;
 			UINT caretpos;
-			bool enable;
+			byte stat;
 		};
 
 	private :
@@ -22,9 +22,10 @@ class UndoTextEditor
 
 	public :
 		BInfo Undo();
-		void AddChar(UINT pos, UINT len);
-		void Delete(LPCWSTR str, UINT pos0, UINT pos1);
+		void AddChar(UINT pos, UINT len, byte stat);
+		void Delete(LPCWSTR str, UINT pos0, UINT pos1, byte stat);
 		void Clear();
+		void UndoAdjust();
 };
 
 
@@ -53,6 +54,7 @@ class CTextContainer
 		int  LineNo(LONG nPos) const;
 
 		UndoTextEditor::BInfo Undo();
+		void UndoAdjust();
 
 	private :
 		int nSelStart_, nSelEnd_;
@@ -64,6 +66,9 @@ class CTextContainer
 	
 		V6::FPointF offpt_; // Textbox2ì‡ÇÃï∂éöÇÃà⁄ìÆÅASinglelineÇ≈èdóv
 		int nStartCharPos_;
+
+		byte ime_stat_;
+
 	private:
 		BOOL EnsureBuffer(UINT nNewTextSize);
 		const UINT LimitCharCnt_ = 65000;

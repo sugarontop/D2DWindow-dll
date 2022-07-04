@@ -336,7 +336,7 @@ static void CreateControl(HWND hWnd)
 
 	FRectF rctextbox(100, 40, FSizeF(400, 700));
 	UIHandle tx = D2DCreateTextbox(root, rctextbox, true, STAT_DEFAULT, L"textbox1");
-	D2DSetText(tx, L"Hello world one\nHello world two\nHello world three\n");
+	//D2DSetText(tx, L"Hello world one\nHello world two\nHello world three\n");
 
 	///////////////////////////////////////
 
